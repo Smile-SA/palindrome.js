@@ -24,14 +24,20 @@ const systemMetrics = {
 		unit : "MB / seconds",
 		max : 10240,
 		current : 1500
+	},
+	bandwidth2 : {
+		label : "BW",
+		unit : "MB / seconds",
+		max : 10240,
+		current : 1500
 	}
 }
 
-const valuePoint1 = systemMetrics.cpu.current / systemMetrics.cpu.max;
-const valuePoint2 = systemMetrics.ram.current / systemMetrics.ram.max;
-const valuePoint3 = systemMetrics.hdd.current / systemMetrics.hdd.max;
-const valuePoint4 = systemMetrics.bandwidth.current / systemMetrics.bandwidth.max;
-
+const dataValue = [];
+for ( const metric in systemMetrics) {
+    const value = systemMetrics[metric].current / systemMetrics[metric].max;
+    dataValue.push(value);
+};
 
 
 const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
@@ -39,18 +45,17 @@ camera.position.set( 0, 20, 100 );
 camera.lookAt( 0, 0, 0 );
 
 const renderer = new THREE.WebGLRenderer();
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-controls.autoRotate = true;
-controls.autoRotateSpeed = 1;
-controls.target = new THREE.Vector3(.5, .5, .5);
-
-
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-	
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+//controls.autoRotate = true;
+controls.autoRotateSpeed = 5;
+//controls.target = new THREE.Vector3(.5, .5, .5);
+			
 const scene = new THREE.Scene();
+const axesHelper = new THREE.AxesHelper();
+scene.add(axesHelper);
 
 const material = new THREE.LineDashedMaterial( {
 	color: 0xffffff,
@@ -61,31 +66,76 @@ const material = new THREE.LineDashedMaterial( {
 } );
 
 class SimpleLine extends THREE.Line {
-	constructor(point1, point2, material) {
+	constructor(value1, value2, material) {
 		const geometry = new THREE.Geometry();
-		geometry.vertices.push(new THREE.Vector3(...point1) );
-		geometry.vertices.push(new THREE.Vector3(...point2) );
+        geometry.vertices.push(new THREE.Vector3(...value1) );
+		geometry.vertices.push(new THREE.Vector3(...value2) );
 
 		super(geometry, material)
 	}
 	}
 
+const b = [];
 
-const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
 
-const point1 = new SimpleLine([0,valuePoint1*50,0], [0,0,0] , material);
-const point2 = new SimpleLine([0,valuePoint2*-50,0], [0,0,0] , material);
-const point3 = new SimpleLine([valuePoint3*50,0,0],[0,0,0], material);
-const point4 = new SimpleLine([valuePoint4*-50,0,0],[0,0,0], material);
+for (let i=0; i< dataValue.length; i++){
+    const pointValue = new SimpleLine([dataValue[i]*50,0,0], [0,0,0] , material);
+	pointValue.rotateZ(i*Math.PI*2/dataValue.length);
+	//console.log(pointValue);
 
-const line = new SimpleLine([0,valuePoint1*50,0], [valuePoint3*50,0,0], material);
-const line2 = new SimpleLine([0,valuePoint2*-50,0], [valuePoint3*50,0,0], material);
-const line3 = new SimpleLine([valuePoint4*-50,0,0],[0,valuePoint2*-50,0],material);
-const line4 = new SimpleLine([valuePoint4*-50,0,0],[0,valuePoint1*50,0],material);
+	scene.add(pointValue);
+	scene.updateMatrixWorld();
 
-scene.add( point1, point2, point3, point4, line, line2, line3, line4 );
+    const points = pointValue.geometry.vertices[0].clone();
+	points.applyMatrix4(pointValue.matrixWorld);
+	//console.log(points);
 
+	b.push(points);
+	
+
+	/*
+    for (let j=0; j< dataValue[i]; j++) {
+        const value = dataValue.i*50;
+        const x = Math.cos(i*Math.PI/2) * value;
+        const y = Math.sin(i*Math.PI/2) * value;
+
+        console.log(x);
+        console.log(y);
+
+    
+        const anwar = new SimpleLine([x,0,0], [0,y,0], material);
+
+        scene.add(anwar);
+    
+    }
+
+*/
+}
+
+
+for(let i = 0; i < b.length -1; i++) {
+	console.log(b[i], b[i+1])
+	const autoLines = new SimpleLine(b[i].toArray(), b[i+1].toArray(), material);
+	//scene.updateMatrixWorld();
+	scene.add(autoLines);
+	//console.log(autoLines);
+}
+const autoLines1 = new SimpleLine(b[b.length - 1].toArray(), b[0].toArray(), material);
+scene.add(autoLines1);
+
+/*
+const line = new SimpleLine([0,dataValue[0]*50,0], [dataValue[2]*50,0,0], material);
+const line2 = new SimpleLine([0,dataValue[1]*-50,0], [dataValue[2]*50,0,0], material);
+const line3 = new SimpleLine([dataValue[3]*-50,0,0],[0,dataValue[1]*-50,0],material);
+const line4 = new SimpleLine([dataValue[3]*-50,0,0],[0,dataValue[0]*50,0],material);
+
+
+scene.add(line, line2, line3, line4 );
+*/
+
+
+
+// display scene
 function render() {
 	controls.update();
 	renderer.render(scene, camera);
@@ -116,28 +166,3 @@ const gameLoop = function ( ) {
 gameLoop();
 */
 
-
-/*
-
-function resize(renderer) {
-  const canvas = renderer.domElement;
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-  const needResize = canvas.width !== width || canvas.height !== height;
-  if (needResize) {
-    renderer.setSize(width, height, false);
-  }
-  return needResize;
-}
-
-function render() {
-  if (resize(renderer)) {
-    camera.aspect = canvas.clientWidth / canvas.clientHeight;
-    camera.updateProjectionMatrix();
-  }
-  renderer.render(scene, camera);
-  requestAnimationFrame(render);
-  controls.update();
-}
-
-*/
