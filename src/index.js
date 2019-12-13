@@ -1,5 +1,4 @@
 
-
 const systemMetrics = {
 	cpu : {
 		label : "CPU",
@@ -32,29 +31,41 @@ const systemMetrics = {
 		current : 1500
 	}
 }
-
+/*
 const dataValue = [];
+const dataTitle = [];
 for ( const metric in systemMetrics) {
     const value = systemMetrics[metric].current / systemMetrics[metric].max;
-    dataValue.push(value);
+	dataValue.push(value);
+	dataTitle.push(metric);
 };
+*/
 
+const dataValue = Object.values(systemMetrics).map(e => e.current / e.max)
+const dataTitle = Object.keys(systemMetrics)
 
 const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
 camera.position.set( 0, 20, 100 );
 camera.lookAt( 0, 0, 0 );
 
 const renderer = new THREE.WebGLRenderer();
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const labelRenderer = new THREE.CSS2DRenderer();
+labelRenderer.setSize( window.innerWidth, window.innerHeight );
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = 0;
+document.body.appendChild( labelRenderer.domElement );
+
+const controls = new THREE.OrbitControls(camera, labelRenderer.domElement);
 //controls.autoRotate = true;
 controls.autoRotateSpeed = 5;
 //controls.target = new THREE.Vector3(.5, .5, .5);
 			
 const scene = new THREE.Scene();
-const axesHelper = new THREE.AxesHelper();
+const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
 
 const material = new THREE.LineDashedMaterial( {
@@ -68,9 +79,8 @@ const material = new THREE.LineDashedMaterial( {
 class SimpleLine extends THREE.Line {
 	constructor(value1, value2, material) {
 		const geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3(...value1) );
+		geometry.vertices.push(new THREE.Vector3(...value1) );
 		geometry.vertices.push(new THREE.Vector3(...value2) );
-
 		super(geometry, material)
 	}
 	}
@@ -78,72 +88,57 @@ class SimpleLine extends THREE.Line {
 const b = [];
 
 
-for (let i=0; i< dataValue.length; i++){
-    const pointValue = new SimpleLine([dataValue[i]*50,0,0], [0,0,0] , material);
-	pointValue.rotateZ(i*Math.PI*2/dataValue.length);
-	//console.log(pointValue);
 
+labelRenderer.render( scene, camera );
+
+for (let i=0; i< dataValue.length; i++){
+	const pointValue = new SimpleLine([dataValue[i]*50,0,0], [0,0,0] , material);
+	pointValue.rotateZ(i*Math.PI*2/dataValue.length);
 	scene.add(pointValue);
 	scene.updateMatrixWorld();
-
-    const points = pointValue.geometry.vertices[0].clone();
+	const points = pointValue.geometry.vertices[0].clone();
 	points.applyMatrix4(pointValue.matrixWorld);
-	//console.log(points);
-
 	b.push(points);
-	
-
-	/*
-    for (let j=0; j< dataValue[i]; j++) {
-        const value = dataValue.i*50;
-        const x = Math.cos(i*Math.PI/2) * value;
-        const y = Math.sin(i*Math.PI/2) * value;
-
-        console.log(x);
-        console.log(y);
-
-    
-        const anwar = new SimpleLine([x,0,0], [0,y,0], material);
-
-        scene.add(anwar);
-    
-    }
-
-*/
 }
-
 
 for(let i = 0; i < b.length -1; i++) {
-	console.log(b[i], b[i+1])
+	//console.log(b[i], b[i+1])
 	const autoLines = new SimpleLine(b[i].toArray(), b[i+1].toArray(), material);
-	//scene.updateMatrixWorld();
 	scene.add(autoLines);
-	//console.log(autoLines);
+
+	const label = createLabel(dataTitle[i], b[i]);
+	scene.add(label); 
 }
+
 const autoLines1 = new SimpleLine(b[b.length - 1].toArray(), b[0].toArray(), material);
 scene.add(autoLines1);
 
-/*
-const line = new SimpleLine([0,dataValue[0]*50,0], [dataValue[2]*50,0,0], material);
-const line2 = new SimpleLine([0,dataValue[1]*-50,0], [dataValue[2]*50,0,0], material);
-const line3 = new SimpleLine([dataValue[3]*-50,0,0],[0,dataValue[1]*-50,0],material);
-const line4 = new SimpleLine([dataValue[3]*-50,0,0],[0,dataValue[0]*50,0],material);
+const label = createLabel(dataTitle[dataTitle.length -1], b[b.length - 1]);
+scene.add(label);
+	
+function createLabel(textContent, vector3) {
+	const labelDiv = document.createElement( 'div' );
+	labelDiv.className = 'label';
+	labelDiv.textContent = textContent;
 
-
-scene.add(line, line2, line3, line4 );
-*/
-
-
+	const metricLabel = new THREE.CSS2DObject( labelDiv );
+	metricLabel.position.set(vector3.x, vector3.y + 1, vector3.z);
+	
+	return metricLabel
+}
 
 // display scene
 function render() {
 	controls.update();
 	renderer.render(scene, camera);
+	labelRenderer.render( scene, camera );
 	
 	requestAnimationFrame(render);
-}
+	}
 
 render();
+
+
 /*
 // game logic
 const update function ( ){
@@ -165,4 +160,3 @@ const gameLoop = function ( ) {
 
 gameLoop();
 */
-
