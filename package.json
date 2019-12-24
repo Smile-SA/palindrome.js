@@ -1,0 +1,20 @@
+{
+  "name": "Pallindrome",
+  "version": "1.0.0",
+  "description": "3D representation of metrics",
+  "main": "index.html",
+  "repository": "git@git.rnd.alterway.fr:overboard/3d_radar_diagram.git",
+  "author": "farooque.mustafa <farooque.mustafa@alterway.fr>",
+  "license": "private",
+  "dependencies": {
+    "parcel-bundler": "^1.12.4",
+    "three-orbitcontrols": "^2.110.3"
+  },
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "devDependencies": {
+    "three.js": "^0.77.1"
+  }
+}
