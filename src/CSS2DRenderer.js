@@ -1,3 +1,4 @@
+//var THREE = require('three');
 
 THREE.CSS2DObject = function ( element ) {
 
@@ -106,3 +107,6 @@ THREE.CSS2DRenderer = function () {
 	};
 
 };
+
+exports.CSS2DRenderer = THREE.CSS2DRenderer;
+exports.CSS2DObject = THREE.CSS2DObject;

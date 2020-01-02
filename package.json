@@ -1,20 +1,20 @@
 {
-  "name": "Pallindrome",
+  "name": "pallidrome",
   "version": "1.0.0",
-  "description": "3D representation of metrics",
+  "description": "Two layers with yarn",
   "main": "index.html",
   "repository": "git@git.rnd.alterway.fr:overboard/3d_radar_diagram.git",
   "author": "farooque.mustafa <farooque.mustafa@alterway.fr>",
   "license": "private",
-  "dependencies": {
-    "parcel-bundler": "^1.12.4",
-    "three-orbitcontrols": "^2.110.3"
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
   },
   "scripts": {
     "dev": "parcel index.html",
     "build": "parcel build index.html"
   },
-  "devDependencies": {
-    "three.js": "^0.77.1"
+  "dependencies": {
+    "three": "^0.112.1",
+    "three-css2drender": "^1.0.0"
   }
 }

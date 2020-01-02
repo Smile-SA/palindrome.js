@@ -1,3 +1,6 @@
+import * as THREE from 'three'
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
+import {CSS2DRenderer, CSS2DObject} from 'three-css2drender'
 
 const systemMetrics = {
 	cpu : {
@@ -65,6 +68,14 @@ const qoeMetrics = {
 	}
 }
 
+fetch("data.json")
+	.then(function(resp) {
+		return resp.json();
+	})
+	.then(function(data) {
+		console.log(data);
+});
+
 class SimpleLine extends THREE.Line {
 	constructor(value1, value2, material2) {
 		const geometry = new THREE.Geometry();
@@ -120,7 +131,7 @@ function createLabel(textContent, vector3) {
 	labelDiv.className = 'label';
 	labelDiv.textContent = textContent;
 
-	const metricLabel = new THREE.CSS2DObject( labelDiv );
+	const metricLabel = new CSS2DObject( labelDiv );
 	metricLabel.position.set(vector3.x, vector3.y + 1, vector3.z);
 	
 	return metricLabel
@@ -152,7 +163,7 @@ function initScene() {
 	const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
 	camera.position.set( 0, 20, 100 );
 	
-	const renderer = new THREE.WebGLRenderer();
+	var renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -166,14 +177,14 @@ function initScene() {
 		camera.updateProjectionMatrix( );
 	});
 	
-	const labelRenderer = new THREE.CSS2DRenderer();
+	const labelRenderer = new CSS2DRenderer();
 	labelRenderer.setSize( window.innerWidth, window.innerHeight );
 	labelRenderer.domElement.style.position = 'absolute';
 	labelRenderer.domElement.style.top = 0;
 	document.body.appendChild( labelRenderer.domElement );
 	
-	const controls = new THREE.OrbitControls(camera, labelRenderer.domElement);
-	//controls.autoRotate = true;
+	const controls = new OrbitControls(camera, labelRenderer.domElement);
+	controls.autoRotate = true;
 	controls.autoRotateSpeed = 5;
 	//controls.target = new THREE.Vector3(.5, .5, .5);
 				
