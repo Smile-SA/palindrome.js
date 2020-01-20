@@ -1,38 +1,32 @@
-import * as THREE from 'three'
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {CSS2DRenderer, CSS2DObject} from 'three-css2drender'
+import * as THREE from 'three';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+import {CSS2DRenderer, CSS2DObject} from 'three-css2drender';
 
-
-
-let myRequest = new Request("data.json")
+const myRequest = new Request("data.json");
 
 fetch(myRequest)
-	.then(function(resp) {
-		return resp.json();
-	})
-	.then(function(data) {
-		readyToExecute(data);
-		});
+	.then(resp => resp.json())
+	.then(data => readyToExecute(data));
+	//.catch(err => alert('An error occured please check your data file'));
+
+class SimpleLine extends THREE.Line {
+	constructor(value1, value2, material2) {
+		const geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3(...value1) );
+		geometry.vertices.push(new THREE.Vector3(...value2) );
+		super(geometry, material2)
+	}
+}
 
 function readyToExecute (data) {
 	(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 	
 	const { qoeMetrics, systemMetrics } = data; 
-
-	class SimpleLine extends THREE.Line {
-		constructor(value1, value2, material2) {
-			const geometry = new THREE.Geometry();
-			geometry.vertices.push(new THREE.Vector3(...value1) );
-			geometry.vertices.push(new THREE.Vector3(...value2) );
-			super(geometry, material2)
-		}
-	}
 	
 	const dataValueSystemMetrics = Object.values(systemMetrics).map(e => e.current / e.max);
 	const dataTitleSystemMetrics = Object.keys(systemMetrics);
 	const dataValueQoeMetrics = Object.values(qoeMetrics).map(e => e.current / e.max);
 	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
-	
 	
 	const { scene, labelRenderer, controls, renderer, camera } = initScene();
 	
@@ -47,25 +41,61 @@ function readyToExecute (data) {
 	loopingOverLayers(plane2points, dataValueQoeMetrics, -10);
 	
 	const pointsCount = plane1points.length;
-	for(let i = 0; i < pointsCount; i++) {
-		const planeOneLines = new SimpleLine(plane1points[i], plane1points[(i+1)  % pointsCount], material1);
-		scene.add(planeOneLines);
-	
-		const lineAddingBothPlanes = new SimpleLine(plane1points[i], plane2points[i], material1);
-		scene.add(lineAddingBothPlanes);
+	const pointsCount2 = plane2points.length;
 
-		const lineAddingBothPlanes2 = new SimpleLine(plane1points[i], plane2points[(i+1) % pointsCount], material1);
-		scene.add(lineAddingBothPlanes2);
+	console.log(pointsCount);
+	console.log(pointsCount2);
+
+	if (pointsCount >= pointsCount2) {
+
+		for(let i = 0; i < pointsCount; i++) {
+			const planeOneLines = new SimpleLine(plane1points[i], plane1points[(i+1)  % pointsCount], material1);
+			scene.add(planeOneLines);
+		
+			const lineAddingBothPlanes = new SimpleLine(plane1points[i], plane2points[(i+1) % pointsCount2], material1);
+			scene.add(lineAddingBothPlanes);
 	
-		const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], plane1points[i]);
-		scene.add(labelForPlane1); 
-	
-		const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], plane2points[i]);
-		scene.add(labelForPlane2); 
-	
-		const planeTwoLines = new SimpleLine(plane2points[i], plane2points[(i+1) % pointsCount], material1);
-		scene.add(planeTwoLines);
+			const lineAddingBothPlanes2 = new SimpleLine(plane1points[(i+1) % pointsCount], plane2points[(i+1) % pointsCount2], material1);
+			scene.add(lineAddingBothPlanes2);
+			
+			const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], plane1points[i]);
+			scene.add(labelForPlane1);
+			
+			const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], plane2points[(i+1) % pointsCount2]);
+			scene.add(labelForPlane2); 
+			console.log(labelForPlane2, dataTitleQoeMetrics, plane2points[i]); 
+		
+			const planeTwoLines = new SimpleLine(plane2points[(i) % pointsCount2], plane2points[(i+1) % pointsCount2], material1);
+			scene.add(planeTwoLines);
+		}
+		console.log('System Metrics is Working!');
 	}
+
+	else {
+
+		for(let i = 0; i < pointsCount2; i++) {
+			const planeOneLines = new SimpleLine(plane1points[(i)  % pointsCount], plane1points[(i+1)  % pointsCount], material1);
+			scene.add(planeOneLines);
+		
+			const lineAddingBothPlanes = new SimpleLine(plane2points[i], plane1points[(i+1)  % pointsCount], material1);
+			scene.add(lineAddingBothPlanes);
+	
+			//const lineAddingBothPlanes2 = new SimpleLine(plane2points[(i+1) % pointsCount2], plane1points[(i+1) % pointsCount], material1);
+			//scene.add(lineAddingBothPlanes2);
+			
+			const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], plane1points[(i+1) % pointsCount]);
+			scene.add(labelForPlane1); 
+		
+			const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], plane2points[i]);
+			scene.add(labelForPlane2); 
+		
+			const planeTwoLines = new SimpleLine(plane2points[i], plane2points[(i+1) % pointsCount2], material1);
+			scene.add(planeTwoLines);
+		}
+		console.log('Qoe Metrics is Working!');
+	}
+		
+	render();
 	
 	
 	//creates labels for all mertics and displays it on their position.
@@ -78,10 +108,8 @@ function readyToExecute (data) {
 		const labelDiv = document.createElement( 'div' );
 		labelDiv.className = 'label';
 		labelDiv.textContent = textContent;
-	
 		const metricLabel = new CSS2DObject( labelDiv );
 		metricLabel.position.set(vector3[0], vector3[1] + 1, vector3[2]);
-		
 		return metricLabel
 	}
 
@@ -89,11 +117,8 @@ function readyToExecute (data) {
 		controls.update();
 		renderer.render(scene, camera);
 		labelRenderer.render( scene, camera );
-		
 		requestAnimationFrame(render);
 	}
-	
-	render();
 	
 	/**
 	 * 
@@ -103,11 +128,6 @@ function readyToExecute (data) {
 		return new THREE.LineDashedMaterial( {
 			color,
 			linewidth: 3,
-			scale: 1,
-			dashSize: 3,
-			gapSize: 1,
-			//transparent,
-			//opacity
 		} );
 	}
 
@@ -136,16 +156,14 @@ function readyToExecute (data) {
 		document.body.appendChild( labelRenderer.domElement );
 		
 		const controls = new OrbitControls(camera, labelRenderer.domElement);
-		controls.autoRotate = true;
+		//controls.autoRotate = true;
 		controls.autoRotateSpeed = 5;
 		controls.target = new THREE.Vector3(1,1,1); //15, 5, 15
 					
 		const scene = new THREE.Scene();
+		scene.background = new THREE.Color( 0xf0f0f0 );
 		const axesHelper = new THREE.AxesHelper(5);
 		scene.add(axesHelper);
-	
-		//labelRenderer.render( scene, camera );
-		//renderer.render( scene, camera );
 
 		const transparentGeometry = new THREE.PlaneGeometry( 15, 15 ,0 );
 		const transparentPlaneMaterial = new THREE.MeshBasicMaterial( {color: 0xA8A8A8, transparent: true, opacity: 0.5, side: THREE.DoubleSide} );
