@@ -22,21 +22,34 @@ class SimpleLine extends THREE.Line {
 function readyToExecute (data) {
 	(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 	
+	/**
+	 * Transfrom readytoExecute to take only ONE varialbe of Metrics
+	 */
 	const { qoeMetrics, systemMetrics } = data; 
 	
 	const dataValueSystemMetrics = Object.values(systemMetrics).map(e => e.current / e.max);
 	const dataTitleSystemMetrics = Object.keys(systemMetrics);
 	const dataValueQoeMetrics = Object.values(qoeMetrics).map(e => e.current / e.max);
 	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
+
+	//const dataValueSystemMetricsMin = Object.values(systemMetrics).map(e => e.current / e.min);
+	//const dataValueSystemMetricsMed = Object.values(systemMetrics).map(e => e.current / e.med);
+	
 	
 	const { scene, labelRenderer, controls, renderer, camera } = initScene();
 	
 	const material1 = createLineMaterial(0xadff2f); //0xfffff
+
+
 	//const material2 = createLineMaterial(0x000000);
 	//const material3 = createLineMaterial(0xC425B9);
 	
 	const plane1points = [];
 	const plane2points = [];
+	const linePoints = [20, 30, 8];
+
+	//const lineTouchingPoints = new SimpleLine(plane1points[1], linePoints, material2);
+	//scene.add(lineTouchingPoints);
 
 	console.log(plane1points);
 	console.log(plane2points);
@@ -65,8 +78,7 @@ function readyToExecute (data) {
 			scene.add(labelForPlane1);
 			
 			const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], plane2points[(i+1) % pointsCount2]);
-			scene.add(labelForPlane2); 
-			//console.log(labelForPlane2, dataTitleQoeMetrics, plane2points[i]); 
+			scene.add(labelForPlane2);
 		
 			const planeTwoLines = new SimpleLine(plane2points[(i) % pointsCount2], plane2points[(i+1) % pointsCount2], material1);
 			scene.add(planeTwoLines);
@@ -134,9 +146,22 @@ function readyToExecute (data) {
 		} );
 	}
 
+	function createTriangleMaterial(color) {
+		return new THREE.MeshBasicMaterial( {
+			color,
+			transparent: true,
+			opacity: 0.5,
+			side: THREE.DoubleSide
+		} );
+	}
+
+
 	function initScene() {
 		const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-		camera.position.set( 0, 20, 100 ); // 0, 20, 100
+		camera.position.set( 0, -100, 20 ); // 0, 20, 100
+
+		//const newCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 100, 500 );
+		//const cameraHelper = new THREE.CameraHelper(newCamera);
 		
 		var renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setPixelRatio( window.devicePixelRatio );
@@ -152,6 +177,8 @@ function readyToExecute (data) {
 			camera.updateProjectionMatrix( );
 		});
 		
+		
+
 		const labelRenderer = new CSS2DRenderer();
 		labelRenderer.setSize( window.innerWidth, window.innerHeight );
 		labelRenderer.domElement.style.position = 'absolute';
@@ -161,12 +188,15 @@ function readyToExecute (data) {
 		const controls = new OrbitControls(camera, labelRenderer.domElement);
 		//controls.autoRotate = true;
 		controls.autoRotateSpeed = 5;
-		controls.target = new THREE.Vector3(1,1,1); //15, 5, 15
+		controls.minPolarAngle = 2;
+		//controls.target = new THREE.Vector3(1,0,1); //15, 5, 15
+		
 					
 		const scene = new THREE.Scene();
-		scene.background = new THREE.Color( 0xf0f0f0 );
+		//scene.background = new THREE.Color( 0xf0f0f0 );
 		const axesHelper = new THREE.AxesHelper(17);
 		scene.add(axesHelper);
+		//scene.add(cameraHelper);
 
 		const transparentGeometry = new THREE.PlaneGeometry( 5, 5 ,0 );
 		const transparentPlaneMaterial = new THREE.MeshBasicMaterial( {color: 0xA8A8A8, transparent: true, opacity: 0.5, side: THREE.DoubleSide} );
@@ -222,7 +252,7 @@ function readyToExecute (data) {
 		}
 	}
 
-
+	
 //const oneSideOfTriangle = new Triangle(plane1points[0], plane1points[1], plane2points[1]);
 
  
@@ -285,11 +315,6 @@ function readyToExecute (data) {
 		geom5.vertices.push(triangle5.b);
 		geom5.vertices.push(triangle5.c);
 
-		/* 
-		var groundMaterial = new THREE.MeshLambertMaterial({
-			color: 0x0AD00B, side:THREE.DobuleSide 
-		});
-		*/
 		var materialIndex = 0;
 
 		const face = new THREE.Face3( 0, 1, 2, materialIndex );
@@ -373,11 +398,6 @@ function readyToExecute (data) {
 		geom5.vertices.push(triangle5.b);
 		geom5.vertices.push(triangle5.c);
 
-		/* 
-		var groundMaterial = new THREE.MeshLambertMaterial({
-			color: 0x0AD00B, side:THREE.DobuleSide 
-		});
-		*/
 		var materialIndex = 0;
 
 		const face = new THREE.Face3( 0, 1, 2, materialIndex );
