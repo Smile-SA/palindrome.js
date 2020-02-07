@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer, CSS2DObject} from 'three-css2drender';
 import {Triangle, SimpleLine} from './ThreeBasicObjects';
+import { dataGenerator } from './dataMock';
 
 const myRequest = new Request("data.json");
 
@@ -78,35 +79,8 @@ function initScene() {
 
 function readyToExecute (data) {
 	(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
-	
-	let flag = "up";
-	function mockUpAndDown(metric){
-		if (flag == "up"){
-		  if (Object.values(metric).current < Object.values(metric).max) {
-			Object.values(metric).current += 1;
-		  } else {
-			flag = "down";
-		  }
-		} else {
-		  if (Object.values(metric).current > Object.values(metric).min) {
-			Object.values(metric).current -= 1;
-		  } else {
-			flag = "up";
-		  }
-		}
-		//console.log(flag);
-		console.log(Object.values(metric).current);
-	  }
 
-	  function callback(){
-		mockUpAndDown(Object.values(systemMetrics));
-		mockUpAndDown(Object.values(qoeMetrics));
-		//mockUpAndDown(otherdataStructure);
-		requestAnimationFrame(callback);
-	  }
-	  
-	  //requestAnimationFrame(callback);
-	  
+	const dataIterator = dataGenerator(data);
 	  
 	const { qoeMetrics, systemMetrics } = data;
 	
@@ -298,7 +272,8 @@ function readyToExecute (data) {
 		renderer.render(scene, camera);
 		labelRenderer.render( scene, camera );
 		
-		mockUpAndDown(Object.values(systemMetrics))
+		// "dataIterator.next().value" return new data everytime it is callded
+		console.log(dataIterator.next().value.systemMetrics.cpu.current);
 
 		requestAnimationFrame(render);
 		//requestAnimationFrame(callback);
