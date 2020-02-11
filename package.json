@@ -16,5 +16,9 @@
   "dependencies": {
     "three": "^0.112.1",
     "three-css2drender": "^1.0.0"
-  }
+  },
+  "browserslist": [
+    "last 1 Chrome versions"
+  ]
+
 }

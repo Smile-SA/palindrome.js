@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer, CSS2DObject} from 'three-css2drender';
 import {Triangle, SimpleLine} from './ThreeBasicObjects';
+import { dataGenerator } from './mockupData';
 
 const myRequest = new Request("data.json");
 
@@ -31,8 +32,6 @@ function initScene() {
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix( );
 	});
-	
-	
 
 	const labelRenderer = new CSS2DRenderer();
 	labelRenderer.setSize( window.innerWidth, window.innerHeight );
@@ -47,21 +46,6 @@ function initScene() {
 	//controls.minAzimuthAngle = Math.PI;
 	//controls.maxPolarAngle = 12;
 	//controls.target = new THREE.Vector3(1,0,1); //15, 5, 15
-
-	calcPosFromLatLonRad(20, 80, 20);
-	function calcPosFromLatLonRad(lat,lon,radius){
-
-		var phi   = (90-lat)*(Math.PI/180);
-		var theta = (lon+180)*(Math.PI/180);
-		
-		var x = -((radius) * Math.sin(phi)*Math.cos(theta));
-		var z = ((radius) * Math.sin(phi)*Math.sin(theta));
-		var y = ((radius) * Math.cos(phi));
-		
-		console.log([x,y,z]);
-		console.log('hey its working');
-		   return [x,y,z];
-		}
 		
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xf0f0f0 );
@@ -78,37 +62,10 @@ function initScene() {
 
 function readyToExecute (data) {
 	(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
-	
-	let flag = "up";
-	function mockUpAndDown(metric){
-		if (flag == "up"){
-		  if (Object.values(metric).current < Object.values(metric).max) {
-			Object.values(metric).current += 1;
-		  } else {
-			flag = "down";
-		  }
-		} else {
-		  if (Object.values(metric).current > Object.values(metric).min) {
-			Object.values(metric).current -= 1;
-		  } else {
-			flag = "up";
-		  }
-		}
-		//console.log(flag);
-		console.log(Object.values(metric).current);
-	  }
-
-	  function callback(){
-		mockUpAndDown(Object.values(systemMetrics));
-		mockUpAndDown(Object.values(qoeMetrics));
-		//mockUpAndDown(otherdataStructure);
-		requestAnimationFrame(callback);
-	  }
 	  
-	  //requestAnimationFrame(callback);
-	  
-	  
+	const dataIterator = dataGenerator(data);
 	const { qoeMetrics, systemMetrics } = data;
+	const { scene, labelRenderer, controls, renderer, camera } = initScene();
 	
 	const dataValueSystemMetricsMax = Object.values(systemMetrics).map(e => e.max / e.current);
 	const dataValueSystemMetricsMed = Object.values(systemMetrics).map(e => e.med / e.current);
@@ -120,9 +77,6 @@ function readyToExecute (data) {
 	const dataValueQoeMetricsMax = Object.values(qoeMetrics).map(e => e.max / e.current);
 	const dataValueQoeMetricsMed = Object.values(qoeMetrics).map(e => e.med / e.current);
 	const dataValueQoeMetricsMin = Object.values(qoeMetrics).map(e => e.min / e.current);
-
-	
-	const { scene, labelRenderer, controls, renderer, camera } = initScene();
 	
 	const lineMaterial = createLineMaterial(0x000000, 1); //0xfffff
 	const transparentLineMaterial = createLineMaterial(0x000000, 0);
@@ -138,146 +92,55 @@ function readyToExecute (data) {
 	const numberOfMetricesInTopLayer = planeTopPointsMax.length;
 	const numberOfMetricesInBottomLayer = planeBottomPointsMax.length;
 
-	function drawPlaneLine(planePoint, i) {
-		const planeOneMaxLines = new SimpleLine(planePoint[i], planePoint[(i+1)  % numberOfMetricesInTopLayer], lineMaterial);
-		scene.add(planeOneMaxLines);
-	}
+	const planeTopPoints = [planeTopPointsMin, planeTopPointsMed, planeTopPointsMax];
+	const planeBottomPoints = [planeBottomPointsMax, planeBottomPointsMed, planeBottomPointsMin];
 
-	if (numberOfMetricesInTopLayer >= numberOfMetricesInBottomLayer) {
-
-		const planeTopPoints = [planeTopPointsMin, planeTopPointsMed, planeTopPointsMax];
-
-		for(let i = 0; i < numberOfMetricesInTopLayer; i++) {
-			for(let planeTopPoint of planeTopPoints) {
-				drawPlaneLine(planeTopPoint, i);
-			}
-
-			// lines adding both planes
-			const lineAddingBothPlanes = new SimpleLine(planeTopPointsMax[i], planeBottomPointsMax[(i) % numberOfMetricesInBottomLayer], lineMaterial);
-			scene.add(lineAddingBothPlanes);
-
-			// Lines adding plane one Max and Med Values
-			const lineAddingPlaneOneMaxAndMed = new SimpleLine(planeTopPointsMax[i], planeTopPointsMed[i], transparentLineMaterial);
-			scene.add(lineAddingPlaneOneMaxAndMed);
-
-			// Lines adding plane one Med and Min Values
-			const lineAddingPlaneOneMedAndMin = new SimpleLine(planeTopPointsMed[i], planeTopPointsMin[i], transparentLineMaterial);
-			scene.add(lineAddingPlaneOneMedAndMin);
-
-			// Lines adding plane two Max and Med Values
-			const lineAddingPlaneTwoMaxAndMed = new SimpleLine(planeBottomPointsMax[i], planeBottomPointsMed[i], transparentLineMaterial);
-			scene.add(lineAddingPlaneTwoMaxAndMed);
-
-			// Lines adding plane two Med and Min Values
-			const lineAddingPlaneTwoMedAndMin = new SimpleLine(planeBottomPointsMed[i], planeBottomPointsMin[i], transparentLineMaterial);
-			scene.add(lineAddingPlaneTwoMedAndMin);
-	
-			//const lineAddingBothPlanes2 = new SimpleLine(planeTopPointsMax[(i+1) % numberOfMetricesInTopLayer], planeBottomPointsMax[(i+1) % numberOfMetricesInBottomLayer], lineMaterial);
-			//scene.add(lineAddingBothPlanes2);
-
-			// Triangle (two) points from upper layer indexes to lower layer (one) point 
-			const triangleFromTopToBottomForUpperLayer = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], 0x4EC163);
-			scene.add(triangleFromTopToBottomForUpperLayer);
-
-			// Triangle (two) points from lower layer indexes to upper layer (one) point 
-			const triangleFromBottomToTopForLowerLayer = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i)  % numberOfMetricesInTopLayer], 0x4EC163);
-			scene.add(triangleFromBottomToTopForLowerLayer);
-
-			/////////////////////////////////
-			//
-			// Place for RED TRIANGLE filled
-			// 		  in UPPER LAYER
-			//
-			////////////////////////////////
-			const triangleFromPlaneOneMaxToMed = new Triangle(planeTopPointsMax[i], planeTopPointsMed[i], planeTopPointsMed[(i+1)  % numberOfMetricesInTopLayer], 0xFF0000);
-			scene.add(triangleFromPlaneOneMaxToMed);
-			const triangleFromPlaneOneMedToMax = new Triangle(planeTopPointsMed[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i)  % numberOfMetricesInTopLayer], 0xFF0000);
-			scene.add(triangleFromPlaneOneMedToMax);
-
-			////////////////////////////////////////
-			//
-			// Place for DARK GREEN TRIANGLE filled
-			// 		  in UPPER LAYER
-			//
-			//////////////////////////////////////
-			const triangleFromPlaneOneMedToMin = new Triangle(planeTopPointsMed[i], planeTopPointsMin[i], planeTopPointsMin[(i+1)  % numberOfMetricesInTopLayer], 0x37B015);
-			scene.add(triangleFromPlaneOneMedToMin);
-			const triangleFromPlaneOneMinToMed = new Triangle(planeTopPointsMin[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMed[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMed[(i)  % numberOfMetricesInTopLayer], 0x37B015);
-			scene.add(triangleFromPlaneOneMinToMed);
-
-			/////////////////////////////////
-			//
-			// Place for RED TRIANGLE filled
-			// 		  in LOWER LAYER
-			//
-			////////////////////////////////
-			const triangleFromPlaneTwoMaxToMed = new Triangle(planeBottomPointsMax[i], planeBottomPointsMed[i], planeBottomPointsMed[(i+1)  % numberOfMetricesInTopLayer], 0xFF0000);
-			scene.add(triangleFromPlaneTwoMaxToMed);
-			const triangleFromPlaneTwoMedToMax = new Triangle(planeBottomPointsMed[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMax[(i)  % numberOfMetricesInTopLayer], 0xFF0000);
-			scene.add(triangleFromPlaneTwoMedToMax);
-
-			////////////////////////////////////////
-			//
-			// Place for DARK GREEN TRIANGLE filled
-			// 		  in UPPER LAYER
-			//
-			//////////////////////////////////////
-			const triangleFromPlaneTwoMedToMin = new Triangle(planeBottomPointsMed[i], planeBottomPointsMin[i], planeBottomPointsMin[(i+1)  % numberOfMetricesInTopLayer], 0x37B015);
-			scene.add(triangleFromPlaneTwoMedToMin);
-			const triangleFromPlaneTwoMinToMed = new Triangle(planeBottomPointsMin[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMed[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMed[(i)  % numberOfMetricesInTopLayer], 0x37B015);
-			scene.add(triangleFromPlaneTwoMinToMed);
-
-			
-			const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], planeTopPointsMax[i]);
-			scene.add(labelForPlane1);
-			
-			const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], planeBottomPointsMax[i]);
-			scene.add(labelForPlane2);
-		
-			const planeTwoMaxLines = new SimpleLine(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], lineMaterial);
-			scene.add(planeTwoMaxLines);
-
-			const planeTwoMedLines = new SimpleLine(planeBottomPointsMed[(i) % numberOfMetricesInBottomLayer], planeBottomPointsMed[(i+1) % numberOfMetricesInBottomLayer], lineMaterial);
-			scene.add(planeTwoMedLines);
-
-			const planeTwoMinLines = new SimpleLine(planeBottomPointsMin[(i) % numberOfMetricesInBottomLayer], planeBottomPointsMin[(i+1) % numberOfMetricesInBottomLayer], lineMaterial);
-			scene.add(planeTwoMinLines);
+	for(let i = 0; i < numberOfMetricesInTopLayer; i++) {
+		for(let planeTopPoint of planeTopPoints) {
+			drawPlaneLine(planeTopPoint, i);
+			drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i);
 		}
-		console.log('System Metrics is Working!');
+		for(let planeBottomPoint of planeBottomPoints) {
+			drawPlaneLine(planeBottomPoint, i);
+			drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, lineMaterial);
+			drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, lineMaterial);
+		}
+		
+		const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], planeTopPointsMax[i]);
+		scene.add(labelForPlane1);
+		const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], planeBottomPointsMax[i]);
+		scene.add(labelForPlane2);
+
+		const triangleFromTopToBottomForUpperLayer = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], 0x4EC163);
+		scene.add(triangleFromTopToBottomForUpperLayer);
+		const triangleFromBottomToTopForLowerLayer = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i)  % numberOfMetricesInTopLayer], 0x4EC163);
+		scene.add(triangleFromBottomToTopForLowerLayer);
+
+		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i, 0xFF0000);
+		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i, 0x37B015);
+		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i, 0xFF0000);
+		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i, 0x37B015);
 	}
-
-	// else {
-
-	// 	for(let i = 0; i < numberOfMetricesInBottomLayer; i++) {
-	// 		const planeOneLines = new SimpleLine(planeTopPointsMax[(i)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i+1)  % numberOfMetricesInTopLayer], lineMaterial);
-	// 		scene.add(planeOneLines);
-		
-	// 		const lineAddingBothPlanes = new SimpleLine(planeBottomPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInTopLayer], lineMaterial);
-	// 		scene.add(lineAddingBothPlanes);
-	
-	// 		const lineAddingBothPlanes2 = new SimpleLine(planeBottomPointsMax[(i+1) % numberOfMetricesInBottomLayer], planeTopPointsMax[(i+1) % numberOfMetricesInTopLayer], lineMaterial);
-	// 		scene.add(lineAddingBothPlanes2);
-
-	// 		const triangleFromTopToBottomForUpperLayer = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i)  % numberOfMetricesInBottomLayer], planeTopPointsMax[(i)  % numberOfMetricesInBottomLayer]);
-	// 		scene.add(triangleFromTopToBottomForUpperLayer);
-	// 		const triangleFromBottomToTopForLowerLayer = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i)  % numberOfMetricesInBottomLayer], planeBottomPointsMax[(i)  % numberOfMetricesInBottomLayer]);
-	// 		scene.add(triangleFromBottomToTopForLowerLayer);
-			
-	// 		const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], planeTopPointsMax[(i+1) % numberOfMetricesInTopLayer]);
-	// 		scene.add(labelForPlane1); 
-		
-	// 		const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], planeBottomPointsMax[i]);
-	// 		scene.add(labelForPlane2); 
-		
-	// 		const planeTwoLines = new SimpleLine(planeBottomPointsMax[i], planeBottomPointsMax[(i+1) % numberOfMetricesInBottomLayer], lineMaterial);
-	// 		scene.add(planeTwoLines);
-	// 	}
-	// 	console.log('Qoe Metrics is Working!');
-	// }
+	console.log('System Metrics is Working!');
 		
 	render();
 	
-	
+	function drawPlaneLine(planePoint, i) {
+		const allPlaneLinesOfLayer = new SimpleLine(planePoint[i], planePoint[(i+1)  % numberOfMetricesInTopLayer], lineMaterial);
+		scene.add(allPlaneLinesOfLayer);
+	}
+
+	function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, material) {
+		const allPlaneConnectingLines = new SimpleLine(planePropertyFrom[i], planePropertyTo[(i) % numberOfMetricesInTopLayer], material);
+		scene.add(allPlaneConnectingLines);
+	}
+
+	function drawTrianglesInALayer(planePointOne, planePointTwo, i, color) {
+		const triangleFromPlaneOneToTwo = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i+1)  % numberOfMetricesInTopLayer], color);
+		scene.add(triangleFromPlaneOneToTwo);
+		const triangleFromPlaneTwoToOne = new Triangle(planePointTwo[(i+1)  % numberOfMetricesInTopLayer], planePointOne[(i+1)  % numberOfMetricesInTopLayer], planePointOne[(i)  % numberOfMetricesInTopLayer], color);
+		scene.add(triangleFromPlaneTwoToOne);
+	}
 	//creates labels for all mertics and displays it on their position.
 	 /**
 	  * 
@@ -297,11 +160,8 @@ function readyToExecute (data) {
 		controls.update();
 		renderer.render(scene, camera);
 		labelRenderer.render( scene, camera );
-		
-		mockUpAndDown(Object.values(systemMetrics))
-
+		console.log(dataIterator.next().value.systemMetrics.cpu.current);
 		requestAnimationFrame(render);
-		//requestAnimationFrame(callback);
 	}
 	
 	/**
@@ -326,9 +186,6 @@ function readyToExecute (data) {
 		} );
 	}
 
-
-	
-	
 	function metricPoint(metric, zplane) {
 		const planepoints = [];
 		for (let i=0; i< metric.length; i++) {
