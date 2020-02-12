@@ -8,9 +8,7 @@ const myRequest = new Request("data.json");
 
 fetch(myRequest)
 	.then(resp => resp.json())
-	.then(data => {
-		readyToExecute(data)
-	});
+	.then(data => render(data));
 
 
 
@@ -19,7 +17,7 @@ function initScene() {
 	const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
 	camera.position.set( 10, -230, 150 );
 	
-	var renderer = new THREE.WebGLRenderer({antialias: true});
+	const renderer = new THREE.WebGLRenderer({antialias : true});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -60,12 +58,16 @@ function initScene() {
 	return { scene, labelRenderer, controls, renderer, camera, transparentPlaneMaterial };
 }
 
+const { scene, labelRenderer, controls, renderer, camera } = initScene();
+
 function readyToExecute (data) {
 	(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
-	  
+	
 	const dataIterator = dataGenerator(data);
-	const { qoeMetrics, systemMetrics } = data;
-	const { scene, labelRenderer, controls, renderer, camera } = initScene();
+	const nextData = dataIterator.next().value;
+	//console.log(nextData)
+	const { qoeMetrics, systemMetrics } = nextData;
+	
 	
 	const dataValueSystemMetricsMax = Object.values(systemMetrics).map(e => e.max / e.current);
 	const dataValueSystemMetricsMed = Object.values(systemMetrics).map(e => e.med / e.current);
@@ -97,13 +99,13 @@ function readyToExecute (data) {
 
 	for(let i = 0; i < numberOfMetricesInTopLayer; i++) {
 		for(let planeTopPoint of planeTopPoints) {
-			drawPlaneLine(planeTopPoint, i);
-			drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i);
+			drawPlaneLine(planeTopPoint, i, numberOfMetricesInTopLayer, lineMaterial);
+			drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i, numberOfMetricesInTopLayer, lineMaterial);
 		}
 		for(let planeBottomPoint of planeBottomPoints) {
-			drawPlaneLine(planeBottomPoint, i);
-			drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, lineMaterial);
-			drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, lineMaterial);
+			drawPlaneLine(planeBottomPoint, i, numberOfMetricesInTopLayer, lineMaterial);
+			drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, numberOfMetricesInTopLayer, lineMaterial);
+			drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, numberOfMetricesInTopLayer, lineMaterial);
 		}
 		
 		const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], planeTopPointsMax[i]);
@@ -116,97 +118,103 @@ function readyToExecute (data) {
 		const triangleFromBottomToTopForLowerLayer = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i)  % numberOfMetricesInTopLayer], 0x4EC163);
 		scene.add(triangleFromBottomToTopForLowerLayer);
 
-		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i, 0xFF0000);
-		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i, 0x37B015);
-		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i, 0xFF0000);
-		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i, 0x37B015);
+		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricesInTopLayer, 0xFF0000);
+		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInTopLayer, 0x37B015);
+		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInTopLayer, 0xFF0000);
+		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInTopLayer, 0x37B015);
 	}
 	console.log('System Metrics is Working!');
-		
-	render();
+	return nextData;
+}
+
+function drawPlaneLine(planePoint, i, planePointLength, material) {
+	const allPlaneLinesOfLayer = new SimpleLine(planePoint[i], planePoint[(i+1)  % planePointLength], material);
+	scene.add(allPlaneLinesOfLayer);
+}
+
+function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, planePointLength, material) {
+	const allPlaneConnectingLines = new SimpleLine(planePropertyFrom[i], planePropertyTo[(i) % planePointLength], material);
+	scene.add(allPlaneConnectingLines);
+}
+
+function drawTrianglesInALayer(planePointOne, planePointTwo, i, planePointLength, color) {
+	const triangleFromPlaneOneToTwo = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i+1)  % planePointLength], color);
+	scene.add(triangleFromPlaneOneToTwo);
+	const triangleFromPlaneTwoToOne = new Triangle(planePointTwo[(i+1)  % planePointLength], planePointOne[(i+1)  % planePointLength], planePointOne[(i)  % planePointLength], color);
+	scene.add(triangleFromPlaneTwoToOne);
+}
+//creates labels for all mertics and displays it on their position.
+ /**
+  * 
+  * @param {string} textContent returns labels for your parameters and displays on your 3D plane
+  * @param {number} vector3 connects x&y coordinates to form lines between points
+  */
+function createLabel(textContent, vector3) {
+	const labelDiv = document.createElement( 'div' );
+	labelDiv.className = 'label';
+	labelDiv.textContent = textContent;
+	const metricLabel = new CSS2DObject( labelDiv );
+	metricLabel.position.set(vector3[0], vector3[1] + 1, vector3[2]);
+	return metricLabel
+}
+
+function render(data) {
+	data = readyToExecute(data);
 	
-	function drawPlaneLine(planePoint, i) {
-		const allPlaneLinesOfLayer = new SimpleLine(planePoint[i], planePoint[(i+1)  % numberOfMetricesInTopLayer], lineMaterial);
-		scene.add(allPlaneLinesOfLayer);
+	controls.update();
+	renderer.render(scene, camera);
+	//remove old shit
+	for( var i = scene.children.length - 1; i >= 0; i--) { 
+		var obj = scene.children[i];
+		scene.remove(obj);
 	}
+	labelRenderer.render( scene, camera );
+	//console.log(dataIterator.next().value.systemMetrics.cpu.current);
+	requestAnimationFrame(() => render(data));
+}
 
-	function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, material) {
-		const allPlaneConnectingLines = new SimpleLine(planePropertyFrom[i], planePropertyTo[(i) % numberOfMetricesInTopLayer], material);
-		scene.add(allPlaneConnectingLines);
-	}
+/**
+ * 
+ * @param {number} color takes hexadecimal color as input 
+ * @param {number} opacity take float number between 1 & 0
+*/
+function createLineMaterial(color, opacity) {
+	return new THREE.LineDashedMaterial( {
+		color,
+		linewidth: 3,
+		transparent: true,
+		opacity
+	} );
+}
 
-	function drawTrianglesInALayer(planePointOne, planePointTwo, i, color) {
-		const triangleFromPlaneOneToTwo = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i+1)  % numberOfMetricesInTopLayer], color);
-		scene.add(triangleFromPlaneOneToTwo);
-		const triangleFromPlaneTwoToOne = new Triangle(planePointTwo[(i+1)  % numberOfMetricesInTopLayer], planePointOne[(i+1)  % numberOfMetricesInTopLayer], planePointOne[(i)  % numberOfMetricesInTopLayer], color);
-		scene.add(triangleFromPlaneTwoToOne);
-	}
-	//creates labels for all mertics and displays it on their position.
-	 /**
-	  * 
-	  * @param {string} textContent returns labels for your parameters and displays on your 3D plane
-	  * @param {number} vector3 connects x&y coordinates to form lines between points
-	  */
-	function createLabel(textContent, vector3) {
-		const labelDiv = document.createElement( 'div' );
-		labelDiv.className = 'label';
-		labelDiv.textContent = textContent;
-		const metricLabel = new CSS2DObject( labelDiv );
-		metricLabel.position.set(vector3[0], vector3[1] + 1, vector3[2]);
-		return metricLabel
-	}
+function createTriangleMaterial(color) {
+	return new THREE.MeshBasicMaterial( {
+		color,
+		transparent: true,
+		opacity: 0.5,
+		side: THREE.DoubleSide
+	} );
+}
 
-	function render() {
-		controls.update();
-		renderer.render(scene, camera);
-		labelRenderer.render( scene, camera );
-		console.log(dataIterator.next().value.systemMetrics.cpu.current);
-		requestAnimationFrame(render);
+function metricPoint(metric, zplane) {
+	const planepoints = [];
+	for (let i=0; i< metric.length; i++) {
+		const points = findNewPoint(i*Math.PI*2/metric.length ,metric[i]*3, zplane);
+		planepoints.push(points);
 	}
-	
-	/**
-	 * 
-	 * @param {number} color takes hexadecimal color as input 
-	*/
-	function createLineMaterial(color, opacity) {
-		return new THREE.LineDashedMaterial( {
-			color,
-			linewidth: 3,
-			transparent: true,
-			opacity
-		} );
-	}
+	return planepoints;
+}
 
-	function createTriangleMaterial(color) {
-		return new THREE.MeshBasicMaterial( {
-			color,
-			transparent: true,
-			opacity: 0.5,
-			side: THREE.DoubleSide
-		} );
-	}
-
-	function metricPoint(metric, zplane) {
-		const planepoints = [];
-		for (let i=0; i< metric.length; i++) {
-			const points = findNewPoint(i*Math.PI*2/metric.length ,metric[i]*3, zplane);
-			planepoints.push(points);
-		}
-		return planepoints;
-	}
-
-	/**
-	 * 
-	 * @param {number} angle angle for calculating x,y,z points on axis. 
-	 * @param {number} radius data values considered as radius for accuracy of coordinates
-	 * @param {number} zplane values for Z-axis
-	 */
-	function findNewPoint( angle, radius, zplane) {
-		const x = radius * Math.cos(angle);
-		const y = radius * Math.sin(angle);
-		const z = zplane;
-		const result = [x, y, z];
-		return result;
-	}
-
+/**
+ * 
+ * @param {number} angle angle for calculating x,y,z points on axis. 
+ * @param {number} radius data values considered as radius for accuracy of coordinates
+ * @param {number} zplane values for Z-axis
+ */
+function findNewPoint( angle, radius, zplane) {
+	const x = radius * Math.cos(angle);
+	const y = radius * Math.sin(angle);
+	const z = zplane;
+	const result = [x, y, z];
+	return result;
 }
