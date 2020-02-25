@@ -5,69 +5,101 @@ import {Triangle, SimpleLine} from './ThreeBasicObjects';
 import { dataGenerator } from './mockupData';
 
 const myRequest = new Request("data.json");
+const { scene, labelRenderer, controls, renderer, camera} = initScene(); //, transparentPlaneMaterial 
 
 fetch(myRequest)
 	.then(resp => resp.json())
-	.then(data => render(data));
-
-
-
-function initScene() {
-
-	const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-	camera.position.set( 10, -230, 150 );
-	
-	const renderer = new THREE.WebGLRenderer({antialias : true});
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-	
-	window.addEventListener( 'resize', function() {
-		const width = window.innerWidth;
-		const height = window.innerHeight;
-		renderer.setSize( width, height);
-		labelRenderer.setSize( width, height);
-		camera.aspect = width / height;
-		camera.updateProjectionMatrix( );
+	.then(data => {
+		initializeLabels(data)
+		render(data)
 	});
 
-	const labelRenderer = new CSS2DRenderer();
-	labelRenderer.setSize( window.innerWidth, window.innerHeight );
-	labelRenderer.domElement.style.position = 'absolute';
-	labelRenderer.domElement.style.top = 0;
-	document.body.appendChild( labelRenderer.domElement );
 	
-	const controls = new OrbitControls(camera, labelRenderer.domElement);
-	//controls.autoRotate = true;
-	controls.autoRotateSpeed = 5;
-	controls.minPolarAngle = 2;
-	//controls.minAzimuthAngle = Math.PI;
-	//controls.maxPolarAngle = 12;
-	//controls.target = new THREE.Vector3(1,0,1); //15, 5, 15
-		
-	const scene = new THREE.Scene();
-	scene.background = new THREE.Color( 0xf0f0f0 );
-	const axesHelper = new THREE.AxesHelper(30);
-	scene.add(axesHelper);
+function initScene() {
+	
+const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
+camera.position.set( 50, 50, 150 );
 
-	const transparentGeometry = new THREE.PlaneGeometry( 5, 5 ,0 );
-	const transparentPlaneMaterial = new THREE.MeshBasicMaterial( {color: 0xA8A8A8, transparent: true, opacity: 0.5, side: THREE.DoubleSide} );
-	const transparentPlane = new THREE.Mesh( transparentGeometry, transparentPlaneMaterial);
-	scene.add(transparentPlane);
+const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
 
-	return { scene, labelRenderer, controls, renderer, camera, transparentPlaneMaterial };
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize( window.innerWidth, window.innerHeight );
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = 0;
+document.body.appendChild( labelRenderer.domElement );
+
+window.addEventListener( 'resize', function() {
+	const width = window.innerWidth;
+	const height = window.innerHeight;
+	renderer.setSize( width, height);
+	labelRenderer.setSize( width, height);
+	camera.aspect = width / height;
+	camera.updateProjectionMatrix( );
+});	
+	
+const scene = new THREE.Scene();
+scene.background = new THREE.Color( 0xffffff );
+
+
+const controls = new OrbitControls(camera, labelRenderer.domElement);
+//controls.autoRotate = true;
+controls.autoRotateSpeed = 15;
+
+return { scene, labelRenderer, controls, renderer, camera};
 }
 
-const { scene, labelRenderer, controls, renderer, camera } = initScene();
+(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+
+function initializeLabels(data) {
+
+	const dataIterator = dataGenerator(data);
+	const nextData = dataIterator.next().value;
+	const { qoeMetrics, systemMetrics } = nextData;
+	const dataTitleSystemMetrics = Object.keys(systemMetrics);
+	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
+
+	const test1 = Object.values(systemMetrics).map(e => e.max / e.current);
+	const test2 = Object.values(qoeMetrics).map(e => e.max / e.current);
+
+	let updatedCurrentValuesTop = metricPoint(test1, 20);
+	let updatedCurrentValuesBottom = metricPoint(test2, -20);
+
+	for (let idx = 0; idx < updatedCurrentValuesTop.length; idx++) {
+		scene.add(
+			createLabel(dataTitleSystemMetrics[idx], updatedCurrentValuesTop[idx])
+		)
+		scene.add(
+			createLabel(dataTitleQoeMetrics[idx], updatedCurrentValuesBottom[idx])
+		)
+	}
+
+}
 
 function readyToExecute (data) {
-	(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 	
 	const dataIterator = dataGenerator(data);
 	const nextData = dataIterator.next().value;
-	//console.log(nextData)
 	const { qoeMetrics, systemMetrics } = nextData;
-	
+
+
+	const test1 = Object.values(systemMetrics).map(e => e.max / e.current);
+	const test2 = Object.values(qoeMetrics).map(e => e.max / e.current);
+	let updatedCurrentValuesTop = metricPoint(test1, 20);
+	let updatedCurrentValuesBottom = metricPoint(test2, -20);
+	//console.log(scene);
+
+	for (let i = 0; i < updatedCurrentValuesTop.length; i++) {
+		const label = scene.children[i]
+		label.position.set(updatedCurrentValuesTop[i][0], updatedCurrentValuesTop[i][2], updatedCurrentValuesTop[i][1])
+	}
+
+	for (let i = 0; i < updatedCurrentValuesBottom.length; i++) {
+		const label = scene.children[i + 5]
+		label.position.set(updatedCurrentValuesBottom[i][0], updatedCurrentValuesBottom[i][2], updatedCurrentValuesBottom[i][1])
+	}
 	
 	const dataValueSystemMetricsMax = Object.values(systemMetrics).map(e => e.max / e.current);
 	const dataValueSystemMetricsMed = Object.values(systemMetrics).map(e => e.med / e.current);
@@ -91,39 +123,47 @@ function readyToExecute (data) {
 	const planeBottomPointsMed = metricPoint(dataValueQoeMetricsMed, -20);
 	const planeBottomPointsMin = metricPoint(dataValueQoeMetricsMin, -20);
 
-	const numberOfMetricesInTopLayer = planeTopPointsMax.length;
+	const numberOfMetricesInALayer = planeTopPointsMax.length;
 	const numberOfMetricesInBottomLayer = planeBottomPointsMax.length;
 
 	const planeTopPoints = [planeTopPointsMin, planeTopPointsMed, planeTopPointsMax];
 	const planeBottomPoints = [planeBottomPointsMax, planeBottomPointsMed, planeBottomPointsMin];
 
-	for(let i = 0; i < numberOfMetricesInTopLayer; i++) {
+	const axesHelper = new THREE.AxesHelper(40);
+	scene.add(axesHelper);
+
+	for(let i = 0; i < numberOfMetricesInALayer; i++) {
 		for(let planeTopPoint of planeTopPoints) {
-			drawPlaneLine(planeTopPoint, i, numberOfMetricesInTopLayer, lineMaterial);
-			drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i, numberOfMetricesInTopLayer, lineMaterial);
+			drawPlaneLine(planeTopPoint, i, numberOfMetricesInALayer, lineMaterial);
+			drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i, numberOfMetricesInALayer, lineMaterial);
 		}
 		for(let planeBottomPoint of planeBottomPoints) {
-			drawPlaneLine(planeBottomPoint, i, numberOfMetricesInTopLayer, lineMaterial);
-			drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, numberOfMetricesInTopLayer, lineMaterial);
-			drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, numberOfMetricesInTopLayer, lineMaterial);
+			drawPlaneLine(planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
+			drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
+			drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, numberOfMetricesInALayer, lineMaterial);
 		}
 		
-		const labelForPlane1 = createLabel(dataTitleSystemMetrics[i], planeTopPointsMax[i]);
-		scene.add(labelForPlane1);
-		const labelForPlane2 = createLabel(dataTitleQoeMetrics[i], planeBottomPointsMax[i]);
-		scene.add(labelForPlane2);
+		const triangleFromTopToBottomForUpperLayerFrontSide = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInALayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], 0x4EC163, THREE.FrontSide);
+		scene.add(triangleFromTopToBottomForUpperLayerFrontSide);
+		const triangleFromBottomToTopForLowerLayerFrontSide = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], planeTopPointsMax[(i)  % numberOfMetricesInALayer], 0x4EC163, THREE.FrontSide);
+		scene.add(triangleFromBottomToTopForLowerLayerFrontSide);
+		
+		const triangleFromTopToBottomForUpperLayerBackSide = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInALayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], 0x4EC163, THREE.BackSide);
+		scene.add(triangleFromTopToBottomForUpperLayerBackSide);
+		const triangleFromBottomToTopForLowerLayerBackSide = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], planeTopPointsMax[(i)  % numberOfMetricesInALayer], 0x4EC163, THREE.BackSide);
+		scene.add(triangleFromBottomToTopForLowerLayerBackSide);
+		
+		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.FrontSide);
+		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.FrontSide);
+		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.FrontSide);
+		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.FrontSide);
 
-		const triangleFromTopToBottomForUpperLayer = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], 0x4EC163);
-		scene.add(triangleFromTopToBottomForUpperLayer);
-		const triangleFromBottomToTopForLowerLayer = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInTopLayer], planeTopPointsMax[(i)  % numberOfMetricesInTopLayer], 0x4EC163);
-		scene.add(triangleFromBottomToTopForLowerLayer);
-
-		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricesInTopLayer, 0xFF0000);
-		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInTopLayer, 0x37B015);
-		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInTopLayer, 0xFF0000);
-		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInTopLayer, 0x37B015);
+		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.BackSide);
+		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.BackSide);
+		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.BackSide);
+		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.BackSide);
 	}
-	console.log('System Metrics is Working!');
+	console.log("System Metrics is working");
 	return nextData;
 }
 
@@ -137,10 +177,10 @@ function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, planePoi
 	scene.add(allPlaneConnectingLines);
 }
 
-function drawTrianglesInALayer(planePointOne, planePointTwo, i, planePointLength, color) {
-	const triangleFromPlaneOneToTwo = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i+1)  % planePointLength], color);
+function drawTrianglesInALayer(planePointOne, planePointTwo, i, planePointLength, color, side) {
+	const triangleFromPlaneOneToTwo = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i+1)  % planePointLength], color, side);
 	scene.add(triangleFromPlaneOneToTwo);
-	const triangleFromPlaneTwoToOne = new Triangle(planePointTwo[(i+1)  % planePointLength], planePointOne[(i+1)  % planePointLength], planePointOne[(i)  % planePointLength], color);
+	const triangleFromPlaneTwoToOne = new Triangle(planePointTwo[(i+1)  % planePointLength], planePointOne[(i+1)  % planePointLength], planePointOne[(i)  % planePointLength], color, side);
 	scene.add(triangleFromPlaneTwoToOne);
 }
 //creates labels for all mertics and displays it on their position.
@@ -154,22 +194,26 @@ function createLabel(textContent, vector3) {
 	labelDiv.className = 'label';
 	labelDiv.textContent = textContent;
 	const metricLabel = new CSS2DObject( labelDiv );
-	metricLabel.position.set(vector3[0], vector3[1] + 1, vector3[2]);
-	return metricLabel
+	metricLabel.name = 'labels';
+	metricLabel.position.set(vector3[0], vector3[2] + 1, vector3[1]);
+	return metricLabel;
 }
 
 function render(data) {
-	data = readyToExecute(data);
 	
+	data = readyToExecute(data);
 	controls.update();
 	renderer.render(scene, camera);
-	//remove old shit
-	for( var i = scene.children.length - 1; i >= 0; i--) { 
-		var obj = scene.children[i];
-		scene.remove(obj);
-	}
+	//remove old shits
+	for( let i = scene.children.length - 1; i >= 0; i--) { 
+		let obj = scene.children[i];
+		let undeletedObject = scene.getObjectByName("labels");
+		if (obj.name !== 'labels' && undeletedObject !== obj) {
+			scene.remove(obj);
+			continue
+		}
+	}	
 	labelRenderer.render( scene, camera );
-	//console.log(dataIterator.next().value.systemMetrics.cpu.current);
 	requestAnimationFrame(() => render(data));
 }
 
@@ -204,9 +248,7 @@ function metricPoint(metric, zplane) {
 	}
 	return planepoints;
 }
-
 /**
- * 
  * @param {number} angle angle for calculating x,y,z points on axis. 
  * @param {number} radius data values considered as radius for accuracy of coordinates
  * @param {number} zplane values for Z-axis
