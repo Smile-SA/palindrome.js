@@ -41,7 +41,7 @@ window.addEventListener( 'resize', function() {
 });	
 	
 const scene = new THREE.Scene();
-scene.background = new THREE.Color( 0xffffff );
+scene.background = new THREE.Color( 0xffffff);
 
 
 const controls = new OrbitControls(camera, labelRenderer.domElement);
@@ -61,21 +61,19 @@ function initializeLabels(data) {
 	const dataTitleSystemMetrics = Object.keys(systemMetrics);
 	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
 
-	const test1 = Object.values(systemMetrics).map(e => e.max / e.current);
-	const test2 = Object.values(qoeMetrics).map(e => e.max / e.current);
-
-	let updatedCurrentValuesTop = metricPoint(test1, 20);
-	let updatedCurrentValuesBottom = metricPoint(test2, -20);
+	const updatedCurrentValuesTop = metricPoint(Object.values(systemMetrics).map(e => e.max / e.current), 20);
+	const updatedCurrentValuesBottom = metricPoint(Object.values(qoeMetrics).map(e => e.max / e.current), -20);
 
 	for (let idx = 0; idx < updatedCurrentValuesTop.length; idx++) {
 		scene.add(
 			createLabel(dataTitleSystemMetrics[idx], updatedCurrentValuesTop[idx])
 		)
+	}
+	for (let idx = 0; idx < updatedCurrentValuesBottom.length; idx++) {
 		scene.add(
 			createLabel(dataTitleQoeMetrics[idx], updatedCurrentValuesBottom[idx])
 		)
 	}
-
 }
 
 function readyToExecute (data) {
@@ -84,20 +82,19 @@ function readyToExecute (data) {
 	const nextData = dataIterator.next().value;
 	const { qoeMetrics, systemMetrics } = nextData;
 
+	const dataTitleSystemMetrics = Object.keys(systemMetrics);
+	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
 
-	const test1 = Object.values(systemMetrics).map(e => e.max / e.current);
-	const test2 = Object.values(qoeMetrics).map(e => e.max / e.current);
-	let updatedCurrentValuesTop = metricPoint(test1, 20);
-	let updatedCurrentValuesBottom = metricPoint(test2, -20);
-	//console.log(scene);
+	const updatedCurrentValuesTop = metricPoint(Object.values(systemMetrics).map(e => e.max / e.current), 20);
+	const updatedCurrentValuesBottom = metricPoint(Object.values(qoeMetrics).map(e => e.max / e.current), -20);
 
 	for (let i = 0; i < updatedCurrentValuesTop.length; i++) {
-		const label = scene.children[i]
+		const label = scene.children[i];
 		label.position.set(updatedCurrentValuesTop[i][0], updatedCurrentValuesTop[i][2], updatedCurrentValuesTop[i][1])
 	}
 
 	for (let i = 0; i < updatedCurrentValuesBottom.length; i++) {
-		const label = scene.children[i + 5]
+		const label = scene.children[i + 5];
 		label.position.set(updatedCurrentValuesBottom[i][0], updatedCurrentValuesBottom[i][2], updatedCurrentValuesBottom[i][1])
 	}
 	
@@ -105,8 +102,6 @@ function readyToExecute (data) {
 	const dataValueSystemMetricsMed = Object.values(systemMetrics).map(e => e.med / e.current);
 	const dataValueSystemMetricsMin = Object.values(systemMetrics).map(e => e.min / e.current);
 
-	const dataTitleSystemMetrics = Object.keys(systemMetrics);
-	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
 
 	const dataValueQoeMetricsMax = Object.values(qoeMetrics).map(e => e.max / e.current);
 	const dataValueQoeMetricsMed = Object.values(qoeMetrics).map(e => e.med / e.current);
