@@ -1,54 +1,65 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer, CSS2DObject} from 'three-css2drender';
-import {Triangle, SimpleLine} from './ThreeBasicObjects';
+import {Triangle, SimpleLine} from './ThreeGeometryObjects';
 import { dataGenerator } from './mockupData';
 
+const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects(); //, transparentPlaneMaterial
+
 const myRequest = new Request("data.json");
-const { scene, labelRenderer, controls, renderer, camera} = initScene(); //, transparentPlaneMaterial 
-
+	
 fetch(myRequest)
-	.then(resp => resp.json())
-	.then(data => {
-		initializeLabels(data)
-		render(data)
-	});
+.then(resp => resp.json())
+.then(data => {
+	initializeLabels(data)
+	render(data)
+});
 
-	
+function initCamera() {
+	const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
+	camera.position.set( 50, 50, 150 );
+	return camera;
+}
+function initRenderer() {
+	const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+	return renderer;
+}
+function initLabelsRenderer() {
+	const labelsRenderer = new CSS2DRenderer();
+	labelsRenderer.setSize( window.innerWidth, window.innerHeight );
+	labelsRenderer.domElement.style.position = 'absolute';
+	labelsRenderer.domElement.style.top = 0;
+	document.body.appendChild( labelsRenderer.domElement );
+	return labelsRenderer;	
+}
+function initControls(camera, labelsRenderer) {
+	return new OrbitControls(camera, labelsRenderer.domElement);
+}
+
 function initScene() {
-	
-const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-camera.position.set( 50, 50, 150 );
+	const scene = new THREE.Scene();
+	scene.background = new THREE.Color( 0xffffff);
+	return scene;
+}
+function initThreeObjects() {
+	const scene = initScene();
+	const camera = initCamera();
+	const renderer = initRenderer();
+	const labelsRenderer = initLabelsRenderer();
+	const controls = initControls(camera, labelsRenderer);
 
-const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
-
-const labelRenderer = new CSS2DRenderer();
-labelRenderer.setSize( window.innerWidth, window.innerHeight );
-labelRenderer.domElement.style.position = 'absolute';
-labelRenderer.domElement.style.top = 0;
-document.body.appendChild( labelRenderer.domElement );
-
-window.addEventListener( 'resize', function() {
-	const width = window.innerWidth;
-	const height = window.innerHeight;
-	renderer.setSize( width, height);
-	labelRenderer.setSize( width, height);
-	camera.aspect = width / height;
-	camera.updateProjectionMatrix( );
-});	
-	
-const scene = new THREE.Scene();
-scene.background = new THREE.Color( 0xffffff);
-
-
-const controls = new OrbitControls(camera, labelRenderer.domElement);
-//controls.autoRotate = true;
-controls.autoRotateSpeed = 15;
-
-return { scene, labelRenderer, controls, renderer, camera};
+	window.addEventListener( 'resize', function() {
+		const width = window.innerWidth;
+		const height = window.innerHeight;
+		renderer.setSize( width, height);
+		labelRenderer.setSize( width, height);
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix( );
+	});
+	return { scene, labelsRenderer, controls, renderer, camera};
 }
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
@@ -158,7 +169,6 @@ function readyToExecute (data) {
 		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.BackSide);
 		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.BackSide);
 	}
-	console.log("System Metrics is working");
 	return nextData;
 }
 
@@ -208,7 +218,7 @@ function render(data) {
 			continue
 		}
 	}	
-	labelRenderer.render( scene, camera );
+	labelsRenderer.render( scene, camera );
 	requestAnimationFrame(() => render(data));
 }
 
