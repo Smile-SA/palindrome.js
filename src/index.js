@@ -4,39 +4,32 @@ import {Triangle, SimpleLine} from './ThreeGeometryObjects';
 import {dataGenerator} from './mockupData';
 import {initThreeObjects} from './ThreeJSBasicObjects';
 
-const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects(); //, transparentPlaneMaterial
+const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
 
 const myRequest = new Request("data.json");
 	
 fetch(myRequest)
 .then(resp => resp.json())
 .then(data => {
-	initializeLabels(data)
+	displayLabelsPositions(data)
 	render(data)
 });
 
 (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
-function initializeLabels(data) {
+function displayLabelsPositions(data) {
 
 	const dataIterator = dataGenerator(data);
 	const nextData = dataIterator.next().value;
-	const { qoeMetrics, systemMetrics } = nextData;
-	const dataTitleSystemMetrics = Object.keys(systemMetrics);
-	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
-
-	const updatedCurrentValuesTop = metricPoint(Object.values(systemMetrics).map(e => e.max / e.current), 20);
-	const updatedCurrentValuesBottom = metricPoint(Object.values(qoeMetrics).map(e => e.max / e.current), -20);
-
-	for (let idx = 0; idx < updatedCurrentValuesTop.length; idx++) {
-		scene.add(
-			createLabel(dataTitleSystemMetrics[idx], updatedCurrentValuesTop[idx])
-		)
-	}
-	for (let idx = 0; idx < updatedCurrentValuesBottom.length; idx++) {
-		scene.add(
-			createLabel(dataTitleQoeMetrics[idx], updatedCurrentValuesBottom[idx])
-		)
+	let zplane = 0
+	for (let metrics in nextData) {
+		let metric = nextData[metrics]
+		const metricTitle = Object.keys(metric);
+		const metricValue = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
+		for (let idx = 0; idx < metricValue.length; idx++) {
+			scene.add(createLabel(metricTitle[idx], metricValue[idx]));
+		}
+		zplane -= 40
 	}
 }
 
@@ -44,14 +37,48 @@ function readyToExecute (data) {
 	
 	const dataIterator = dataGenerator(data);
 	const nextData = dataIterator.next().value;
+	
+	/**
+	 * for (let metrics in nextData) {
+	 	let metric = nextData[metrics];
+		const metricValueMax = metricPoint(Object.values(metric).map(e => e.max / e.current), 20);
+
+	  }
+	 */
+
 	const { qoeMetrics, systemMetrics } = nextData;
 
-	const dataTitleSystemMetrics = Object.keys(systemMetrics);
-	const dataTitleQoeMetrics = Object.keys(qoeMetrics);
+	//console.log(Object.keys(data).length);
+	// for (let object = 0; object < Object.keys(nextData).length; object++) {
+	// 	//console.log(nextData[0].innerText);
+	// }
 
 	const updatedCurrentValuesTop = metricPoint(Object.values(systemMetrics).map(e => e.max / e.current), 20);
 	const updatedCurrentValuesBottom = metricPoint(Object.values(qoeMetrics).map(e => e.max / e.current), -20);
 
+	
+	
+	const lineMaterial = createLineMaterial(0x000000, 1); //0xfffff
+	const transparentLineMaterial = createLineMaterial(0x000000, 0);
+	
+	//const planeTopPointsMax = metricPoint(Object.values(systemMetrics).map(e => e.max / e.current), 20);
+	const planeTopPointsMed = metricPoint(Object.values(systemMetrics).map(e => e.med / e.current), 20);
+	const planeTopPointsMin = metricPoint(Object.values(systemMetrics).map(e => e.min / e.current), 20);
+
+	//const planeBottomPointsMax = metricPoint(Object.values(qoeMetrics).map(e => e.max / e.current), -20);
+	const planeBottomPointsMed = metricPoint(Object.values(qoeMetrics).map(e => e.med / e.current), -20);
+	const planeBottomPointsMin = metricPoint(Object.values(qoeMetrics).map(e => e.min / e.current), -20);
+
+	const numberOfMetricesInALayer = updatedCurrentValuesTop.length;
+	const numberOfMetricesInBottomLayer = updatedCurrentValuesBottom.length;
+
+	const planeTopPoints = [planeTopPointsMin, planeTopPointsMed, updatedCurrentValuesTop];
+	const planeBottomPoints = [updatedCurrentValuesBottom, planeBottomPointsMed, planeBottomPointsMin];
+
+	const axesHelper = new THREE.AxesHelper(40);
+	scene.add(axesHelper);
+
+	// Updating label position
 	for (let i = 0; i < updatedCurrentValuesTop.length; i++) {
 		const label = scene.children[i];
 		label.position.set(updatedCurrentValuesTop[i][0], updatedCurrentValuesTop[i][2], updatedCurrentValuesTop[i][1])
@@ -61,36 +88,8 @@ function readyToExecute (data) {
 		const label = scene.children[i + 5];
 		label.position.set(updatedCurrentValuesBottom[i][0], updatedCurrentValuesBottom[i][2], updatedCurrentValuesBottom[i][1])
 	}
-	
-	const dataValueSystemMetricsMax = Object.values(systemMetrics).map(e => e.max / e.current);
-	const dataValueSystemMetricsMed = Object.values(systemMetrics).map(e => e.med / e.current);
-	const dataValueSystemMetricsMin = Object.values(systemMetrics).map(e => e.min / e.current);
 
-
-	const dataValueQoeMetricsMax = Object.values(qoeMetrics).map(e => e.max / e.current);
-	const dataValueQoeMetricsMed = Object.values(qoeMetrics).map(e => e.med / e.current);
-	const dataValueQoeMetricsMin = Object.values(qoeMetrics).map(e => e.min / e.current);
-	
-	const lineMaterial = createLineMaterial(0x000000, 1); //0xfffff
-	const transparentLineMaterial = createLineMaterial(0x000000, 0);
-	
-	const planeTopPointsMax = metricPoint(dataValueSystemMetricsMax, 20);
-	const planeTopPointsMed = metricPoint(dataValueSystemMetricsMed, 20);
-	const planeTopPointsMin = metricPoint(dataValueSystemMetricsMin, 20);
-
-	const planeBottomPointsMax = metricPoint(dataValueQoeMetricsMax, -20);
-	const planeBottomPointsMed = metricPoint(dataValueQoeMetricsMed, -20);
-	const planeBottomPointsMin = metricPoint(dataValueQoeMetricsMin, -20);
-
-	const numberOfMetricesInALayer = planeTopPointsMax.length;
-	const numberOfMetricesInBottomLayer = planeBottomPointsMax.length;
-
-	const planeTopPoints = [planeTopPointsMin, planeTopPointsMed, planeTopPointsMax];
-	const planeBottomPoints = [planeBottomPointsMax, planeBottomPointsMed, planeBottomPointsMin];
-
-	const axesHelper = new THREE.AxesHelper(40);
-	scene.add(axesHelper);
-
+	// this loop creates lines, connectingLines, traingles
 	for(let i = 0; i < numberOfMetricesInALayer; i++) {
 		for(let planeTopPoint of planeTopPoints) {
 			drawPlaneLine(planeTopPoint, i, numberOfMetricesInALayer, lineMaterial);
@@ -99,28 +98,18 @@ function readyToExecute (data) {
 		for(let planeBottomPoint of planeBottomPoints) {
 			drawPlaneLine(planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
 			drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
-			drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, numberOfMetricesInALayer, lineMaterial);
+			drawPlaneConnectingLine(updatedCurrentValuesTop, updatedCurrentValuesBottom, i, numberOfMetricesInALayer, lineMaterial);
 		}
 		
-		const triangleFromTopToBottomForUpperLayerFrontSide = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInALayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], 0x4EC163, THREE.FrontSide);
+		const triangleFromTopToBottomForUpperLayerFrontSide = new Triangle(updatedCurrentValuesTop[i], updatedCurrentValuesTop[(i+1)  % numberOfMetricesInALayer], updatedCurrentValuesBottom[(i+1)  % numberOfMetricesInALayer], 0x4EC163);
 		scene.add(triangleFromTopToBottomForUpperLayerFrontSide);
-		const triangleFromBottomToTopForLowerLayerFrontSide = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], planeTopPointsMax[(i)  % numberOfMetricesInALayer], 0x4EC163, THREE.FrontSide);
+		const triangleFromBottomToTopForLowerLayerFrontSide = new Triangle(updatedCurrentValuesBottom[i], updatedCurrentValuesBottom[(i+1)  % numberOfMetricesInALayer], updatedCurrentValuesTop[(i+1)  % numberOfMetricesInALayer], 0x4EC163);
 		scene.add(triangleFromBottomToTopForLowerLayerFrontSide);
 		
-		const triangleFromTopToBottomForUpperLayerBackSide = new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricesInALayer], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], 0x4EC163, THREE.BackSide);
-		scene.add(triangleFromTopToBottomForUpperLayerBackSide);
-		const triangleFromBottomToTopForLowerLayerBackSide = new Triangle(planeBottomPointsMax[i], planeBottomPointsMax[(i+1)  % numberOfMetricesInALayer], planeTopPointsMax[(i)  % numberOfMetricesInALayer], 0x4EC163, THREE.BackSide);
-		scene.add(triangleFromBottomToTopForLowerLayerBackSide);
-		
-		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.FrontSide);
-		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.FrontSide);
-		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.FrontSide);
-		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.FrontSide);
-
-		drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.BackSide);
-		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.BackSide);
-		drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricesInALayer, 0xFF0000, THREE.BackSide);
-		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInALayer, 0x37B015, THREE.BackSide);
+		drawTrianglesInALayer(updatedCurrentValuesTop, planeTopPointsMed, i,numberOfMetricesInALayer, 0xFF0000);
+		drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricesInALayer, 0x37B015);
+		drawTrianglesInALayer(updatedCurrentValuesBottom, planeBottomPointsMed, i,numberOfMetricesInALayer, 0xFF0000);
+		drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricesInALayer, 0x37B015);
 	}
 	return nextData;
 }
@@ -186,15 +175,6 @@ function createLineMaterial(color, opacity) {
 		linewidth: 3,
 		transparent: true,
 		opacity
-	} );
-}
-
-function createTriangleMaterial(color) {
-	return new THREE.MeshBasicMaterial( {
-		color,
-		transparent: true,
-		opacity: 0.5,
-		side: THREE.DoubleSide
 	} );
 }
 

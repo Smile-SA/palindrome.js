@@ -46,7 +46,7 @@ export function initThreeObjects() {
 		const width = window.innerWidth;
 		const height = window.innerHeight;
 		renderer.setSize( width, height);
-		labelRenderer.setSize( width, height);
+		labelsRenderer.setSize( width, height);
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix( );
 	});
