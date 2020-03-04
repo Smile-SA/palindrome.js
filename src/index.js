@@ -45,8 +45,9 @@ function readyToExecute (data) {
 	
 	let zplane = 20;
 	let previousLayer = null;
-	 let layer = 0;
-	 for (let metrics in nextData) {
+	let lastLayer = null;
+	let layer = 0;
+	for (let metrics in nextData) {
 		let metric = nextData[metrics];
 		const metricValueMax = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
 		const metricValueMed = metricPoint(Object.values(metric).map(e => e.med / e.current), zplane);
@@ -54,25 +55,20 @@ function readyToExecute (data) {
 
 		const planeLength = Object.values(metric).length;
 		const planePoints = [metricValueMax, metricValueMed, metricValueMin];
-		// let previousValueMax
-		// let previousValueMed
-		// let previousValueMin
-		// if (previousLayer !== null) {
-
-		// 	previousValueMax = metricPoint(Object.values(previousLayer).map(e => e.max / e.current), zplane);
-		// 	previousValueMed = metricPoint(Object.values(previousLayer).map(e => e.med / e.current), zplane);
-		// 	previousValueMin = metricPoint(Object.values(previousLayer).map(e => e.min / e.current), zplane);
-			
-		// 	// const previousPlaneLength = Object.values(previousLayer).length;
-		// 	// const previousPlanePoints = [previousValueMax, previousValueMed, previousValueMin];
-		// }
-		 for(let i = 0; i < planeLength; i++) {
+		if (previousLayer !== null) {
+			const previousValueMax = metricPoint(Object.values(previousLayer).map(e => e.max / e.current), zplane + 40);
+			// const previousValueMed = metricPoint(Object.values(previousLayer).map(e => e.med / e.current), zplane);
+			// const previousValueMin = metricPoint(Object.values(previousLayer).map(e => e.min / e.current), zplane);
+			console.log(previousValueMax)
+			for(let i = 0; i < planeLength; i++) {
+				drawPlaneConnectingLine(previousValueMax, metricValueMax, i, planeLength, lineMaterial);
+			}
+			// const previousPlaneLength = Object.values(previousLayer).length;
+			// const previousPlanePoints = [previousValueMax, previousValueMed, previousValueMin];
+		}
+		for(let i = 0; i < planeLength; i++) {
 			for(let planePoint of planePoints) {
-				//console.log(previousLayer)
 				drawPlaneLine(planePoint, i, planeLength, lineMaterial);
-				// if (previousLayer !== null) {
-				// 	//drawPlaneConnectingLine(previousValueMax, metricValueMax, i, planeLength, lineMaterial);
-				// }
 			}
 			drawTrianglesInALayer(metricValueMax, metricValueMed, i,planeLength, 0xFF0000);
 			drawTrianglesInALayer(metricValueMed, metricValueMin, i,planeLength, 0x37B015);
@@ -81,13 +77,10 @@ function readyToExecute (data) {
 		for (let i = 0; i < planeLength; i++) {
 			const label = sortedLabels[i];
 			label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1])
-			}
-			// for(let i = 0; i < planeLength; i++) {
-				// 	drawPlaneConnectingLine(previousValueMax, metricValueMax, i, planeLength, lineMaterial);
-				// }
+		}
 				
 		zplane -= 40;
-		previousLayer = metric
+		previousLayer = metric;
 		layer++;
 	}
 	
@@ -110,11 +103,11 @@ function readyToExecute (data) {
 	// for(let i = 0; i < numberOfMetricesInALayer; i++) {
 	// 	for(let planeTopPoint of planeTopPoints) {
 	// 		drawPlaneLine(planeTopPoint, i, numberOfMetricesInALayer, lineMaterial);
-	// 		drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i, numberOfMetricesInALayer, lineMaterial);
+	// 		// drawPlaneConnectingLine(planeTopPoint, planeTopPoint, i, numberOfMetricesInALayer, lineMaterial);
 	// 	}
 	// 	for(let planeBottomPoint of planeBottomPoints) {
 	// 		drawPlaneLine(planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
-	// 		drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
+	// 		// drawPlaneConnectingLine(planeBottomPoint, planeBottomPoint, i, numberOfMetricesInALayer, lineMaterial);
 	// 		drawPlaneConnectingLine(planeTopPointsMax, planeBottomPointsMax, i, numberOfMetricesInALayer, lineMaterial);
 	// 	}
 		
