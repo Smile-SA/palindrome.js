@@ -45,7 +45,6 @@ function readyToExecute (data) {
 	
 	let zplane = 20;
 	let previousLayer = null;
-	let lastLayer = null;
 	let layer = 0;
 	for (let metrics in nextData) {
 		let metric = nextData[metrics];
@@ -59,8 +58,11 @@ function readyToExecute (data) {
 			const previousValueMax = metricPoint(Object.values(previousLayer).map(e => e.max / e.current), zplane + 40);
 			// const previousValueMed = metricPoint(Object.values(previousLayer).map(e => e.med / e.current), zplane);
 			// const previousValueMin = metricPoint(Object.values(previousLayer).map(e => e.min / e.current), zplane);
-			console.log(previousValueMax)
 			for(let i = 0; i < planeLength; i++) {
+				const topDownPart = new Triangle(metricValueMax[i], metricValueMax[(i+1)  % planeLength], previousValueMax[(i+1)  % planeLength], 0x4EC163);
+				scene.add(topDownPart);
+				const bottomUpPart = new Triangle(previousValueMax[i], previousValueMax[(i+1)  % planeLength], metricValueMax[(i)  % planeLength], 0x4EC163);
+				scene.add(bottomUpPart);
 				drawPlaneConnectingLine(previousValueMax, metricValueMax, i, planeLength, lineMaterial);
 			}
 			// const previousPlaneLength = Object.values(previousLayer).length;
@@ -140,7 +142,7 @@ function drawPlaneLine(planePoint, i, planePointLength, material) {
 }
 
 function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, planePointLength, material) {
-	const allPlaneConnectingLines = new SimpleLine(planePropertyFrom[i], planePropertyTo[(i) % planePointLength], material);
+	const allPlaneConnectingLines = new SimpleLine(planePropertyFrom[i], planePropertyTo[(i+1) % planePointLength], material);
 	scene.add(allPlaneConnectingLines);
 }
 
