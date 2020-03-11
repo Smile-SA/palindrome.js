@@ -1,0 +1,11 @@
+# ** 3D resprentation of Metric System **
+
+This project aims to display 3D representation of metric system, where you can add different sets of metrics with some definition and analyze behavior/functionality with time series.
+
+
+## Motivation
+
+Idea behind this project is to optimize throughput and based on rlation defined for metrics you can continously optimize, predict and plan your project/system/resources.
+
+## Installation
+

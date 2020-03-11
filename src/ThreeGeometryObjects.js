@@ -23,7 +23,6 @@ export class Triangle extends THREE.Mesh {
 		const face = new THREE.Face3( 0, 1, 2);
 		geometry.faces.push(face);
 		const material = new THREE.MeshBasicMaterial( {color, transparent: true, opacity: 0.5, side: THREE.DoubleSide} );
-	
 		super(geometry, material);
 	}
 }
