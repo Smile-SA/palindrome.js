@@ -42,6 +42,7 @@ function readyToExecute (data) {
 	const axesHelper = new THREE.AxesHelper(40);
 	scene.add(axesHelper);
 	const lineMaterial = createLineMaterial(0x000000, 1);
+	const lineMaterialTransparent = createLineMaterial(0x4EC163, 0.5);
 	
 	let zplane = 20;
 	let previousLayer = null;
@@ -51,6 +52,15 @@ function readyToExecute (data) {
 		const metricValueMax = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
 		const metricValueMed = metricPoint(Object.values(metric).map(e => e.med / e.current), zplane);
 		const metricValueMin = metricPoint(Object.values(metric).map(e => e.min / e.current), zplane);
+		const layerStatus = Object.values(metric).map(e => e.max / e.current);
+
+		const arrSum = arr => arr.reduce((a,b) => a + b, 0);
+		console.log(arrSum(layerStatus));
+		/**
+		Returns the sum of all values in a given array. 
+		const arrSum = arr => arr.reduce((a,b) => a + b, 0)
+		// arrSum([20, 10, 5, 10]) -> 45
+		 */
 
 		const planeLength = Object.values(metric).length;
 		const planePoints = [metricValueMax, metricValueMed, metricValueMin];
@@ -64,7 +74,7 @@ function readyToExecute (data) {
 			if (planeLength >= previousPlaneLength) {
 				for(let i = 0; i < planeLength; i++) { 
 					scene.add(
-						new SimpleLine(metricValueMax[i], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
+						new SimpleLine(metricValueMax[i], previousValueMax[(i+1) % previousPlaneLength], lineMaterialTransparent),
 						new SimpleLine(metricValueMax[(i+1) % planeLength], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
 						new Triangle(metricValueMax[i], metricValueMax[(i+1)  % planeLength], previousValueMax[(i+1)  % previousPlaneLength], 0x4EC163),
 						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i)  % planeLength], 0x4EC163)
@@ -74,35 +84,13 @@ function readyToExecute (data) {
 			else {
 				for(let i = 0; i < previousPlaneLength; i++) { 
 					scene.add(
-						new SimpleLine(previousValueMax[i], metricValueMax[(i+1)  % planeLength], lineMaterial),
+						new SimpleLine(previousValueMax[i], metricValueMax[(i+1)  % planeLength], lineMaterialTransparent),
 						new SimpleLine(previousValueMax[(i+1) % previousPlaneLength], metricValueMax[(i+1) % planeLength], lineMaterial),
 						new Triangle(metricValueMax[(i)  % planeLength], metricValueMax[(i+1)  % planeLength], previousValueMax[(i)  % previousPlaneLength], 0x4EC163),
 						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i+1)  % planeLength], 0x4EC163)
 					)
 				}
 			}
-
-
-			// for(let i = 0; i < planeLength; i++) {
-			// 	// if (planeLength < previousLayer) {
-			// 	// 	planeLength === previousPlaneLength;
-			// 	// }
-			// 			scene.add(
-			// 				new Triangle(metricValueMax[i], metricValueMax[(i+1)  % planeLength], previousValueMax[(i+1)  % planeLength], 0x4EC163),
-			// 				new Triangle(previousValueMax[i], previousValueMax[(i+1)  % planeLength], metricValueMax[(i)  % planeLength], 0x4EC163)
-			// 				);
-			// 		drawPlaneConnectingLine(previousValueMax, metricValueMax, i, planeLength, lineMaterial);
-			// }
-		
-		
-			// for (let i = 0; i < previousPlaneLength; i++) {
-			// 	// const topDownPart = new Triangle(metricValueMax[i], metricValueMax[(i+1)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], 0x4EC163);
-			// 	// scene.add(topDownPart);
-			// 	// const bottomUpPart = new Triangle(previousValueMax[i], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i)  % previousPlaneLength], 0x4EC163);
-			// 	// scene.add(bottomUpPart);
-			// 	drawPlaneConnectingLine(previousValueMax, metricValueMax, i, planeLength, previousPlaneLength ,lineMaterial);
-			// }
-			
 		}
 		for(let i = 0; i < planeLength; i++) {
 			for(let planePoint of planePoints) {
@@ -121,68 +109,6 @@ function readyToExecute (data) {
 		previousLayer = metric;
 		layer++;
 	}
-	
-	//0xfffff
-	// const { qoeMetrics, systemMetrics } = nextData;
-	// const planeTopPointsMax = metricPoint(Object.values(systemMetrics).map(e => e.max / e.current), 20);
-	// const planeTopPointsMed = metricPoint(Object.values(systemMetrics).map(e => e.med / e.current), 20);
-	// const planeTopPointsMin = metricPoint(Object.values(systemMetrics).map(e => e.min / e.current), 20);
-	// const planeBottomPointsMax = metricPoint(Object.values(qoeMetrics).map(e => e.max / e.current), -20);
-	// const planeBottomPointsMed = metricPoint(Object.values(qoeMetrics).map(e => e.med / e.current), -20);
-	// const planeBottomPointsMin = metricPoint(Object.values(qoeMetrics).map(e => e.min / e.current), -20);
-	// const transparentLineMaterial = createLineMaterial(0x000000, 0);	// const numberOfMetricesInBottomLayer = planeBottomPointsMax.length;
-	// const numberOfMetricsInTopLayer = planeTopPointsMax.length;
-	// const numberOfMetricsInBottomLayer = planeBottomPointsMax.length;
-	
-	// const planeTopPoints = [planeTopPointsMin, planeTopPointsMed, planeTopPointsMax];
-	// const planeBottomPoints = [planeBottomPointsMax, planeBottomPointsMed, planeBottomPointsMin];
-	// if (numberOfMetricsInTopLayer >= numberOfMetricsInBottomLayer) {
-	// 	for(let i = 0; i < numberOfMetricsInTopLayer; i++) { 
-	// 		scene.add(
-	// 			new SimpleLine(planeTopPointsMax[i], planeBottomPointsMax[(i+1) % numberOfMetricsInBottomLayer], lineMaterial),
-	// 			new SimpleLine(planeTopPointsMax[(i+1) % numberOfMetricsInTopLayer], planeBottomPointsMax[(i+1) % numberOfMetricsInBottomLayer], lineMaterial),
-	// 			new Triangle(planeTopPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricsInTopLayer], planeBottomPointsMax[(i+1)  % numberOfMetricsInBottomLayer], 0x4EC163),
-	// 			new Triangle(planeBottomPointsMax[(i)  % numberOfMetricsInBottomLayer], planeBottomPointsMax[(i+1)  % numberOfMetricsInBottomLayer], planeTopPointsMax[(i)  % numberOfMetricsInTopLayer], 0x4EC163)
-	// 		)
-	// 	}
-	// }
-	// else {
-	// 	for(let i = 0; i < numberOfMetricsInBottomLayer; i++) { 
-	// 		scene.add(
-	// 			new SimpleLine(planeBottomPointsMax[i], planeTopPointsMax[(i+1)  % numberOfMetricsInTopLayer], lineMaterial),
-	// 			new SimpleLine(planeBottomPointsMax[(i+1) % numberOfMetricsInBottomLayer], planeTopPointsMax[(i+1) % numberOfMetricsInTopLayer], lineMaterial),
-	// 			new Triangle(planeTopPointsMax[(i)  % numberOfMetricsInTopLayer], planeTopPointsMax[(i+1)  % numberOfMetricsInTopLayer], planeBottomPointsMax[(i)  % numberOfMetricsInBottomLayer], 0x4EC163),
-	// 			new Triangle(planeBottomPointsMax[(i)  % numberOfMetricsInBottomLayer], planeBottomPointsMax[(i+1)  % numberOfMetricsInBottomLayer], planeTopPointsMax[(i+1)  % numberOfMetricsInTopLayer], 0x4EC163)
-	// 		)
-	// 	}
-	// }
-	
-	// // this loop creates lines, connectingLines, traingles
-	// for(let i = 0; i < numberOfMetricsInTopLayer; i++) {
-	// 	for(let planeTopPoint of planeTopPoints) {
-	// 		drawPlaneLine(planeTopPoint, i, numberOfMetricsInTopLayer, lineMaterial);
-	// 	}
-	// 	drawTrianglesInALayer(planeTopPointsMax, planeTopPointsMed, i,numberOfMetricsInTopLayer, 0xFF0000);
-	// 	drawTrianglesInALayer(planeTopPointsMed, planeTopPointsMin, i,numberOfMetricsInTopLayer, 0x37B015);
-		
-	// }
-	// for(let i = 0; i < numberOfMetricsInBottomLayer; i++) {
-	// 	for(let planeBottomPoint of planeBottomPoints) {
-	// 		drawPlaneLine(planeBottomPoint, i, numberOfMetricsInBottomLayer, lineMaterial);
-	// 	}
-	// 	drawTrianglesInALayer(planeBottomPointsMax, planeBottomPointsMed, i,numberOfMetricsInBottomLayer, 0xFF0000);
-	// 	drawTrianglesInALayer(planeBottomPointsMed, planeBottomPointsMin, i,numberOfMetricsInBottomLayer, 0x37B015);
-	// }
-	// // Updating label position
-	// for (let i = 0; i < planeTopPointsMax.length; i++) {
-	// 	const label = scene.children[i];
-	// 	label.position.set(planeTopPointsMax[i][0], planeTopPointsMax[i][2], planeTopPointsMax[i][1])
-	// }
-
-	// for (let i = 0; i < planeBottomPointsMax.length; i++) {
-	// 	const label = scene.children[i + 5];
-	// 	label.position.set(planeBottomPointsMax[i][0], planeBottomPointsMax[i][2], planeBottomPointsMax[i][1])
-	// }
 	return nextData;
 }
 
@@ -268,7 +194,7 @@ function createLineMaterial(color, opacity) {
 function metricPoint(metric, zplane) {
 	const planepoints = [];
 	for (let i=0; i< metric.length; i++) {
-		const points = findNewPoint(i*Math.PI*2/metric.length ,metric[i]*3, zplane);
+		const points = findNewPoint(i*Math.PI*2/metric.length ,metric[i]*5, zplane);
 		planepoints.push(points);
 	}
 	return planepoints;

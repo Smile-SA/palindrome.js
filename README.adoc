@@ -2,10 +2,124 @@
 
 This project aims to display 3D representation of metric system, where you can add different sets of metrics with some definition and analyze behavior/functionality with time series.
 
+### Motivation
 
-## Motivation
+Idea behind this project is to optimize throughput and based on relation defined for metrics you can continously optimize, predict and plan your project/system/resources.
 
-Idea behind this project is to optimize throughput and based on rlation defined for metrics you can continously optimize, predict and plan your project/system/resources.
+### Tech/framework used
+Project is created with:
 
-## Installation
+* Three.js
+* CSS2DRender.js
 
+## Setup
+To run this project, install it locally using npm or yarn:
+
+* run dependencies mentioned above
+* You will require .JSON file to fetch data (metrics)
+* An example of data structure is shown below:
+
+```
+{
+    "systemMetrics":
+        {
+            "throughput" : {
+                "label" : "CPU",
+                "unit" : "cycle / seconds",
+                "min" : 1000,
+                "med" : 5000,
+                "max" : 10000,
+                "current" : 3900
+            },
+            "availability" : {
+                "label" : "RAM",
+                "unit" : "GB",
+                "min" : 16,
+                "med" : 64,
+                "max" : 128,
+                "current" : 48
+            }
+        }
+}
+```
+
+### Code Example
+
+```
+function readyToExecute (data) {
+	
+	const dataIterator = dataGenerator(data);
+	const nextData = dataIterator.next().value;
+	const axesHelper = new THREE.AxesHelper(40);
+	scene.add(axesHelper);
+	const lineMaterial = createLineMaterial(0x000000, 1);
+	
+	let zplane = 20;
+	let previousLayer = null;
+	let layer = 0;
+	for (let metrics in nextData) {
+		let metric = nextData[metrics];
+		const metricValueMax = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
+		const metricValueMed = metricPoint(Object.values(metric).map(e => e.med / e.current), zplane);
+		const metricValueMin = metricPoint(Object.values(metric).map(e => e.min / e.current), zplane);
+
+		const planeLength = Object.values(metric).length;
+		const planePoints = [metricValueMax, metricValueMed, metricValueMin];
+		if (previousLayer !== null) {
+			const previousValueMax = metricPoint(Object.values(previousLayer).map(e => e.max / e.current), zplane + 30);
+			// const previousValueMed = metricPoint(Object.values(previousLayer).map(e => e.med / e.current), zplane);
+			// const previousValueMin = metricPoint(Object.values(previousLayer).map(e => e.min / e.current), zplane);
+			const previousPlaneLength = Object.values(previousLayer).length;
+			// const previousPlanePoints = [previousValueMax, previousValueMed, previousValueMin];
+			
+			if (planeLength >= previousPlaneLength) {
+				for(let i = 0; i < planeLength; i++) { 
+					scene.add(
+						new SimpleLine(metricValueMax[i], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
+						new SimpleLine(metricValueMax[(i+1) % planeLength], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
+						new Triangle(metricValueMax[i], metricValueMax[(i+1)  % planeLength], previousValueMax[(i+1)  % previousPlaneLength], 0x4EC163),
+						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i)  % planeLength], 0x4EC163)
+					)
+				}
+			}
+			else {
+				for(let i = 0; i < previousPlaneLength; i++) { 
+					scene.add(
+						new SimpleLine(previousValueMax[i], metricValueMax[(i+1)  % planeLength], lineMaterial),
+						new SimpleLine(previousValueMax[(i+1) % previousPlaneLength], metricValueMax[(i+1) % planeLength], lineMaterial),
+						new Triangle(metricValueMax[(i)  % planeLength], metricValueMax[(i+1)  % planeLength], previousValueMax[(i)  % previousPlaneLength], 0x4EC163),
+						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i+1)  % planeLength], 0x4EC163)
+					)
+				}
+			}
+		}
+		for(let i = 0; i < planeLength; i++) {
+			for(let planePoint of planePoints) {
+				drawPlaneLine(planePoint, i, planeLength, lineMaterial);
+			}
+			drawTrianglesInALayer(metricValueMax, metricValueMed, i,planeLength, 0xFF0000);
+			drawTrianglesInALayer(metricValueMed, metricValueMin, i,planeLength, 0x37B015);
+		}
+		const sortedLabels = scene.children.filter((item) => item.layer == layer)
+		for (let i = 0; i < planeLength; i++) {
+			const label = sortedLabels[i];
+			label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+		}
+				
+		zplane -= 30;
+		previousLayer = metric;
+		layer++;
+	}
+	return nextData;
+}
+```
+
+### API Reference
+
+### How to use?
+
+### Contribute
+
+### Credits
+
+### License

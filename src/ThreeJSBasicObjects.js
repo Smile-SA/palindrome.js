@@ -4,7 +4,7 @@ import {CSS2DRenderer} from 'three-css2drender';
 
 function initCamera() {
 	const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-	camera.position.set( 50, 50, 150 );
+	camera.position.set( 40, 40, 70 );
 	return camera;
 }
 
