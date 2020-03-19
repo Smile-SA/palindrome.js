@@ -52,16 +52,9 @@ function readyToExecute (data) {
 		const metricValueMax = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
 		const metricValueMed = metricPoint(Object.values(metric).map(e => e.med / e.current), zplane);
 		const metricValueMin = metricPoint(Object.values(metric).map(e => e.min / e.current), zplane);
-		const layerStatus = Object.values(metric).map(e => e.max / e.current);
-
-		const arrSum = arr => arr.reduce((a,b) => a + b, 0);
-		console.log(arrSum(layerStatus));
-		/**
-		Returns the sum of all values in a given array. 
-		const arrSum = arr => arr.reduce((a,b) => a + b, 0)
-		// arrSum([20, 10, 5, 10]) -> 45
-		 */
-
+		const max = Object.values(metric).map(e => e.max).reduce((a, b) => a + b, 0);
+		const current = Object.values(metric).map(e => e.current).reduce((a, b) => a + b, 0);
+		const layerStatus = (current/max)*100;
 		const planeLength = Object.values(metric).length;
 		const planePoints = [metricValueMax, metricValueMed, metricValueMin];
 		if (previousLayer !== null) {
@@ -96,7 +89,7 @@ function readyToExecute (data) {
 			for(let planePoint of planePoints) {
 				drawPlaneLine(planePoint, i, planeLength, lineMaterial);
 			}
-			drawTrianglesInALayer(metricValueMax, metricValueMed, i,planeLength, 0xFF0000);
+			drawTrianglesInALayer(metricValueMax, metricValueMed, i,planeLength, layerColorDecidedByLayerStatus(layerStatus));
 			drawTrianglesInALayer(metricValueMed, metricValueMin, i,planeLength, 0x37B015);
 		}
 		const sortedLabels = scene.children.filter((item) => item.layer == layer)
@@ -117,33 +110,26 @@ function drawPlaneLine(planePoint, i, planePointLength, material) {
 	scene.add(allPlaneLinesOfLayer);
 }
 
+function layerColorDecidedByLayerStatus(value) {
+	let layerStatusColor = 0x9FC5E8;
+	if (value >= 0 && value <= 30){
+		return layerStatusColor;
+	}
+	else if (value > 30 && value <= 60) {
+		layerStatusColor = 0x00FF00;
+		return layerStatusColor;
+	}
+	else{
+		layerStatusColor = 0xFF0000;
+		return layerStatusColor;
+	}
+}
+
 function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, planePointLength, material) {
-	
 	const allPlaneConnectingLines = new SimpleLine(planePropertyFrom[i], planePropertyTo[(i+1) % planePointLength], material);
 	scene.add(allPlaneConnectingLines);
 	const allPlaneConnectingLines2 = new SimpleLine(planePropertyFrom[(i)  % planePointLength], planePropertyTo[(i) % planePointLength], material);
 	scene.add(allPlaneConnectingLines2);
-
-
-		// const allPlaneConnectingLines2 = new SimpleLine(planePropertyTo[(i +1)  % previousPlanePointLength], planePropertyFrom[(i + 1) % previousPlanePointLength], material);
-		// scene.add(allPlaneConnectingLines2);
-	
-	
-		// const allPlaneConnectingLines = new SimpleLine(planePropertyTo[(i+1)  % previousPlanePointLength], planePropertyFrom[(i+1) % planePointLength], material);
-		// scene.add(allPlaneConnectingLines);
-	
-	// else if (planePointLength > previousPlanePointLength){
-	// 	const allPlaneConnectingLines2 = new SimpleLine(planePropertyTo[(i) % planePointLength], planePropertyFrom[(i) % previousPlanePointLength], material);
-	// 	scene.add(allPlaneConnectingLines2);
-	// 	const allPlaneConnectingLines = new SimpleLine(planePropertyTo[(i+1)  % planePointLength], planePropertyFrom[(i) % planePointLength], material);
-	// 	scene.add(allPlaneConnectingLines);
-	// }
-	// else if (previousPlanePointLength > planePointLength) {
-	// 	const allPlaneConnectingLines = new SimpleLine(planePropertyTo[(i+1)  % previousPlanePointLength], planePropertyFrom[(i) % planePointLength], material);
-	// 	scene.add(allPlaneConnectingLines);
-	// }
-	
-	
 }
 
 function drawTrianglesInALayer(planePointOne, planePointTwo, i, planePointLength, color, side) {
@@ -153,6 +139,11 @@ function drawTrianglesInALayer(planePointOne, planePointTwo, i, planePointLength
 	scene.add(triangleFromPlaneTwoToOne);
 }
 
+/**
+ * @param {string} textContent to get label of our metric point
+ * @param {number} vector3 coordinates of our metric point on the plane
+ * @param {number} layer to keep track or layers and metric inside
+ */
 function createLabel(textContent, vector3, layer) {
 	const labelDiv = document.createElement( 'div' );
 	labelDiv.className = 'label';
@@ -164,8 +155,10 @@ function createLabel(textContent, vector3, layer) {
 	return metricLabel;
 }
 
+/**
+ * @param {data} data rendering data constantly with new instance of data in animation loop
+ */
 function render(data) {
-	
 	data = readyToExecute(data);
 	controls.update();
 	renderer.render(scene, camera);
@@ -182,15 +175,23 @@ function render(data) {
 	requestAnimationFrame(() => render(data));
 }
 
+/**
+ * @param {string} color hexadecimal color value for line color
+ * @param {number} opacity to define line opacity incase of transparent or solid lines
+ */
 function createLineMaterial(color, opacity) {
 	return new THREE.LineDashedMaterial( {
 		color,
 		linewidth: 3,
-		transparent: true,
+		transparernt: true,
 		opacity
 	} );
 }
 
+/**
+ * @param {number} metric value is required from to data to map on x,y plane
+ * @param {number} zplane adding z plane for 3D respresentation
+ */
 function metricPoint(metric, zplane) {
 	const planepoints = [];
 	for (let i=0; i< metric.length; i++) {

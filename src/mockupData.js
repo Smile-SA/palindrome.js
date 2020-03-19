@@ -7,7 +7,7 @@ export function* dataGenerator(model) {
                 const { min, max, current } = metric;
                 // a random walk with 1% step
                 const update = (Math.random() - .5) * 2 * (max - min) / 100;
-                // metric.current = Math.max(Math.min(current + update, max), min);
+                metric.current = Math.max(Math.min(current + update, max), min);
             }
         }
 
