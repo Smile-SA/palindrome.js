@@ -41,7 +41,7 @@ yarn init
 fill in the details about your project and install dependencies:
 ```
 yarn add three
-yarn add css2drenderer
+yarn add three-css2drender
 ```
 Adding parcel  bundler to your project:
 
@@ -59,12 +59,9 @@ Then, add these tasks scripts to your project, by modifying your package.json:
 }
 ```
 
-Then, you will be able to run it:
-```
-yarn dev
-```
 
-Finally You will require .JSON file to fetch data (metrics).
+
+Finally You will require .JSON file to fetch data (metrics). This file is required before running the program, so add the path of your data in the code.
 An example of data structure is shown below:
 
 ### Code Example
@@ -83,13 +80,17 @@ An example of data structure is shown below:
             "availability" : {
                 "label" : "RAM",
                 "unit" : "GB",
-                "min" : 16,
-                "med" : 64,
-                "max" : 128,
-                "current" : 48
+                "min" : 160,
+                "med" : 640,
+                "max" : 1280,
+                "current" : 480
             }
         }
 }
+```
+Then, you will be able to run the program using:
+```
+yarn dev
 ```
 
 

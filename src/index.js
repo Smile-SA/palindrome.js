@@ -6,6 +6,8 @@ import {initThreeObjects} from './ThreeJSBasicObjects';
 
 const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
 
+// add you file path here from the respository you created.
+// const myRequest = new Request(".location/of/data.json");
 const myRequest = new Request("data.json");
 	
 fetch(myRequest)
@@ -183,7 +185,7 @@ function createLineMaterial(color, opacity) {
 	return new THREE.LineDashedMaterial( {
 		color,
 		linewidth: 3,
-		transparernt: true,
+		// transparernt: true,
 		opacity
 	} );
 }
