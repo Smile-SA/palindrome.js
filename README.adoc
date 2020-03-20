@@ -10,7 +10,6 @@ This project aims to display 3D representation of metric system, where you can a
 Project is created with:
 
 * Three.js
-* CSS2DRender.js
 
 ## Setup
 To run this project first install npm or yarn, I prefer yarn:
@@ -61,7 +60,7 @@ Then, add these tasks scripts to your project, by modifying your package.json:
 
 
 
-Finally You will require .JSON file to fetch data (metrics). This file is required before running the program, so add the path of your data in the code.
+Finally You will require json file to fetch data (metrics). Create a file in anywehre in your repository and it's path to *index.js* file on line *11*. This file is required before running the program, so add the path of your data in the code.
 An example of data structure is shown below:
 
 ### Code Example

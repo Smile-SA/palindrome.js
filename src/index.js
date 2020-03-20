@@ -3,11 +3,26 @@ import {CSS2DObject} from 'three-css2drender';
 import {Triangle, SimpleLine} from './ThreeGeometryObjects';
 import {dataGenerator} from './mockupData';
 import {initThreeObjects} from './ThreeJSBasicObjects';
+import {baseData} from './baseData';
 
 const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
 
-// add you file path here from the respository you created.
-// const myRequest = new Request(".location/of/data.json");
+// const filePath = "data.json"
+// const fileContent = new Request(filePath)
+// run(fileContent)
+
+// async function run(content) {
+// 	const result = await fetch(content)
+// 	let data
+// 	try {
+// 	data = await result.json()
+// 	} catch(error) {
+// 	data = baseData()
+// 	}
+// 	displayLabels(data)
+// 	render(data)
+// }
+
 const myRequest = new Request("data.json");
 	
 fetch(myRequest)
