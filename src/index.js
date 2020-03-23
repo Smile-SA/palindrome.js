@@ -7,32 +7,21 @@ import {baseData} from './baseData';
 
 const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
 
-// const filePath = "data.json"
-// const fileContent = new Request(filePath)
-// run(fileContent)
+const filePath = "data.json"
+const fileContent = new Request(filePath)
+run(fileContent)
 
-// async function run(content) {
-// 	const result = await fetch(content)
-// 	let data
-// 	try {
-// 	data = await result.json()
-// 	} catch(error) {
-// 	data = baseData()
-// 	}
-// 	displayLabels(data)
-// 	render(data)
-// }
-
-const myRequest = new Request("data.json");
-	
-fetch(myRequest)
-.then(resp => resp.json())
-.then(data => {
+async function run(content) {
+	const result = await fetch(content)
+	let data
+	try {
+		data = await result.json()
+	} catch(error) {
+		data = baseData()
+	}
 	displayLabels(data)
 	render(data)
-});
-
-(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+}
 
 function displayLabels(data) {
 

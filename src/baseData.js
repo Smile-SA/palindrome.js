@@ -42,6 +42,49 @@ export function baseData() {
                     "max" : 1024,
                     "current" : 450
                 }
+            },
+        "qoeMetrics": 
+            {
+                "cpu" : {
+                    "label" : "CPU",
+                    "unit" : "cycle / seconds",
+                    "min" : 100,
+                    "med" : 500,
+                    "max" : 1000,
+                    "current" : 390
+                },
+                "ram" : {
+                    "label" : "RAM",
+                    "unit" : "GB",
+                    "min" : 160,
+                    "med" : 640,
+                    "max" : 1280,
+                    "current" : 480
+                },
+                "ram2" : {
+                    "label" : "RAM",
+                    "unit" : "GB",
+                    "min" : 160,
+                    "med" : 640,
+                    "max" : 1280,
+                    "current" : 480
+                },
+                "hdd" : {
+                    "label" : "HDD",
+                    "unit" : "GB",
+                    "min" : 102,
+                    "med" : 512,
+                    "max" : 1024,
+                    "current" : 450
+                },
+                "bandwidth" : {
+                    "label" : "BW",
+                    "unit" : "MB / seconds",
+                    "min" : 102,
+                    "med" : 512,
+                    "max" : 1024,
+                    "current" : 450
+                }
             }
     }
     
