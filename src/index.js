@@ -30,7 +30,7 @@ function displayLabels(data) {
 	let zplane = 20;
 	let layer = 0;
 	for (let metrics in nextData) {
-		let metric = nextData[metrics]
+		let metric = nextData[metrics].metrics
 		const metricTitle = Object.keys(metric);
 		const metricValue = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
 		for (let idx = 0; idx < metricValue.length; idx++) {
@@ -53,8 +53,8 @@ function readyToExecute (data) {
 	let zplane = 20;
 	let previousLayer = null;
 	let layer = 0;
-	for (let metrics in nextData) {
-		let metric = nextData[metrics];
+	for (let object in nextData) {
+		let metric = nextData[object].metrics;
 		const metricValueMax = metricPoint(Object.values(metric).map(e => e.max / e.current), zplane);
 		const metricValueMed = metricPoint(Object.values(metric).map(e => e.med / e.current), zplane);
 		const metricValueMin = metricPoint(Object.values(metric).map(e => e.min / e.current), zplane);
