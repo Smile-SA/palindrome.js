@@ -65,45 +65,6 @@ function readyToExecute (data) {
 	const newData = dataIterator.next().value;
 	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);
 	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);
-
-	// const initMockUp = true;
-	// const runMockUp = false;
-	// const startButton = document.getElementById( 'startButtonId' );
-	// const resetButton = document.getElementById( 'resetButtonId' );
-
-	// // startButton.onclick =
-	// function StartAnimation() {
-
-	// 	if (initMockUp) {
-	// 	  initMockUp = false;
-	// 	  runMockUp = true;
-	// 	}
-	// 	// Start and Pause 
-	// 	if (runMockUp) { 
-	// 	  startButton.innerHTML = 'Pause';
-	// 	  runMockUp = false;
-	// 	  isPlay = true;
-	// 	  animate();
-	// 	  } else {
-	// 			startButton.innerHTML = 'Restart';
-	// 			runMockUp = true;
-	// 			isPlay = false;
-	// 	  }
-	// }
-
-	// // resetButton.onclick = 
-	// function ResetParameters() {
-
-	// 	// Set StartButton to Start  
-	// 	startButton.innerHTML = 'Start';
-	 
-	// 	// Boolean for Stop Animation
-	// 	initMockUp = true;
-	// 	runMockUp = false;
-	// 	theta = 0;
-	// 	isPlay = false;
-	// 	render();
-	// }
 	
 	let zplane = 20;
 	let previousLayer = null;
