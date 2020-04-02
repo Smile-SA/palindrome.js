@@ -24,56 +24,65 @@ async function run(content) {
 }
 
 let configuration = {
-		UIControl : true,
-		layerMidColor : 0xDFDF0B,
-		mainAppColor : 0x4EC163,
-		subAppColor : 0x9FC5E8,
-		statusColor : {
-			low : 0x9FC5E8,
-			med : 0x00FF00,
-			high : 0xFF0000
-		},
-		line :{
-			lineColor : 0x000000,
-			lineOpacity : 1,
-			lineTranparency : 0.5
-		}
+	LayerStatusControl : true,
+	metricMagnifier: 5,
+	layerMidColor : 0xDFDF0B,
+	mainAppColor : 0x4EC163,
+	subAppColor : 0x9FC5E8,
+	statusRange : {
+		low : 0,
+		med : 30,
+		high: 60
+	},
+	statusColor : {
+		low : 0x9FC5E8,
+		med : 0x00FF00,
+		high : 0xFF0000
+	},
+	line :{
+		lineColor : 0x000000,
+		lineOpacity : 1,
+		lineTranparency : 0.5,
+		lineWidth : 3
+	},
+	zplane : {
+		zplaneInitial : 20,
+		zplaneHeight : 40,
+		zplaneMultilayer : 30
+	}
 }
 
-
 function displayLabels(data) {
-
 	const dataIterator = dataGenerator(data);
 	const newData = dataIterator.next().value;
-	let zplane = 20;
+	let zAxis = configuration.zplane.zplaneInitial;
 	let layerIndex = 0;
 	for (let layer in newData) {
 		let metric = newData[layer].metrics
 		const metricTitles = Object.keys(metric);
-		const metricValues = metricPoint(Object.values(metric).map(item => item.max / item.current), zplane);
+		const metricValues = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
 		for (let idx = 0; idx < metricValues.length; idx++) {
 			scene.add(createLabel(metricTitles[idx], metricValues[idx], layerIndex));
 		}
-		zplane -= 40
+		zAxis -= configuration.zplane.zplaneHeight
 		layerIndex++;
 	}
 }
 
 function readyToExecute (data) {
-	
 	const dataIterator = dataGenerator(data);
 	const newData = dataIterator.next().value;
 	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);
 	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);
 	
-	let zplane = 20;
+	let zAxis = configuration.zplane.zplaneInitial;
 	let previousLayer = null;
 	let layerIndex = 0;
 	for (let layer in newData) {
 		let metric = newData[layer].metrics;
-		const metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zplane);
-		const metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zplane);
-		const metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zplane);
+		const metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
+		const metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
+		const metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
 		const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
 		const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
 		const layerStatus = (current/max)*100;
@@ -81,7 +90,7 @@ function readyToExecute (data) {
 		const planeLength = Object.values(metric).length;
 		const planePoints = [metricValueMax, metricValueMed, metricValueMin];
 		if (previousLayer !== null) {
-			const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zplane + 30);
+			const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zAxis + configuration.zplane.zplaneMultilayer);
 			const previousPlaneLength = Object.values(previousLayer).length;
 			if (planeLength >= previousPlaneLength) {
 				for(let i = 0; i < planeLength; i++) { 
@@ -90,7 +99,7 @@ function readyToExecute (data) {
 						new SimpleLine(metricValueMax[(i+1) % planeLength], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
 						new Triangle(metricValueMax[i], metricValueMax[(i+1)  % planeLength], previousValueMax[(i+1)  % previousPlaneLength], configuration.mainAppColor),
 						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i)  % planeLength], configuration.mainAppColor)
-					)
+						)
 				}
 			}
 			else {
@@ -116,8 +125,8 @@ function readyToExecute (data) {
 			const label = sortedLabels[i];
 			label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
 		}
-				
-		zplane -= 30;
+		
+		zAxis -= configuration.zplane.zplaneMultilayer;
 		previousLayer = metric;
 		layerIndex++;
 	}
@@ -130,31 +139,26 @@ function drawPlaneLine(planePoint, i, planePointLength, material) {
 
 function layerColorDecidedByLayerStatus(value) {
 	let layerStatusColor = configuration.statusColor.min;
-	if (value >= 0 && value <= 30){
-		return layerStatusColor;
+	if (configuration.LayerStatusControl) {
+		if (value >= configuration.statusRange.low && value <= configuration.statusRange.med ){
+			return layerStatusColor;
+		}
+		else if (value > configuration.statusRange.med && value <= configuration.statusRange.high) {
+			layerStatusColor = configuration.statusColor.med;
+			return layerStatusColor;
+		}
+		else{
+			layerStatusColor = configuration.statusColor.high;
+			return layerStatusColor;
+		}
 	}
-	else if (value > 30 && value <= 60) {
-		layerStatusColor = configuration.statusColor.med;
-		return layerStatusColor;
-	}
-	else{
-		layerStatusColor = configuration.statusColor.high;
-		return layerStatusColor;
-	}
-}
-
-function drawPlaneConnectingLine(planePropertyFrom, planePropertyTo, i, planePointLength, material) {
-	scene.add(
-		new SimpleLine(planePropertyFrom[i], planePropertyTo[(i+1) % planePointLength], material),
-		new SimpleLine(planePropertyFrom[(i)  % planePointLength], planePropertyTo[(i) % planePointLength], material)
-	)
 }
 
 function drawTrianglesInALayer(planePointOne, planePointTwo, i, planePointLength, color, side) {
 	scene.add(
 		new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i+1)  % planePointLength], color, side),
 		new Triangle(planePointTwo[(i+1)  % planePointLength], planePointOne[(i+1)  % planePointLength], planePointOne[(i)  % planePointLength], color, side)
-	)
+		)
 }
 
 /**
@@ -200,26 +204,67 @@ function render(data) {
 function createLineMaterial(color, opacity) {
 	return new THREE.LineDashedMaterial( {
 		color,
-		linewidth: 3,
+		linewidth: configuration.line.lineWidth,
 		opacity
 	} );
 }
 
 /**
  * @param {number} metric value is required from to data to map on x,y plane
- * @param {number} zplane adding z plane for 3D respresentation
+ * @param {number} zplaneValue adding z plane for 3D respresentation
  */
-function metricPoint(metric, zplane) {
+function metricPoint(metric, zplaneValue) {
 	const planepoints = [];
 	for (let i=0; i< metric.length; i++) {
-		const points = findNew3DPoint(i*Math.PI*2/metric.length ,metric[i]*5, zplane);
+		const points = findNew3DPoint(i*Math.PI*2/metric.length ,metric[i]*configuration.metricMagnifier, zplaneValue);
 		planepoints.push(points);
 	}
 	return planepoints;
 }
 
-function findNew3DPoint( angle, radius, zplane) {
+function findNew3DPoint( angle, radius, zplaneValue) {
 	return [radius * Math.cos(angle), /*angle for calculating x,y,z points on axis*/
-		   radius * Math.sin(angle), /*data values considered as radius for accuracy of coordinates*/
-		   zplane]					/*values for Z-axis*/
+		radius * Math.sin(angle), /*data values considered as radius for accuracy of coordinates*/
+		zplaneValue]					/*values for Z-axis*/
 }
+		
+// var initAnimationUI = true;
+// var runAnimation = false;
+// var isPlay = false;
+// var startButton = document.getElementById( 'startButtonId' );
+// var resetButton = document.getElementById( 'resetButtonId' );
+// window.onload = function () {
+// 	startButton.onclick = function StartAnimation() {
+	
+// 		if (initAnimationUI) {
+// 		  initAnimationUI = false;
+// 		  runAnimation = true;
+// 		}
+// 		// Start and Pause 
+// 		if (runAnimation) { 
+// 		  startButton.innerHTML = 'Pause';
+// 		  runAnimation = false;
+// 		  isPlay = true;
+// 		  render(data)
+// 		  } else {
+// 				startButton.innerHTML = 'Restart';
+// 				runAnimation = true;
+// 				isPlay = false;
+// 		}
+// 	}
+// }()
+
+// window.onload = function () {
+// 	resetButton.onclick = function ResetParameters() {
+	
+// 		// Set StartButton to Start  
+// 		startButton.innerHTML = 'Start';
+		
+// 		// Boolean for Stop Animation
+// 		initAnimationUI = true;
+// 		runAnimation = false;
+// 		theta = 0;
+// 		isPlay = false;
+// 		render(data);
+// 	}
+// }
