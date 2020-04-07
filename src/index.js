@@ -25,8 +25,7 @@ async function run(content) {
 
 let configuration = {
 	layerStatusControl : true,
-	displayOption1: true,
-	displayOption2: false,
+	displayOption: "one",
 	metricMagnifier: 5,
 	layerMidColor : 0xDFDF0B,
 	mainAppColor : 0x4EC163,
@@ -72,16 +71,18 @@ function displayLabels(data) {
 }
 
 function readyToExecute (data) {
-	const dataIterator = dataGenerator(data);
-	const newData = dataIterator.next().value;
-	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);
-	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);
+	const dataIterator = dataGenerator(data);//ok
+	const newData = dataIterator.next().value;//ok
+	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);//ok
+	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);//ok
 	
-	let zAxis = configuration.zplane.zplaneInitial;
-	let previousLayer = null;
-	let layerIndex = 0;
-	for (let layer in newData) {
-		let metric = newData[layer].metrics;
+	let zAxis = configuration.zplane.zplaneInitial;//ok
+	let previousLayer = null;//ok
+	let layerIndex = 0;//ok
+
+if (configuration.displayOption === "one"){
+	for (let layer in newData) {//ok
+		let metric = newData[layer].metrics;//ok
 		const metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
 		const metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
 		const metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
@@ -133,18 +134,7 @@ function readyToExecute (data) {
 		layerIndex++;
 	}
 	return newData;
-}
-
-function readyToExecute2 (data) {
-	
-	const dataIterator = dataGenerator(data);
-	const newData = dataIterator.next().value;
-	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);
-	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);
-	
-	let zAxis = configuration.zplane.zplaneInitial;
-	let previousLayer = null;
-	let layerIndex = 0;
+} else if (configuration.displayOption === "two"){
 	for (let layer in newData) {
 		let metric = newData[layer].metrics;
 		const metricValueMax = metricPoint(Object.values(metric).map(item => item.max /100), zAxis);
@@ -198,6 +188,7 @@ function readyToExecute2 (data) {
 	}
 	return newData;
 }
+}
 
 function drawPlaneLine(planePoint, i, planePointLength, material) {
 	scene.add(new SimpleLine(planePoint[i], planePoint[(i+1)  % planePointLength], material))
@@ -247,11 +238,7 @@ function createLabel(textContent, vector3, layerIndex) {
  * @param {data} data rendering data constantly with new instance of data in animation loop
  */
 function render(data) {
-	if(configuration.displayOption1) {
-		data = readyToExecute(data);
-	} else if (configuration.displayOption2) {
-		data = readyToExecute2(data);
-	}
+    data = readyToExecute(data);;
 	controls.update();
 	renderer.render(scene, camera);
 	//remove objects from scene except labels
