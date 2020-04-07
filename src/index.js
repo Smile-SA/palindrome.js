@@ -24,7 +24,9 @@ async function run(content) {
 }
 
 let configuration = {
-	LayerStatusControl : true,
+	layerStatusControl : true,
+	displayOption1: true,
+	displayOption2: false,
 	metricMagnifier: 5,
 	layerMidColor : 0xDFDF0B,
 	mainAppColor : 0x4EC163,
@@ -133,13 +135,77 @@ function readyToExecute (data) {
 	return newData;
 }
 
+function readyToExecute2 (data) {
+	
+	const dataIterator = dataGenerator(data);
+	const newData = dataIterator.next().value;
+	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);
+	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);
+	
+	let zAxis = configuration.zplane.zplaneInitial;
+	let previousLayer = null;
+	let layerIndex = 0;
+	for (let layer in newData) {
+		let metric = newData[layer].metrics;
+		const metricValueMax = metricPoint(Object.values(metric).map(item => item.max /100), zAxis);
+		const metricValueCurrent = metricPoint(Object.values(metric).map(item => item.current/100), zAxis);
+		const metricValueMin = metricPoint(Object.values(metric).map(item => item.min/100), zAxis);
+		const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
+		const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
+		const layerStatus = (current/max)*100;
+		console.log(layerStatus);
+		const planeLength = Object.values(metric).length;
+		const planePoints = [metricValueMax, metricValueCurrent, metricValueMin];
+		if (previousLayer !== null) {
+			const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max /100), zAxis + configuration.zplane.zplaneMultilayer);
+			const previousPlaneLength = Object.values(previousLayer).length;
+			if (planeLength >= previousPlaneLength) {
+				for(let i = 0; i < planeLength; i++) { 
+					scene.add(
+						new SimpleLine(metricValueMax[i], previousValueMax[(i+1) % previousPlaneLength], lineMaterialTransparent),
+						new SimpleLine(metricValueMax[(i+1) % planeLength], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
+						new Triangle(metricValueMax[i], metricValueMax[(i+1)  % planeLength], previousValueMax[(i+1)  % previousPlaneLength], configuration.mainAppColor),
+						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i)  % planeLength], configuration.mainAppColor)
+						)
+				}
+			}
+			else {
+				for(let i = 0; i < previousPlaneLength; i++) { 
+					scene.add(
+						new SimpleLine(previousValueMax[i], metricValueMax[(i+1)  % planeLength], lineMaterialTransparent),
+						new SimpleLine(previousValueMax[(i+1) % previousPlaneLength], metricValueMax[(i+1) % planeLength], lineMaterial),
+						new Triangle(metricValueMax[(i)  % planeLength], metricValueMax[(i+1)  % planeLength], previousValueMax[(i)  % previousPlaneLength], configuration.mainAppColor),
+						new Triangle(previousValueMax[(i)  % previousPlaneLength], previousValueMax[(i+1)  % previousPlaneLength], metricValueMax[(i+1)  % planeLength], configuration.mainAppColor)
+					)
+				}
+			}
+		}
+		for(let i = 0; i < planeLength; i++) {
+			for(let planePoint of planePoints) {
+				drawPlaneLine(planePoint, i, planeLength, lineMaterial);
+			}
+			drawTrianglesInALayer(metricValueMax, metricValueCurrent, i,planeLength, layerColorDecidedByLayerStatus(layerStatus));
+			drawTrianglesInALayer(metricValueCurrent, metricValueMin, i,planeLength, configuration.layerMidColor);
+		}
+		const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+		for (let i = 0; i < planeLength; i++) {
+			const label = sortedLabels[i];
+			label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+		}
+		zAxis -= configuration.zplane.zplaneMultilayer;
+		previousLayer = metric;
+		layerIndex++;
+	}
+	return newData;
+}
+
 function drawPlaneLine(planePoint, i, planePointLength, material) {
 	scene.add(new SimpleLine(planePoint[i], planePoint[(i+1)  % planePointLength], material))
 }
 
 function layerColorDecidedByLayerStatus(value) {
 	let layerStatusColor = configuration.statusColor.min;
-	if (configuration.LayerStatusControl) {
+	if (configuration.layerStatusControl) {
 		if (value >= configuration.statusRange.low && value <= configuration.statusRange.med ){
 			return layerStatusColor;
 		}
@@ -181,7 +247,11 @@ function createLabel(textContent, vector3, layerIndex) {
  * @param {data} data rendering data constantly with new instance of data in animation loop
  */
 function render(data) {
-	data = readyToExecute(data);
+	if(configuration.displayOption1) {
+		data = readyToExecute(data);
+	} else if (configuration.displayOption2) {
+		data = readyToExecute2(data);
+	}
 	controls.update();
 	renderer.render(scene, camera);
 	//remove objects from scene except labels

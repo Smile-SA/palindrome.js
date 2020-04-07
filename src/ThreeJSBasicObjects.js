@@ -9,6 +9,7 @@ function initCamera() {
 }
 
 function initRenderer() {
+	// const pallindrome = document.getElementById("pallindrome");
 	const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );

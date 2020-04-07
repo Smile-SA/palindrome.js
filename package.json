@@ -7,11 +7,16 @@
   "author": "farooque.mustafa <farooque.mustafa@alterway.fr>",
   "license": "private",
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@storybook/html": "^5.3.18",
+    "babel-loader": "^8.1.0",
     "parcel-bundler": "^1.12.4"
   },
   "scripts": {
     "dev": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "three": "^0.112.1",
