@@ -9,20 +9,22 @@ function initCamera() {
 }
 
 function initRenderer() {
-	// const pallindrome = document.getElementById("pallindrome");
+	let pallindromeDiv = document.getElementById("pallindrome");
+	console.log('hello world');
 	const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	document.pallindromeDiv.appendChild( renderer.domElement );
 	return renderer;
 }
 
 function initLabelsRenderer() {
+	const pallindromeDiv = document.getElementById("pallindrome");
 	const labelsRenderer = new CSS2DRenderer();
 	labelsRenderer.setSize( window.innerWidth, window.innerHeight );
 	labelsRenderer.domElement.style.position = 'absolute';
 	labelsRenderer.domElement.style.top = 0;
-	document.body.appendChild( labelsRenderer.domElement );
+	document.pallindromeDiv.appendChild( labelsRenderer.domElement );
 	return labelsRenderer;	
 }
 
