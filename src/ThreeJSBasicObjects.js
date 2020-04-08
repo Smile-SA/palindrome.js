@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer} from 'three-css2drender';
+import {configuration} from './configuration';
 
 function initCamera() {
 	const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
@@ -9,6 +10,9 @@ function initCamera() {
 }
 
 function initRenderer() {
+	// if (configuration.displayArea === 'pallindrome') {
+
+	// }
 	let pallindromeDiv = document.getElementById("pallindrome");
 	console.log('hello world');
 	const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
