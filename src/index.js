@@ -24,8 +24,6 @@ async function run(content) {
 	render(data)
 }
 
-
-
 function displayLabels(data) {
 	const dataIterator = dataGenerator(data);
 	const newData = dataIterator.next().value;
@@ -258,46 +256,3 @@ function findNew3DPoint( angle, radius, zplaneValue) {
 		radius * Math.sin(angle), /*data values considered as radius for accuracy of coordinates*/
 		zplaneValue]					/*values for Z-axis*/
 }
-
-
-export {configuration};
-// var initAnimationUI = true;
-// var runAnimation = false;
-// var isPlay = false;
-// var startButton = document.getElementById( 'startButtonId' );
-// var resetButton = document.getElementById( 'resetButtonId' );
-// window.onload = function () {
-// 	startButton.onclick = function StartAnimation() {
-	
-// 		if (initAnimationUI) {
-// 		  initAnimationUI = false;
-// 		  runAnimation = true;
-// 		}
-// 		// Start and Pause 
-// 		if (runAnimation) { 
-// 		  startButton.innerHTML = 'Pause';
-// 		  runAnimation = false;
-// 		  isPlay = true;
-// 		  render(data)
-// 		  } else {
-// 				startButton.innerHTML = 'Restart';
-// 				runAnimation = true;
-// 				isPlay = false;
-// 		}
-// 	}
-// }()
-
-// window.onload = function () {
-// 	resetButton.onclick = function ResetParameters() {
-	
-// 		// Set StartButton to Start  
-// 		startButton.innerHTML = 'Start';
-		
-// 		// Boolean for Stop Animation
-// 		initAnimationUI = true;
-// 		runAnimation = false;
-// 		theta = 0;
-// 		isPlay = false;
-// 		render(data);
-// 	}
-// }

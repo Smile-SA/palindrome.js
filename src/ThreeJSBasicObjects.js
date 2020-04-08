@@ -10,16 +10,20 @@ function initCamera() {
 }
 
 function initRenderer() {
-	// if (configuration.displayArea === 'pallindrome') {
-
-	// }
-	let pallindromeDiv = document.getElementById("pallindrome");
-	console.log('hello world');
-	const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.pallindromeDiv.appendChild( renderer.domElement );
-	return renderer;
+	if (configuration.displayArea === 'pallindrome') {
+		let pallindromeDiv = document.getElementById("pallindrome");
+		const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		pallindromeDiv.appendChild( renderer.domElement );
+		return renderer;
+	} else if (configuration.displayArea === "body") {
+		const renderer = new THREE.WebGLRenderer({antialias : true, alpha:true, transparent: true});
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
+		return renderer;
+	}
 }
 
 function initLabelsRenderer() {
@@ -28,7 +32,7 @@ function initLabelsRenderer() {
 	labelsRenderer.setSize( window.innerWidth, window.innerHeight );
 	labelsRenderer.domElement.style.position = 'absolute';
 	labelsRenderer.domElement.style.top = 0;
-	document.pallindromeDiv.appendChild( labelsRenderer.domElement );
+	pallindromeDiv.appendChild( labelsRenderer.domElement );
 	return labelsRenderer;	
 }
 
