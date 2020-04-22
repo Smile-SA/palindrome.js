@@ -60,7 +60,7 @@ function readyToExecute (data) {
 			const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
 			const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
 			const layerStatus = (current/max)*100;
-			console.log(layerStatus);
+			//console.log(layerStatus);
 			const planeLength = Object.values(metric).length;
 			const planePoints = [metricValueMax, metricValueMed, metricValueMin];
 			if (previousLayer !== null) {
@@ -159,7 +159,8 @@ function readyToExecute (data) {
 			layerIndex++;
 		}
 		return newData;
-	}
+	} 
+	else if (configuration.displayOption == "debug") {alert("debug")}
 }
 
 function drawPlaneLine(planePoint, i, planePointLength, material) {
@@ -223,7 +224,9 @@ function render(data) {
 		}
 	}	
 	labelsRenderer.render( scene, camera );
-	requestAnimationFrame(() => render(data));
+	if (configuration.mockupData == true){
+	    requestAnimationFrame(() => render(data));
+	}
 }
 
 /**

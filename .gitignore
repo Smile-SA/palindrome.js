@@ -2,3 +2,5 @@ dist
 node_modules
 .cache
 *log
+package.json
+yarn.lock
