@@ -1,13 +1,15 @@
+import { withKnobs, text } from "@storybook/addon-knobs";
+
 export default {
-  title: 'Demo',
+  title: 'Pallindrome',
+  decorators: [withKnobs]
 };
 
-export const Heading = () => '<h1>Hello World</h1>';
+export const Radar = () => '';
+//export const Simple = () => {
+//  const title = text('Title', 'Pallindrome - type 1');
+//  const content = `${title}`;
+//  return `<h1>${content}</h1>`;
+//};
 
-export const Button = () => {
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.innerText = 'Hello Button';
-  btn.addEventListener('click', e => console.log(e));
-  return btn;
-};
+import {testScript} from '../src/index.js';

@@ -10,6 +10,7 @@ const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
 
 const filePath = "data.json"
 const fileContent = new Request(filePath)
+
 run(fileContent)
 
 async function run(content) {

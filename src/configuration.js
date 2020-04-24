@@ -1,7 +1,7 @@
 export let configuration = {
-        mockupData : false,
+  mockupData : false,
 	layerStatusControl : true,
-	displayOption: 'debug',
+	displayOption: 'one',
 	displayArea : "pallindrome",
 	metricMagnifier: 5,
 	layerMidColor : 0xDFDF0B,
