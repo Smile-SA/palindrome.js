@@ -1,5 +1,5 @@
 export let configuration = {
-  mockupData : false,
+  mockupData : true,
 	layerStatusControl : true,
 	displayOption: 'one',
 	displayArea : "pallindrome",

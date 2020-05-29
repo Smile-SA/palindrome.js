@@ -6,6 +6,12 @@ import {initThreeObjects} from './ThreeJSBasicObjects';
 import {baseData} from './baseData';
 import {configuration} from './configuration';
 
+//module.exports.configurationjson = configuration;
+
+
+let k;
+export default k =  configuration;
+
 const { scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
 
 const filePath = "data.json"
@@ -47,7 +53,7 @@ function readyToExecute (data) {
 	const newData = dataIterator.next().value;
 	const lineMaterial = createLineMaterial(configuration.line.lineColor, configuration.line.lineOpacity);
 	const lineMaterialTransparent = createLineMaterial(configuration.mainAppColor, configuration.line.lineTranparency);
-	
+
 	let zAxis = configuration.zplane.zplaneInitial;
 	let previousLayer = null;
 	let layerIndex = 0;
@@ -68,7 +74,7 @@ function readyToExecute (data) {
 				const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zAxis + configuration.zplane.zplaneMultilayer);
 				const previousPlaneLength = Object.values(previousLayer).length;
 				if (planeLength >= previousPlaneLength) {
-					for(let i = 0; i < planeLength; i++) { 
+					for(let i = 0; i < planeLength; i++) {
 						scene.add(
 							new SimpleLine(metricValueMax[i], previousValueMax[(i+1) % previousPlaneLength], lineMaterialTransparent),
 							new SimpleLine(metricValueMax[(i+1) % planeLength], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
@@ -78,7 +84,7 @@ function readyToExecute (data) {
 					}
 				}
 				else {
-					for(let i = 0; i < previousPlaneLength; i++) { 
+					for(let i = 0; i < previousPlaneLength; i++) {
 						scene.add(
 							new SimpleLine(previousValueMax[i], metricValueMax[(i+1)  % planeLength], lineMaterialTransparent),
 							new SimpleLine(previousValueMax[(i+1) % previousPlaneLength], metricValueMax[(i+1) % planeLength], lineMaterial),
@@ -100,7 +106,7 @@ function readyToExecute (data) {
 				const label = sortedLabels[i];
 				label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
 			}
-			
+
 			zAxis -= configuration.zplane.zplaneMultilayer;
 			previousLayer = metric;
 			layerIndex++;
@@ -123,7 +129,7 @@ function readyToExecute (data) {
 				const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max /100), zAxis + configuration.zplane.zplaneMultilayer);
 				const previousPlaneLength = Object.values(previousLayer).length;
 				if (planeLength >= previousPlaneLength) {
-					for(let i = 0; i < planeLength; i++) { 
+					for(let i = 0; i < planeLength; i++) {
 						scene.add(
 							new SimpleLine(metricValueMax[i], previousValueMax[(i+1) % previousPlaneLength], lineMaterialTransparent),
 							new SimpleLine(metricValueMax[(i+1) % planeLength], previousValueMax[(i+1) % previousPlaneLength], lineMaterial),
@@ -133,7 +139,7 @@ function readyToExecute (data) {
 					}
 				}
 				else {
-					for(let i = 0; i < previousPlaneLength; i++) { 
+					for(let i = 0; i < previousPlaneLength; i++) {
 						scene.add(
 							new SimpleLine(previousValueMax[i], metricValueMax[(i+1)  % planeLength], lineMaterialTransparent),
 							new SimpleLine(previousValueMax[(i+1) % previousPlaneLength], metricValueMax[(i+1) % planeLength], lineMaterial),
@@ -160,7 +166,7 @@ function readyToExecute (data) {
 			layerIndex++;
 		}
 		return newData;
-	} 
+	}
 	else if (configuration.displayOption == "debug") {alert("debug")}
 }
 
@@ -216,14 +222,14 @@ function render(data) {
 	controls.update();
 	renderer.render(scene, camera);
 	//remove objects from scene except labels
-	for( let i = scene.children.length - 1; i >= 0; i--) { 
+	for( let i = scene.children.length - 1; i >= 0; i--) {
 		let obj = scene.children[i];
 		let undeletedObject = scene.getObjectByName("labels");
 		if (obj.name !== 'labels' && undeletedObject !== obj) {
 			scene.remove(obj);
 			continue
 		}
-	}	
+	}
 	labelsRenderer.render( scene, camera );
 	if (configuration.mockupData == true){
 	    requestAnimationFrame(() => render(data));
