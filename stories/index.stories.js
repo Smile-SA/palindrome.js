@@ -1,4 +1,6 @@
-import { withKnobs, text } from "@storybook/addon-knobs";
+import { withKnobs, text, number, boolean, color } from "@storybook/addon-knobs";
+
+import pallindrome from '../src/index';
 
 export default {
   title: 'Pallindrome',
@@ -6,20 +8,48 @@ export default {
 };
 
 //note : this is buggish as at the current moment palyndrome is displayed in every views
-export const Palyndrome = () => '';
+export const Palyndrome = () => {
+  const config = {
+    mockupData : boolean('mockupData', true),
+    layerStatusControl : boolean('layerStatusControl', true),
+    displayOption: text('displayOption', 'one'),
+    displayArea : text('displayArea', 'pallindrome'),
+    metricMagnifier: number('metricMagnifier', 5),
+    layerMidColor : color('layerMidColor', '#DFDF0B'),
+    mainAppColor : color('mainAppColor', '#4EC163'),
+    subAppColor : color('subAppColor', '#9FC5E8'),
+    statusRange : {
+      low : number('statusRange low', '0'),
+      med : number('statusRange med', '30'),
+      high: number('statusRange high', '60')
+    },
+    statusColor : {
+      low : color('statusColor low', '#9FC5E8'),
+      med : color('statusColor med', '#00FF00'),
+      high : color('statusColor high', '#FF0000')
+    },
+    line :{
+      lineColor : color('lineColor', '#000000'),
+      lineOpacity : number('lineOpacity', 1),
+      lineTranparency : number('lineTranparency', 0.5),
+      lineWidth : number('lineWidth', 3)
+    },
+    zplane : {
+      zplaneInitial : number('zplaneInitial', 20),
+      zplaneHeight : number('zplaneHeight', 40),
+      zplaneMultilayer : number('zplaneMultilayer', 30)
+    }
+  };
+
+  const container = document.createElement('div');
+  pallindrome(container, config);
+
+  return container;
+};
 
 //note : example below provides a modifiable title with knobs. if the knobs panel doesn't shows up, run `localstorage.clear()` in the browser console
 export const SimpleKnob = () => {
-const title = text('Title', 'Pallindrome - type 1');
-const content = `${title}`;
-return `<h1>${content}</h1>`;
+  const title = text('Title', 'Pallindrome - type 1');
+  const content = `${title}`;
+  return `<h1>${content}</h1>`;
 };
-
-
-//note : below calls the palyndrome and an external configuration file. configuration is not availble through knobs.
-import {config} from '../src/configuration';
-import {pallindrome} from '../src/index';
-setTimeout(function(){
-  console.log(config);
-  console.log(pallindrome)
-},5000)
