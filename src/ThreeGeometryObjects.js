@@ -8,6 +8,12 @@ export class SimpleLine extends THREE.Line {
 		geometry.vertices.push(new THREE.Vector3(value2[0], value2[2], value2[1]) );
 		super(geometry, transparentLineMaterial)
 	}
+
+	update(a, b) {
+		this.geometry.vertices[0].set(a[0], a[2], a[1]);
+		this.geometry.vertices[1].set(b[0], b[2], b[1]);
+    	this.geometry.verticesNeedUpdate = true;
+	}
 }
 
 export class Triangle extends THREE.Mesh {
@@ -24,5 +30,12 @@ export class Triangle extends THREE.Mesh {
 		geometry.faces.push(face);
 		const material = new THREE.MeshBasicMaterial( {color, transparent: true, opacity: 0.5, side: THREE.DoubleSide} );
 		super(geometry, material);
+	}
+
+	update(a, b, c) {
+		this.geometry.vertices[0].set(a[0], a[2], a[1]);
+		this.geometry.vertices[1].set(b[0], b[2], b[1]);
+		this.geometry.vertices[2].set(c[0], c[2], c[1]);
+    	this.geometry.verticesNeedUpdate = true;
 	}
 }
