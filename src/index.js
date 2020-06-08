@@ -3,7 +3,6 @@ import { CSS2DObject } from 'three-css2drender';
 import { Triangle, SimpleLine } from './ThreeGeometryObjects';
 import { dataGenerator } from './mockupData';
 import { initThreeObjects } from './ThreeJSBasicObjects';
-import { baseData } from './baseData';
 
 export default (function (parentElement, conf) {
 	const lineMaterial = createLineMaterial(conf.line.lineColor, conf.line.lineOpacity);
@@ -33,7 +32,7 @@ export default (function (parentElement, conf) {
 		try {
 			data = await result.json();
 		} catch (error) {
-			data = baseData();
+			data = conf.data;
 		}
 		dataIterator = dataGenerator(data);
 		displayLabels(data);

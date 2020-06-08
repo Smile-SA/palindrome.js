@@ -1,6 +1,7 @@
-import { withKnobs, text, number, boolean, color } from "@storybook/addon-knobs";
+import { withKnobs, text, number, boolean, color, object } from "@storybook/addon-knobs";
 
 import pallindrome from '../src/index';
+import { baseData } from '../src/baseData';
 
 export default {
   title: 'Pallindrome',
@@ -38,7 +39,8 @@ export const Palyndrome = () => {
       zplaneInitial : number('zplaneInitial', 20),
       zplaneHeight : number('zplaneHeight', 40),
       zplaneMultilayer : number('zplaneMultilayer', 30)
-    }
+    },
+    data: object('data', baseData())
   };
 
   const container = document.createElement('div');
