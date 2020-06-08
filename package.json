@@ -20,7 +20,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "three": ">= 0.91",
+    "three": ">= 0.117.1",
     "three-css2drender": "^1.0.0"
   },
   "browserslist": [
