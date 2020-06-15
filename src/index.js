@@ -10,6 +10,7 @@ export default (function (parentElement, conf) {
 	const meshs = {};
 
 	let dataIterator;
+	let newData;
 
 	const {
 		scene,
@@ -34,6 +35,7 @@ export default (function (parentElement, conf) {
 		} catch (error) {
 			data = conf.data;
 		}
+		newData = data;
 		dataIterator = dataGenerator(data);
 		displayLabels(data);
 		render(data);
@@ -55,7 +57,9 @@ export default (function (parentElement, conf) {
 	}
 
 	function readyToExecute() {
-		const newData = dataIterator.next().value;
+		if(conf.mockupData) {
+			newData = dataIterator.next().value;
+		}
 
 		let zAxis = conf.zplane.zplaneInitial;
 		let previousLayer = null;
@@ -281,9 +285,7 @@ export default (function (parentElement, conf) {
 		renderer.render(scene, camera);
 		
 		labelsRenderer.render(scene, camera);
-		if (conf.mockupData == true) {
-			requestAnimationFrame(render);
-		}
+		requestAnimationFrame(render);
 	}
 
 	/**

@@ -44,7 +44,7 @@ export const Palyndrome = () => {
   };
 
   const container = document.createElement('div');
-  pallindrome(container, config);
+  pallindrome(container, JSON.parse(JSON.stringify(config)));
 
   return container;
 };
