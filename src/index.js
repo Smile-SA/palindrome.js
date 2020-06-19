@@ -171,6 +171,7 @@ export default (function (parentElement, conf) {
 				for (let i = 0; i < planeLength; i++) {
 					const label = sortedLabels[i];
 					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+					label.element.innerText = Object.keys(metric)[i] + " " + Object.values(metric)[i].current.toFixed();
 				}
 
 				zAxis -= conf.zplane.zplaneMultilayer;
@@ -244,6 +245,7 @@ export default (function (parentElement, conf) {
 				for (let i = 0; i < planeLength; i++) {
 					const label = sortedLabels[i];
 					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+					label.element.innerText = Object.keys(metric)[i] + " " + Object.values(metric)[i].current.toFixed();
 				}
 				zAxis -= conf.zplane.zplaneMultilayer;
 				previousLayer = metric;
