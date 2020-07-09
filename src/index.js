@@ -11,12 +11,9 @@ import { initThreeObjects } from './ThreeJSBasicObjects';
 export default (function (parentElement, conf) {
 	let lineMaterial;
 	let lineMaterialTransparent;
-
 	const meshs = {};
-
 	let dataIterator;
 	let newData;
-
 	const {
 		scene,
 		labelsRenderer,
@@ -78,14 +75,13 @@ export default (function (parentElement, conf) {
 		let layerIndex = 0;
 
 		for (let layer in data) {
-			let metric = data[layer].metrics
-			const metricTitles = Object.keys(metric);
-			const metricValues = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
-
-			for (let idx = 0; idx < metricValues.length; idx++) {
-				scene.add(createLabel(metricTitles[idx], metricValues[idx], layerIndex));
+			let metric = data[layer].metrics;
+			
+			for (const [key, value] of Object.entries(metric)) {
+				const labelValue = metricPoint((value.max / value.current), zAxis);
+			  	scene.add(createLabel(value.label, labelValue, layerIndex));
 			}
-
+			
 			zAxis -= conf.zplane.zplaneHeight
 			layerIndex++;
 		}
@@ -112,7 +108,6 @@ export default (function (parentElement, conf) {
 				const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
 				const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
 				const layerStatus = (current / max) * 100;
-
 				const planeLength = Object.values(metric).length;
 				const planePoints = [metricValueMax, metricValueMed, metricValueMin];
 				if (previousLayer !== null) {
@@ -171,7 +166,7 @@ export default (function (parentElement, conf) {
 				for (let i = 0; i < planeLength; i++) {
 					const label = sortedLabels[i];
 					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-					label.element.innerText = Object.keys(metric)[i] + " " + Object.values(metric)[i].current.toFixed();
+					label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
 				}
 
 				zAxis -= conf.zplane.zplaneMultilayer;
@@ -344,7 +339,6 @@ export default (function (parentElement, conf) {
 		updateMeshs();
 		controls.update();
 		renderer.render(scene, camera);
-
 		labelsRenderer.render(scene, camera);
 		requestAnimationFrame(render);
 	}
