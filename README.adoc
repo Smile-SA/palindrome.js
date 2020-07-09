@@ -1,109 +1,65 @@
-# ** 3D resprentation of Metric System **
+# ** Palindrome.js **
 
-This project aims to display 3D representation of metric system, where you can add different sets of metrics with some definition and analyze behavior/functionality with time series.
+```Palindrome.js``` ìs a ```three.js```` based library which provides a 3D representation for system metrics and KPIs, presented as sets within layers, to easily identify relations in behaviors or trends evolutions for your real time systems. Custom algorithms, behaviors, styles and color schemes can easily be added. *```Palyndrome.js``` is still considered as an experimental / beta prototype, feedbacks are welcome !*
+
+<!---
+sets of metrics with some definition and analyze behavior/functionality with time series.
+-->
+
 
 ### Motivation
 
-Idea behind this project is to optimize throughput and based on relation defined for metrics you can continously optimize, predict and plan your project/system/resources.
+Idea behind this project is to go one step further current monitoring and dashboarding solutions, by enabling a scalable, user oriented, single view for multi-dimensional or heterogeneous sets of data points. Use cases are various, from comparing system metrics to external indicators, to stacking up multi-tenancy informations groups for measuring differences or similarities. ```Palyndrome.js``` can both be used as a live UI component for a larger BI dashboard, or as the signal source for a computer-vision based workflow.
+
+<!--
+vectorized supervision optimize throughput and based on relation defined for metrics you can continously optimize, predict and plan your project/system/resources.
+-->
+
 
 ## Tech/framework used
 Project is created with:
 
 * Three.js
+* love
 
 ## Setup
-To run this project first install npm or yarn, I prefer yarn and I am going to show you how I created this project:
-
-On Debian or Ubuntu Linux, you can install Yarn via Debian package repository
-```
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-```
-
-Then you can simply:
+This project uses ```yarn``` as the dependency manager, ```parcel-bundler``` as the packager, ```three.js``` as its 3D renderer and ```storybook``` for functional testing. 
 
 ```
-sudo apt update && sudo apt install yarn
+yarn install
 ```
 
-Here also I used *Parcel Bundler* web application bundler.
-First install Parcel using Yarn:
+Then, run ```storybook``` for an interactive session :
 
 ```
-yarn global add parcel-bundler
+yarn storybook
 ```
 
-Create a package.json file in your project directory using:
-```
-yarn init
-```
-fill in the details about your project and install dependencies:
-```
-yarn add three
-yarn add three-css2drender
-```
-Adding parcel  bundler to your project:
+If for some reason the ```knobs``` panel isn't showing up, open your  browser developer console and type ```localStorage.clear()```
 
-```
-yarn add parcel-bundler --dev
-```
+Or alternatively the default local session :
 
-Then, add these tasks scripts to your project, by modifying your package.json:
-```
-{
-  "scripts": {
-    "dev": "parcel <your entry file>",
-    "build": "parcel build <your entry file>"
-  }
-}
-```
-
-Finally You will require json file to fetch data (metrics). Here you will find a *beseData* file pre-configured for you to have an idea how this application works. 
-An example of data structure is shown below:
-
-### Code Example
-```
-{
-    "systemMetrics":
-        {
-            "throughput" : {
-                "label" : "CPU",
-                "unit" : "cycle / seconds",
-                "min" : 1000,
-                "med" : 5000,
-                "max" : 10000,
-                "current" : 3900
-            },
-            "availability" : {
-                "label" : "RAM",
-                "unit" : "GB",
-                "min" : 160,
-                "med" : 640,
-                "max" : 1280,
-                "current" : 480
-            }
-        }
-}
-```
-Then, you will be able to run the program using:
 ```
 yarn dev
 ```
 
-
-
-
-
 ### API Reference
+
+Todo : add API or configuration documentation
 
 ### How to use?
 
+Todo : add a step by step integration documentation
+
 ### Contribute
 
+Simply open a pull request over the repository to describe your changes.
+
 ### Credits
+Rnd Team @ Alter Way
+Farooque Mustafa
+Damien Gilles
+Jonathan Rivalan
 
-### License & Copyright
-
-© Farooque Mustafa,  R&D Engineer (trainee) at Alterway
-
+### License
 Licensed under MIT license
