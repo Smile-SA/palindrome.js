@@ -5,7 +5,7 @@ export function baseData() {
                "metrics" : 
                     {
                     "throughput" : {
-                        "label" : "CPU",
+                        "label" : "throughput",
                         "unit" : "cycle / seconds",
                         "min" : 100,
                         "med" : 500,
@@ -13,15 +13,15 @@ export function baseData() {
                         "current" : 390
                     },
                     "availability" : {
-                        "label" : "RAM",
+                        "label" : "availability",
                         "unit" : "GB",
                         "min" : 160,
                         "med" : 640,
                         "max" : 1280,
-                        "current" : 480
+                        "current" : 480 
                     },
                     "inboundLatency" : {
-                        "label" : "RAM",
+                        "label" : "inboundLatency",
                         "unit" : "GB",
                         "min" : 120,
                         "med" : 640,
@@ -29,26 +29,26 @@ export function baseData() {
                         "current" : 620
                     },
                     "outboundLatency" : {
-                        "label" : "HDD",
+                        "label" : "outboundLatency",
                         "unit" : "GB",
                         "min" : 102,
                         "med" : 512,
                         "max" : 1024,
-                        "current" : 450
+                        "current" : 450 
                     },
                     "ioSpeed" : {
-                        "label" : "BW",
+                        "label" : "ioSpeed",
                         "unit" : "MB / seconds",
                         "min" : 102,
                         "med" : 512,
                         "max" : 1024,
-                        "current" : 450
+                        "current" : 450 
                     }
                     },
     
-               "layer" : 
+               "layer" :  
                     {
-                    "layerBehavior" : "someting",
+                    "layerBehavior" : "something",
                     "defaultColor" : "green",
                     "publicColorOption" : "random calls function to pick a color"
                     }
@@ -99,16 +99,14 @@ export function baseData() {
                         "current" : 450
                     }
                     },
-    
+     
                 "layer" : 
                     {
-                    "layerBehavior" : "someting",
+                    "layerBehavior" : "something",
                     "defaultColor" : "green",
                     "publicColorOption" : "random calls function to pick a color"
                     }
-                
-            }
+                 
+            } 
     }
-    
-    
 }
