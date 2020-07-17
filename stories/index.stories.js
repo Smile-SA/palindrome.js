@@ -4,11 +4,10 @@ import palindrome from '../src/index';
 import { baseData } from '../src/baseData';
 
 export default {
-    title: 'Palindrome',
+    title: 'Palindrome Examples',
     decorators: [withKnobs]
 };
 
-//note : this is buggish as at the current moment palyndrome is displayed in every views
 export const DefaultConfigurable = () => {
     const config = {
         mockupData: boolean('mockupData', true),
@@ -49,7 +48,6 @@ export const DefaultConfigurable = () => {
     return container;
 };
 
-//note : example below provides a modifiable title with knobs. if the knobs panel doesn't shows up, run `localstorage.clear()` in the browser console
 export const CustomConfigurable = () => {
     const title = text('Title', 'Pallindrome - type 1');
     const config = {
