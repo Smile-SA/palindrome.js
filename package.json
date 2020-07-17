@@ -1,11 +1,11 @@
 {
-  "name": "pallidrome",
+  "name": "Palindrome",
   "version": "1.0.0",
-  "description": "Two layers with yarn",
+  "description": "3D probe for metrics and KPIs",
   "main": "index.html",
   "repository": "git@git.rnd.alterway.fr:overboard/3d_radar_diagram.git",
-  "author": "farooque.mustafa <farooque.mustafa@alterway.fr>",
-  "license": "private",
+  "author": "Alter Way RnD  <rnd@alterway.fr>",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@storybook/addon-knobs": "^5.3.18",

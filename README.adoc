@@ -35,9 +35,9 @@ Then, run ```storybook``` for an interactive session :
 yarn storybook
 ```
 
-If for some reason the ```knobs``` panel isn't showing up, open your  browser developer console and type ```localStorage.clear()```
+*If for some reason the ```knobs``` panel isn't showing up, open your  browser developer console and type ```localStorage.clear()```*
 
-Or alternatively the default local session :
+Or alternatively run the default local session :
 
 ```
 yarn dev
