@@ -1,4 +1,4 @@
-# ** Palindrome.js **
+# Palindrome.js
 
 ```Palindrome.js``` is a ```three.js``` based library which provides a 3D representation for system metrics and KPIs, presented as sets within layers, to easily identify relations in behaviors or trends evolutions for your realtime systems. Custom algorithms, behaviors, styles and color schemes can easily be modified or added. 
 
