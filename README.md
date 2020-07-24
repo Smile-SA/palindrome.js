@@ -1,8 +1,8 @@
 # ** Palindrome.js **
 
-```Palindrome.js``` ìs a ```three.js```` based library which provides a 3D representation for system metrics and KPIs, presented as sets within layers, to easily identify relations in behaviors or trends evolutions for your realtime systems. Custom algorithms, behaviors, styles and color schemes can easily be modified or added. 
+```Palindrome.js``` is a ```three.js``` based library which provides a 3D representation for system metrics and KPIs, presented as sets within layers, to easily identify relations in behaviors or trends evolutions for your realtime systems. Custom algorithms, behaviors, styles and color schemes can easily be modified or added. 
 
-*```Palyndrome.js``` is still considered as an experimental / beta prototype, feedbacks are welcome !*
+***```Palyndrome.js``` is still considered as an experimental / beta prototype, feedbacks are welcome !***
 
 ### Motivation
 
@@ -12,7 +12,7 @@ Idea behind this project is to go one step further in current monitoring and das
 Project is created with:
 
 * Three.js
-* love
+* love <3
 
 ## Setup
 This project uses ```yarn``` as the dependency manager, ```parcel-bundler``` as the packager, ```three.js``` as its 3D renderer and ```storybook``` for functional testing. 
@@ -48,10 +48,10 @@ Todo : add a step by step integration documentation
 Simply open a pull request over the repository to describe your changes.
 
 ### Credits
-Rnd Team @ Alter Way
-Farooque Mustafa
-Damien Gilles
-Jonathan Rivalan
+- Rnd Team @ Alter Way
+- Farooque Mustafa
+- Damien Gilles
+- Jonathan Rivalan
 
 ### License
 Licensed under MIT license
