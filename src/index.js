@@ -19,11 +19,13 @@ export default (function (parentElement, conf) {
 		labelsRenderer,
 		controls,
 		renderer,
-		camera
+	 	camera
 	} = initThreeObjects();
 
 	parentElement.appendChild(renderer.domElement);
 	parentElement.appendChild(labelsRenderer.domElement);
+
+
 
 	// TODO change this when we have a real data source
 	const fileContent = new Request("data.json");
@@ -61,8 +63,21 @@ export default (function (parentElement, conf) {
 		});
 
 		// rendering
+		if (conf.displayGrid){
+			displayGrid();
+		}
 		displayLabels(data);
 		render(data);
+	}
+
+	/**
+	 * Adds a grid at Z = 0
+	 */
+	function displayGrid(){
+		var size = 50;
+		var divisions = 50;
+		var gridHelper = new THREE.GridHelper( size, divisions );
+		scene.add(gridHelper);
 	}
 
 	/**
@@ -113,15 +128,18 @@ export default (function (parentElement, conf) {
 				if (previousLayer !== null) {
 					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zAxis + conf.zplane.zplaneMultilayer);
 					const previousPlaneLength = Object.values(previousLayer).length;
+					//adds side texture if the palindrome is more than 1 plane
 					if (planeLength >= previousPlaneLength) {
 						for (let i = 0; i < planeLength; i++) {
 							if (meshs['0' + layer + i]) {
 								// if init done
+								// TODO : check if below code is needed
 								meshs['0' + layer + i].update(metricValueMax[i], previousValueMax[(i + 1) % previousPlaneLength])
 								meshs['1' + layer + i].update(metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength])
 								meshs['2' + layer + i].update(metricValueMax[i], metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength])
 								meshs['3' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % planeLength])
 							} else {
+								//TODO better meshes ID handling (loop ?)
 								//init objects
 								meshs['0' + layer + i] = new SimpleLine(metricValueMax[i], previousValueMax[(i + 1) % previousPlaneLength], lineMaterialTransparent);
 								scene.add(meshs['0' + layer + i]);
@@ -134,6 +152,7 @@ export default (function (parentElement, conf) {
 							}
 						}
 					} else {
+						//todo : what is this conidtion ? single plane ??
 						for (let i = 0; i < previousPlaneLength; i++) {
 							if (meshs['4' + layer + i]) {
 								// if init done

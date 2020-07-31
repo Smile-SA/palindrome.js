@@ -2,6 +2,7 @@ export let configuration = {
   mockupData : true,
 	layerStatusControl : true,
 	displayOption: 'one',
+        displayGrid: true,
 	displayArea : "pallindrome",
 	metricMagnifier: 5,
 	layerMidColor : 0xDFDF0B,
