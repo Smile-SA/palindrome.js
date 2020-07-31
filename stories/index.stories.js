@@ -1,9 +1,9 @@
 import { withKnobs, text, number, boolean, color, object } from "@storybook/addon-knobs";
 
 import palindrome from '../src/index';
-import { baseData } from '../src/baseData';
-import { customData } from '../src/customData';
-import { multiData } from '../src/multiData';
+import { baseData } from '../src/data_examples/baseData';
+import { customData } from '../src/data_examples/customData';
+import { multiData } from '../src/data_examples/multiData';
 
 export default {
     title: 'Palindrome Examples',
@@ -37,9 +37,9 @@ export const Default = () => {
             lineWidth: number('lineWidth', 3)
         },
         zplane: {
-            zplaneInitial: number('zplaneInitial', 20),
+            zplaneInitial: number('zplaneInitial', 0),
             zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', 30)
+            zplaneMultilayer: number('zplaneMultilayer', -20)
         },
         data: object('data', baseData())
     };
@@ -77,9 +77,9 @@ export const Custom = () => {
             lineWidth: number('lineWidth', 3)
         },
         zplane: {
-            zplaneInitial: number('zplaneInitial', 20),
+            zplaneInitial: number('zplaneInitial', 0),
             zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', 30)
+            zplaneMultilayer: number('zplaneMultilayer', -20)
         },
         data: object('data', customData())
     };
@@ -117,9 +117,9 @@ export const Multi = () => {
             lineWidth: number('lineWidth', 3)
         },
         zplane: {
-            zplaneInitial: number('zplaneInitial', 20),
+            zplaneInitial: number('zplaneInitial', 0),
             zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', 30)
+            zplaneMultilayer: number('zplaneMultilayer', -20)
         },
         data: object('data', multiData())
     };
