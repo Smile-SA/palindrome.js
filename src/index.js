@@ -9,6 +9,7 @@ import { initThreeObjects } from './ThreeJSBasicObjects';
  * @param {*} conf model's configuration
  */
 export default (function (parentElement, conf) {
+	var debug = true;
 	let lineMaterial;
 	let lineMaterialTransparent;
 	const meshs = {};
@@ -114,40 +115,77 @@ export default (function (parentElement, conf) {
 		let previousLayer = null;
 		let layerIndex = 0;
 
-		if (conf.displayOption === 'one') {
-			for (let layer in newData) {
-				const metric = newData[layer].metrics;
-				const metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
-				const metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
-				const metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
-				const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
-				const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
-				const layerStatus = (current / max) * 100;
-				const planeLength = Object.values(metric).length;
-				const planePoints = [metricValueMax, metricValueMed, metricValueMin];
+
+		for (let layer in newData) {
+			const metric = newData[layer].metrics;
+			const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
+			const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
+			const layerStatus = (current / max) * 100;
+			if (conf.displayOption == "three"){
+				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
+				var metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
+				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
+			} else if (conf.displayOption == "four"){
+				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 100), zAxis);
+				var metricValueCurrent = metricPoint(Object.values(metric).map(item => item.current / 100), zAxis);
+				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / 100), zAxis);
+			} else {
+				break;
+			}
+				
+			const metricsNumber = Object.values(metric).length;
+			const metricsPositions = [metricValueMax, metricValueMed, metricValueMin];
+			
+			if (debug == true){
+				console.log(metricsNumber)
+				console.log(metricsPositions)
+				debug = false;
+			}
+
+			//draws layers
+			for (let i = 0; i < metricsNumber; i++) {
+				for (let metricPosition of metricsPositions) {
+					//draws outside lines
+					drawLayerOutline(layer + '_0', metricPosition, i, metricsNumber, lineMaterial);
+				}
+				//draws innner layer shapes
+				drawTrianglesInALayer(layer + '_0', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
+				drawTrianglesInALayer(layer + '_1', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
+			}
+
+			//draws labels
+			const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+			for (let i = 0; i < metricsNumber; i++) {
+				const label = sortedLabels[i];
+				label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+				label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
+			}
+
+			//draws side planes
+			if (conf.displaySidePanels == true){
 				if (previousLayer !== null) {
 					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zAxis + conf.zplane.zplaneMultilayer);
 					const previousPlaneLength = Object.values(previousLayer).length;
 					//adds side texture if the palindrome is more than 1 plane
-					if (planeLength >= previousPlaneLength) {
-						for (let i = 0; i < planeLength; i++) {
+					if (metricsNumber >= previousPlaneLength) {
+						for (let i = 0; i < metricsNumber; i++) {
 							if (meshs['0' + layer + i]) {
 								// if init done
 								// TODO : check if below code is needed
 								meshs['0' + layer + i].update(metricValueMax[i], previousValueMax[(i + 1) % previousPlaneLength])
-								meshs['1' + layer + i].update(metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength])
-								meshs['2' + layer + i].update(metricValueMax[i], metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength])
-								meshs['3' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % planeLength])
+								meshs['1' + layer + i].update(metricValueMax[(i + 1) % metricsNumber], previousValueMax[(i + 1) % previousPlaneLength])
+								meshs['2' + layer + i].update(metricValueMax[i], metricValueMax[(i + 1) % metricsNumber], previousValueMax[(i + 1) % previousPlaneLength])
+								meshs['3' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % metricsNumber])
 							} else {
 								//TODO better meshes ID handling (loop ?)
 								//init objects
 								meshs['0' + layer + i] = new SimpleLine(metricValueMax[i], previousValueMax[(i + 1) % previousPlaneLength], lineMaterialTransparent);
 								scene.add(meshs['0' + layer + i]);
-								meshs['1' + layer + i] = new SimpleLine(metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength], lineMaterial);
+								meshs['1' + layer + i] = new SimpleLine(metricValueMax[(i + 1) % metricsNumber], previousValueMax[(i + 1) % previousPlaneLength], lineMaterial);
 								scene.add(meshs['1' + layer + i]);
-								meshs['2' + layer + i] = new Triangle(metricValueMax[i], metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength], conf.mainAppColor);
+								meshs['2' + layer + i] = new Triangle(metricValueMax[i], metricValueMax[(i + 1) % metricsNumber], previousValueMax[(i + 1) % previousPlaneLength], conf.mainAppColor);
 								scene.add(meshs['2' + layer + i]);
-								meshs['3' + layer + i] = new Triangle(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % planeLength], conf.mainAppColor);
+								meshs['3' + layer + i] = new Triangle(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % metricsNumber], conf.mainAppColor);
 								scene.add(meshs['3' + layer + i]);
 							}
 						}
@@ -156,43 +194,32 @@ export default (function (parentElement, conf) {
 						for (let i = 0; i < previousPlaneLength; i++) {
 							if (meshs['4' + layer + i]) {
 								// if init done
-								meshs['4' + layer + i].update(previousValueMax[i], metricValueMax[(i + 1) % planeLength])
-								meshs['5' + layer + i].update(previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength])
-								meshs['6' + layer + i].update(metricValueMax[(i) % planeLength], metricValueMax[(i + 1) % planeLength], previousValueMax[(i) % previousPlaneLength])
-								meshs['7' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength])
+								meshs['4' + layer + i].update(previousValueMax[i], metricValueMax[(i + 1) % metricsNumber])
+								meshs['5' + layer + i].update(previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % metricsNumber])
+								meshs['6' + layer + i].update(metricValueMax[(i) % metricsNumber], metricValueMax[(i + 1) % metricsNumber], previousValueMax[(i) % previousPlaneLength])
+								meshs['7' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % metricsNumber])
 							} else {
 								//init objects
-								meshs['4' + layer + i] = new SimpleLine(previousValueMax[i], metricValueMax[(i + 1) % planeLength], lineMaterialTransparent);
+								meshs['4' + layer + i] = new SimpleLine(previousValueMax[i], metricValueMax[(i + 1) % metricsNumber], lineMaterialTransparent);
 								scene.add(meshs['4' + layer + i]);
-								meshs['5' + layer + i] = new SimpleLine(previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength], lineMaterial);
+								meshs['5' + layer + i] = new SimpleLine(previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % metricsNumber], lineMaterial);
 								scene.add(meshs['5' + layer + i]);
-								meshs['6' + layer + i] = new Triangle(metricValueMax[(i) % planeLength], metricValueMax[(i + 1) % planeLength], previousValueMax[(i) % previousPlaneLength], conf.mainAppColor);
+								meshs['6' + layer + i] = new Triangle(metricValueMax[(i) % metricsNumber], metricValueMax[(i + 1) % metricsNumber], previousValueMax[(i) % previousPlaneLength], conf.mainAppColor);
 								scene.add(meshs['6' + layer + i]);
-								meshs['7' + layer + i] = new Triangle(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength], conf.mainAppColor);
+								meshs['7' + layer + i] = new Triangle(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % metricsNumber], conf.mainAppColor);
 								scene.add(meshs['7' + layer + i]);
 							}
 						}
 					}
 				}
-				for (let i = 0; i < planeLength; i++) {
-					for (let planePoint of planePoints) {
-						drawPlaneLine(layer + '_0', planePoint, i, planeLength, lineMaterial);
-					}
-					drawTrianglesInALayer(layer + '_0', metricValueMax, metricValueMed, i, planeLength, layerColorDecidedByLayerStatus(layerStatus));
-					drawTrianglesInALayer(layer + '_1', metricValueMed, metricValueMin, i, planeLength, conf.layerMidColor);
-				}
-				const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
-				for (let i = 0; i < planeLength; i++) {
-					const label = sortedLabels[i];
-					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-					label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
-				}
-
-				zAxis -= conf.zplane.zplaneMultilayer;
-				previousLayer = metric;
-				layerIndex++;
 			}
-		} else if (conf.displayOption === 'two') {
+			zAxis -= conf.zplane.zplaneMultilayer;
+			previousLayer = metric;
+			layerIndex++;
+			
+		}
+
+		if (conf.displayOption === 'two') {
 			for (let layer in newData) {
 				const metric = newData[layer].metrics;
 				const metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 100), zAxis);
@@ -203,6 +230,7 @@ export default (function (parentElement, conf) {
 				const layerStatus = (current / max) * 100;
 				const planeLength = Object.values(metric).length;
 				const planePoints = [metricValueMax, metricValueCurrent, metricValueMin];
+				
 				if (previousLayer !== null) {
 					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / 100), zAxis + conf.zplane.zplaneMultilayer);
 					const previousPlaneLength = Object.values(previousLayer).length;
@@ -250,20 +278,20 @@ export default (function (parentElement, conf) {
 				}
 				for (let i = 0; i < planeLength; i++) {
 					for (let planePoint of planePoints) {
-						drawPlaneLine(layer + '_1', planePoint, i, planeLength, lineMaterial);
+						drawLayerOutline(layer + '_1', planePoint, i, planeLength, lineMaterial);
 					}
 					drawTrianglesInALayer(layer + '_2', metricValueMax, metricValueCurrent, i, planeLength, layerColorDecidedByLayerStatus(layerStatus));
 					drawTrianglesInALayer(layer + '_3', metricValueCurrent, metricValueMin, i, planeLength, conf.layerMidColor);
 				}
-				const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+				const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)//
 				for (let i = 0; i < planeLength; i++) {
-					const label = sortedLabels[i];
-					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-					label.element.innerText = Object.keys(metric)[i] + " " + Object.values(metric)[i].current.toFixed();
+					const label = sortedLabels[i];//
+					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);//
+					label.element.innerText = Object.keys(metric)[i] + " " + Object.values(metric)[i].current.toFixed();//
 				}
 				zAxis -= conf.zplane.zplaneMultilayer;
-				previousLayer = metric;
-				layerIndex++;
+				previousLayer = metric;//
+				layerIndex++;//
 			}
 		}
 	}
@@ -277,7 +305,7 @@ export default (function (parentElement, conf) {
 	 * @param {number} planePointLength number of points in the plane
 	 * @param {THREE.Material} material material to apply to the line
 	 */
-	function drawPlaneLine(layer, planePoint, i, planePointLength, material) {
+	function drawLayerOutline(layer, planePoint, i, planePointLength, material) {
 		if (meshs['18' + layer + i]) {
 			// if init done
 			meshs['18' + layer + i].update(planePoint[i], planePoint[(i + 1) % planePointLength])

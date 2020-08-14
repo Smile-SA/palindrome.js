@@ -15,7 +15,8 @@ export const Default = () => {
     const config = {
         mockupData: boolean('mockupData', true),
         layerStatusControl: boolean('layerStatusControl', true),
-        displayOption: text('displayOption', 'one'),
+        displayOption: text('displayOption', 'three'),
+	displaySidePanels : boolean('displaySidePanels', false),
         displayGrid: boolean('displayGrid', true),
         displayArea: text('displayArea', 'palindrome'),
         metricMagnifier: number('metricMagnifier', 5),
@@ -138,7 +139,7 @@ export const Single = () => {
     const config = {
         mockupData: boolean('mockupData', false),
         layerStatusControl: boolean('layerStatusControl', true),
-        displayOption: text('displayOption', 'one'),
+        displayOption: text('displayOption', 'three'),
         displayGrid: boolean('displayGrid', true),
         displayArea: text('displayArea', 'palindrome'),
         metricMagnifier: number('metricMagnifier', 10),
