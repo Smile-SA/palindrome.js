@@ -145,26 +145,27 @@ export default (function (parentElement, conf) {
 			const metricsPositions = [metricValueMax, metricValueMed, metricValueMin];
 			
 
-			//draws layers
+			//draws and update layers
 			for (let i = 0; i < metricsNumber; i++) {
 				for (let metricPosition of metricsPositions) {
 					//draws outside lines
-					drawLayerOutline(layer + '_0', metricPosition, i, metricsNumber, lineMaterial);
+					drawLayerOutline(layer + '_layerShapesEdges', metricPosition, i, metricsNumber, lineMaterial);
 				}
 				//draws innner layer shapes
-				drawTrianglesInALayer(layer + '_0', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
-				drawTrianglesInALayer(layer + '_1', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
+				drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
+				drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
 			}
 
 			//update labels
 			const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
-			for (let i = 0; i < metricsNumber; i++) {
+			for (let i = 0; i <  metricsNumber; i++) {
 				const label = sortedLabels[i];
 				label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
 				label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
 			}
 
 			//draw and update sides lines and panels
+			//tood : check why displayDides is broken
 			if (conf.displaySides == true){
 				if (previousLayer !== null) {
 					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zAxis + conf.zplane.zplaneMultilayer);
@@ -185,21 +186,28 @@ export default (function (parentElement, conf) {
 					//refactor mesh names
 					//extract into create / update functions
 					for (let i = 0; i < sideDividerEven; i++) {
+						var calc1 = sideSizeEven[(i + 1) % sideDividerOdd];
+						var calc2 = sideSizeOdd[(i + 1) % sideDividerEven];
+						var calc3 = sideSizeEven[(i) % sideDividerOdd];
+						var calc4 = sideSizeOdd[(i) % sideDividerEven];
+
 						if (meshs['side-bias-line' + layer + i]) {
 							// if init done, update
-							meshs['side-bias-line' + layer + i].update(sideSizeOdd[i], sideSizeEven[(i + 1) % sideDividerOdd])
-							meshs['side-straight-line' + layer + i].update(sideSizeOdd[(i + 1) % sideDividerEven], sideSizeEven[(i + 1) % sideDividerOdd])
-							meshs['side-top-left-pane' + layer + i].update(sideSizeEven[(i) % sideDividerOdd], sideSizeEven[(i + 1) % sideDividerOdd],sideSizeOdd[(i) % sideDividerEven])
-							meshs['side-bottom-right-pane' + layer + i].update(sideSizeOdd[(i) % sideDividerEven], sideSizeOdd[(i + 1) % sideDividerEven], sideSizeEven[(i + 1) % sideDividerOdd])
-						} else {
+							//
+
+							meshs['side-bias-line' + layer + i].update(sideSizeOdd[i], calc1)
+							meshs['side-straight-line' + layer + i].update(calc2, calc1)
+							meshs['side-top-left-pane' + layer + i].update(calc3, calc1,sideSizeOdd[(i) % sideDividerEven])
+							meshs['side-bottom-right-pane' + layer + i].update(sideSizeOdd[(i) % sideDividerEven], calc2, calc1)
+						 } else {
 							//init objects
-							meshs['side-bias-line' + layer + i] = new SimpleLine(sideSizeOdd[i], sideSizeEven[(i + 1) % sideDividerOdd], lineMaterialTransparent);
+							meshs['side-bias-line' + layer + i] = new SimpleLine(sideSizeOdd[i], calc1, lineMaterialTransparent);
 							scene.add(meshs['side-bias-line' + layer + i]);
-							meshs['side-straight-line' + layer + i] = new SimpleLine(sideSizeOdd[(i + 1) % sideDividerEven], sideSizeEven[(i + 1) % sideDividerOdd], lineMaterial);
+							meshs['side-straight-line' + layer + i] = new SimpleLine(calc2, calc1, lineMaterial);
 							scene.add(meshs['side-straight-line' + layer + i]);
-							meshs['side-top-left-pane' + layer + i] = new Triangle(sideSizeEven[(i) % sideDividerOdd], sideSizeEven[(i + 1) % sideDividerOdd], sideSizeOdd[(i) % sideDividerEven], conf.mainAppColor);
+							meshs['side-top-left-pane' + layer + i] = new Triangle(calc3, calc1, calc4, conf.mainAppColor);
 							scene.add(meshs['side-top-left-pane' + layer + i]);
-							meshs['side-bottom-right-pane' + layer + i] = new Triangle(sideSizeOdd[(i) % sideDividerEven], sideSizeOdd[(i + 1) % sideDividerEven], sideSizeEven[(i + 1) % sideDividerOdd], conf.mainAppColor);
+							meshs['side-bottom-right-pane' + layer + i] = new Triangle(calc4, calc2, calc1, conf.mainAppColor);
 							scene.add(meshs['side-bottom-right-pane' + layer + i]);
 						}
 					}
