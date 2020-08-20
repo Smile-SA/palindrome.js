@@ -121,58 +121,65 @@ export default (function (parentElement, conf) {
 		let previousLayer = null;
 		let layerIndex = 0;
 
-
 		for (let layer in newData) {
 			const metric = newData[layer].metrics;
 			const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
 			const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
 			const layerStatus = (current / max) * 100;
+			let metricsDivider;
 			if (conf.displayMode == "dynamic"){
 				//todo homogeneize metric set min, med, max, current
 				//todo save previous value to add trend-like ?
 				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
 				var metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
 				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
+				metricsDivider = "item.current";
 			} else if (conf.displayMode == "fixed"){
-				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 100), zAxis);
-				var metricValueCurrent = metricPoint(Object.values(metric).map(item => item.current / 100), zAxis);
-				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / 100), zAxis);
+				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 150), zAxis);
+				var metricValueMed = metricPoint(Object.values(metric).map(item => item.current / 150), zAxis);
+				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / 150), zAxis);
+				metricsDivider = 150;
 			} else { 
 				break;
 			}
 				
 			const metricsNumber = Object.values(metric).length;
 			const metricsPositions = [metricValueMax, metricValueMed, metricValueMin];
-			
 
 			//draws and update layers
-			for (let i = 0; i < metricsNumber; i++) {
-				for (let metricPosition of metricsPositions) {
-					//draws outside lines
-					drawLayerOutline(layer + '_layerShapesEdges', metricPosition, i, metricsNumber, lineMaterial);
+			//todo number of shapes shall be dynamic
+			//todo outer lines shall be optional and for all the shapes
+			if (conf.displayLayers){
+				for (let i = 0; i < metricsNumber; i++) {
+					for (let metricPosition of metricsPositions) {
+						//draws outside lines
+						drawLayerOutline(layer + '_layerShapesEdges', metricPosition, i, metricsNumber, lineMaterial);
+					}
+					//draws innner layer shapes
+					drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
+					drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
 				}
-				//draws innner layer shapes
-				drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
-				drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
 			}
 
 			//update labels
-			const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
-			for (let i = 0; i <  metricsNumber; i++) {
-				const label = sortedLabels[i];
-				label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-				label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
+			if (conf.displayLabels){
+				const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+				for (let i = 0; i <  metricsNumber; i++) {
+					const label = sortedLabels[i];
+					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+					label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
+				}
 			}
 
+			//extract into create / update functions
 			//draw and update sides lines and panels
 			//tood : check why displayDides is broken
-			if (conf.displaySides == true){
+			if (conf.displaySides === true){
 				if (previousLayer !== null) {
-					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / item.current), zAxis + conf.zplane.zplaneMultilayer);
+					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / eval(metricsDivider)), zAxis + conf.zplane.zplaneMultilayer);
 					const previousPlaneLength = Object.values(previousLayer).length;
 					//adds side texture if the palindrome is more than 1 plane
-			
-					
+
 					//checks if actual layer points is higher than previous ones to determine if the sides should be drawn from few to many OR from many to few
 					//for the number of sides
 					const sideDividerOdd = (metricsNumber >= previousPlaneLength) ? previousPlaneLength : metricsNumber;
@@ -182,10 +189,10 @@ export default (function (parentElement, conf) {
 					const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValueMax;
 					
 					//todo
-					//refactor attributes name for clarity and compute once 
-					//refactor mesh names
-					//extract into create / update functions
+					//done : refactor attributes name for clarity and compute once 
+					//done : refactor mesh names
 					for (let i = 0; i < sideDividerEven; i++) {
+						//todo : refactor this part with better variable names ?
 						var calc1 = sideSizeEven[(i + 1) % sideDividerOdd];
 						var calc2 = sideSizeOdd[(i + 1) % sideDividerEven];
 						var calc3 = sideSizeEven[(i) % sideDividerOdd];
@@ -193,12 +200,10 @@ export default (function (parentElement, conf) {
 
 						if (meshs['side-bias-line' + layer + i]) {
 							// if init done, update
-							//
-
 							meshs['side-bias-line' + layer + i].update(sideSizeOdd[i], calc1)
-							meshs['side-straight-line' + layer + i].update(calc2, calc1)
-							meshs['side-top-left-pane' + layer + i].update(calc3, calc1,sideSizeOdd[(i) % sideDividerEven])
-							meshs['side-bottom-right-pane' + layer + i].update(sideSizeOdd[(i) % sideDividerEven], calc2, calc1)
+							meshs['side-straight-line' + layer + i].update(calc2, calc1, lineMaterial)
+							meshs['side-top-left-pane' + layer + i].update(calc3, calc1,calc4)
+							meshs['side-bottom-right-pane' + layer + i].update(calc4, calc2, calc1)
 						 } else {
 							//init objects
 							meshs['side-bias-line' + layer + i] = new SimpleLine(sideSizeOdd[i], calc1, lineMaterialTransparent);
@@ -216,82 +221,6 @@ export default (function (parentElement, conf) {
 			zAxis -= conf.zplane.zplaneMultilayer;
 			previousLayer = metric;
 			layerIndex++;
-		}
-
-		if (conf.displayOption === 'two') {
-			for (let layer in newData) {
-				const metric = newData[layer].metrics;
-				const metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 100), zAxis);
-				const metricValueCurrent = metricPoint(Object.values(metric).map(item => item.current / 100), zAxis);
-				const metricValueMin = metricPoint(Object.values(metric).map(item => item.min / 100), zAxis);
-				const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
-				const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
-				const layerStatus = (current / max) * 100;
-				const planeLength = Object.values(metric).length;
-				const planePoints = [metricValueMax, metricValueCurrent, metricValueMin];
-				
-				if (previousLayer !== null) {
-					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / 100), zAxis + conf.zplane.zplaneMultilayer);
-					const previousPlaneLength = Object.values(previousLayer).length;
-					if (planeLength >= previousPlaneLength) {
-						for (let i = 0; i < planeLength; i++) {
-							if (meshs['10' + layer + i]) {
-								// if init done
-								meshs['10' + layer + i].update(metricValueMax[i], previousValueMax[(i + 1) % previousPlaneLength])
-								meshs['11' + layer + i].update(metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength], lineMaterial)
-								meshs['12' + layer + i].update(metricValueMax[i], metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength])
-								meshs['13' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % planeLength])
-							} else {
-								//init objects
-								meshs['10' + layer + i] = new SimpleLine(metricValueMax[i], previousValueMax[(i + 1) % previousPlaneLength], lineMaterialTransparent);
-								scene.add(meshs['10' + layer + i]);
-								meshs['11' + layer + i] = new SimpleLine(metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength], lineMaterial);
-								scene.add(meshs['11' + layer + i]);
-								meshs['12' + layer + i] = new Triangle(metricValueMax[i], metricValueMax[(i + 1) % planeLength], previousValueMax[(i + 1) % previousPlaneLength], conf.mainAppColor);
-								scene.add(meshs['12' + layer + i]);
-								meshs['13' + layer + i] = new Triangle(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i) % planeLength], conf.mainAppColor);
-								scene.add(meshs['13' + layer + i]);
-							}
-						}
-					} else {
-						for (let i = 0; i < previousPlaneLength; i++) {
-							if (meshs['14' + layer + i]) {
-								// if init done
-								meshs['14' + layer + i].update(previousValueMax[i], metricValueMax[(i + 1) % planeLength])
-								meshs['15' + layer + i].update(previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength], lineMaterial)
-								meshs['16' + layer + i].update(metricValueMax[(i) % planeLength], metricValueMax[(i + 1) % planeLength], previousValueMax[(i) % previousPlaneLength])
-								meshs['17' + layer + i].update(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength], metricValueMax[(i) % planeLength])
-							} else {
-								//init objects
-								meshs['14' + layer + i] = new SimpleLine(previousValueMax[i], metricValueMax[(i + 1) % planeLength], lineMaterialTransparent);
-								scene.add(meshs['14' + layer + i]);
-								meshs['15' + layer + i] = new SimpleLine(previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength], lineMaterial);
-								scene.add(meshs['15' + layer + i]);
-								meshs['16' + layer + i] = new Triangle(metricValueMax[(i) % planeLength], metricValueMax[(i + 1) % planeLength], previousValueMax[(i) % previousPlaneLength], conf.mainAppColor);
-								scene.add(meshs['16' + layer + i]);
-								meshs['17' + layer + i] = new Triangle(previousValueMax[(i) % previousPlaneLength], previousValueMax[(i + 1) % previousPlaneLength], metricValueMax[(i + 1) % planeLength], conf.mainAppColor);
-								scene.add(meshs['17' + layer + i]);
-							}
-						}
-					}
-				}
-				for (let i = 0; i < planeLength; i++) {
-					for (let planePoint of planePoints) {
-						drawLayerOutline(layer + '_1', planePoint, i, planeLength, lineMaterial);
-					}
-					drawTrianglesInALayer(layer + '_2', metricValueMax, metricValueCurrent, i, planeLength, layerColorDecidedByLayerStatus(layerStatus));
-					drawTrianglesInALayer(layer + '_3', metricValueCurrent, metricValueMin, i, planeLength, conf.layerMidColor);
-				}
-				const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)//
-				for (let i = 0; i < planeLength; i++) {
-					const label = sortedLabels[i];//
-					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);//
-					label.element.innerText = Object.keys(metric)[i] + " " + Object.values(metric)[i].current.toFixed();//
-				}
-				zAxis -= conf.zplane.zplaneMultilayer;
-				previousLayer = metric;//
-				layerIndex++;//
-			}
 		}
 	}
 
