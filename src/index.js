@@ -130,9 +130,16 @@ export default (function (parentElement, conf) {
 			if (conf.displayMode == "dynamic"){
 				//todo homogeneize metric set min, med, max, current
 				//todo save previous value to add trend-like ?
+				//var metricValueMax = metricPoint(Object.values(metric).map(item => item.current / item.max), zAxis);
+				//var metricValueMed = metricPoint(Object.values(metric).map(item => item.current / item.med), zAxis);
+				//var metricValueMin = metricPoint(Object.values(metric).map(item => item.current / item.min), zAxis);
 				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
 				var metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
 				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
+				if (debug == true) {
+					console.log(metricValueMax,metricValueMed,metricValueMin)
+					debug = false;
+				}
 				metricsDivider = "item.current";
 			} else if (conf.displayMode == "fixed"){
 				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 150), zAxis);
@@ -156,6 +163,8 @@ export default (function (parentElement, conf) {
 						drawLayerOutline(layer + '_layerShapesEdges', metricPosition, i, metricsNumber, lineMaterial);
 					}
 					//draws innner layer shapes
+					//drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMin, metricValueMed, i, metricsNumber, "#FF0000");
+					//drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, "#000000");
 					drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
 					drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
 				}
