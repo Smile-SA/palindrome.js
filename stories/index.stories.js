@@ -6,6 +6,7 @@ import { customData } from '../src/data_examples/customData';
 import { multiData } from '../src/data_examples/multiData';
 import { singleLayerTwo } from '../src/data_examples/singleLayerTwo';
 import { singleLayerThree } from '../src/data_examples/singleLayerThree';
+import { singleLayerFour } from '../src/data_examples/singleLayerFour';
 
 export default {
     title: 'Palindrome Examples',
@@ -196,11 +197,11 @@ export const SingleTwo = () => {
     return container;
 };
 
-export const SingleThree = () => {
-    const config = { 
+export const SingleThree = ()  => {
+    const config = {  
         mockupData: boolean('mockupData', false),
         displayArea: text('displayArea', 'palindrome'),
-        displayMode: text('displayOption', 'dynamic'),
+        displayMode: text('displayOption', 'debug'),
 	displayLayers : boolean('displayLayers', true),
 	displayLabels : boolean('displayLabels', true),
 	displaySides : boolean('displaySides', true),
@@ -234,6 +235,52 @@ export const SingleThree = () => {
             zplaneMultilayer: number('zplaneMultilayer', -20)
         },
         data: object('data', singleLayerThree())
+    };
+
+    const container = document.createElement('div');
+    palindrome(container, JSON.parse(JSON.stringify(config)));
+
+    return container;
+};
+
+export const SingleFour = () => {
+    const config = { 
+        mockupData: boolean('mockupData', false),
+        displayArea: text('displayArea', 'palindrome'),
+        displayMode: text('displayOption', 'debug'),
+	displayLayers : boolean('displayLayers', true),
+	displayLabels : boolean('displayLabels', true),
+	displaySides : boolean('displaySides', true),
+        displayGrid: boolean('displayGrid', true),
+        gridSize: number('gridSize', 100),
+        gridDivisions: number('gridDivisions', 100),
+        metricMagnifier: number('metricMagnifier', 10),
+        layerStatusControl: boolean('layerStatusControl', true),
+        layerMidColor: color('layerMidColor', '#FF2C00'),
+        mainAppColor: color('mainAppColor', '#FFCC00'),
+        subAppColor: color('subAppColor', '#FFFFFF'),
+        statusRange: {
+            low: number('statusRange low', '0'),
+            med: number('statusRange med', '30'),
+            high: number('statusRange high', '60')
+        },
+        statusColor: {
+            low: color('statusColor low', '#9FC5E8'),
+            med: color('statusColor med', '#00FF00'),
+            high: color('statusColor high', '#FF0000')
+        },
+        line: {
+            lineColor: color('lineColor', '#000000'),
+            lineOpacity: number('lineOpacity', 1),
+            lineTranparency: number('lineTranparency', 0.5),
+            lineWidth: number('lineWidth', 3)
+        },
+        zplane: {
+            zplaneInitial: number('zplaneInitial', 0),
+            zplaneHeight: number('zplaneHeight', 40),
+            zplaneMultilayer: number('zplaneMultilayer', -20)
+        },
+        data: object('data', singleLayerFour())
     };
 
     const container = document.createElement('div');

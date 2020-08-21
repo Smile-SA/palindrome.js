@@ -92,6 +92,7 @@ export default (function (parentElement, conf) {
 	 * @param {*} data dataObject (conf.data)
 	 */
 	function createLabels(data) {
+		console.log("createLabels");
 		let zAxis = conf.zplane.zplaneInitial;
 		let layerIndex = 0;
 
@@ -100,13 +101,34 @@ export default (function (parentElement, conf) {
 			
 			for (const [key, value] of Object.entries(metric)) {
 				const labelValue = metricPoint((value.max / value.current), zAxis);
+				//const labelValueMin = metricPoint((value.max / value.med), zAxis);
+				//how come the addition to the scene is recursive ?
 			  	scene.add(createLabel(value.label, labelValue, layerIndex));
+			  	//scene.add(createLabel(value.label, labelValueMin, layerIndex));
 			}
 			
 			zAxis -= conf.zplane.zplaneHeight
 			layerIndex++;
 		}
 
+	}
+
+	/**
+	 * Create a label using CSS2DObject
+	 * 
+	 * @param {string} textContent label text
+	 * @param {number} vector3 coordinates of our metric point on the plane
+	 * @param {number} layerIndex to keep track or layers and metric inside
+	 */
+	function createLabel(textContent, vector3, layerIndex) {
+		const labelDiv = document.createElement('div');
+		labelDiv.className = 'label';
+		labelDiv.textContent = textContent;
+		const metricLabel = new CSS2DObject(labelDiv);
+		metricLabel.name = 'labels';
+		metricLabel.layerIndex = layerIndex;
+		metricLabel.position.set(vector3[0], vector3[2] + 1, vector3[1]);
+		return metricLabel;
 	}
 
 	/**
@@ -127,12 +149,9 @@ export default (function (parentElement, conf) {
 			const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
 			const layerStatus = (current / max) * 100;
 			let metricsDivider;
-			if (conf.displayMode == "dynamic"){
+			if (conf. displayMode == "dynamic"){
 				//todo homogeneize metric set min, med, max, current
 				//todo save previous value to add trend-like ?
-				//var metricValueMax = metricPoint(Object.values(metric).map(item => item.current / item.max), zAxis);
-				//var metricValueMed = metricPoint(Object.values(metric).map(item => item.current / item.med), zAxis);
-				//var metricValueMin = metricPoint(Object.values(metric).map(item => item.current / item.min), zAxis);
 				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
 				var metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
 				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
@@ -145,7 +164,33 @@ export default (function (parentElement, conf) {
 				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 150), zAxis);
 				var metricValueMed = metricPoint(Object.values(metric).map(item => item.current / 150), zAxis);
 				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / 150), zAxis);
-				metricsDivider = 150;
+				 metricsDivider = 150;
+			} else if (conf.displayMode == "debug"){
+				var metricValueMaxDyn = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
+				var metricValueMedDyn = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
+				var metricValueMinDyn = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
+
+				var metricValueMaxFix = metricPoint(Object.values(metric).map(item => item.max / 150), zAxis);
+				var metricValueMedFix = metricPoint(Object.values(metric).map(item => item.current / 150), zAxis);
+				var metricValueMinFix = metricPoint(Object.values(metric).map(item => item.min / 150), zAxis);
+
+				var metricValueMax = metricPoint(Object.values(metric).map(item => item.current / item.max), zAxis);
+				var metricValueMed = metricPoint(Object.values(metric).map(item => 0), zAxis);
+				var metricValueMin = metricPoint(Object.values(metric).map(item => 0), zAxis);	
+				
+				if (debug == true){
+					console.log(metricValueMaxDyn)
+                                	console.log(metricValueMedDyn)
+                                	console.log(metricValueMinDyn)
+                                	console.log(metricValueMaxFix)
+                                	console.log(metricValueMedFix)
+                                	console.log(metricValueMinFix)
+                                	console.log(metricValueMax)
+                                	console.log(metricValueMed)
+                                	console.log(metricValueMin)
+					debug = false;
+				}
+
 			} else { 
 				break;
 			}
@@ -175,8 +220,9 @@ export default (function (parentElement, conf) {
 				const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
 				for (let i = 0; i <  metricsNumber; i++) {
 					const label = sortedLabels[i];
+					//todo last : modify the current setting point for labels, currently set at the maxpoint
 					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-					label.element.innerText = Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();
+					label.element.innerHTML = '<table><ul><li>'+Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();+'</li></ul></table>';
 				}
 			}
 
@@ -298,23 +344,6 @@ export default (function (parentElement, conf) {
 		}
 	}
 
-	/**
-	 * Create a label using CSS2DObject
-	 * 
-	 * @param {string} textContent label text
-	 * @param {number} vector3 coordinates of our metric point on the plane
-	 * @param {number} layerIndex to keep track or layers and metric inside
-	 */
-	function createLabel(textContent, vector3, layerIndex) {
-		const labelDiv = document.createElement('div');
-		labelDiv.className = 'label';
-		labelDiv.textContent = textContent;
-		const metricLabel = new CSS2DObject(labelDiv);
-		metricLabel.name = 'labels';
-		metricLabel.layerIndex = layerIndex;
-		metricLabel.position.set(vector3[0], vector3[2] + 1, vector3[1]);
-		return metricLabel;
-	}
 
 	/**
 	 * Rendering loop
