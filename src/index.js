@@ -92,7 +92,6 @@ export default (function (parentElement, conf) {
 	 * @param {*} data dataObject (conf.data)
 	 */
 	function createLabels(data) {
-		console.log("createLabels");
 		let zAxis = conf.zplane.zplaneInitial;
 		let layerIndex = 0;
 
@@ -100,9 +99,8 @@ export default (function (parentElement, conf) {
 			let metric = data[layer].metrics;
 			
 			for (const [key, value] of Object.entries(metric)) {
-				const labelValue = metricPoint((value.max / value.current), zAxis);
-				//const labelValueMin = metricPoint((value.max / value.med), zAxis);
-				//how come the addition to the scene is recursive ?
+				const labelValue = layerPoints((value.max / value.current), zAxis);
+				//const labelValueMin = layerPoints((value.max / value.med), zAxis);
 			  	scene.add(createLabel(value.label, labelValue, layerIndex));
 			  	//scene.add(createLabel(value.label, labelValueMin, layerIndex));
 			}
@@ -144,39 +142,57 @@ export default (function (parentElement, conf) {
 		let layerIndex = 0;
 
 		for (let layer in newData) {
-			const metric = newData[layer].metrics;
-			const max = Object.values(metric).map(item => item.max).reduce((a, b) => a + b, 0);
-			const current = Object.values(metric).map(item => item.current).reduce((a, b) => a + b, 0);
-			const layerStatus = (current / max) * 100;
+			//this is the updated layer metrics
+			const layerMetrics = newData[layer].metrics;
+			//this is the new total of current's
+			const layerCurrentTotal = Object.values(layerMetrics).map(item => item.current).reduce((a, b) => a + b, 0);
+			//this is the new total of max's
+			const layerMaxTotal = Object.values(layerMetrics).map(item => item.max).reduce((a, b) => a + b, 0);
+
+			//todo : status colors shall map with default colors
+			const layerStatus = (layerCurrentTotal / layerMaxTotal) * 100;
 			let metricsDivider;
+				
+			if (debug == true) {
+				console.log(layerMetrics)
+				debug = false;
+			}
+
 			if (conf. displayMode == "dynamic"){
 				//todo homogeneize metric set min, med, max, current
 				//todo save previous value to add trend-like ?
-				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
-				var metricValueMed = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
-				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
+				var metricValueMax = layerPoints(Object.values(layerMetrics).map(item => item.max / item.current), zAxis);
+				var metricValueMed = layerPoints(Object.values(layerMetrics).map(item => item.med / item.current), zAxis);
+				var metricValueMin = layerPoints(Object.values(layerMetrics).map(item => item.min / item.current), zAxis);
+
+				//below an attempt at assigning the right values
+				//var metricValueMax = layerPoints(Object.values(layerMetrics).map(item => item.max), zAxis);
+				//var metvar metricValueMed = layerPoints(Object.values(layerMetrics).map(item => item.med), zAxis);
+				//var metvar metricValueMin = layerPoints(Object.values(layerMetrics).map(item => item.min), zAxis);
+				var metricValueCurrent = layerPoints(Object.values(layerMetrics).map(item => item.current), zAxis);
 				if (debug == true) {
-					console.log(metricValueMax,metricValueMed,metricValueMin)
+					console.log(metricValueMax,metricValueMed,metricValueMin,metricValueCurrent)
 					debug = false;
 				}
 				metricsDivider = "item.current";
+
 			} else if (conf.displayMode == "fixed"){
-				var metricValueMax = metricPoint(Object.values(metric).map(item => item.max / 150), zAxis);
-				var metricValueMed = metricPoint(Object.values(metric).map(item => item.current / 150), zAxis);
-				var metricValueMin = metricPoint(Object.values(metric).map(item => item.min / 150), zAxis);
-				 metricsDivider = 150;
+				var metricValueMax = layerPoints(Object.values(layerMetrics).map(item => item.max / 150), zAxis);
+				var metricValueMed = layerPoints(Object.values(layerMetrics).map(item => item.current / 150), zAxis);
+				var metricValueMin = layerPoints(Object.values(layerMetrics).map(item => item.min / 150), zAxis);
+				metricsDivider = 150;
 			} else if (conf.displayMode == "debug"){
-				var metricValueMaxDyn = metricPoint(Object.values(metric).map(item => item.max / item.current), zAxis);
-				var metricValueMedDyn = metricPoint(Object.values(metric).map(item => item.med / item.current), zAxis);
-				var metricValueMinDyn = metricPoint(Object.values(metric).map(item => item.min / item.current), zAxis);
+				var metricValueMaxDyn = layerPoints(Object.values(layerMetrics).map(item => item.max / item.current), zAxis);
+				var metricValueMedDyn = layerPoints(Object.values(layerMetrics).map(item => item.med / item.current), zAxis);
+				var metricValueMinDyn = layerPoints(Object.values(layerMetrics).map(item => item.min / item.current), zAxis);
 
-				var metricValueMaxFix = metricPoint(Object.values(metric).map(item => item.max / 150), zAxis);
-				var metricValueMedFix = metricPoint(Object.values(metric).map(item => item.current / 150), zAxis);
-				var metricValueMinFix = metricPoint(Object.values(metric).map(item => item.min / 150), zAxis);
+				var metricValueMaxFix = layerPoints(Object.values(layerMetrics).map(item => item.max / 150), zAxis);
+				var metricValueMedFix = layerPoints(Object.values(layerMetrics).map(item => item.current / 150), zAxis);
+				var metricValueMinFix = layerPoints(Object.values(layerMetrics).map(item => item.min / 150), zAxis);
 
-				var metricValueMax = metricPoint(Object.values(metric).map(item => item.current / item.max), zAxis);
-				var metricValueMed = metricPoint(Object.values(metric).map(item => 0), zAxis);
-				var metricValueMin = metricPoint(Object.values(metric).map(item => 0), zAxis);	
+				var metricValueMax = layerPoints(Object.values(layerMetrics).map(item => item.current / item.max), zAxis);
+				var metricValueMed = layerPoints(Object.values(layerMetrics).map(item => 0), zAxis);
+				var metricValueMin = layerPoints(Object.values(layerMetrics).map(item => 0), zAxis);	
 				
 				if (debug == true){
 					console.log(metricValueMaxDyn)
@@ -195,7 +211,7 @@ export default (function (parentElement, conf) {
 				break;
 			}
 				
-			const metricsNumber = Object.values(metric).length;
+			const metricsNumber = Object.values(layerMetrics).length;
 			const metricsPositions = [metricValueMax, metricValueMed, metricValueMin];
 
 			//draws and update layers
@@ -205,13 +221,14 @@ export default (function (parentElement, conf) {
 				for (let i = 0; i < metricsNumber; i++) {
 					for (let metricPosition of metricsPositions) {
 						//draws outside lines
-						drawLayerOutline(layer + '_layerShapesEdges', metricPosition, i, metricsNumber, lineMaterial);
+						//question : why is this limited to the inner layer ?
+						drawInnerLayerOutline(layer + '_layerShapesEdges', metricPosition, i, metricsNumber, lineMaterial);
 					}
 					//draws innner layer shapes
 					//drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMin, metricValueMed, i, metricsNumber, "#FF0000");
 					//drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, "#000000");
-					drawTrianglesInALayer(layer + '_innerLayerShape', metricValueMed, metricValueMin, i, metricsNumber, conf.layerMidColor);
-					drawTrianglesInALayer(layer + '_outerLayerShape', metricValueMax, metricValueMed, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
+					drawTrianglesInALayer(layer + '_minToMedLayerShape', metricValueMin, metricValueMed, i, metricsNumber, conf.layerMidColor);
+					drawTrianglesInALayer(layer + '_medtoMaxLayerShape', metricValueMed, metricValueMax, i, metricsNumber, layerColorDecidedByLayerStatus(layerStatus));
 				}
 			}
 
@@ -222,7 +239,7 @@ export default (function (parentElement, conf) {
 					const label = sortedLabels[i];
 					//todo last : modify the current setting point for labels, currently set at the maxpoint
 					label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-					label.element.innerHTML = '<table><ul><li>'+Object.values(metric)[i].label + " " + Object.values(metric)[i].current.toFixed();+'</li></ul></table>';
+					label.element.innerHTML = '<table><ul><li>'+Object.values(layerMetrics)[i].label + " " + Object.values(layerMetrics)[i].current.toFixed();+'</li></ul></table>';
 				}
 			}
 
@@ -231,7 +248,7 @@ export default (function (parentElement, conf) {
 			//tood : check why displayDides is broken
 			if (conf.displaySides === true){
 				if (previousLayer !== null) {
-					const previousValueMax = metricPoint(Object.values(previousLayer).map(item => item.max / eval(metricsDivider)), zAxis + conf.zplane.zplaneMultilayer);
+					const previousValueMax = layerPoints(Object.values(previousLayer).map(item => item.max / eval(metricsDivider)), zAxis + conf.zplane.zplaneMultilayer);
 					const previousPlaneLength = Object.values(previousLayer).length;
 					//adds side texture if the palindrome is more than 1 plane
 
@@ -274,7 +291,7 @@ export default (function (parentElement, conf) {
 				}
 			}
 			zAxis -= conf.zplane.zplaneMultilayer;
-			previousLayer = metric;
+			previousLayer = layerMetrics;
 			layerIndex++;
 		}
 	}
@@ -288,14 +305,14 @@ export default (function (parentElement, conf) {
 	 * @param {number} planePointLength number of points in the plane
 	 * @param {THREE.Material} material material to apply to the line
 	 */
-	function drawLayerOutline(layer, planePoint, i, planePointLength, material) {
-		if (meshs['18' + layer + i]) {
+	function drawInnerLayerOutline(layer, planePoint, i, planePointLength, material) {
+		if (meshs['_innerLayerOutline' + layer + i]) {
 			// if init done
-			meshs['18' + layer + i].update(planePoint[i], planePoint[(i + 1) % planePointLength])
+			meshs['_innerLayerOutline' + layer + i].update(planePoint[i], planePoint[(i + 1) % planePointLength])
 		} else {
 			//init objects
-			meshs['18' + layer + i] = new SimpleLine(planePoint[i], planePoint[(i + 1) % planePointLength], material);
-			scene.add(meshs['18' + layer + i]);
+			meshs['_innerLayerOutline' + layer + i] = new SimpleLine(planePoint[i], planePoint[(i + 1) % planePointLength], material);
+			scene.add(meshs['_innerLayerOutline' + layer + i]);
 		}
 	}
 
@@ -354,7 +371,7 @@ export default (function (parentElement, conf) {
 		renderer.render(scene, camera);
 		labelsRenderer.render(scene, camera);
 		requestAnimationFrame(render);
-	}
+	} 
 
 	/**
 	 * Transform a metric value into a 3d point
@@ -362,10 +379,10 @@ export default (function (parentElement, conf) {
 	 * @param {number} metric value is required from to data to map on x,y plane
 	 * @param {number} zplaneValue adding z plane for 3D respresentation
 	 */
-	function metricPoint(metric, zplaneValue) {
+	function layerPoints(metricValue, zplaneValue) {
 		const planepoints = [];
-		for (let i = 0; i < metric.length; i++) {
-			const points = findNew3DPoint(i * Math.PI * 2 / metric.length, metric[i] * conf.metricMagnifier, zplaneValue);
+		for (let i = 0; i < metricValue.length; i++) {
+			const points = polarTo3DPoint(i * Math.PI * 2 / metricValue.length, metricValue[i] * conf.metricMagnifier, zplaneValue);
 			planepoints.push(points);
 		}
 		return planepoints;
@@ -378,7 +395,7 @@ export default (function (parentElement, conf) {
 	 * @param {number} radius 
 	 * @param {number} zplaneValue 
 	 */
-	function findNew3DPoint(angle, radius, zplaneValue) {
+	function polarTo3DPoint(angle, radius, zplaneValue) {
 		return [radius * Math.cos(angle), radius * Math.sin(angle), zplaneValue];
 	}
 });
