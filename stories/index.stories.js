@@ -359,7 +359,7 @@ export const SingleFour = () => {
     return container;
 };
 
-export const DebugThree = () => {
+export const DebugTwoLayersThreePoints = () => {
     const config = { 
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
@@ -399,7 +399,7 @@ export const DebugThree = () => {
             zplaneHeight: number('zplaneHeight', 40),
             zplaneMultilayer: number('zplaneMultilayer', -20)
         },
-        data: object('data', debug())
+        data: object('data', debugThree())
     };
 
     const container = document.createElement('div');
