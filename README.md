@@ -4,7 +4,9 @@
 
 ```Palindrome.js``` is a ```three.js``` based library which provides a 3D representation for system metrics and KPIs. Presented as metrics sets within layers, it helps to easily identify relations between metrics or indicators, behaviors and trends evolutions for your realtime systems or any other data source. Custom algorithms or visual behaviors, styles and color schemes can easily be modified or added.
 
-![Three points, Two Layers](assets/img/debug-three-points-two-layers.png "Three points, Two Layers")![Datacenter energy efficiency](assets/img/dc-energy-efficency.png "Datacenter energy efficiency")![Datacenter custom configuration](assets/img/dc-custom-configuration.png "Datacenter custom configuration")
+<img alt="Three points, Two Layers" desc="Three points, Two Layers" title="Three points, Two Layers" src="assets/img/debug-three-points-two-layers.png" width="30%">
+<img alt="Datacenter energy efficiency" desc="Datacenter energy efficiency" title="Datacenter energy efficiency" src="assets/img/dc-energy-efficency.png" width="33%">
+<img alt="Datacenter custom configuration" desc="Datacenter custom configuration" title="Datacenter custom configuration" src="assets/img/dc-custom-configuration.png" width="30%">
 
 ***```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !***
 
@@ -37,7 +39,7 @@ yarn storybook
 
 *If for some reason the ```knobs``` panel isn't showing up, open your  browser developer console and type ```localStorage.clear()```*
 
-![Palindrome Storybook](assets/img/palindrome-storybook.png" "Palindrome Storybook")
+<img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
 
 Or alternatively run the default local session :
 
