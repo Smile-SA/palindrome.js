@@ -4,3 +4,4 @@ node_modules
 *log
 package.json
 yarn.lock
+*.DS_Store
