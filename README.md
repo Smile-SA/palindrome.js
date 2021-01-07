@@ -4,7 +4,11 @@
 
 ```Palindrome.js``` is a ```three.js``` based library which provides a 3D representation for system metrics and KPIs. Presented as metrics sets within layers, it helps to easily identify relations between metrics or indicators, behaviors and trends evolutions for your realtime systems or any other data source. Custom algorithms or visual behaviors, styles and color schemes can easily be modified or added.
 
+![Three points, Two Layers](assets/img/debug-three-points-two-layers.png "Three points, Two Layers")![Datacenter energy efficiency](assets/img/dc-energy-efficency.png "Datacenter energy efficiency")![Datacenter custom configuration](assets/img/dc-custom-configuration.png "Datacenter custom configuration")
+
 ***```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !***
+
+
 
 ### Motivation
 
@@ -32,6 +36,8 @@ yarn storybook
 ```
 
 *If for some reason the ```knobs``` panel isn't showing up, open your  browser developer console and type ```localStorage.clear()```*
+
+![Palindrome Storybook](assets/img/palindrome-storybook.png" "Palindrome Storybook")
 
 Or alternatively run the default local session :
 
