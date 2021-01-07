@@ -1,17 +1,17 @@
-export function singleLayerTwo() {
+export function logicBoolean() {
     return {
-  "systemKPIS": {
+  "boolean": {
     "metrics": {
-      "Good": {
-        "label": "Good",
+      "True": {
+        "label": "True",
         "unit": "number",
         "min": 0,
         "med": 90,
         "max": 100,
-        "current": 70
+        "current": 75
       },
-      "Bad": { 
-        "label": "Bad",
+      "False": { 
+        "label": "False",
         "unit": "number",
         "min": 0,
         "med": 10,

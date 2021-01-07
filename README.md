@@ -1,5 +1,7 @@
 # Palindrome.js
 
+>***A palindrome is a word, number, phrase, or other sequence of characters which reads the same backward as forward, such as madam, racecar. There are also numeric palindromes, including date/time stamps using short digits 11/11/11 11:11 and long digits 02/02/2020.***
+
 ```Palindrome.js``` is a ```three.js``` based library which provides a 3D representation for system metrics and KPIs. Presented as metrics sets within layers, it helps to easily identify relations between metrics or indicators, behaviors and trends evolutions for your realtime systems or any other data source. Custom algorithms or visual behaviors, styles and color schemes can easily be modified or added.
 
 ***```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !***

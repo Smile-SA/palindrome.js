@@ -1,4 +1,4 @@
-export function debug() {
+export function debugTwoLayersThreePoints() {
   return {
   "layer-0": {
     "metrics": {

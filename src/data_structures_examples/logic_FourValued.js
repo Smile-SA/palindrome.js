@@ -1,38 +1,38 @@
-export function singleLayerFour() {
+export function logicFourValued() {
     return {
-  "systemKPIS": {
-    "metrics": {
-      "About bad": { 
-        "label": "About bad",
+  "Four-valued": {
+    "metrics":  {
+      "Maybe false": { 
+        "label": "Maybe false",
         "unit": "number",
         "min": 0,
-        "med": 10,
+        "med": 50,
         "max": 100,
-        "current": 5
+        "current": 15
       },
-      "Good": {
-        "label": "Good",
+      "True": {
+        "label": "True",
         "unit": "number",
         "min": 0,
-        "med": 90,
+        "med": 50,
         "max": 100,
         "current": 70
       },
-      "Bad": { 
-        "label": "Bad",
+      "False": { 
+        "label": "False",
         "unit": "number",
         "min": 0,
-        "med": 10,
-        "max": 100,
-        "current": 25
-      },
-      "About good": { 
-        "label": "About good",
-        "unit": "number",
-        "min": 0,
-        "med": 10,
+        "med": 50,
         "max": 100,
         "current": 5
+      },
+      "Maybe true": { 
+        "label": "Maybe true",
+        "unit": "number",
+        "min": 0,
+        "med": 50,
+        "max": 100,
+        "current": 10
       }
     },
     "layer": {

@@ -1,30 +1,30 @@
-export function singleLayerThree() {
+export function logicTernary() {
     return {
-  "systemKPIS": {
+  "Ternary": {
     "metrics": {
-      "Good": {
-        "label": "Good",
+      "True": {
+        "label": "True",
         "unit": "number",
         "min": 0,
-        "med": 90,
+        "med": 50,
         "max": 100,
         "current": 70
       },
-      "Bad": { 
-        "label": "Bad",
+      "False": { 
+        "label": "False",
         "unit": "number",
         "min": 0,
         "med": 10,
         "max": 100,
-        "current": 25
+        "current": 10
       },
-      "Other": { 
-        "label": "Other",
+      "Maybe": { 
+        "label": "Maybe",
         "unit": "number",
         "min": 0,
-        "med": 10,
+        "med": 40,
         "max": 100,
-        "current": 5
+        "current": 20
       }
     },
     "layer": {
