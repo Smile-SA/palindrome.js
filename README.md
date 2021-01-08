@@ -1,8 +1,6 @@
 # Palindrome.js
 
-<img alt="Datacenter custom configuration" desc="Datacenter custom configuration" title="Datacenter custom configuration" src="assets/img/dc-custom-configuration.png" width="30%">
-
-![Palindrome.js](assets/img/dc-energy-efficency.png "Palindrome.js")
+![Palindrome.js](assets/img/Palindrome.js-logo-and-title.jpg "Palindrome.js")
 
 >***A palindrome is a word, number, phrase, or other sequence of characters which reads the same backward as forward, such as madam, racecar. There are also numeric palindromes, including date/time stamps using short digits 11/11/11 11:11 and long digits 02/02/2020.***
 
