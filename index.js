@@ -1,11 +1,7 @@
 import palindrome from './src/index';
 
-
 import { debugTwoLayersThreePoints } from './src/data_structures_examples/debug_TwoLayersThreePoints';
-import { debugTwoLayersFourPoints } from './src/data_structures_examples/debug_TwoLayersFourPoints';
 
-
-(function(){
     const config = { 
         mockupData: true,
         displayArea: 'palindrome',
@@ -50,7 +46,5 @@ import { debugTwoLayersFourPoints } from './src/data_structures_examples/debug_T
     };
 
     const container = document.getElementById('palindrome');
-    console.log(container);
     palindrome(container, JSON.parse(JSON.stringify(config)));
 
-})();

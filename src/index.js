@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three-css2drender';
 import { Triangle, SimpleLine } from './ThreeGeometryObjects';
-import { dataGenerator } from './mockupData';
+import { dataGenerator } from './dataGenerator';
 import { initThreeObjects } from './ThreeJSBasicObjects';
 
 /**
@@ -28,7 +28,6 @@ export default (function (parentElement, conf) {
 
     // TODO change this when we have a real data source
     const fileContent = new Request("data.json");
-    console.log(fileContent)
 
     run(fileContent);
 
@@ -235,14 +234,6 @@ export default (function (parentElement, conf) {
                         const labelDataValue =  Object.values(layerMetrics)[labelDataIndex][labelDataType].toFixed();
                         const labelPositions = metricValue[labelDataType][labelDataIndex];
                         if (debug == true){
-			    console.log(layer)
-			    console.log(layerIndex)
-                            console.log(layerMetrics)
-                            console.log(sortedLabels)
-                            console.log(label)
-                            console.log(metricValue)
-                            console.log(labelDataType)
-                            console.log(metricValue[labelDataType])
                             debug = false;
                         }
                         label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
@@ -299,9 +290,7 @@ export default (function (parentElement, conf) {
                             scene.add(meshs['side-bottom-right-pane' + layer + i]);
                         }
                     }
-                } else {
-                    //console.log("this happens")
-                    }
+                } else {}
             }
             zAxis -= conf.zplane.zplaneMultilayer;
             previousLayer = layerMetrics;

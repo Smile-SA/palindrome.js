@@ -31,6 +31,7 @@ First install the project dependencies :
 yarn install
 ```
 
+### Storybook
 Then, run ```storybook``` for an interactive session :
 
 ```
@@ -41,19 +42,27 @@ yarn storybook
 
 <img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
 
+
+### Default HTML
 Alternatively, you can run the default html session :
 
 ```
 yarn dev
 ```
 
+<img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/palindrome-html.png" width="93%">
+
 ### API Reference
 
 Todo : add API or configuration documentation
 
-### How to use?
+### How to add your usecase ?
 
 Todo : add a step by step integration documentation
+
+### Connect with remote data source
+
+Todo : add integration details
 
 ### Contribute
 
