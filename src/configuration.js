@@ -3,7 +3,7 @@ export let configuration = {
 	layerStatusControl : true,
 	displayOption: 'one',
         displayGrid: true,
-	displayArea : "pallindrome",
+	displayArea : "palindrome",
 	metricMagnifier: 5,
 	layerMidColor : 0xDFDF0B,
 	mainAppColor : 0x4EC163,

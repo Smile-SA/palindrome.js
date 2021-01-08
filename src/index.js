@@ -28,6 +28,7 @@ export default (function (parentElement, conf) {
 
     // TODO change this when we have a real data source
     const fileContent = new Request("data.json");
+    console.log(fileContent)
 
     run(fileContent);
 
