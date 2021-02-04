@@ -1,0 +1,29 @@
+{
+  "name": "Palindrome",
+  "version": "1.0.0",
+  "description": "3D probe for metrics and KPIs",
+  "main": "index.html",
+  "repository": "git@git.rnd.alterway.fr:overboard/3d_radar_diagram.git",
+  "author": "Alter Way RnD  <rnd@alterway.fr>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@storybook/addon-knobs": "^6.1.11",
+    "@storybook/html": "^6.1.11",
+    "babel-loader": "^8.1.0",
+    "parcel-bundler": "^1.12.4"
+  },
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "three": ">= 0.117.1",
+    "three-css2drender": "^1.0.0"
+  },
+  "browserslist": [
+    "last 1 Chrome versions"
+  ]
+}
