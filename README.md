@@ -6,11 +6,13 @@
 
 ```Palindrome.js``` is a ```three.js``` based library which provides a 3D library for system metrics and KPIs. Presented as metrics sets within layers, ```Palindrome.js``` helps to easily identify relations between metrics, indicators, behaviors or trends for your realtime systems or any other data source. Custom algorithms, visual behaviors, styles and color schemes can easily be modified or added.
 
-<img alt="Three points, Two Layers" desc="Three points, Two Layers" title="Three points, Two Layers" src="assets/img/debug-three-points-two-layers.png" width="30%">
-<img alt="Datacenter energy efficiency" desc="Datacenter energy efficiency" title="Datacenter energy efficiency" src="assets/img/dc-energy-efficency.png" width="33%">
-<img alt="Datacenter custom configuration" desc="Datacenter custom configuration" title="Datacenter custom configuration" src="assets/img/dc-custom-configuration.png" width="30%">
+<p float="left">
+<img alt="Three points, Two Layers" desc="Three points, Two Layers" title="Three points, Two Layers" src="assets/img/debug-three-points-two-layers.png" width="32%" >
+<img alt="Datacenter energy efficiency" desc="Datacenter energy efficiency" title="Datacenter energy efficiency" src="assets/img/dc-energy-efficency.png" width="33.5%">
+<img alt="Datacenter custom configuration" desc="Datacenter custom configuration" title="Datacenter custom configuration" src="assets/img/dc-custom-configuration.png" width="29.8%">
+</p>
 
-***```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !***
+_**```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !**_
 
 ### Motivation
 
