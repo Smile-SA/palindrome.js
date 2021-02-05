@@ -72,9 +72,9 @@ Simply open a pull request over the repository to describe your changes.
 
 ### Credits
 - Rnd Team @ Alter Way
-- Farooque Mustafa
-- Damien Gilles
-- Jonathan Rivalan
+- Farooque Mustafa @farooquemustafa
+- Damien Gilles @gillesdami
+- Jonathan Rivalan (author) @JonRiv
 
 ### License
 Licensed under the Apache 2.0 license
