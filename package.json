@@ -10,8 +10,7 @@
     "@babel/core": "7.9.0",
     "@storybook/addon-knobs": "^6.1.11",
     "@storybook/html": "^6.1.11",
-    "babel-loader": "8.1.0",
-    "parcel-bundler": "1.12.4"
+    "babel-loader": "8.1.0"
   },
   "scripts": {
     "dev": "parcel index.html",
