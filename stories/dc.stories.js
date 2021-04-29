@@ -14,6 +14,7 @@ export default {
 
 export const BasicConfiguration = () => {
     const config = {
+        Text3D: boolean('3D text', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -63,7 +64,7 @@ export const BasicConfiguration = () => {
 
 export const CustomConfiguration = () => {
     const config = {
-
+        Text3D: boolean('3D text', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -113,7 +114,7 @@ export const CustomConfiguration = () => {
 
 export const FullMap= ()  => {
     const config = {
-
+        Text3D: boolean('3D text', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -164,7 +165,7 @@ export const FullMap= ()  => {
 
 export const EnergeticEfficiency = ()  => {
     const config = {
-
+        Text3D: boolean('3D text', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),

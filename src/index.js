@@ -68,11 +68,11 @@ export default (function (parentElement, conf) {
         }
 
         if (conf.displayLabels) {
-
+            if (conf.Text3D) {
                 create3DLabels(data);
-
-                //create2DLabels(data);
-
+            } else {
+                create2DLabels(data);
+            }
         }
 
         render(data);
@@ -360,7 +360,7 @@ export default (function (parentElement, conf) {
             // update label 2D and 3D position
             if (conf.displayLabels) {
                 // set 3D label position
-
+                if (conf.Text3D) {
                     const sortedLabels = scene.children.filter((item) => item.layerindex == layerIndex)
                     for (let i = 0; i < sortedLabels.length; i++) {
                         const label = sortedLabels[i];
@@ -387,44 +387,41 @@ export default (function (parentElement, conf) {
                             label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
                         }
                     }
+                }
+                else {
+                    // set 2D label position
+                    const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+                    //todo : check if iteration over metricsnumber could make sense
+                    //for (let i = 0;  i <  metricsNumber; i++) {
+                    //const label = sortedLabels[i];
+                    //todo last : modify the current setting point for labels, currently set at the maxpoint
+                    //label.position.set(metricValueCurrent[i][0], metricValueCurrent[i][2], metricValueCurrent[i][1]);
+                    //label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
+                    //label.element.innerHTML = '<table><ul><li>My real name is : '+label.name+'</li><li>'+Object.values(layerMetrics)[i].label + " " + Object.values(layerMetrics)[i].current.toFixed();+'</li></ul></table>';
+                    //}
+                    for (let i = 0; i < sortedLabels.length; i++) {
+                        const label = sortedLabels[i];
+                        if (layerMetrics[label.key]) {
+                            const labelData = layerMetrics[label.key];
+                            const labelDataName = labelData.label;
+                            const labelDataType = label.dataType;
+                            var labelDataUnit = label.labelUnit;
+                            const labelDataIndex = Object.keys(layerMetrics).indexOf(label.key);
+                            const labelDataValue = Object.values(layerMetrics)[labelDataIndex][labelDataType].toFixed();
+                            const labelPositions = metricValue[labelDataType][labelDataIndex];
 
 
-                    // // set 2D label position
-                    // const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
-                    // //todo : check if iteration over metricsnumber could make sense
-                    // //for (let i = 0;  i <  metricsNumber; i++) {
-                    // //const label = sortedLabels[i];
-                    // //todo last : modify the current setting point for labels, currently set at the maxpoint
-                    // //label.position.set(metricValueCurrent[i][0], metricValueCurrent[i][2], metricValueCurrent[i][1]);
-                    // //label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-                    // //label.element.innerHTML = '<table><ul><li>My real name is : '+label.name+'</li><li>'+Object.values(layerMetrics)[i].label + " " + Object.values(layerMetrics)[i].current.toFixed();+'</li></ul></table>';
-                    // //}
-                    // for (let i = 0; i < sortedLabels.length; i++) {
-                    //     const label = sortedLabels[i];
-                    //     if (layerMetrics[label.key]) {
-                    //         const labelData = layerMetrics[label.key];
-                    //         const labelDataName = labelData.label;
-                    //         const labelDataType = label.dataType;
-                    //         var labelDataUnit = label.labelUnit;
-                    //         const labelDataIndex = Object.keys(layerMetrics).indexOf(label.key);
-                    //         const labelDataValue = Object.values(layerMetrics)[labelDataIndex][labelDataType].toFixed();
-                    //         const labelPositions = metricValue[labelDataType][labelDataIndex];
-                    //
-                    //         // display units in label
-                    //         if (!conf.displayUnits) {
-                    //             labelDataUnit = '';
-                    //         }
-                    //
-                    //         if (debug == true) {
-                    //             debug = false;
-                    //         }
-                    //         label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
-                    //         label.element.innerHTML =
-                    //             '<table><ul><li><b>' + labelDataName + '</b> - ' + labelDataType + ' : ' + labelDataValue +' '+ labelDataUnit+ '</li>' +
-                    //             '</ul></table>';
-                    //     }
-                    // }
 
+                            if (debug == true) {
+                                debug = false;
+                            }
+                            label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
+                            label.element.innerHTML =
+                                '<table><ul><li><b>' + labelDataName + '</b> - ' + labelDataType + ' : ' + labelDataValue +' '+ labelDataUnit+ '</li>' +
+                                '</ul></table>';
+                        }
+                    }
+                }
             }
             //)
 
