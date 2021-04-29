@@ -13,7 +13,8 @@ export default {
 };
 
 export const Boolean = () => {
-    const config = { 
+    const config = {
+
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -62,7 +63,8 @@ export const Boolean = () => {
 };
 
 export const Ternary = ()  => {
-    const config = {  
+    const config = {
+
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -111,7 +113,8 @@ export const Ternary = ()  => {
 };
 
 export const FourValued = () => {
-    const config = { 
+    const config = {
+
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -160,7 +163,8 @@ export const FourValued = () => {
 };
 
 export const FiveThreeTwoPyramid = () => {
-    const config = { 
+    const config = {
+
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
