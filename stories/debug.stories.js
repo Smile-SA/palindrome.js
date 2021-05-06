@@ -13,6 +13,7 @@ export default {
 export const DebugTwoLayersThreePoints = () => {
     const config = {
         Text3D: boolean('3D text', true),
+        displayUnits: boolean('Display units in labels', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -64,6 +65,7 @@ export const DebugTwoLayersThreePoints = () => {
 export const DebugTwoLayersFourPoints = () => {
     const config = {
         Text3D: boolean('3D text', true),
+        displayUnits: boolean('Display units in labels', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),

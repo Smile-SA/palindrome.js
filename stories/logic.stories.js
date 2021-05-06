@@ -15,6 +15,7 @@ export default {
 export const Boolean = () => {
     const config = {
         Text3D: boolean('3D text', true),
+        displayUnits: boolean('Display units in labels', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -65,6 +66,7 @@ export const Boolean = () => {
 export const Ternary = ()  => {
     const config = {
         Text3D: boolean('3D text', true),
+        displayUnits: boolean('Display units in labels', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -115,6 +117,7 @@ export const Ternary = ()  => {
 export const FourValued = () => {
     const config = {
         Text3D: boolean('3D text', true),
+        displayUnits: boolean('Display units in labels', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -165,6 +168,7 @@ export const FourValued = () => {
 export const FiveThreeTwoPyramid = () => {
     const config = {
         Text3D: boolean('3D text', true),
+        displayUnits: boolean('Display units in labels', true),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),

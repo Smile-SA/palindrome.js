@@ -140,6 +140,7 @@ export default (function (parentElement, conf) {
      * @param {number} layerIndex to keep track or layers and metric inside
      */
     function create2DLabel(key, labelName, labelType, layerIndex,labelUnit) {
+        if (labelUnit === undefined) labelUnit = '';
         const labelDiv = document.createElement('div');
         labelDiv.className = 'label ' + labelName;
         labelDiv.textContent = labelName;
@@ -148,7 +149,6 @@ export default (function (parentElement, conf) {
         metricLabel.name = labelName;
         metricLabel.dataType = labelType;
         metricLabel.layerIndex = layerIndex;
-        if (labelUnit === undefined) labelUnit = '';
         metricLabel.labelUnit = labelUnit;
         //metricLabel.position.set(vector3[0], vector3[2] + 1, vector3[1]);
         return metricLabel;
@@ -165,6 +165,7 @@ export default (function (parentElement, conf) {
      * @param {Objet} parameters
      */
     function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit, parameters) {
+        // display units in label
         if (labelUnit === undefined) labelUnit = '';
         labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit
         var canvas = createCanvas(labelName, parameters);
@@ -322,7 +323,7 @@ export default (function (parentElement, conf) {
                 }
             }
 
-            // update label 2D and 3D position
+            // update label position
             if (conf.displayLabels) {
                 var sortedLabels;
                 if(conf.Text3D){
@@ -330,11 +331,9 @@ export default (function (parentElement, conf) {
                 }else{
                     sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
                 }
-
                 for (let i = 0; i < sortedLabels.length; i++) {
                     const label = sortedLabels[i];
                     if (layerMetrics[label.key]) {
-
                         const labelData = layerMetrics[label.key];
                         const labelDataName = labelData.label;
                         const labelDataType = label.dataType;
@@ -345,17 +344,16 @@ export default (function (parentElement, conf) {
                         if (debug == true) {
                             debug = false;
                         }
+                        // display units in label
+                        if (!conf.displayUnits || labelDataUnit === undefined) labelDataUnit = '';
                         label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue+' '+labelDataUnit;
-
                         if(conf.Text3D){
                             var canvas = createCanvas(label.name);
                             var texture = new THREE.Texture(canvas[0]);
                             texture.needsUpdate = true;
                             label.material.map = texture;
                         }else{
-                            label.element.innerHTML =
-                                '<table><ul><li><b>' + labelDataName + '</b> - ' + labelDataType + ' : ' + labelDataValue +' '+ labelDataUnit+ '</li>' +
-                                '</ul></table>';
+                            label.element.innerHTML = '<table><ul><li><b>' + label.name+ '</li>' + '</ul></table>';
                         }
                         label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
                     }

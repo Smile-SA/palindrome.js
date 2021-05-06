@@ -1,7 +1,7 @@
 export function* dataGenerator(model) {
     const model_ = {...model};
 
-      while(1) {
+      //while(1) {
         for(let layer of Object.values(model_)) {
             for(let metric of Object.values(layer.metrics)) {
                 const { min, max, current } = metric;
@@ -12,5 +12,5 @@ export function* dataGenerator(model) {
         }
 
         yield model;
-     }
+   //  }
 };
