@@ -68,11 +68,7 @@ export default (function (parentElement, conf) {
         }
 
         if (conf.displayLabels) {
-            if (conf.Text3D) {
-                create3DLabels(data);
-            } else {
-                create2DLabels(data);
-            }
+                createLabels(data);
         }
 
         render(data);
@@ -95,7 +91,7 @@ export default (function (parentElement, conf) {
      *
      * @param {*} data dataObject (conf.data)
      */
-    function create2DLabels(data) {
+    function createLabels(data) {
         let zAxis = conf.zplane.zplaneInitial;
         let layerIndex = 0;
 
@@ -109,13 +105,23 @@ export default (function (parentElement, conf) {
                     break;
                 } else {
                     labelsIds.push(key)
-                    scene.add(create2DLabel(key, value.label, 'current', layerIndex, value.unit));
-
-                    if (conf.displayLabelsAll) {
-                        scene.add(create2DLabel(key, value.label, 'min', layerIndex, value.unit));
-                        scene.add(create2DLabel(key, value.label, 'med', layerIndex, value.unit));
-                        scene.add(create2DLabel(key, value.label, 'max', layerIndex, value.unit));
+                    if(conf.Text3D){
+                        labelsIds.push(key)
+                        scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
+                        if (conf.displayLabelsAll) {
+                            scene.add(create3DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
+                            scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
+                            scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
+                        }
+                    }else{
+                        scene.add(create2DLabel(key, value.label, 'current', layerIndex, value.unit));
+                        if (conf.displayLabelsAll) {
+                            scene.add(create2DLabel(key, value.label, 'min', layerIndex, value.unit));
+                            scene.add(create2DLabel(key, value.label, 'med', layerIndex, value.unit));
+                            scene.add(create2DLabel(key, value.label, 'max', layerIndex, value.unit));
+                        }
                     }
+
                 }
 
             }
@@ -148,42 +154,6 @@ export default (function (parentElement, conf) {
         return metricLabel;
     }
 
-    /**
-     * Create all 3D label for each textsprites metric
-     *
-     * @param {*} data dataObject (conf.data)
-     */
-    function create3DLabels(data) {
-
-        let zAxis = conf.zplane.zplaneInitial;
-        let layerIndex = 0;
-
-        for (let layer in data) {
-            let metrics = data[layer].metrics;
-            let labelsIds = [];
-            for (const [key, value] of Object.entries(metrics)) {
-                if (labelsIds.includes(key) == true) {
-                    console.warn("This layer contains two times the same metric key", [layer]);
-                    break;
-                } else {
-                    labelsIds.push(key)
-                    scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
-
-                    if (conf.displayLabelsAll) {
-                        scene.add(create3DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
-                        scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
-                        scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
-                    }
-                }
-
-            }
-
-
-            zAxis -= conf.zplane.zplaneHeight
-            layerIndex++;
-        }
-
-    }
 
     /**
      * Return a 3d label with text sprite
@@ -195,7 +165,9 @@ export default (function (parentElement, conf) {
      * @param {Objet} parameters
      */
     function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit, parameters) {
-        var canvas = createCanvas(labelName, labelType, labelValue, layerIndex, labelUnit, parameters);
+        if (labelUnit === undefined) labelUnit = '';
+        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit
+        var canvas = createCanvas(labelName, parameters);
         var texture = new THREE.Texture(canvas[0]);
         texture.needsUpdate = true;
         var fontsize = canvas[1];
@@ -203,10 +175,9 @@ export default (function (parentElement, conf) {
         var metricLabel = new THREE.Sprite(spriteMaterial);
         metricLabel.scale.set((0.5 + (0.5 * 1 / 2)) * fontsize, (0.25 + (0.25 * 1 / 2)) * fontsize, (0.75 + (0.75 * 1 / 2)) * fontsize);
         metricLabel.key = key;
-        metricLabel.name = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
+        metricLabel.name = labelName;
         metricLabel.dataType = labelType;
         metricLabel.layerindex = layerIndex;
-        if (labelUnit === undefined) labelUnit = '';
         metricLabel.labelUnit = labelUnit;
         return metricLabel;
     }
@@ -215,14 +186,12 @@ export default (function (parentElement, conf) {
      * Return a canvas element
      *
      * @param {string} labelName
-     * @param {string} labelType
-     * @param {number} layerIndex
      * @param {Objet} parameters
      */
-    function createCanvas(labelName, labelType, labelValue, layerIndex, labelUnit, parameters) {
+    function createCanvas(labelName, parameters) {
         if (parameters === undefined) parameters = {};
         var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
-        var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
+        var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 12;
         var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
         var borderColor = parameters.hasOwnProperty("borderColor") ? parameters["borderColor"] : {
             r: 255,
@@ -241,10 +210,7 @@ export default (function (parentElement, conf) {
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
         context.font = fontsize + "px " + fontface;
-
-
-
-        var metrics = context.measureText(labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit);
+        var metrics = context.measureText(labelName );
         var textWidth = metrics.width;
 
         context.fillStyle = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
@@ -254,8 +220,7 @@ export default (function (parentElement, conf) {
         roundRect(context, borderThickness / 2, borderThickness / 2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
 
         context.fillStyle = "rgba(" + textColor.r + ", " + textColor.g + ", " + textColor.b + ", 1.0)";
-        if (labelUnit === undefined) labelUnit = '';
-        context.fillText(labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit, borderThickness, fontsize + borderThickness);
+        context.fillText(labelName , borderThickness, fontsize + borderThickness);
 
         return [canvas, fontsize];
     }
@@ -359,67 +324,40 @@ export default (function (parentElement, conf) {
 
             // update label 2D and 3D position
             if (conf.displayLabels) {
-                // set 3D label position
-                if (conf.Text3D) {
-                    const sortedLabels = scene.children.filter((item) => item.layerindex == layerIndex)
-                    for (let i = 0; i < sortedLabels.length; i++) {
-                        const label = sortedLabels[i];
-                        if (layerMetrics[label.key]) {
+                var sortedLabels;
+                if(conf.Text3D){
+                    sortedLabels = scene.children.filter((item) => item.layerindex == layerIndex)
+                }else{
+                    sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+                }
 
-                            const labelData = layerMetrics[label.key];
-                            const labelDataName = labelData.label;
-                            const labelDataType = label.dataType;
-                            var labelDataUnit = label.labelUnit;
-                            const labelDataIndex = Object.keys(layerMetrics).indexOf(label.key);
-                            const labelDataValue = Object.values(layerMetrics)[labelDataIndex][labelDataType].toFixed();
-                            const labelPositions = metricValue[labelDataType][labelDataIndex];
+                for (let i = 0; i < sortedLabels.length; i++) {
+                    const label = sortedLabels[i];
+                    if (layerMetrics[label.key]) {
 
-                            if (debug == true) {
-                                debug = false;
-                            }
+                        const labelData = layerMetrics[label.key];
+                        const labelDataName = labelData.label;
+                        const labelDataType = label.dataType;
+                        var labelDataUnit = label.labelUnit;
+                        const labelDataIndex = Object.keys(layerMetrics).indexOf(label.key);
+                        const labelDataValue = Object.values(layerMetrics)[labelDataIndex][labelDataType].toFixed();
+                        const labelPositions = metricValue[labelDataType][labelDataIndex];
+                        if (debug == true) {
+                            debug = false;
+                        }
+                        label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue+' '+labelDataUnit;
 
-
-                            label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue+' '+labelDataUnit;
-                            var canvas = createCanvas(labelDataName, labelDataType, labelDataValue, labelDataIndex,labelDataUnit);
+                        if(conf.Text3D){
+                            var canvas = createCanvas(label.name);
                             var texture = new THREE.Texture(canvas[0]);
                             texture.needsUpdate = true;
                             label.material.map = texture;
-                            label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
-                        }
-                    }
-                }
-                else {
-                    // set 2D label position
-                    const sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
-                    //todo : check if iteration over metricsnumber could make sense
-                    //for (let i = 0;  i <  metricsNumber; i++) {
-                    //const label = sortedLabels[i];
-                    //todo last : modify the current setting point for labels, currently set at the maxpoint
-                    //label.position.set(metricValueCurrent[i][0], metricValueCurrent[i][2], metricValueCurrent[i][1]);
-                    //label.position.set(metricValueMax[i][0], metricValueMax[i][2], metricValueMax[i][1]);
-                    //label.element.innerHTML = '<table><ul><li>My real name is : '+label.name+'</li><li>'+Object.values(layerMetrics)[i].label + " " + Object.values(layerMetrics)[i].current.toFixed();+'</li></ul></table>';
-                    //}
-                    for (let i = 0; i < sortedLabels.length; i++) {
-                        const label = sortedLabels[i];
-                        if (layerMetrics[label.key]) {
-                            const labelData = layerMetrics[label.key];
-                            const labelDataName = labelData.label;
-                            const labelDataType = label.dataType;
-                            var labelDataUnit = label.labelUnit;
-                            const labelDataIndex = Object.keys(layerMetrics).indexOf(label.key);
-                            const labelDataValue = Object.values(layerMetrics)[labelDataIndex][labelDataType].toFixed();
-                            const labelPositions = metricValue[labelDataType][labelDataIndex];
-
-
-
-                            if (debug == true) {
-                                debug = false;
-                            }
-                            label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
+                        }else{
                             label.element.innerHTML =
                                 '<table><ul><li><b>' + labelDataName + '</b> - ' + labelDataType + ' : ' + labelDataValue +' '+ labelDataUnit+ '</li>' +
                                 '</ul></table>';
                         }
+                        label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
                     }
                 }
             }
