@@ -1,4 +1,4 @@
-import { withKnobs, text, number, boolean, color, object } from "@storybook/addon-knobs";
+import {withKnobs, text, number, boolean, color, object, select} from "@storybook/addon-knobs";
 
 import palindrome from '../src/index';
 
@@ -12,8 +12,26 @@ export default {
 
 export const DebugTwoLayersThreePoints = () => {
     const config = {
-        Text3D: boolean('3D text', true),
+        TextStyle : select('Text style',{
+            '2D': 1,
+            '3D text sprite': 2,
+            '3D webGlFont': 3,
+        },1),
         displayUnits: boolean('Display units in labels', true),
+        textSize : select('Text size',{
+            Small: 16,
+            Medium: 24,
+            Large: 30,
+        },24),
+        textColor : color('Text color', '#000000'),
+        textBold: boolean('bold text',false),
+        textItalic: boolean('Italic text',false),
+        textFontFace : select('Text font family',{
+            'Serif': 'Serif',
+            'Sans-serif': 'sans-serif',
+            'Arial': 'arial',
+        },'arial'),
+        textBoxColor: color('Text box Color', '#FFFFFF'),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),
@@ -64,8 +82,26 @@ export const DebugTwoLayersThreePoints = () => {
 
 export const DebugTwoLayersFourPoints = () => {
     const config = {
-        Text3D: boolean('3D text', true),
+        TextStyle : select('Text style',{
+            '2D': 1,
+            '3D text sprite': 2,
+            '3D webGlFont': 3,
+        },1),
         displayUnits: boolean('Display units in labels', true),
+        textSize : select('Text size',{
+            Small: 16,
+            Medium: 24,
+            Large: 30,
+        },24),
+        textColor : color('Text color', '#000000'),
+        textBold: boolean('bold text',false),
+        textItalic: boolean('Italic text',false),
+        textFontFace : select('Text font family',{
+            'Serif': 'Serif',
+            'Sans-serif': 'sans-serif',
+            'Arial': 'arial',
+        },'arial'),
+        textBoxColor: color('Text box Color', '#FFFFFF'),
         mockupData: boolean('mockupData', true),
         displayArea: text('displayArea', 'palindrome'),
     	palindromeSize : number('palindromeSize', 3),

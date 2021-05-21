@@ -10,7 +10,6 @@ export function* dataGenerator(model) {
                 const mockUp = metric.current = Math.max(Math.min(current + update, max), min);
             }
         }
-
         yield model;
-   //  }
+     //}
 };

@@ -21,9 +21,12 @@
   },
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",
+    "load-bmfont": "^1.4.1",
     "three": "0.117.1",
+    "three-bmfont-text": "^3.0.1",
     "three-css2drender": "1.0.0",
-    "three-text2d": "^0.6.0"
+    "three-text2d": "^0.6.0",
+    "three.text": "^1.0.13"
   },
   "browserslist": [
     "defaults"

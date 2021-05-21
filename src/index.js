@@ -4,7 +4,6 @@ import {Triangle, SimpleLine} from './ThreeGeometryObjects';
 import {dataGenerator} from './dataGenerator';
 import {initThreeObjects} from './ThreeJSBasicObjects';
 
-
 /**
  * @param {HTMLElement} parentElement perent element of three's renderer element
  * @param {*} conf model's configuration
@@ -14,6 +13,8 @@ export default (function (parentElement, conf) {
     let lineMaterial;
     let lineMaterialTransparent;
     const meshs = {};
+    var MSDFShader;
+    var parameters = {};
     let dataIterator;
     let newData;
     const {
@@ -49,6 +50,8 @@ export default (function (parentElement, conf) {
         }
         newData = data;
         dataIterator = dataGenerator(data);
+        //init msdf
+        MSDFShader = require('three-bmfont-text/shaders/msdf');
 
         // init materials
         lineMaterial = new THREE.LineDashedMaterial({
@@ -68,11 +71,29 @@ export default (function (parentElement, conf) {
         }
 
         if (conf.displayLabels) {
-                createLabels(data);
+            // configuration text parameters
+            if (conf.textBold) {
+                parameters["fontBold"] = 'bold'
+            } else {
+                parameters["fontBold"] = ''
+            }
+            if (conf.textItalic) {
+                parameters["fontItalic"] = 'Italic'
+            } else {
+                parameters["fontItalic"] = ''
+            }
+
+            parameters["fontFace"] = conf.textFontFace;
+            parameters["fontSize"] = conf.textSize;
+            parameters["borderColor"] = conf.textBoxColor;
+            parameters["backgroundColor"] = conf.textBoxColor;
+            parameters["textColor"] = conf.textColor;
+            createLabels(data);
         }
 
         render(data);
     }
+
 
     /**
      * Adds a grid at Z = 0
@@ -84,7 +105,6 @@ export default (function (parentElement, conf) {
         var gridHelper = new THREE.GridHelper(size, divisions);
         scene.add(gridHelper);
     }
-
 
     /**
      * Create labels for each metrics
@@ -105,25 +125,25 @@ export default (function (parentElement, conf) {
                     break;
                 } else {
                     labelsIds.push(key)
-                    if(conf.Text3D){
-                        labelsIds.push(key)
-                        scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
-                        if (conf.displayLabelsAll) {
-                            scene.add(create3DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
-                            scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
-                            scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
-                        }
-                    }else{
+                    if (conf.TextStyle == 1) {
                         scene.add(create2DLabel(key, value.label, 'current', layerIndex, value.unit));
                         if (conf.displayLabelsAll) {
                             scene.add(create2DLabel(key, value.label, 'min', layerIndex, value.unit));
                             scene.add(create2DLabel(key, value.label, 'med', layerIndex, value.unit));
                             scene.add(create2DLabel(key, value.label, 'max', layerIndex, value.unit));
                         }
+                    } else {
+                        if (conf.TextStyle == 2) {
+                            labelsIds.push(key)
+                            scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
+                            if (conf.displayLabelsAll) {
+                                scene.add(create3DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
+                                scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
+                                scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
+                            }
+                        }
                     }
-
                 }
-
             }
 
             zAxis -= conf.zplane.zplaneHeight
@@ -139,7 +159,7 @@ export default (function (parentElement, conf) {
      * @param {number} vector3 coordinates of our metric point on the plane
      * @param {number} layerIndex to keep track or layers and metric inside
      */
-    function create2DLabel(key, labelName, labelType, layerIndex,labelUnit) {
+    function create2DLabel(key, labelName, labelType, layerIndex, labelUnit) {
         if (labelUnit === undefined) labelUnit = '';
         const labelDiv = document.createElement('div');
         labelDiv.className = 'label ' + labelName;
@@ -154,7 +174,6 @@ export default (function (parentElement, conf) {
         return metricLabel;
     }
 
-
     /**
      * Return a 3d label with text sprite
      *
@@ -162,19 +181,17 @@ export default (function (parentElement, conf) {
      * @param {string} labelName
      * @param {string} labelType
      * @param {number} layerIndex
-     * @param {Objet} parameters
      */
-    function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit, parameters) {
-        // display units in label
+    function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
         if (labelUnit === undefined) labelUnit = '';
-        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit
+        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
         var canvas = createCanvas(labelName, parameters);
         var texture = new THREE.Texture(canvas[0]);
         texture.needsUpdate = true;
-        var fontsize = canvas[1];
+        var fontSize = canvas[1];
         var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: true});
         var metricLabel = new THREE.Sprite(spriteMaterial);
-        metricLabel.scale.set((0.5 + (0.5 * 1 / 2)) * fontsize, (0.25 + (0.25 * 1 / 2)) * fontsize, (0.75 + (0.75 * 1 / 2)) * fontsize);
+        metricLabel.scale.set((0.5 + (0.5 * 1 / 2)) * fontSize, (0.25 + (0.25 * 1 / 2)) * fontSize, (0.75 + (0.75 * 1 / 2)) * fontSize);
         metricLabel.key = key;
         metricLabel.name = labelName;
         metricLabel.dataType = labelType;
@@ -184,46 +201,77 @@ export default (function (parentElement, conf) {
     }
 
     /**
+     * Return a 3d label with text sprite
+     *
+     * @param {number} key
+     * @param {string} labelName
+     * @param {string} labelType
+     * @param {number} layerIndex
+     */
+    function create3DSecondLabel(geometry, texture,key, labelName, labelType, labelValue, layerIndex, labelUnit) {
+        // Create material with msdf shader from three-bmfont-text
+        const material = new THREE.RawShaderMaterial(MSDFShader({
+            map: texture,
+            color: 0x000000, // We'll remove it later when defining the fragment shader
+            side: THREE.DoubleSide,
+            transparent: true,
+            negate: false,
+        }));
+
+        //Create mesh of text
+        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: true});
+        var metricLabel = new THREE.Sprite(spriteMaterial);
+        metricLabel.scale.set((0.5 + (0.5 * 1 / 2)) * fontSize, (0.25 + (0.25 * 1 / 2)) * fontSize, (0.75 + (0.75 * 1 / 2)) * fontSize);
+        metricLabel.key = key;
+        metricLabel.name = labelName;
+        metricLabel.dataType = labelType;
+        metricLabel.layerindex = layerIndex;
+        metricLabel.labelUnit = labelUnit;
+        return metricLabel;
+
+        // Create mesh of text
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(-80, 0, 0); // Move according to text size
+        mesh.rotation.set(Math.PI, 0, 0); // Spin to face correctly
+        scene.add(mesh);
+    }
+
+    /**
      * Return a canvas element
      *
      * @param {string} labelName
-     * @param {Objet} parameters
      */
-    function createCanvas(labelName, parameters) {
-        if (parameters === undefined) parameters = {};
-        var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
-        var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 12;
+    function createCanvas(labelName) {
+        var fontFace = parameters.hasOwnProperty("fontFace") ? parameters["fontFace"] : "sans-serif";
+        var fontSize = parameters.hasOwnProperty("fontSize") ? parameters["fontSize"] : 22;
+        var fontBold = parameters.hasOwnProperty("fontBold") ? parameters["fontBold"] : 'bold';
+        var fontItalic = parameters.hasOwnProperty("fontItalic") ? parameters["fontItalic"] : 'Italic';
         var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
-        var borderColor = parameters.hasOwnProperty("borderColor") ? parameters["borderColor"] : {
-            r: 255,
-            g: 255,
-            b: 255,
-            a: 1.0
-        };
-        var backgroundColor = parameters.hasOwnProperty("backgroundColor") ? parameters["backgroundColor"] : {
-            r: 255,
-            g: 255,
-            b: 255,
-            a: 1.0
-        };
-        var textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : {r: 0, g: 0, b: 0, a: 1.0};
-
+        var borderColor = parameters.hasOwnProperty("borderColor") ? parameters["borderColor"] : 'rgba(0,0,0,0)';
+        var backgroundColor = parameters.hasOwnProperty("backgroundColor") ? parameters["backgroundColor"] : 'rgba(0,0,0,0)'
+        var textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : '#000000';
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
-        context.font = fontsize + "px " + fontface;
-        var metrics = context.measureText(labelName );
+        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + fontFace;
+        // var newDiv = document.createElement("div");
+        // newDiv.style='color :' + parameters['textColor'] + ';' +
+        //     ' font-family:' + parameters['fontFace'] + ';' +
+        //     ' font-weight:' + parameters["fontBold"] + ';' +
+        //     ' font-style: ' + parameters["fontItalic"] + '; ' +
+        //     ' font-size: ' + parameters["fontSize"] + 'px; ';
+        // newDiv.textContent=labelName;
+        // console.log(newDiv.width);
+        var metrics = context.measureText(labelName);
         var textWidth = metrics.width;
-
-        context.fillStyle = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
-        context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
-
+        canvas.width = textWidth+fontSize;
+        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + fontFace;
+        context.fillStyle = backgroundColor
+        context.strokeStyle = borderColor
         context.lineWidth = borderThickness;
-        roundRect(context, borderThickness / 2, borderThickness / 2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
-
-        context.fillStyle = "rgba(" + textColor.r + ", " + textColor.g + ", " + textColor.b + ", 1.0)";
-        context.fillText(labelName , borderThickness, fontsize + borderThickness);
-
-        return [canvas, fontsize];
+        roundRect(context, borderThickness / 2, borderThickness / 2, textWidth + borderThickness, fontSize * 1.4 + borderThickness, 6);
+        context.fillStyle = textColor;
+        context.fillText(labelName, borderThickness/2, fontSize + borderThickness);
+        return [canvas, fontSize];
     }
 
     /**
@@ -326,10 +374,12 @@ export default (function (parentElement, conf) {
             // update label position
             if (conf.displayLabels) {
                 var sortedLabels;
-                if(conf.Text3D){
-                    sortedLabels = scene.children.filter((item) => item.layerindex == layerIndex)
-                }else{
+                if (conf.TextStyle==1) {
                     sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
+                } else {
+                    if(conf.TextStyle==2){
+                        sortedLabels = scene.children.filter((item) => item.layerindex == layerIndex)
+                    }
                 }
                 for (let i = 0; i < sortedLabels.length; i++) {
                     const label = sortedLabels[i];
@@ -346,14 +396,24 @@ export default (function (parentElement, conf) {
                         }
                         // display units in label
                         if (!conf.displayUnits || labelDataUnit === undefined) labelDataUnit = '';
-                        label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue+' '+labelDataUnit;
-                        if(conf.Text3D){
-                            var canvas = createCanvas(label.name);
-                            var texture = new THREE.Texture(canvas[0]);
-                            texture.needsUpdate = true;
-                            label.material.map = texture;
-                        }else{
-                            label.element.innerHTML = '<table><ul><li><b>' + label.name+ '</li>' + '</ul></table>';
+                        label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue + ' ' + labelDataUnit;
+                        if (conf.TextStyle==1) {
+                            label.element.innerHTML = '<table><ul><li ' +
+                                'style=" ' +
+                                ' color :' + parameters['textColor'] + ';' +
+                                ' font-family:' + parameters['fontFace'] + ';' +
+                                ' font-weight:' + parameters["fontBold"] + ';' +
+                                ' font-style: ' + parameters["fontItalic"] + '; ' +
+                                ' font-size: ' + parameters["fontSize"] + 'px; ' +
+                                '">' + label.name + '</li>' + '</ul></table>';
+                        } else {
+                            if(conf.TextStyle==2){
+                                var canvas = createCanvas(label.name);
+                                var texture = new THREE.Texture(canvas[0]);
+                                texture.needsUpdate = true;
+                                label.material.map = texture;
+                            }
+
                         }
                         label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
                     }
@@ -481,7 +541,6 @@ export default (function (parentElement, conf) {
         }
     }
 
-
     /**
      * Rendering loop
      */
@@ -518,7 +577,6 @@ export default (function (parentElement, conf) {
     function polarTo3DPoint(angle, radius, zplaneValue) {
         return [radius * Math.cos(angle), radius * Math.sin(angle), zplaneValue];
     }
-
 
 });
 
