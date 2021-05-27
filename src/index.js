@@ -50,8 +50,6 @@ export default (function (parentElement, conf) {
         }
         newData = data;
         dataIterator = dataGenerator(data);
-        //init msdf
-        MSDFShader = require('three-bmfont-text/shaders/msdf');
 
         // init materials
         lineMaterial = new THREE.LineDashedMaterial({
@@ -83,7 +81,7 @@ export default (function (parentElement, conf) {
                 parameters["fontItalic"] = ''
             }
 
-            parameters["fontFace"] = conf.textFontFace;
+            parameters["characterFont"] = conf.characterFont;
             parameters["fontSize"] = conf.textSize;
             parameters["borderColor"] = conf.textBoxColor;
             parameters["backgroundColor"] = conf.textBoxColor;
@@ -141,6 +139,16 @@ export default (function (parentElement, conf) {
                                 scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
                                 scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
                             }
+                        } else{
+                            if (conf.TextStyle == 3) {
+                                labelsIds.push(key)
+                                scene.add(create3DSecondLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
+                                if (conf.displayLabelsAll) {
+                                    scene.add(create3DSecondLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
+                                    scene.add(create3DSecondLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
+                                    scene.add(create3DSecondLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
+                                }
+                            }
                         }
                     }
                 }
@@ -182,16 +190,19 @@ export default (function (parentElement, conf) {
      * @param {string} labelType
      * @param {number} layerIndex
      */
-    function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
+    function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit)  {
         if (labelUnit === undefined) labelUnit = '';
         labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
-        var canvas = createCanvas(labelName, parameters);
-        var texture = new THREE.Texture(canvas[0]);
-        texture.needsUpdate = true;
+        var canvas = createCanvas(labelName);
         var fontSize = canvas[1];
-        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: true});
+        var texture = new THREE.CanvasTexture(canvas[0]);
+        texture.needsUpdate = true;
+        texture.magFilter = THREE.NearestFilter;
+        texture.minFilter = THREE.NearestFilter;
+        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: false
+        });
         var metricLabel = new THREE.Sprite(spriteMaterial);
-        metricLabel.scale.set((0.5 + (0.5 * 1 / 2)) * fontSize, (0.25 + (0.25 * 1 / 2)) * fontSize, (0.75 + (0.75 * 1 / 2)) * fontSize);
+        metricLabel.scale.set((0.5 +(0.5*2/5))*fontSize, (0.25 +(0.25*2/5))* fontSize, (0.75 +(0.75*2/5))*fontSize);
         metricLabel.key = key;
         metricLabel.name = labelName;
         metricLabel.dataType = labelType;
@@ -209,31 +220,39 @@ export default (function (parentElement, conf) {
      * @param {number} layerIndex
      */
     function create3DSecondLabel(geometry, texture,key, labelName, labelType, labelValue, layerIndex, labelUnit) {
-        // Create material with msdf shader from three-bmfont-text
-        const material = new THREE.RawShaderMaterial(MSDFShader({
-            map: texture,
-            color: 0x000000, // We'll remove it later when defining the fragment shader
-            side: THREE.DoubleSide,
-            transparent: true,
-            negate: false,
-        }));
+        if (labelUnit === undefined) labelUnit = '';
+        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
+        // add 3D text
+        var loader = new THREE.FontLoader();
 
-        //Create mesh of text
-        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: true});
-        var metricLabel = new THREE.Sprite(spriteMaterial);
-        metricLabel.scale.set((0.5 + (0.5 * 1 / 2)) * fontSize, (0.25 + (0.25 * 1 / 2)) * fontSize, (0.75 + (0.75 * 1 / 2)) * fontSize);
-        metricLabel.key = key;
-        metricLabel.name = labelName;
-        metricLabel.dataType = labelType;
-        metricLabel.layerindex = layerIndex;
-        metricLabel.labelUnit = labelUnit;
-        return metricLabel;
 
-        // Create mesh of text
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(-80, 0, 0); // Move according to text size
-        mesh.rotation.set(Math.PI, 0, 0); // Spin to face correctly
-        scene.add(mesh);
+            var textGeo = new THREE.TextGeometry( "text", {
+                font: undefined,
+                size: 70,
+                height: 20,
+                curveSegments: 4,
+                bevelThickness: 2,
+                bevelSize: 1.5,
+                bevelEnabled: true
+
+            } );
+
+            textGeo.computeBoundingBox();
+
+            const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+
+            var textMesh1 = new THREE.Mesh( textGeo, materials );
+
+            textMesh1.position.x = centerOffset;
+            textMesh1.position.y = hover;
+            textMesh1.position.z = 0;
+
+            textMesh1.rotation.x = 0;
+            textMesh1.rotation.y = Math.PI * 2;
+
+            scene.add( textMesh1 );
+
+
     }
 
     /**
@@ -242,7 +261,7 @@ export default (function (parentElement, conf) {
      * @param {string} labelName
      */
     function createCanvas(labelName) {
-        var fontFace = parameters.hasOwnProperty("fontFace") ? parameters["fontFace"] : "sans-serif";
+        var characterFont = parameters.hasOwnProperty("characterFont") ? parameters["characterFont"] : "sans-serif";
         var fontSize = parameters.hasOwnProperty("fontSize") ? parameters["fontSize"] : 22;
         var fontBold = parameters.hasOwnProperty("fontBold") ? parameters["fontBold"] : 'bold';
         var fontItalic = parameters.hasOwnProperty("fontItalic") ? parameters["fontItalic"] : 'Italic';
@@ -252,25 +271,20 @@ export default (function (parentElement, conf) {
         var textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : '#000000';
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
-        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + fontFace;
-        // var newDiv = document.createElement("div");
-        // newDiv.style='color :' + parameters['textColor'] + ';' +
-        //     ' font-family:' + parameters['fontFace'] + ';' +
-        //     ' font-weight:' + parameters["fontBold"] + ';' +
-        //     ' font-style: ' + parameters["fontItalic"] + '; ' +
-        //     ' font-size: ' + parameters["fontSize"] + 'px; ';
-        // newDiv.textContent=labelName;
-        // console.log(newDiv.width);
+        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + characterFont;
         var metrics = context.measureText(labelName);
         var textWidth = metrics.width;
-        canvas.width = textWidth+fontSize;
-        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + fontFace;
-        context.fillStyle = backgroundColor
-        context.strokeStyle = borderColor
+        canvas.height = (textWidth+fontSize)/2;
+        canvas.width = (textWidth+fontSize);
+        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + characterFont;
+        context.fillStyle = backgroundColor;
+        context.strokeStyle = borderColor;
         context.lineWidth = borderThickness;
         roundRect(context, borderThickness / 2, borderThickness / 2, textWidth + borderThickness, fontSize * 1.4 + borderThickness, 6);
         context.fillStyle = textColor;
         context.fillText(labelName, borderThickness/2, fontSize + borderThickness);
+        context.restore();
+
         return [canvas, fontSize];
     }
 
@@ -401,7 +415,7 @@ export default (function (parentElement, conf) {
                             label.element.innerHTML = '<table><ul><li ' +
                                 'style=" ' +
                                 ' color :' + parameters['textColor'] + ';' +
-                                ' font-family:' + parameters['fontFace'] + ';' +
+                                ' font-family:' + parameters['characterFont'] + ';' +
                                 ' font-weight:' + parameters["fontBold"] + ';' +
                                 ' font-style: ' + parameters["fontItalic"] + '; ' +
                                 ' font-size: ' + parameters["fontSize"] + 'px; ' +

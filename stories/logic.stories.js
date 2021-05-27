@@ -28,7 +28,7 @@ export const Boolean = () => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('bold text',false),
         textItalic: boolean('Italic text',false),
-        textFontFace : select('Text font family',{
+        characterFont : select('Character Font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
@@ -97,7 +97,7 @@ export const Ternary = ()  => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('bold text',false),
         textItalic: boolean('Italic text',false),
-        textFontFace : select('Text font family',{
+        characterFont : select('Character Font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
@@ -166,7 +166,7 @@ export const FourValued = () => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('bold text',false),
         textItalic: boolean('Italic text',false),
-        textFontFace : select('Text font family',{
+        characterFont : select('Character Font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
@@ -235,7 +235,7 @@ export const FiveThreeTwoPyramid = () => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('bold text',false),
         textItalic: boolean('Italic text',false),
-        textFontFace : select('Text font family',{
+        characterFont : select('Character Font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',

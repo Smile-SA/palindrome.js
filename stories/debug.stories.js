@@ -26,7 +26,7 @@ export const DebugTwoLayersThreePoints = () => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('bold text',false),
         textItalic: boolean('Italic text',false),
-        textFontFace : select('Text font family',{
+        characterFont : select('Character Font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
@@ -96,7 +96,7 @@ export const DebugTwoLayersFourPoints = () => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('bold text',false),
         textItalic: boolean('Italic text',false),
-        textFontFace : select('Text font family',{
+        characterFont : select('Character Font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
