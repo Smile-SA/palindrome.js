@@ -140,6 +140,7 @@ export default (function (parentElement, conf) {
                                 scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
                             }
                         } else{
+                            //create3DSecondLabel()
                             if (conf.TextStyle == 3) {
                                 labelsIds.push(key)
                                 scene.add(create3DSecondLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
@@ -183,79 +184,6 @@ export default (function (parentElement, conf) {
     }
 
     /**
-     * Return a 3d label with text sprite
-     *
-     * @param {number} key
-     * @param {string} labelName
-     * @param {string} labelType
-     * @param {number} layerIndex
-     */
-    function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit)  {
-        if (labelUnit === undefined) labelUnit = '';
-        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
-        var canvas = createCanvas(labelName);
-        var fontSize = canvas[1];
-        var texture = new THREE.CanvasTexture(canvas[0]);
-        texture.needsUpdate = true;
-        texture.magFilter = THREE.NearestFilter;
-        texture.minFilter = THREE.NearestFilter;
-        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: false
-        });
-        var metricLabel = new THREE.Sprite(spriteMaterial);
-        metricLabel.scale.set((0.5 +(0.5*2/5))*fontSize, (0.25 +(0.25*2/5))* fontSize, (0.75 +(0.75*2/5))*fontSize);
-        metricLabel.key = key;
-        metricLabel.name = labelName;
-        metricLabel.dataType = labelType;
-        metricLabel.layerindex = layerIndex;
-        metricLabel.labelUnit = labelUnit;
-        return metricLabel;
-    }
-
-    /**
-     * Return a 3d label with text sprite
-     *
-     * @param {number} key
-     * @param {string} labelName
-     * @param {string} labelType
-     * @param {number} layerIndex
-     */
-    function create3DSecondLabel(geometry, texture,key, labelName, labelType, labelValue, layerIndex, labelUnit) {
-        if (labelUnit === undefined) labelUnit = '';
-        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
-        // add 3D text
-        var loader = new THREE.FontLoader();
-
-
-            var textGeo = new THREE.TextGeometry( "text", {
-                font: undefined,
-                size: 70,
-                height: 20,
-                curveSegments: 4,
-                bevelThickness: 2,
-                bevelSize: 1.5,
-                bevelEnabled: true
-
-            } );
-
-            textGeo.computeBoundingBox();
-
-            const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-
-            var textMesh1 = new THREE.Mesh( textGeo, materials );
-
-            textMesh1.position.x = centerOffset;
-            textMesh1.position.y = hover;
-            textMesh1.position.z = 0;
-
-            textMesh1.rotation.x = 0;
-            textMesh1.rotation.y = Math.PI * 2;
-
-            scene.add( textMesh1 );
-
-
-    }
-
-    /**
      * Return a canvas element
      *
      * @param {string} labelName
@@ -271,46 +199,219 @@ export default (function (parentElement, conf) {
         var textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : '#000000';
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d');
-        context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + characterFont;
+        context.font = fontItalic + "  " + fontBold + " " + fontSize + "px " + characterFont;
         var metrics = context.measureText(labelName);
         var textWidth = metrics.width;
-        canvas.height = (textWidth+fontSize)/2;
-        canvas.width = (textWidth+fontSize);
+        canvas.setAttribute("width", 600 + " px");
+        canvas.setAttribute("height", 300 + " px");
         context.font = fontItalic + " " + fontBold + " " + fontSize + "px " + characterFont;
         context.fillStyle = backgroundColor;
         context.strokeStyle = borderColor;
         context.lineWidth = borderThickness;
-        roundRect(context, borderThickness / 2, borderThickness / 2, textWidth + borderThickness, fontSize * 1.4 + borderThickness, 6);
+        addTextBackground(context, borderThickness/2, borderThickness/2,  canvas.width, canvas.width/2,  'rgba(0,0,0,0)') // backgroundColor );
         context.fillStyle = textColor;
-        context.fillText(labelName, borderThickness/2, fontSize + borderThickness);
-        context.restore();
-
-        return [canvas, fontSize];
+        addMultiLineText(labelName,  borderThickness/2, fontSize + borderThickness, 20, textWidth + borderThickness, context);
+        return canvas;
     }
 
     /**
-     * function for drawing rounded labels rectangles
+     * Return webGL canvas element
      *
-     * @param {number} ctx
-     * @param {number} x
-     * @param {number} y
-     * @param {number} h
-     * @param {number} r
+     * @param {string} labelName
      */
-    function roundRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + w - r, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-        ctx.lineTo(x + w, y + h - r);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        ctx.lineTo(x + r, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+    function createWebGLCanvas(labelName) {
+        //var cv = document.createElement('canvas');
+        //var context = cv.getContext('webgl');
+        var canvas = createCanvas(labelName);
+       //var canvasTexture;
+        var gl = canvas.getContext('webgl');
+        //canvasTexture = context.createTexture();
+        //handleLoadedTexture(gl,canvasTexture, canvas);
+        return canvas;
+    }
+
+    function handleLoadedTexture(gl,texture, textureCanvas) {
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureCanvas); // This is the important line!
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+        gl.generateMipmap(gl.TEXTURE_2D);
+
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    /**
+     * Pour ajouter une couleur de fond sur un champ texte
+     *
+     * @param  {[type]} context  [description]
+     * @param  {[type]} txt  [description]
+     * @param  {[type]} font [description]
+     * @param  {[type]} x    [description]
+     * @param  {[type]} y    [description]
+     * @return {[type]}      [description]
+     */
+    function addTextBackground(context, x, y, width, height, color)
+    {
+        context.save();
+        context.textBaseline = 'top';
+        context.fillStyle = color;
+        context.fillRect(x, y, width, height);
+        context.restore();
+    }
+
+    /**
+     * Gestion d'un texte HTML5 sur plusieurs lignes
+     *
+     *
+     * @param  {[type]} text       [description]
+     * @param  {[type]} x          position en x
+     * @param  {[type]} y          position en y
+     * @param  {[type]} lineHeight hauteur des lignes
+     * @param  {[type]} fitWidth   largeur du texte avant saut de ligne
+     * @return {[type]} oContext   le champ texte (ctx  = canvas.getContext('2d');)
+     * @return {[type]} bDebug     active ou non le debug (encadre le texte)
+     */
+    function addMultiLineText(text, x, y, lineHeight, fitWidth, oContext, bDebug)
+    {
+       var index = null;
+        var draw = x !== null && y !== null;
+
+        // pour la gestion des sauts de ligne manuels
+        text = text.replace(/(\r\n|\n\r|\r|\n)/g, "\n");
+        var sections = text.split("\n");
+
+        var i, str, wordWidth, words, currentLine = 0,
+            maxHeight = 0,
+            maxWidth = 0;
+
+        var printNextLine = function(str)
+        {
+            if (draw)
+                oContext.fillText(str, x, y + (lineHeight * currentLine));
+
+            currentLine++;
+            wordWidth = oContext.measureText(str).width;
+
+            if (wordWidth > maxWidth)
+                maxWidth = wordWidth;
+        };
+
+        for (i = 0; i < sections.length; i++)
+        {
+            words = sections[i].split(' ');
+            index = 1;
+
+            while (words.length > 0 && index <= words.length)
+            {
+                str = words.slice(0, index).join(' ');
+                wordWidth = oContext.measureText(str).width;
+
+                if (wordWidth > fitWidth)
+                {
+                    if (index === 1)
+                    {
+                        // Falls to this case if the first word in words[] is bigger than fitWidth
+                        // so we print this word on its own line; index = 2 because slice is
+                        str = words.slice(0, 1).join(' ');
+                        words = words.splice(1);
+                    }
+                    else
+                    {
+                        str = words.slice(0, index - 1).join(' ');
+                        words = words.splice(index - 1);
+                    }
+
+                    printNextLine(str);
+
+                    index = 1;
+                }
+                else
+                    index++;
+            }
+
+            // The left over words on the last line
+            if (index > 0)
+                printNextLine(words.join(' '));
+        }
+
+        maxHeight = lineHeight * (currentLine);
+
+        if (bDebug)
+            oContext.strokeRect(x, y, maxWidth, maxHeight);// Encadre le texte dans un rectangle
+
+        if (!draw)
+        {
+            return {
+                height: maxHeight,
+                width: maxWidth
+            };
+        }
+    };
+
+    /**
+     * Return a 3d label with text sprite
+     *
+     * @param {number} key
+     * @param {string} labelName
+     * @param {string} labelType
+     * @param {number} layerIndex
+     */
+    function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit)  {
+        if (labelUnit === undefined) labelUnit = '';
+        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
+        var canvas = createCanvas(labelName);
+        var fontSize = parameters["fontSize"];
+        var texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        texture.magFilter = THREE.NearestFilter;
+        texture.minFilter = THREE.NearestFilter;
+        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: false
+        });
+        var metricLabel = new THREE.Sprite(spriteMaterial);
+        metricLabel.scale.set((0.5 +(0.5*4/5))*fontSize, (0.25 +(0.25*4/5))* fontSize, (0.75 +(0.75*4/5))*fontSize);
+        metricLabel.key = key;
+        metricLabel.name = labelName;
+        metricLabel.dataType = labelType;
+        metricLabel.layerindex = layerIndex;
+        metricLabel.labelUnit = labelUnit;
+        return metricLabel;
+    }
+
+
+    /**
+     * Return a 3d label with text sprite
+     *
+     * @param {number} key
+     * @param {string} labelName
+     * @param {string} labelType
+     * @param {number} layerIndex
+     */
+    //function create3DSecondLabel(geometry, texture,key, labelName, labelType, labelValue, layerIndex, labelUnit) {
+    function create3DSecondLabel( key, labelName, labelType, labelValue, layerIndex, labelUnit) {
+
+        if (labelUnit === undefined) labelUnit = '';
+        labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
+        var canvas = createWebGLCanvas(labelName);
+        var fontSize = parameters["fontSize"];
+        var texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        texture.magFilter = THREE.NearestFilter;
+        texture.minFilter = THREE.NearestFilter;
+        var spriteMaterial = new THREE.SpriteMaterial({map: texture, useScreenCoordinates: false
+        });
+        var metricLabel = new THREE.Sprite(spriteMaterial);
+        metricLabel.scale.set((0.5 +(0.5*2)/4)*fontSize, (0.25 +(0.25*2)/4)* fontSize, (0.75 +(0.75*2)/4)*fontSize);
+        metricLabel.key = key;
+        metricLabel.name = labelName;
+        metricLabel.dataType = labelType;
+        metricLabel.layerindex = layerIndex;
+        metricLabel.labelUnit = labelUnit;
+        return metricLabel;
+
+
+
     }
 
     /**
@@ -391,9 +492,7 @@ export default (function (parentElement, conf) {
                 if (conf.TextStyle==1) {
                     sortedLabels = scene.children.filter((item) => item.layerIndex == layerIndex)
                 } else {
-                    if(conf.TextStyle==2){
                         sortedLabels = scene.children.filter((item) => item.layerindex == layerIndex)
-                    }
                 }
                 for (let i = 0; i < sortedLabels.length; i++) {
                     const label = sortedLabels[i];
@@ -423,11 +522,17 @@ export default (function (parentElement, conf) {
                         } else {
                             if(conf.TextStyle==2){
                                 var canvas = createCanvas(label.name);
-                                var texture = new THREE.Texture(canvas[0]);
+                                var texture = new THREE.Texture(canvas);
                                 texture.needsUpdate = true;
                                 label.material.map = texture;
+                            }else{
+                                if(conf.TextStyle==3){
+                                    var canvas = createWebGLCanvas(label.name);
+                                    var texture = new THREE.Texture(canvas);
+                                    texture.needsUpdate = true;
+                                    label.material.map = texture;
+                                }
                             }
-
                         }
                         label.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
                     }
