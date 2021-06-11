@@ -56,7 +56,9 @@ yarn dev
 
 ### API Reference
 
-Todo : add API or configuration documentation
+Configuration parameter and its options
+
+
 
 ### How to add your usecase ?
 
