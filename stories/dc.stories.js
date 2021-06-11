@@ -16,8 +16,8 @@ export const BasicConfiguration = () => {
     const config = {
         TextStyle : select('Text style',{
             '2D': 1,
-            '3D text sprite': 2,
-            '3D webGlFont': 3,
+            '3D TextSprite': 2,
+            '3D WebGlFont': 3,
         },1),
         displayUnits: boolean('Display units in labels', true),
         textSize : select('Text size',{
@@ -33,46 +33,45 @@ export const BasicConfiguration = () => {
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
         },'arial'),
-        textBoxColor: color('Text box color', 'rgba(0,0,0,0)'),
-        mockupData: boolean('mockupData', true),
-        displayArea: text('displayArea', 'palindrome'),
-    	palindromeSize : number('palindromeSize', 3),
-        displaySides : boolean('displaySides', true),
-        displayMode: text('displayMode', 'dynamic'),
-        displayLayers : boolean('displayLayers', true),
-        layerDisplayMode: text('layerDisplayMode', 'dynamic'),
-        displayLabels : boolean('displayLabels', true),
-        displayLabelsAll : boolean('displayLabelsAll', false),
-        displayGrid: boolean('displayGrid', true),
-        gridSize: number('gridSize', 100),
-        gridDivisions: number('gridDivisions', 100),
-        metricMagnifier: number('metricMagnifier', 10),
-        layerStatusControl: boolean('layerStatusControl', true),
-        layerMidColor: color('layerMidColor', '#DFDF0B'),
-        mainAppColor: color('mainAppColor', '#00FF06'),
-        subAppColor: color('subAppColor', '#9FC5E8'),
+        mockupData: boolean('Mockup data', true),
+        displayArea: text('Display area', 'palindrome'),
+    	palindromeSize : number('Palindrome size', 3),
+        displaySides : boolean('Display sides', true),
+        displayMode: text('Display sides mode', 'dynamic'),
+        displayLayers : boolean('Display layers', true),
+        layerDisplayMode: text('Display layers mode', 'dynamic'),
+        displayLabels : boolean('Display labels', true),
+        displayLabelsAll : boolean('Display all labels', false),
+        displayGrid: boolean('Display grid', true),
+        gridSize: number('Grid size', 100),
+        gridDivisions: number('Grid divisions', 100),
+        metricMagnifier: number('Metric magnifier', 10),
+        layerStatusControl: boolean('Layer status control', true),
+        layerMidColor: color('Layer mid color', '#DFDF0B'),
+        mainAppColor: color('Main app color', '#00FF06'),
+        subAppColor: color('Sub app color', '#9FC5E8'),
         statusRange: {
-            low: number('statusRange low', '0'),
-            med: number('statusRange med', '30'),
-            high: number('statusRange high', '60')
+            low: number('Status range low', '0'),
+            med: number('Status range med', '30'),
+            high: number('Status range high', '60')
         },
         statusColor: {
-            low: color('statusColor low', '#9FC5E8'),
-            med: color('statusColor med', '#00FF00'),
-            high: color('statusColor high', '#FF0000')
+            low: color('Status color low', '#9FC5E8'),
+            med: color('Status color med', '#00FF00'),
+            high: color('Status color high', '#FF0000')
         },
         line: {
-            lineColor: color('lineColor', '#000000'),
-            lineOpacity: number('lineOpacity', 1),
-            lineTranparency: number('lineTranparency', 0.5),
-            lineWidth: number('lineWidth', 3)
+            lineColor: color('Line color', '#000000'),
+            lineOpacity: number('Line opacity', 1),
+            lineTranparency: number('Line tranparency', 0.5),
+            lineWidth: number('Line width', 3)
         },
         zplane: {
-            zplaneInitial: number('zplaneInitial', 0),
-            zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', -20)
+            zplaneInitial: number('Zplane initial', 0),
+            zplaneHeight: number('Zplane height', 40),
+            zplaneMultilayer: number('Zplane multilayer', -20)
         },
-        data: object('data', dcBasicConfiguration())
+        data: object('Data', dcBasicConfiguration())
     };
     const container = document.createElement('div');
     palindrome(container, JSON.parse(JSON.stringify(config)));
@@ -83,77 +82,8 @@ export const CustomConfiguration = () => {
     const config = {
         TextStyle : select('Text style',{
             '2D': 1,
-            '3D text sprite': 2,
-            '3D webGlFont': 3,
-        },1),
-        displayUnits: boolean('Display units in labels', true),
-        textSize : select('Text size',{
-            Small: 12,
-            Medium: 14,
-            Large: 18,
-        },14),
-        textColor : color('Text color', '#000000'),
-        textBold: boolean('Bold text',false),
-        textItalic: boolean('Italic text',false),
-        characterFont : select('Character Font',{
-            'Serif': 'Serif',
-            'Sans-serif': 'sans-serif',
-            'Arial': 'arial',
-        },'arial'),
-        textBoxColor: color('Text box color', 'rgba(0,0,0,0)'),
-        mockupData: boolean('mockupData', true),
-        displayArea: text('displayArea', 'palindrome'),
-    	palindromeSize : number('palindromeSize', 3),
-        displaySides : boolean('displaySides', true),
-        displayMode: text('displayMode', 'dynamic'),
-        displayLayers : boolean('displayLayers', true),
-        layerDisplayMode: text('layerDisplayMode', 'dynamic'),
-        displayLabels : boolean('displayLabels', true),
-        displayLabelsAll : boolean('displayLabelsAll', true),
-        displayGrid: boolean('displayGrid', true),
-        gridSize: number('gridSize', 100),
-        gridDivisions: number('gridDivisions', 100),
-        metricMagnifier: number('metricMagnifier', 10),
-        layerStatusControl: boolean('layerStatusControl', true),
-        layerMidColor: color('layerMidColor', '#FF2C00'),
-        mainAppColor: color('mainAppColor', '#FFCC00'),
-        subAppColor: color('subAppColor', '#FFFFFF'),
-        statusRange: {
-            low: number('statusRange low', '0'),
-            med: number('statusRange med', '30'),
-            high: number('statusRange high', '60')
-        },
-        statusColor: {
-            low: color('statusColor low', '#9FC5E8'),
-            med: color('statusColor med', '#00FF00'),
-            high: color('statusColor high', '#FF0000')
-        },
-        line: {
-            lineColor: color('lineColor', '#000000'),
-            lineOpacity: number('lineOpacity', 1),
-            lineTranparency: number('lineTranparency', 0.5),
-            lineWidth: number('lineWidth', 3)
-        },
-        zplane: {
-            zplaneInitial: number('zplaneInitial', 0),
-            zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', -20)
-        },
-        data: object('data', dcCustomConfiguration())
-    };
-
-    const container = document.createElement('div');
-    palindrome(container, JSON.parse(JSON.stringify(config)));
-
-    return container;
-};
-
-export const FullMap= ()  => {
-    const config = {
-        TextStyle : select('Text style',{
-            '2D': 1,
-            '3D text sprite': 2,
-            '3D webGlFont': 3,
+            '3D TextSprite': 2,
+            '3D WebGlFont': 3,
         },1),
         displayUnits: boolean('Display units in labels', true),
         textSize : select('Text size',{
@@ -169,60 +99,59 @@ export const FullMap= ()  => {
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
         },'arial'),
-        textBoxColor: color('Text box color', 'rgba(0,0,0,0)'),
-        mockupData: boolean('mockupData', true),
-        displayArea: text('displayArea', 'palindrome'),
-    	palindromeSize : number('palindromeSize', 3),
-        displaySides : boolean('displaySides', true),
-        displayMode: text('displayMode', 'dynamic'),
-        displayLayers : boolean('displayLayers', true),
-        layerDisplayMode: text('layerDisplayMode', 'dynamic'),
-        displayLabels : boolean('displayLabels', true),
-        displayLabelsAll : boolean('displayLabelsAll', true),
-        displayGrid: boolean('displayGrid', true),
-        gridSize: number('gridSize', 100),
-        gridDivisions: number('gridDivisions', 100),
-        metricMagnifier: number('metricMagnifier', 10),
-        layerStatusControl: boolean('layerStatusControl', true),
-        layerMidColor: color('layerMidColor', '#FF2C00'),
-        mainAppColor: color('mainAppColor', '#FFCC00'),
-        subAppColor: color('subAppColor', '#FFFFFF'),
+        mockupData: boolean('Mockup data', true),
+        displayArea: text('Display area', 'palindrome'),
+        palindromeSize : number('Palindrome size', 3),
+        displaySides : boolean('Display sides', true),
+        displayMode: text('Display sides mode', 'dynamic'),
+        displayLayers : boolean('Display layers', true),
+        layerDisplayMode: text('Display layers mode', 'dynamic'),
+        displayLabels : boolean('Display labels', true),
+        displayLabelsAll : boolean('Display all labels', false),
+        displayGrid: boolean('Display grid', true),
+        gridSize: number('Grid size', 100),
+        gridDivisions: number('Grid divisions', 100),
+        metricMagnifier: number('Metric magnifier', 10),
+        layerStatusControl: boolean('Layer status control', true),
+        layerMidColor: color('Layer mid color', '#FF2C00'),
+        mainAppColor: color('Main app color', '#FFCC00'),
+        subAppColor: color('Sub app color', '#FFFFFF'),
         statusRange: {
-            low: number('statusRange low', '0'),
-            med: number('statusRange med', '30'),
-            high: number('statusRange high', '60')
+            low: number('Status range low', '0'),
+            med: number('Status range med', '30'),
+            high: number('Status range high', '60')
         },
         statusColor: {
-            low: color('statusColor low', '#9FC5E8'),
-            med: color('statusColor med', '#00FF00'),
-            high: color('statusColor high', '#FF0000')
+            low: color('Status color low', '#9FC5E8'),
+            med: color('Status color med', '#00FF00'),
+            high: color('Status color high', '#FF0000')
         },
         line: {
-            lineColor: color('lineColor', '#000000'),
-            lineOpacity: number('lineOpacity', 1),
-            lineTranparency: number('lineTranparency', 0.5),
-            lineWidth: number('lineWidth', 3)
+            lineColor: color('Line color', '#000000'),
+            lineOpacity: number('Line opacity', 1),
+            lineTranparency: number('line tranparency', 0.5),
+            lineWidth: number('Line width', 3)
         },
         zplane: {
-            zplaneInitial: number('zplaneInitial', 0),
-            zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', -20)
+            zplaneInitial: number('Zplane initial', 0),
+            zplaneHeight: number('Zplane height', 40),
+            zplaneMultilayer: number('Zplane multilayer', -20)
         },
-        data: object('data', dcFullMap())
+        data: object('data', dcCustomConfiguration())
     };
-
     const container = document.createElement('div');
     palindrome(container, JSON.parse(JSON.stringify(config)));
 
     return container;
+
 };
 
-export const EnergeticEfficiency = ()  => {
+export const FullMap= ()  => {
     const config = {
         TextStyle : select('Text style',{
             '2D': 1,
-            '3D text sprite': 2,
-            '3D webGlFont': 3,
+            '3D TextSprite': 2,
+            '3D WebGlFont': 3,
         },1),
         displayUnits: boolean('Display units in labels', true),
         textSize : select('Text size',{
@@ -233,55 +162,126 @@ export const EnergeticEfficiency = ()  => {
         textColor : color('Text color', '#000000'),
         textBold: boolean('Bold text',false),
         textItalic: boolean('Italic text',false),
-        characterFont : select('Character Font',{
+        characterFont : select('Character font',{
             'Serif': 'Serif',
             'Sans-serif': 'sans-serif',
             'Arial': 'arial',
         },'arial'),
-        textBoxColor: color('Text box color', 'rgba(0,0,0,0)'),
-        mockupData: boolean('mockupData', true),
-        displayArea: text('displayArea', 'palindrome'),
-    	palindromeSize : number('palindromeSize', 3),
-        displaySides : boolean('displaySides', true),
-        displayMode: text('displayMode', 'dynamic'),
-        displayLayers : boolean('displayLayers', true),
-        layerDisplayMode: text('layerDisplayMode', 'dynamic'),
-        displayLabels : boolean('displayLabels', true),
-        displayLabelsAll : boolean('displayLabelsAll', false),
-        displayGrid: boolean('displayGrid', false),
-        gridSize: number('gridSize', 50),
-        gridDivisions: number('gridDivisions', 50),
-        metricMagnifier: number('metricMagnifier', 10),
-        layerStatusControl: boolean('layerStatusControl', true),
-        layerMidColor: color('layerMidColor', '#FF2C00'),
-        mainAppColor: color('mainAppColor', '#7AEDF3'),
-        subAppColor: color('subAppColor', '#FFFFFF'),
+        mockupData: boolean('Mockup data', true),
+        displayArea: text('Display area', 'palindrome'),
+        palindromeSize : number('Palindrome size', 3),
+        displaySides : boolean('Display sides', true),
+        displayMode: text('Display mode', 'dynamic'),
+        displayLayers : boolean('Display layers', true),
+        layerDisplayMode: text('Layer display mode', 'dynamic'),
+        displayLabels : boolean('Display labels', true),
+        displayLabelsAll : boolean('Display all labels', false),
+        displayGrid: boolean('Display grid', true),
+        gridSize: number('Grid size', 100),
+        gridDivisions: number('Grid divisions', 100),
+        metricMagnifier: number('Metric magnifier', 10),
+        layerStatusControl: boolean('Layer status control', true),
+        layerMidColor: color('Layer mid color', '#FF2C00'),
+        mainAppColor: color('Main app color', '#FFCC00'),
+        subAppColor: color('Sub app color', '#FFFFFF'),
         statusRange: {
-            low: number('statusRange low', '0'),
-            med: number('statusRange med', '25'),
-            high: number('statusRange high', '50')
+            low: number('Status range low', '0'),
+            med: number('Status range med', '30'),
+            high: number('Status range high', '60')
         },
         statusColor: {
-            low: color('statusColor low', '#9FC5E8'),
-            med: color('statusColor med', '#00FF00'),
-            high: color('statusColor high', '#FF0000')
+            low: color('Status color low', '#9FC5E8'),
+            med: color('Status color med', '#00FF00'),
+            high: color('Status color high', '#FF0000')
         },
         line: {
-            lineColor: color('lineColor', '#000000'),
-            lineOpacity: number('lineOpacity', 1),
-            lineTranparency: number('lineTranparency', 0.5),
-            lineWidth: number('lineWidth', 3)
+            lineColor: color('Line color', '#000000'),
+            lineOpacity: number('Line opacity', 1),
+            lineTranparency: number('Line tranparency', 0.5),
+            lineWidth: number('Line width', 3)
         },
         zplane: {
-            zplaneInitial: number('zplaneInitial', 0),
-            zplaneHeight: number('zplaneHeight', 40),
-            zplaneMultilayer: number('zplaneMultilayer', -20)
+            zplaneInitial: number('Zplane initial', 0),
+            zplaneHeight: number('Zplane height', 40),
+            zplaneMultilayer: number('Zplane multilayer', -20)
         },
-        data: object('data', dcEnergeticEfficiency())
+        data: object('data', dcFullMap())
+
     };
 
     const container = document.createElement('div');
     palindrome(container, JSON.parse(JSON.stringify(config)));
 
     return container;
+
+};
+
+export const EnergeticEfficiency = ()  => {
+    const config = {
+        TextStyle : select('Text style',{
+            '2D': 1,
+            '3D TextSprite': 2,
+            '3D WebGlFont': 3,
+        },1),
+        displayUnits: boolean('Display units in labels', true),
+        textSize : select('Text size',{
+            Small: 12,
+            Medium: 14,
+            Large: 18,
+        },14),
+        textColor : color('Text color', '#000000'),
+        textBold: boolean('Bold text',false),
+        textItalic: boolean('Italic text',false),
+        characterFont : select('Character font',{
+            'Serif': 'Serif',
+            'Sans-serif': 'sans-serif',
+            'Arial': 'arial',
+        },'arial'),
+        mockupData: boolean('Mockup data', true),
+        displayArea: text('Display area', 'palindrome'),
+        palindromeSize : number('Palindrome size', 3),
+        displaySides : boolean('Display sides', true),
+        displayMode: text('Display mode', 'dynamic'),
+        displayLayers : boolean('Display layers', true),
+        layerDisplayMode: text('Layer display mode', 'dynamic'),
+        displayLabels : boolean('Display labels', true),
+        displayLabelsAll : boolean('Display all labels', false),
+        displayGrid: boolean('Display grid', true),
+        gridSize: number('Grid size', 100),
+        gridDivisions: number('Grid divisions', 100),
+        metricMagnifier: number('Metric magnifier', 10),
+        layerStatusControl: boolean('Layer status control', true),
+        layerMidColor: color('Layer mid color', '#FF2C00'),
+        mainAppColor: color('Main app color', '#7AEDF3'),
+        subAppColor: color('Sub app color', '#FFFFFF'),
+        statusRange: {
+            low: number('Status range low', '0'),
+            med: number('Status range med', '25'),
+            high: number('Status range high', '50')
+        },
+        statusColor: {
+            low: color('Status color low', '#9FC5E8'),
+            med: color('Status color med', '#00FF00'),
+            high: color('Status color high', '#FF0000')
+        },
+        line: {
+            lineColor: color('Line color', '#000000'),
+            lineOpacity: number('Line opacity', 1),
+            lineTranparency: number('Line tranparency', 0.5),
+            lineWidth: number('Line width', 3)
+        },
+        zplane: {
+            zplaneInitial: number('Zplane initial', 0),
+            zplaneHeight: number('Zplane height', 40),
+            zplaneMultilayer: number('Zplane multilayer', -20)
+        },
+        data: object('data', dcEnergeticEfficiency())
+
+    };
+
+    const container = document.createElement('div');
+    palindrome(container, JSON.parse(JSON.stringify(config)));
+
+    return container;
+
 };

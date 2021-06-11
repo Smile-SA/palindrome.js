@@ -127,7 +127,7 @@ export default (function (parentElement, conf) {
             var textWidth = metrics.width;
             canvas.setAttribute("width", 1200 + " px");
             canvas.setAttribute("height", 600 + " px");
-            var textSize = fontSize * 1.8;
+            var textSize = fontSize * 1.7;
             context.font = fontItalic + " " + fontBold + " " + textSize + "px " + characterFont;
             context.fillStyle = backgroundColor;
             context.strokeStyle = borderColor;
@@ -135,7 +135,7 @@ export default (function (parentElement, conf) {
             context.textAlign = 'center';
             var w = canvas.width;
             var h = canvas.height;
-            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * fontSize), w / 2 + (borderThickness * fontSize), 'rgba(0,0,0,0)') // backgroundColor );
+            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * fontSize), w /2 + (borderThickness * fontSize), 'rgba(0,0,0,0)') // backgroundColor );
             context.fillStyle = textColor;
             context.textAlign = 'center';
             addMultiLineText(labelName, w / 2, h / 2, textSize, w, context);
@@ -334,7 +334,7 @@ export default (function (parentElement, conf) {
                 map: texture, useScreenCoordinates: false
             });
             var metricLabel = new THREE.Sprite(spriteMaterial);
-            metricLabel.scale.set((3 * fontSize), (3 * fontSize) / 2);
+            metricLabel.scale.set((4 * fontSize), (2 * fontSize) );
             metricLabel.key = key;
             metricLabel.name = labelName;
             metricLabel.dataType = labelType;

@@ -14,7 +14,7 @@
 
 _**```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !**_
 
-### Motivation
+## Motivation
 
 Idea behind this project is to go one step further current monitoring and dashboards solutions, by enabling a scalable and user oriented, 3D monitoring probe for multi-dimensional and heterogeneous sets of data points. Compatible use cases are various, from comparing system metrics with external indicators, to stacking up multi-tenancy informations groups for measuring differences or similarities, ```Palindrome.js``` can both be used as a live UI component for a larger BI dashboard, or as the signal source for a computer-vision based workflow.
 
@@ -33,7 +33,7 @@ First install the project dependencies :
 yarn install
 ```
 
-### Storybook
+## Storybook
 Then, run ```storybook``` for an interactive session :
 
 ```
@@ -45,7 +45,7 @@ yarn storybook
 <img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
 
 
-### Default HTML
+## Default HTML
 Alternatively, you can run the default html session :
 
 ```
@@ -54,29 +54,112 @@ yarn dev
 
 <img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/palindrome-html.png" width="93%">
 
-### API Reference
-
+## API Reference
 Configuration parameter and its options
 
+### Text style : 
+It is a configuration option which allows to change the style of the labels
+####  configuration options 
+- 2D (Default option)
+- 3D TextSprite
+- 3D WebGlFont
 
+### Display units in labels :
+It is a boolean configuration option which allows us to display or not the units of labels
 
-### How to add your usecase ?
+### Text size : 
+It is a configuration option which allows to change the size of the labels
+#### configuration options 
+- Small
+- Medium (Default option)
+- Large
+
+### Text color :
+It is a configuration option which allows to change the color of the labels
+
+### Bold text :
+It is a configuration option which allows to put the labels in bold or not
+
+### Italic text :
+It is a configuration option which allows to put the labels in italic or not
+
+### Character font : 
+It is a configuration option which allows to change the characters of the labels
+#### configuration options :
+- Arial (Default option)
+- Serif
+- Sans-serif 
+
+### Mockup data :
+It is a configuration option which allows to make dynamic the data
+
+### Palindrome size :
+It is a configuration option which allows to resize the palindromme
+
+### Display sides :
+It is a configuration option which allows to display or not the sides of palindromme
+
+### Display sides mode :
+It is a configuration option which allows to configure the sides mode
+
+### Display layers :
+It is a configuration option which allows to display or not the layers of palindrome
+
+### Display layers mode :
+This is a configuration option which allows to configure the layers mode
+
+### Display labels :
+It is a configuration option which allows to display or not the labels
+
+### Display all labels :
+It is a configuration option which allows to display or not all the labels
+
+### Display grid :
+It is a configuration option which allows to display or not the grid of the plan
+
+### Grid size :
+It is a configuration option which allows to resize the grid .
+
+### Grid divisions :
+This is a configuration option which allows to define the divisions of the grid
+
+### Metric Magnifier :
+This is a configuration which that allows to resize the metrics
+
+### Layer status control :
+This is a configuration which that allows to resize the metrics
+
+### Line opacity :
+This is a configuration which that allows to define the line opacity
+
+### Line transparency :
+This is a configuration which that allows to define the line transparency
+
+### Layer status control :
+This is a configuration which that allows to resize the line width
+
+### All color configurations
+All configuration names ending with color allow to modify the colors of a specific event
+###### For example :
+##### Line Color : it's to change the color of the lines
+
+## How to add your usecase ?
 
 Todo : add a step by step integration documentation
 
-### Connect with remote data source
+## Connect with remote data source
 
 Todo : add integration details
 
-### Contribute
+## Contribute
 
 Simply open a pull request over the repository to describe your changes.
 
-### Credits
+## Credits
 - Rnd Team @ Alter Way
 - Farooque Mustafa @farooquemustafa
 - Damien Gilles @gillesdami
 - Jonathan Rivalan (author) @JonRiv
 
-### License
+## License
 Licensed under the Apache 2.0 license
