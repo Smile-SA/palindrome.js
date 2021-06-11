@@ -94,10 +94,10 @@ It is a configuration option which allows to change the characters of the labels
 It is a configuration option which allows to make dynamic the data
 
 ### Palindrome size :
-It is a configuration option which allows to resize the palindromme
+It is a configuration option which allows to resize the palindrome
 
 ### Display sides :
-It is a configuration option which allows to display or not the sides of palindromme
+It is a configuration option which allows to display or not the sides of palindrome
 
 ### Display sides mode :
 It is a configuration option which allows to configure the sides mode
