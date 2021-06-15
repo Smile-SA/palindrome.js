@@ -58,15 +58,15 @@ Configuration parameter and its options
 
 |  Name| Description |option |
 | ------ | ------ | ------ |
-| Text style | To change the style of the labels | 2D(Default option),  3D TextSprite,3D WebGlFont |
+| Text style | To change the style of the labels | Multi select : 2D(Default option), 3D TextSprite, 3D WebGlFont |
 | Display units in labels | To display or not the units of labels | Check button |
 |Text size | To change the size of the labels| Small, Medium (Default option), Large |
 |Text color | To change the color of the labels | Color input|
 |Bold text | To put the labels in bold or not | Check button |
 |Italic text | To put the labels in italic or not | Check button |
-|Character font | To change the characters of the labels| Arial (Default option) Serif Sans-serif |
+|Character font | To change the characters of the labels| Multi select : Arial (Default option), Serif, Sans-serif |
 |Mockup data | To make dynamic the data | Check button |
-|Palindrome size | To resize the palindrome | number input |
+|Palindrome size | To resize the palindrome | Number input |
 |Display sides | To display or not the sides of palindrome | Check button |
 |Display sides mode | To configure the sides mode| Text input |
 |Display layers | To display or not the layers of palindrome| Check button |
