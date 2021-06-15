@@ -54,7 +54,7 @@ yarn dev
 <img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/palindrome-html.png" width="93%">
 
 ## API Reference
-Configuration parameter and its options
+Configuration parameters and their options
 
 |  Name| Description |option |
 | ------ | ------ | ------ |
