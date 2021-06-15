@@ -95,7 +95,7 @@ Configuration parameter and its options
 |Zplane height | To resize the height zplane | Number input |
 |Zplane multilayer | To resize the multilayer zplane |Number input |
 
-###Table legend
+### Table legend
 |  Option | Display  |
 | ------ | ------  |
 | Multi select | ![multi-selct-button-input](assets/img/multi-select-input.png) |
