@@ -9,9 +9,16 @@
   "devDependencies": {
     "@babel/core": "7.9.0",
     "@babel/plugin-transform-runtime": "^7.13.15",
-    "@storybook/addon-knobs": "^6.1.11",
-    "@storybook/html": "^6.1.11",
-    "babel-loader": "8.1.0"
+    "@storybook/addon-actions": "^6.2.9",
+    "@storybook/addon-essentials": "^6.2.9",
+    "@storybook/addon-knobs": "^6.2.9",
+    "@storybook/addon-links": "^6.2.9",
+    "@storybook/html": "^6.2.9",
+    "@types/node": "^15.12.2",
+    "@types/react": "^17.0.11",
+    "babel-loader": "8.1.0",
+    "cssnano": "^5.0.6",
+    "postcss": "^8.2.15"
   },
   "scripts": {
     "dev": "parcel index.html",
@@ -22,6 +29,7 @@
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",
     "load-bmfont": "^1.4.1",
+    "storybook-addon-knobs-color-options": "^6.2.0-rc.2",
     "three": "0.117.1",
     "three-bmfont-text": "^3.0.1",
     "three-css2drender": "1.0.0",
