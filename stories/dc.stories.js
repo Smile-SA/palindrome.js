@@ -11,7 +11,7 @@ export default {
 
 export const BasicConfiguration = createPalindrome.bind({});
 BasicConfiguration.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     textColor: '#252c11',
@@ -39,11 +39,11 @@ BasicConfiguration.args = {
     statusRangemed: 30,
     statusRangehigh: 60,
     statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
+    statusColormed: '#00FF00',
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineTranparency: 0.5,
+
     lineWidth: 3,
     zplaneInitial: 0,
     zplaneHeight: 40,
@@ -53,7 +53,7 @@ BasicConfiguration.args = {
 
 export const CustomConfiguration = createPalindrome.bind({});
 CustomConfiguration.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     textColor: '#000000',
@@ -81,11 +81,10 @@ CustomConfiguration.args = {
     statusRangemed: 30,
     statusRangehigh: 60,
     statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
+    statusColormed: '#00FF00',
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineTranparency: 0.5,
     lineWidth: 3,
     zplaneInitial: 0,
     zplaneHeight: 40,
@@ -95,7 +94,7 @@ CustomConfiguration.args = {
 
 export const FullMap = createPalindrome.bind({});
 FullMap.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     textColor: '#000000',
@@ -123,11 +122,10 @@ FullMap.args = {
     statusRangemed: 30,
     statusRangehigh: 60,
     statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
+    statusColormed: '#00FF00',
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineTranparency: 0.5,
     lineWidth: 3,
     zplaneInitial: 0,
     zplaneHeight: 40,
@@ -137,7 +135,7 @@ FullMap.args = {
 
 export const EnergeticEfficiency = createPalindrome.bind({});
 EnergeticEfficiency.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     textColor: '#000000',
@@ -165,11 +163,10 @@ EnergeticEfficiency.args = {
     statusRangemed: 30,
     statusRangehigh: 60,
     statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
+    statusColormed: '#00FF00',
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineTranparency: 0.5,
     lineWidth: 3,
     zplaneInitial: 0,
     zplaneHeight: 40,

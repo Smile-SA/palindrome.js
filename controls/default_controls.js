@@ -56,7 +56,6 @@ export function defaultControl() {
         statusColorhigh: {name: 'Status color high', control: 'color'},
         lineColor: {name: 'Line color', control: 'color'},
         lineOpacity: {name: 'Line opacity', control: 'number'},
-        lineTranparency: {name: 'Line tranparency', control: 'number'},
         lineWidth: {name: 'Line width', control: 'number'},
         zplaneInitial: {name: 'Zplane initial', control: 'number'},
         zplaneHeight: {name: 'Zplane height', control: 'number'},

@@ -58,7 +58,7 @@ export default (function (parentElement, conf) {
             lineMaterialTransparent = new THREE.LineDashedMaterial({
                 color: conf.mainAppColor,
                 linewidth: conf.lineWidth,
-                opacity: conf.lineTranparency
+                opacity: conf.lineOpacity
             });
 
             // rendering
