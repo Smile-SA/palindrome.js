@@ -39,7 +39,6 @@ twoLayersThreePoints.args = {
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineTranparency: 0.5,
     lineWidth: 3,
     zplaneInitial: 0,
     zplaneHeight: 40,
