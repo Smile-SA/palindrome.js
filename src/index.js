@@ -48,6 +48,7 @@ export default (function (parentElement, conf) {
             }
             newData = data;
             dataIterator = dataGenerator(data);
+            initTextSettings();
 
             // init materials
             lineMaterial = new THREE.LineDashedMaterial({
@@ -68,7 +69,6 @@ export default (function (parentElement, conf) {
 
             if (conf.displayLabels) {
                 // configuration text parameters
-                initTextSettings();
                 createLabels(data);
             }
             render(data);
@@ -80,12 +80,14 @@ export default (function (parentElement, conf) {
         function initTextSettings() {
             parameters["fontItalic"] ='';
             parameters["fontBold"] ='';
-            parameters["characterFont"] = conf.characterFont;
+            if(conf.characterFont){
+                parameters["characterFont"] = conf.characterFont
+            }else{parameters["characterFont"] = 'Serif'}
             parameters["fontSize"] = conf.textSize;
             parameters["textColor"] = conf.textColor;
             if (conf.textBold) {
                 parameters["fontBold"] = 'bold'
-            }else{}
+            }
             if (conf.textItalic) {
                 parameters["fontItalic"] = 'Italic'
             }
@@ -115,6 +117,9 @@ export default (function (parentElement, conf) {
             let borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
             let backgroundColor = parameters.hasOwnProperty("backgroundColor") ? parameters["backgroundColor"] : 'rgba(0,0,0,0)'
             let textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : '#000000';
+            console.log(textColor);
+            if(textColor===null || textColor === undefined || textColor === '' ){textColor = '#000000'}
+            if(fontSize===null || fontSize === undefined || fontSize === '' ){fontSize = 14}
             let canvas = document.createElement('canvas');
             let context = canvas.getContext('2d');
             context.font = fontItalic + "  " + fontBold + " " + (fontSize) + "px " + characterFont;
