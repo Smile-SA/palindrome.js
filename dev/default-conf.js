@@ -1,6 +1,6 @@
-import { debugTwoLayersThreePoints } from './src/data_structures_examples/debug_TwoLayersThreePoints';
-import {defaultControl} from "./controls/default_controls";
-import {getPalindrome} from "./controls/getPalindrome";
+import { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
+import {defaultControl} from "../stories/controls/default_controls";
+import {getPalindrome} from "../stories/controls/getPalindrome";
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
     argTypes: defaultControl(),

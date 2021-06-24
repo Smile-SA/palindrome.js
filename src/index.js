@@ -28,7 +28,7 @@ export default (function (parentElement, conf) {
         parentElement.appendChild(labelsRenderer.domElement);
 
         // TODO change this when we have a real data source
-        const fileContent = new Request("data.json");
+        const fileContent = new Request("default-data.json");
 
         run(fileContent);
 
