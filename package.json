@@ -24,7 +24,7 @@
   "scripts": {
     "dev": "parcel dev/index.html",
     "build": "parcel build index.html",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6006 -s assets",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
