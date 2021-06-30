@@ -438,6 +438,7 @@ export default (function (parentElement, conf) {
                             }
                             // display units in label
                             if (!conf.displayUnits || labelDataUnit === undefined) labelDataUnit = '';
+                            // label configuration
                             label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue + ' ' + labelDataUnit;
                             if (conf.TextStyle === 1) {
                                 label.element.innerHTML = '<ul ' +

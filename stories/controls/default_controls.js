@@ -4,7 +4,10 @@
 export function defaultControl() {
     return {
         TextStyle: {
-            name: 'Text style', control: {
+            name: 'Text style',
+            defaultValue: 2,
+            description: 'overwritten description',
+            control: {
                 type: 'select',
                 options: {
                     '2D': 1,
@@ -13,10 +16,12 @@ export function defaultControl() {
                 }
             },
         },
-        displayUnits: {name: 'Display units in labels', control: 'boolean'},
+        displayUnits: {name: 'Display units in labels', defaultValue: true, control: 'boolean'},
         textSize: {
-            name: 'Text size', control: {
-                label: 'Text style', type: 'select',
+            name: 'Text size',
+            defaultValue: 14,
+            control: {
+                type: 'select',
                 options: {
                     Small: 12,
                     Medium: 14,
@@ -24,15 +29,15 @@ export function defaultControl() {
                 }
             }
         },
-        textColor: {name: 'Text color', control: 'color'},
-        textBold: {name: 'Bold text', control: 'boolean'},
-        textItalic: {name: 'Italic text', control: 'boolean'},
+        textColor: {name: 'Text color', defaultValue: '#000000', control: 'color'},
+        textBold: {name: 'Bold text', defaultValue: true, control: 'boolean'},
+        textItalic: {name: 'Italic text', defaultValue: false, control: 'boolean'},
         characterFont: {
-            name: 'Character font', control:
+            name: 'Character font', defaultValue: 'Serif', control:
                 {type: 'select', options: ['Serif', 'Sans-serif', 'Arial',]},
         },
-        mockupData: {name: 'Mockup data', control: 'boolean'},
-        displayArea: {name: 'Display area', control: 'text'},
+        mockupData: {name: 'Mockup data', defaultValue: true, control: 'boolean'},
+        displayArea: {name: 'Display area', defaultValue: 'palindrome', control: 'text'},
         palindromeSize: {name: 'Palindrome size', control: 'number'},
         displaySides: {name: 'Display sides', control: 'boolean'},
         displayMode: {name: 'Display sides mode', control: 'text'},
