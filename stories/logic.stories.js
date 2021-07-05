@@ -2,8 +2,8 @@ import { logicBoolean } from '../src/data_structures_examples/logic_Boolean';
 import { logicTernary } from '../src/data_structures_examples/logic_Ternary';
 import { logicFourValued } from '../src/data_structures_examples/logic_FourValued';
 import { logicFiveThreeTwo } from '../src/data_structures_examples/logic_FiveThreeTwo';
-import {defaultControl} from '../controls/default_controls';
-import {createPalindrome} from '../controls/createPalindrome';
+import {defaultControl} from './controls/default_controls';
+import {createPalindrome} from './controls/createPalindrome';
 
 export default {
     title: 'Use Cases/Palindrome/Multi-values logic example',
@@ -40,7 +40,7 @@ Boolean.args = {
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineWidth: 3,
+    lineWidth: 0.5,
     zplaneInitial: 0,
     zplaneHeight: 40,
     zplaneMultilayer: -20,
@@ -77,7 +77,7 @@ Ternary.args = {
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineWidth: 3,
+    lineWidth: 0.5,
     zplaneInitial: 0,
     zplaneHeight: 40,
     zplaneMultilayer: -20,
@@ -114,7 +114,7 @@ FourValued.args = {
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineWidth: 3,
+    lineWidth: 0.5,
     zplaneInitial: 0,
     zplaneHeight: 40,
     zplaneMultilayer: -20,
@@ -151,7 +151,7 @@ FiveThreeTwoPyramid.args = {
     statusColorhigh: '#FF0000',
     lineColor: '#000000',
     lineOpacity: 1,
-    lineWidth: 3,
+    lineWidth: 0.5,
     zplaneInitial: 0,
     zplaneHeight: 40,
     zplaneMultilayer: -20,

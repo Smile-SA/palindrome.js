@@ -2,8 +2,8 @@ import {dcBasicConfiguration} from '../src/data_structures_examples/dc_BasicConf
 import {dcCustomConfiguration} from '../src/data_structures_examples/dc_CustomConfiguration';
 import {dcEnergeticEfficiency} from '../src/data_structures_examples/dc_EnergeticEfficiency';
 import {dcFullMap} from '../src/data_structures_examples/dc_FullMap';
-import {defaultControl} from '../controls/default_controls';
-import {createPalindrome} from '../controls/createPalindrome';
+import {defaultControl} from './controls/default_controls';
+import {createPalindrome} from './controls/createPalindrome';
 
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
