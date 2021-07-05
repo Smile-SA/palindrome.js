@@ -8,15 +8,11 @@ import {createPalindrome} from './controls/createPalindrome';
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
     argTypes: defaultControl(),
+    subcomponents: '[pConf, lConf]',
 };
 
 export const BasicConfiguration = createPalindrome.bind({});
 BasicConfiguration.args = {
-    TextStyle: 1,
-    displayUnits: true,
-    textSize: 14,
-    mockupData: true,
-    displayArea: 'palindrome',
     palindromeSize: 3,
     displaySides: true,
     displayMode: 'dynamic',
@@ -53,6 +49,8 @@ CustomConfiguration.args = {
     displayUnits: true,
     textSize: 14,
     mockupData: true,
+    textBold: true,
+    textItalic: false,
     displayArea: 'palindrome',
     palindromeSize: 3,
     displaySides: true,
@@ -90,6 +88,8 @@ FullMap.args = {
     displayUnits: true,
     textSize: 14,
     mockupData: true,
+    textBold: true,
+    textItalic: false,
     displayArea: 'palindrome',
     palindromeSize: 3,
     displaySides: true,
@@ -127,6 +127,8 @@ EnergeticEfficiency.args = {
     displayUnits: true,
     textSize: 14,
     mockupData: true,
+    textBold: true,
+    textItalic: false,
     displayArea: 'palindrome',
     palindromeSize: 3,
     displaySides: true,
