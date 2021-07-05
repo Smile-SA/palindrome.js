@@ -453,7 +453,7 @@ export default (function (parentElement, conf) {
                             } else {
                                 let canvas = createCanvas(label.name);
                                 let texture = new THREE.CanvasTexture(canvas);
-                                texture.needsUpdate = true;
+                                console.log(label.material.map);
                                 label.material.map = texture;
                             }
                             label.position.set(labelPositions[0], labelPositions[2]+0.5, labelPositions[1]);
