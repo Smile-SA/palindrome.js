@@ -4,7 +4,25 @@
 export function defaultControl() {
     return {
         // labels configuration
-        TextStyle: {
+        MetricsXposition: {
+            name: 'Metrics x position',
+            description: 'To change the x position of metrics',
+            defaultValue: 0,
+            control: 'number',
+            table: {
+                category: 'Metrics'
+            },
+        },
+        MetricsYposition: {
+            name: 'Metrics y position',
+            description: 'To change the y position of metrics',
+            defaultValue: +0.5,
+            control: 'number',
+            table: {
+                category: 'Metrics',
+            },
+        },
+        LabelStyle: {
             name: 'Label style',
             description: 'To change the style of labels',
             defaultValue: 2,
@@ -17,20 +35,20 @@ export function defaultControl() {
                 }
             },
             table: {
-                category: 'Label',
+                category: 'Metrics', subcategory: 'Label',
             },
         },
-        characterFont: {
+        LabelCharacterFont: {
             name: 'Label Character font', defaultValue: 'Serif', description: 'To change the characters of the labels',
             control: {
                     type: 'select',
                     options: ['Serif', 'Sans-serif', 'Arial',]
                 },
             table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
-        textSize: {
+        LabelSize: {
             name: 'Label size',
             defaultValue: 15,
             description:'To change the size of the labels',
@@ -43,41 +61,41 @@ export function defaultControl() {
                 }
             },
             table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
-        textColor: {
+        LabelColor: {
             name: 'Label color', defaultValue: '#000000', control: 'color',
             description:'To change the color of the labels',
             table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
-        textBold: {
+        LabelBold: {
             name: 'Bold Label', defaultValue: true, control: 'boolean',description:'To put the labels in bold or not', table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
-        textItalic: {
+        LabelItalic: {
             name: 'Italic Label', defaultValue: false,description:'To put the labels in italic or not', control: 'boolean', table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
         displayUnits: {
             name: 'Display units in labels', defaultValue: true,description:'To display or not the units of labels', control: 'boolean', table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
         displayLabels: {
             name: 'Display labels', defaultValue: true,description:'To display or not the labels', control: 'boolean',
             table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
         displayLabelsAll: {
             name: 'Display all labels', defaultValue: false,description:'To display or not all the labels', control: 'boolean',
             table: {
-                category: 'Label'
+                category: 'Metrics', subcategory: 'Label',
             },
         },
 
