@@ -118,7 +118,6 @@ export default (function (parentElement, conf) {
             let fontItalic = parameters.hasOwnProperty("fontItalic") ? parameters["fontItalic"] : '';
             let borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
             let textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : '#000000';
-            console.log(textColor);
             if (textColor === null || textColor === undefined || textColor === '') {
                 textColor = '#000000'
             }
@@ -453,7 +452,6 @@ export default (function (parentElement, conf) {
                             } else {
                                 let canvas = createCanvas(label.name);
                                 let texture = new THREE.CanvasTexture(canvas);
-                                texture.needsUpdate = true;
                                 label.material.map = texture;
                             }
                             label.position.set(labelPositions[0], labelPositions[2]+0.5, labelPositions[1]);
