@@ -33,7 +33,7 @@ export function defaultControl() {
         textBold: {name: 'Bold text', defaultValue: true, control: 'boolean'},
         textItalic: {name: 'Italic text', defaultValue: false, control: 'boolean'},
         characterFont: {
-            name: 'Character font', defaultValue: 'Serif', control:
+            name: 'Character font', defaultValue: 'Arial', control:
                 {type: 'select', options: ['Serif', 'Sans-serif', 'Arial',]},
         },
         mockupData: {name: 'Mockup data', defaultValue: true, control: 'boolean'},
