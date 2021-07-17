@@ -5,8 +5,7 @@ export function defaultControl() {
     return {
         TextStyle: {
             name: 'Text style',
-            defaultValue: 2,
-            description: 'overwritten description',
+            defaultValue: 1,
             control: {
                 type: 'select',
                 options: {
