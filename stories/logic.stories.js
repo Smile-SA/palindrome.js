@@ -12,7 +12,7 @@ export default {
 
 export const Boolean = createPalindrome.bind({});
 Boolean.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     mockupData: true,
@@ -49,7 +49,7 @@ Boolean.args = {
 
 export const Ternary = createPalindrome.bind({});
 Ternary.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     mockupData: true,
@@ -86,7 +86,7 @@ Ternary.args = {
 
 export const FourValued = createPalindrome.bind({});
 FourValued.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     mockupData: true,
@@ -125,7 +125,7 @@ FourValued.args = {
 
 export const FiveThreeTwoPyramid = createPalindrome.bind({});
 FiveThreeTwoPyramid.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     mockupData: true,

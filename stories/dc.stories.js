@@ -13,7 +13,8 @@ export default {
 
 export const BasicConfiguration = createPalindrome.bind({});
 BasicConfiguration.args = {
-    palindromeSize: 1,
+    TextStyle: 1,
+    palindromeSize: 3,
     displaySides: true,
     displayMode: 'dynamic',
     displayLayers: true,
@@ -52,7 +53,7 @@ CustomConfiguration.args = {
     textBold: false,
     textItalic: false,
     displayArea: 'palindrome',
-    palindromeSize: 1,
+    palindromeSize: 3,
     displaySides: true,
     displayMode: 'dynamic',
     displayLayers: true,
@@ -91,7 +92,7 @@ FullMap.args = {
     textBold: false,
     textItalic: false,
     displayArea: 'palindrome',
-    palindromeSize: 1,
+    palindromeSize: 3,
     displaySides: true,
     displayMode: 'dynamic',
     displayLayers: true,
@@ -130,7 +131,7 @@ EnergeticEfficiency.args = {
     textBold: false,
     textItalic: false,
     displayArea: 'palindrome',
-    palindromeSize: 1,
+    palindromeSize: 3,
     displaySides: true,
     displayMode: 'dynamic',
     displayLayers: true,

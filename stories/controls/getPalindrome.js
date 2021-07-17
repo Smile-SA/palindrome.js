@@ -1,4 +1,4 @@
-import palindrome from "../../src";
+import palindrome from "../../src/index";
 
 export var getPalindrome = ({...args }) => {
     const container = document.getElementById('palindrome');
