@@ -8,35 +8,35 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "7.9.0",
-    "@babel/plugin-transform-runtime": "^7.13.15",
-    "@storybook/addon-actions": "^6.2.9",
-    "@storybook/addon-essentials": "^6.2.9",
-    "@storybook/addon-knobs": "^6.2.9",
-    "@storybook/addon-links": "^6.2.9",
-    "@storybook/addons": "^6.3.0",
-    "@storybook/html": "^6.2.9",
-    "@types/node": "^15.12.2",
-    "@types/react": "^17.0.11",
+    "@babel/plugin-transform-runtime": "7.13.15",
+    "@storybook/addon-actions": "6.3.4",
+    "@storybook/addon-essentials": "6.3.4",
+    "@storybook/addon-knobs": "6.2.9",
+    "@storybook/addon-links": "6.3.4",
+    "@storybook/addons": "6.3.4",
+    "@storybook/html": "6.3.4",
+    "@types/node": "15.12.2",
+    "@types/react": "17.0.11",
     "babel-loader": "8.1.0",
-    "cssnano": "^5.0.6",
-    "postcss": "^8.2.15"
+    "cssnano": "5.0.6",
+    "postcss": "8.2.15"
   },
   "scripts": {
-    "dev": "parcel dev/index.html",
+    "dev": "parcel index.html",
     "build": "parcel build index.html",
     "storybook": "start-storybook -p 6006 -s assets",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@bellapps/three.text-sprite": "^1.0.0",
-    "@storybook/theming": "^6.3.0",
-    "load-bmfont": "^1.4.1",
-    "storybook-addon-knobs-color-options": "^6.2.0-rc.2",
+    "@bellapps/three.text-sprite": "1.0.0",
+    "@storybook/theming": "6.3.4",
+    "load-bmfont": "1.4.1",
+    "storybook-addon-knobs-color-options": "6.2.0-rc.2",
     "three": "0.117.1",
-    "three-bmfont-text": "^3.0.1",
+    "three-bmfont-text": "3.0.1",
     "three-css2drender": "1.0.0",
-    "three-text2d": "^0.6.0",
-    "three.text": "^1.0.13"
+    "three-text2d": "0.6.0",
+    "three.text": "1.0.13"
   },
   "browserslist": [
     "defaults"

@@ -1,4 +1,4 @@
-import { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
+import  { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
 import {defaultControl} from "../stories/controls/default_controls";
 import {getPalindrome} from "../stories/controls/getPalindrome";
 export default {

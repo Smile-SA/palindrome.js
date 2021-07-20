@@ -8,11 +8,11 @@ export default {
 };
 export const DebugTwoLayersThreePoints = createPalindrome.bind({});
 DebugTwoLayersThreePoints.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     mockupData: true,
-    textBold: true,
+    textBold: false,
     textItalic:false,
     displayArea: 'palindrome',
     palindromeSize: 3,
@@ -47,11 +47,11 @@ DebugTwoLayersThreePoints.args = {
 
 export const DebugTwoLayersFourPoints = createPalindrome.bind({});
 DebugTwoLayersFourPoints.args = {
-    TextStyle:1,
+    TextStyle: 1,
     displayUnits: true,
     textSize: 14,
     mockupData: true,
-    textBold: true,
+    textBold: false,
     textItalic:false,
     displayArea: 'palindrome',
     palindromeSize: 3,
