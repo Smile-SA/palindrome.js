@@ -1,13 +1,8 @@
-import  { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
-import {defaultControl} from "../stories/controls/default_controls";
-import {getPalindrome} from "../stories/controls/getPalindrome";
-export default {
-    title: 'Use Cases/Palindrome/Data Center example',
-    argTypes: defaultControl(),
-};
-const twoLayersThreePoints = getPalindrome.bind({});
-twoLayersThreePoints.args = {
-    TextStyle:1,
+import palindrome from '../src/index';
+import { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
+
+const config = {
+    labelsRendering:"3D",
     displayUnits: true,
     textSize: 14,
     textColor: '#252c11',
@@ -45,3 +40,7 @@ twoLayersThreePoints.args = {
     zplaneMultilayer: -20,
     data: debugTwoLayersThreePoints(),
 };
+
+const container = document.getElementById('palindrome');
+palindrome(container, JSON.parse(JSON.stringify(config)));
+

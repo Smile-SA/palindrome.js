@@ -10,12 +10,18 @@ import {initThreeObjects} from './ThreeJSBasicObjects';
  */
 export default (function (parentElement, conf) {
         let debug = true;
+
+        // text related
+        let parameters = {};
+        
+        // data related
+        let dataIterator;
+        let newData;
+
+        // three.js related
         let lineMaterial;
         let lineMaterialTransparent;
         const meshs = {};
-        let parameters = {};
-        let dataIterator;
-        let newData;
         const {
             scene,
             labelsRenderer,
@@ -23,6 +29,10 @@ export default (function (parentElement, conf) {
             renderer,
             camera
         } = initThreeObjects();
+
+        //3D related
+        let labelCanvas = [];
+        let labelTexture = [];
 
         parentElement.appendChild(renderer.domElement);
         parentElement.appendChild(labelsRenderer.domElement);
@@ -78,20 +88,20 @@ export default (function (parentElement, conf) {
          * set default text settings
          */
         function initTextSettings() {
-            parameters["LabelItalic"] = '';
-            parameters["LabelBold"] = '';
-            if (conf.LabelCharacterFont) {
-                parameters["LabelCharacterFont"] = conf.LabelCharacterFont
+            parameters["labelItalic"] = '';
+            parameters["labelBold"] = '';
+            if (conf.labelCharacterFont) {
+                parameters["labelCharacterFont"] = conf.labelCharacterFont
             } else {
-                parameters["LabelCharacterFont"] = 'Serif'
+                parameters["labelCharacterFont"] = 'Serif'
             }
-            parameters["LabelSize"] = conf.LabelSize;
-            parameters["LabelColor"] = conf.LabelColor;
-            if (conf.LabelBold) {
-                parameters["LabelBold"] = 'bold'
+            parameters["labelSize"] = conf.labelSize;
+            parameters["labelColor"] = conf.labelColor;
+            if (conf.labelBold) {
+                parameters["labelBold"] = 'bold'
             }
-            if (conf.LabelItalic) {
-                parameters["LabelItalic"] = 'Italic'
+            if (conf.labelItalic) {
+                parameters["labelItalic"] = 'Italic'
             }
         }
 
@@ -111,36 +121,43 @@ export default (function (parentElement, conf) {
          *
          * @param {string} labelName label name
          */
-        function createCanvas(labelName) {
-            let LabelCharacterFont = parameters.hasOwnProperty("LabelCharacterFont") ? parameters["LabelCharacterFont"] : "sans-serif";
-            let LabelSize = parameters.hasOwnProperty("LabelSize") ? parameters["LabelSize"] : 22;
-            let LabelBold = parameters.hasOwnProperty("LabelBold") ? parameters["LabelBold"] : '';
-            let LabelItalic = parameters.hasOwnProperty("LabelItalic") ? parameters["LabelItalic"] : '';
+        function createLabelCanvas(labelName, labelText) {
+            //define properties and attributes
+            let labelCharacterFont = parameters.hasOwnProperty("labelCharacterFont") ? parameters["labelCharacterFont"] : "sans-serif";
+            let labelSize = parameters.hasOwnProperty("labelSize") ? parameters["labelSize"] : 22;
+            let labelBold = parameters.hasOwnProperty("labelBold") ? parameters["labelBold"] : '';
+            let labelItalic = parameters.hasOwnProperty("labelItalic") ? parameters["labelItalic"] : '';
             let borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
-            let LabelColor = parameters.hasOwnProperty("LabelColor") ? parameters["LabelColor"] : '#000000';
-            if (LabelColor === null || LabelColor === undefined || LabelColor === '') {
-                LabelColor = '#000000'
+            let labelColor = parameters.hasOwnProperty("labelColor") ? parameters["labelColor"] : '#000000';
+            if (labelColor === null || labelColor === undefined || labelColor === '') {
+                labelColor = '#000000'
             }
-            if (LabelSize === null || LabelSize === undefined || LabelSize === '') {
-                LabelSize = 14
+            if (labelSize === null || labelSize === undefined || labelSize === '') {
+                labelSize = 14
             }
-            let canvas = document.createElement('canvas');
-            let context = canvas.getContext('2d');
-            context.font = LabelItalic + "  " + LabelBold + " " + (LabelSize) + "px " + LabelCharacterFont;
-            canvas.setAttribute("width", 900 + " px");
-            canvas.setAttribute("height", 450 + " px");
-            let textSize = LabelSize * 1.75;
-            context.font = LabelItalic + " " + LabelBold + " " + textSize + "px " + LabelCharacterFont;
+
+            //prepare canvas
+            labelCanvas[labelName] = document.createElement('canvas');
+            labelCanvas[labelName].setAttribute("className", labelName);
+            labelCanvas[labelName].setAttribute("width", 900 + " px");
+            labelCanvas[labelName].setAttribute("height", 450 + " px");            
+            labelCanvas[labelName]['textSize'] = labelSize * 1.75;
+
+            //prepare context
+            let context = labelCanvas[labelName].getContext('2d');
+            context.font = labelItalic + "  " + labelBold + " " + (labelSize) + "px " + labelCharacterFont;
+            context.font = labelItalic + " " + labelBold + " " + labelCanvas[labelName]['textSize'] + "px " + labelCharacterFont;
             context.lineWidth = borderThickness;
             context.textAlign = 'center';
-            let w = canvas.width;
-            let h = canvas.height;
-            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * LabelSize), w / 2 + (borderThickness * LabelSize), 'rgba(10,194,93,0)') // backgroundColor );
-            context.fillStyle = LabelColor;
-            context.textAlign = 'center';
-            //context.fillText(labelName, borderThickness, LabelSize + borderThickness);
-             addMultiLineText(labelName, w / 2, h / 2, textSize, w, context);
-            return canvas;
+            context.fillStyle = labelColor;
+
+            //reassign values (design pattern)
+            let w = labelCanvas[labelName].width;
+            let h = labelCanvas[labelName].height;
+
+            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * labelSize), h / 2 + (borderThickness * labelSize), 'rgba(10,194,93,0)');
+            addMultiLineText(labelText, w / 2, h / 2, labelCanvas[labelName]['textSize'], w, context);
+            return labelCanvas[labelName];
         }
 
         /**
@@ -246,14 +263,14 @@ export default (function (parentElement, conf) {
                         break;
                     } else {
                         labelsIds.push(key)
-                        if (conf.TextStyle === 1) {
+                        if (conf.labelsRendering === "2D") {
                             scene.add(create2DLabel(key, value.label, 'current', layerIndex, value.unit));
                             if (conf.displayLabelsAll) {
                                 scene.add(create2DLabel(key, value.label, 'min', layerIndex, value.unit));
                                 scene.add(create2DLabel(key, value.label, 'med', layerIndex, value.unit));
                                 scene.add(create2DLabel(key, value.label, 'max', layerIndex, value.unit));
                             }
-                        } else {
+                        } else if (conf.labelsRendering === "3D") {
                             labelsIds.push(key)
                             scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
                             if (conf.displayLabelsAll) {
@@ -294,17 +311,11 @@ export default (function (parentElement, conf) {
             return metricLabel;
         }
 
-        function onDocumentMouseMove( event ) {
-            event.preventDefault();
-            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-        }
-
         /**
          * Return a 3d label with text sprite and webGL
          *
          * @param {number} key to keep track the label
-         * @param {string} labelName label text
+         * @param {string} labelName label name
          * @param {string} labelType type of label
          * @param {string} labelValue label value
          * @param {number} layerIndex to keep track layers and metric inside
@@ -312,35 +323,36 @@ export default (function (parentElement, conf) {
          */
         function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
             if (labelUnit === undefined) labelUnit = '';
-            labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
-            let canvas = createCanvas(labelName);
-            let LabelSize = parameters["LabelSize"];
-            let texture = new THREE.CanvasTexture(canvas);
-            texture.needsUpdate = true;
-            texture.minFilter = THREE.NearestFilter;
-            if (conf.TextStyle === 3) {
-                let canvasWebGL = document.createElement('canvas');
-                let gl = canvasWebGL.getContext('webgl');
-                let textureWebGL = gl.createTexture(texture);
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-                gl.bindTexture(gl.TEXTURE_2D, textureWebGL);
-                //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureWebGL); // This is the important line!
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-                gl.generateMipmap(gl.TEXTURE_2D);
-                gl.bindTexture(gl.TEXTURE_2D, null);
-            }
+            let labelText = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
+            let labelSize = parameters["labelSize"];
+            //let texture = new THREE.CanvasTexture(createCanvas(labelName, labelText));
+            labelTexture[labelName] = new THREE.CanvasTexture(createLabelCanvas(labelName, labelText));
+            labelTexture[labelName].minFilter = THREE.NearestFilter;
+
             // canvas contents will be used for a texture
             var spriteMaterial = new THREE.SpriteMaterial(
-                { map: texture, depthWrite:false, useScreenCoordinates: false, transparent: true} );
+                { map: labelTexture[labelName], depthWrite:false, useScreenCoordinates: false, transparent: true} );
             let metricLabel = new THREE.Sprite(spriteMaterial);
-            metricLabel.scale.set(2.5 * LabelSize, 1.25 * LabelSize, 1 * LabelSize);
+            metricLabel.scale.set(2.5 * labelSize, 1.25 * labelSize, 1 * labelSize);
             metricLabel.key = key;
-            metricLabel.name = labelName;
+            metricLabel.name = labelText;
             metricLabel.dataType = labelType;
-            metricLabel.layerindex = layerIndex;
+            metricLabel.layerIndex = layerIndex;
             metricLabel.labelUnit = labelUnit;
             return metricLabel;
+
+            //todo : reimplement so it does not interfere with 'text sprite' method
+            //if (conf.labels3DRendering === 3) {
+            //    let canvasWebGL = document.createElement('canvas');
+            //    let gl = canvasWebGL.getContext('webgl');
+            //    textureWebGL = gl.createTexture(texture);
+            //    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            //    gl.bindTexture(gl.TEXTURE_2D, textureWebGL);
+            //    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            //    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+            //    gl.generateMipmap(gl.TEXTURE_2D);
+            //    gl.bindTexture(gl.TEXTURE_2D, null);
+            //}
         }
 
         /**
@@ -400,7 +412,6 @@ export default (function (parentElement, conf) {
                         else if (conf.layerDisplayMode === "dynamic") {
                             drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, conf.layerMidColor);
                         }
-
                     }
                 }
 
@@ -416,12 +427,8 @@ export default (function (parentElement, conf) {
 
                 // update label position
                 if (conf.displayLabels) {
-                    let sortedLabels;
-                    if (conf.TextStyle === 1) {
-                        sortedLabels = scene.children.filter((item) => item.layerIndex === layerIndex)
-                    } else {
-                        sortedLabels = scene.children.filter((item) => item.layerindex === layerIndex)
-                    }
+                    let sortedLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
+
                     for (let i = 0; i < sortedLabels.length; i++) {
                         const label = sortedLabels[i];
                         if (layerMetrics[label.key]) {
@@ -437,32 +444,36 @@ export default (function (parentElement, conf) {
                             }
                             // display units in label
                             if (!conf.displayUnits || labelDataUnit === undefined) labelDataUnit = '';
-                            // label configuration
-                            label.name = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue + ' ' + labelDataUnit;
-                            if (conf.TextStyle === 1) {
+
+                            label.text = labelDataName + ' - ' + labelDataType + ' : ' + labelDataValue + ' ' + labelDataUnit;
+                            if (conf.labelsRendering === "2D") {
+                                //todo reimplement so static parameters are not recomputed each time 
+                                //(maybe through a better HTML element management or a CSS class ?)
                                 label.element.innerHTML = '<ul ' +
                                     'style=" ' +
-                                    ' color :' + parameters['LabelColor'] + ';' +
-                                    ' font-family:' + parameters['characterFont'] + ';' +
-                                    ' font-weight:' + parameters["LabelBold"] + ';' +
-                                    ' font-style: ' + parameters["LabelItalic"] + '; ' +
-                                    ' font-size: ' + parameters["LabelSize"] + 'px; ' +
-                                    '">' + label.name  + '</ul>';
-                                label.element.addEventListener( 'mousemove', onDocumentMouseMove, false );
-                            } else {
-                                let canvas = createCanvas(label.name);
-                                let texture = new THREE.CanvasTexture(canvas);
-                                label.material.map = texture;
+                                    ' color :' + parameters['labelColor'] + ';' +
+                                    ' font-family:' + parameters['labelCharacterFont'] + ';' +
+                                    ' font-weight:' + parameters["labelBold"] + ';' +
+                                    ' font-style: ' + parameters["labelItalic"] + '; ' +
+                                    ' font-size: ' + parameters["labelSize"] + 'px; ' +
+                                    '">' + label.text  + '</ul>';
+                            }
+                            else if (conf.labelsRendering === "3D") {
+                                //clear the canvas
+                                //todo : explore optimization through saving the transformation mmatrix
+                                labelCanvas[labelDataName].getContext('2d').clearRect(0, 0, labelCanvas[labelDataName].width, labelCanvas[labelDataName].height);
+                                //update the canvas
+                                addMultiLineText(label.text, labelCanvas[labelDataName].width / 2, labelCanvas[labelDataName].height / 2, labelCanvas[labelDataName]['textSize'], labelCanvas[labelDataName].width, labelCanvas[labelDataName].getContext('2d'));
+                                //update the three.js object material
+                                label.material.map.needsUpdate = true;
                             }
                             label.position.set(labelPositions[0]+conf.MetricsXposition, labelPositions[2]+conf.MetricsYposition, labelPositions[1]);
                         }
                     }
                 }
-                //)
 
                 //extract into create / update functions
                 //draw and update sides lines and panels
-                //tood : check why displayDides is broken
                 if (conf.displaySides === true) {
 
                     if (previousLayer !== null) {
@@ -470,7 +481,7 @@ export default (function (parentElement, conf) {
                         const previousPlaneLength = Object.values(previousLayer).length;
                         //adds side texture if the palindrome is more than 1 plane
 
-                        //checks if actual layer points is higher than previous ones to determine if the sides should be drawn from few to many OR from many to few
+                        //check if actual layer points is higher than previous ones to determine if the sides should be drawn from few to many OR from many to few
                         //for the number of sides
                         const sideDividerOdd = (metricsNumber >= previousPlaneLength) ? previousPlaneLength : metricsNumber;
                         const sideDividerEven = (metricsNumber >= previousPlaneLength) ? metricsNumber : previousPlaneLength;
@@ -478,9 +489,6 @@ export default (function (parentElement, conf) {
                         const sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
                         const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
 
-                        //todo
-                        //done : refactor attributes name for clarity and compute once
-                        //done : refactor mesh names
                         for (let i = 0; i < sideDividerEven; i++) {
                             //todo : refactor this part with better variable names ?
                             let calc1 = sideSizeEven[(i + 1) % sideDividerOdd];
@@ -507,6 +515,7 @@ export default (function (parentElement, conf) {
                             }
                         }
                     } else {
+                        //todo : describe this case
                     }
                 }
                 zAxis -= conf.zplaneMultilayer;
