@@ -32,6 +32,7 @@ export default (function (parentElement, conf) {
 
         //3D related
         let labelCanvas = [];
+        let labelContext = [];
         let labelTexture = [];
 
         parentElement.appendChild(renderer.domElement);
@@ -144,19 +145,19 @@ export default (function (parentElement, conf) {
             labelCanvas[labelName]['textSize'] = labelSize * 1.75;
 
             //prepare context
-            let context = labelCanvas[labelName].getContext('2d');
-            context.font = labelItalic + "  " + labelBold + " " + (labelSize) + "px " + labelCharacterFont;
-            context.font = labelItalic + " " + labelBold + " " + labelCanvas[labelName]['textSize'] + "px " + labelCharacterFont;
-            context.lineWidth = borderThickness;
-            context.textAlign = 'center';
-            context.fillStyle = labelColor;
+            labelContext[labelName] = labelCanvas[labelName].getContext('2d');
+            labelContext[labelName].font = labelItalic + "  " + labelBold + " " + (labelSize) + "px " + labelCharacterFont;
+            labelContext[labelName].font = labelItalic + " " + labelBold + " " + labelCanvas[labelName]['textSize'] + "px " + labelCharacterFont;
+            labelContext[labelName].lineWidth = borderThickness;
+            labelContext[labelName].textAlign = 'center';
+            labelContext[labelName].fillStyle = labelColor;
 
             //reassign values (design pattern)
             let w = labelCanvas[labelName].width;
             let h = labelCanvas[labelName].height;
 
-            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * labelSize), h / 2 + (borderThickness * labelSize), 'rgba(10,194,93,0)');
-            addMultiLineText(labelText, w / 2, h / 2, labelCanvas[labelName]['textSize'], w, context);
+            addTextBackground(labelContext[labelName], borderThickness / 2, borderThickness / 2, w + (borderThickness * labelSize), h / 2 + (borderThickness * labelSize), 'rgba(10,194,93,0)');
+            addMultiLineText(labelText, w / 2, h / 2, labelCanvas[labelName]['textSize'], w, labelContext[labelName]);
             return labelCanvas[labelName];
         }
 
@@ -461,9 +462,9 @@ export default (function (parentElement, conf) {
                             else if (conf.labelsRendering === "3D") {
                                 //clear the canvas
                                 //todo : explore optimization through saving the transformation mmatrix
-                                labelCanvas[labelDataName].getContext('2d').clearRect(0, 0, labelCanvas[labelDataName].width, labelCanvas[labelDataName].height);
+                                labelContext[labelDataName].clearRect(0, 0, labelCanvas[labelDataName].width, labelCanvas[labelDataName].height);
                                 //update the canvas
-                                addMultiLineText(label.text, labelCanvas[labelDataName].width / 2, labelCanvas[labelDataName].height / 2, labelCanvas[labelDataName]['textSize'], labelCanvas[labelDataName].width, labelCanvas[labelDataName].getContext('2d'));
+                                addMultiLineText(label.text, labelCanvas[labelDataName].width / 2, labelCanvas[labelDataName].height / 2, labelCanvas[labelDataName]['textSize'], labelCanvas[labelDataName].width, labelContext[labelDataName]);
                                 //update the three.js object material
                                 label.material.map.needsUpdate = true;
                             }
