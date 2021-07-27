@@ -26,14 +26,6 @@ export function debugTwoLayersThreePoints() {
         "max": 100,
         "current": 50
       },
-      "0C": { 
-        "label": "0C",
-        "unit": "number",
-        "min": 0,
-        "med": 50,
-        "max": 100,
-        "current": 50
-      }
     },
     "layer": {
       "layerBehavior": "something",
@@ -53,14 +45,6 @@ export function debugTwoLayersThreePoints() {
       },
       "0B1": {
         "label": "0B1",
-        "unit": "number",
-        "min": 0,
-        "med": 50,
-        "max": 100,
-        "current": 50
-      },
-      "0C1": { 
-        "label": "0C1",
         "unit": "number",
         "min": 0,
         "med": 50,
