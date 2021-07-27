@@ -336,7 +336,7 @@ export default (function (parentElement, conf) {
             texture.minFilter = THREE.NearestFilter;
             // canvas contents will be used for a texture
             var spriteMaterial = new THREE.SpriteMaterial(
-                { map: texture, depthWrite:false, useScreenCoordinates: false, transparent: true} );
+                { map: texture, depthWrite:false, transparent: true} );
             let metricLabel = new THREE.Sprite(spriteMaterial);
             metricLabel.scale.set(2.5 * labelSize, 1.25 * labelSize, 1 * labelSize);
             metricLabel.key = key;
