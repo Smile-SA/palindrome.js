@@ -39,8 +39,6 @@ Then, run ```storybook``` for an interactive session :
 yarn storybook
 ```
 
-*If for some reason the ```knobs``` panel isn't showing up, open your  browser developer console and type ```localStorage.clear()```*
-
 <img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
 
 
