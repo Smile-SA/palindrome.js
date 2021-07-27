@@ -78,20 +78,20 @@ export default (function (parentElement, conf) {
          * set default text settings
          */
         function initTextSettings() {
-            parameters["fontItalic"] = '';
-            parameters["fontBold"] = '';
-            if (conf.characterFont) {
-                parameters["characterFont"] = conf.characterFont
+            parameters["LabelItalic"] = '';
+            parameters["LabelBold"] = '';
+            if (conf.LabelCharacterFont) {
+                parameters["LabelCharacterFont"] = conf.LabelCharacterFont
             } else {
-                parameters["characterFont"] = 'Serif'
+                parameters["LabelCharacterFont"] = 'Serif'
             }
-            parameters["fontSize"] = conf.textSize;
-            parameters["textColor"] = conf.textColor;
-            if (conf.textBold) {
-                parameters["fontBold"] = 'bold'
+            parameters["LabelSize"] = conf.LabelSize;
+            parameters["LabelColor"] = conf.LabelColor;
+            if (conf.LabelBold) {
+                parameters["LabelBold"] = 'bold'
             }
-            if (conf.textItalic) {
-                parameters["fontItalic"] = 'Italic'
+            if (conf.LabelItalic) {
+                parameters["LabelItalic"] = 'Italic'
             }
         }
 
@@ -112,34 +112,33 @@ export default (function (parentElement, conf) {
          * @param {string} labelName label name
          */
         function createCanvas(labelName) {
-            let characterFont = parameters.hasOwnProperty("characterFont") ? parameters["characterFont"] : "sans-serif";
-            let fontSize = parameters.hasOwnProperty("fontSize") ? parameters["fontSize"] : 22;
-            let fontBold = parameters.hasOwnProperty("fontBold") ? parameters["fontBold"] : '';
-            let fontItalic = parameters.hasOwnProperty("fontItalic") ? parameters["fontItalic"] : '';
+            let LabelCharacterFont = parameters.hasOwnProperty("LabelCharacterFont") ? parameters["LabelCharacterFont"] : "sans-serif";
+            let LabelSize = parameters.hasOwnProperty("LabelSize") ? parameters["LabelSize"] : 22;
+            let LabelBold = parameters.hasOwnProperty("LabelBold") ? parameters["LabelBold"] : '';
+            let LabelItalic = parameters.hasOwnProperty("LabelItalic") ? parameters["LabelItalic"] : '';
             let borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
-            let textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : '#000000';
-            console.log(textColor);
-            if (textColor === null || textColor === undefined || textColor === '') {
-                textColor = '#000000'
+            let LabelColor = parameters.hasOwnProperty("LabelColor") ? parameters["LabelColor"] : '#000000';
+            if (LabelColor === null || LabelColor === undefined || LabelColor === '') {
+                LabelColor = '#000000'
             }
-            if (fontSize === null || fontSize === undefined || fontSize === '') {
-                fontSize = 14
+            if (LabelSize === null || LabelSize === undefined || LabelSize === '') {
+                LabelSize = 14
             }
             let canvas = document.createElement('canvas');
             let context = canvas.getContext('2d');
-            context.font = fontItalic + "  " + fontBold + " " + (fontSize) + "px " + characterFont;
+            context.font = LabelItalic + "  " + LabelBold + " " + (LabelSize) + "px " + LabelCharacterFont;
             canvas.setAttribute("width", 900 + " px");
             canvas.setAttribute("height", 450 + " px");
-            let textSize = fontSize * 1.75;
-            context.font = fontItalic + " " + fontBold + " " + textSize + "px " + characterFont;
+            let textSize = LabelSize * 1.75;
+            context.font = LabelItalic + " " + LabelBold + " " + textSize + "px " + LabelCharacterFont;
             context.lineWidth = borderThickness;
             context.textAlign = 'center';
             let w = canvas.width;
             let h = canvas.height;
-            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * fontSize), w / 2 + (borderThickness * fontSize), 'rgba(10,194,93,0)') // backgroundColor );
-            context.fillStyle = textColor;
+            addTextBackground(context, borderThickness / 2, borderThickness / 2, w + (borderThickness * LabelSize), w / 2 + (borderThickness * LabelSize), 'rgba(10,194,93,0)') // backgroundColor );
+            context.fillStyle = LabelColor;
             context.textAlign = 'center';
-            //context.fillText(labelName, borderThickness, fontSize + borderThickness);
+            //context.fillText(labelName, borderThickness, LabelSize + borderThickness);
              addMultiLineText(labelName, w / 2, h / 2, textSize, w, context);
             return canvas;
         }
@@ -315,7 +314,7 @@ export default (function (parentElement, conf) {
             if (labelUnit === undefined) labelUnit = '';
             labelName = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
             let canvas = createCanvas(labelName);
-            let fontSize = parameters["fontSize"];
+            let LabelSize = parameters["LabelSize"];
             let texture = new THREE.CanvasTexture(canvas);
             texture.needsUpdate = true;
             texture.minFilter = THREE.NearestFilter;
@@ -335,7 +334,7 @@ export default (function (parentElement, conf) {
             var spriteMaterial = new THREE.SpriteMaterial(
                 { map: texture, depthWrite:false, useScreenCoordinates: false, transparent: true} );
             let metricLabel = new THREE.Sprite(spriteMaterial);
-            metricLabel.scale.set(2.5 * fontSize, 1.25 * fontSize, 1 * fontSize);
+            metricLabel.scale.set(2.5 * LabelSize, 1.25 * LabelSize, 1 * LabelSize);
             metricLabel.key = key;
             metricLabel.name = labelName;
             metricLabel.dataType = labelType;
@@ -443,20 +442,19 @@ export default (function (parentElement, conf) {
                             if (conf.TextStyle === 1) {
                                 label.element.innerHTML = '<ul ' +
                                     'style=" ' +
-                                    ' color :' + parameters['textColor'] + ';' +
+                                    ' color :' + parameters['LabelColor'] + ';' +
                                     ' font-family:' + parameters['characterFont'] + ';' +
-                                    ' font-weight:' + parameters["fontBold"] + ';' +
-                                    ' font-style: ' + parameters["fontItalic"] + '; ' +
-                                    ' font-size: ' + parameters["fontSize"] + 'px; ' +
+                                    ' font-weight:' + parameters["LabelBold"] + ';' +
+                                    ' font-style: ' + parameters["LabelItalic"] + '; ' +
+                                    ' font-size: ' + parameters["LabelSize"] + 'px; ' +
                                     '">' + label.name  + '</ul>';
                                 label.element.addEventListener( 'mousemove', onDocumentMouseMove, false );
                             } else {
                                 let canvas = createCanvas(label.name);
                                 let texture = new THREE.CanvasTexture(canvas);
-                                texture.needsUpdate = true;
                                 label.material.map = texture;
                             }
-                            label.position.set(labelPositions[0], labelPositions[2]+0.5, labelPositions[1]);
+                            label.position.set(labelPositions[0]+conf.MetricsXposition, labelPositions[2]+conf.MetricsYposition, labelPositions[1]);
                         }
                     }
                 }
