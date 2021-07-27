@@ -1,3 +1,3 @@
 export const parameters = {
-  controls: { expanded: false },
+  controls: { expanded: true },
 };

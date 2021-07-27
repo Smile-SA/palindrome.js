@@ -7,7 +7,7 @@ import {createPalindrome} from './controls/createPalindrome';
 
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
-    argTypes: defaultControl(),
+    argTypes: defaultControls(),
 };
 
 export const BasicConfiguration = createPalindrome.bind({});

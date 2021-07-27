@@ -1,7 +1,7 @@
 /**
  * Return declare control types
  */
-export function defaultControl() {
+export function defaultControls() {
     return {
         // Palindrome configurations
         displayArea: {

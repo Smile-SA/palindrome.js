@@ -33,7 +33,7 @@ export default (function (parentElement, conf) {
         //3D related
         let labelCanvas = [];
         let labelContext = [];
-        let labelTexture = [];
+        //let labelTexture = [];
 
         parentElement.appendChild(renderer.domElement);
         parentElement.appendChild(labelsRenderer.domElement);
@@ -326,13 +326,17 @@ export default (function (parentElement, conf) {
             if (labelUnit === undefined) labelUnit = '';
             let labelText = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
             let labelSize = parameters["labelSize"];
-            //let texture = new THREE.CanvasTexture(createCanvas(labelName, labelText));
-            labelTexture[labelName] = new THREE.CanvasTexture(createLabelCanvas(labelName, labelText));
-            labelTexture[labelName].minFilter = THREE.NearestFilter;
 
+
+            // todo : check if storing the texture in an object helps limiting query in the scene
+            //labelTexture[labelName] = new THREE.CanvasTexture(createLabelCanvas(labelName, labelText));
+            //labelTexture[labelName].minFilter = THREE.NearestFilter;
+
+            let texture = new THREE.CanvasTexture(createLabelCanvas(labelName, labelText));
+            texture.minFilter = THREE.NearestFilter;
             // canvas contents will be used for a texture
             var spriteMaterial = new THREE.SpriteMaterial(
-                { map: labelTexture[labelName], depthWrite:false, useScreenCoordinates: false, transparent: true} );
+                { map: texture, depthWrite:false, useScreenCoordinates: false, transparent: true} );
             let metricLabel = new THREE.Sprite(spriteMaterial);
             metricLabel.scale.set(2.5 * labelSize, 1.25 * labelSize, 1 * labelSize);
             metricLabel.key = key;
@@ -465,7 +469,7 @@ export default (function (parentElement, conf) {
                                 labelContext[labelDataName].clearRect(0, 0, labelCanvas[labelDataName].width, labelCanvas[labelDataName].height);
                                 //update the canvas
                                 addMultiLineText(label.text, labelCanvas[labelDataName].width / 2, labelCanvas[labelDataName].height / 2, labelCanvas[labelDataName]['textSize'], labelCanvas[labelDataName].width, labelContext[labelDataName]);
-                                //update the three.js object material
+                                //update the three.js object material map
                                 label.material.map.needsUpdate = true;
                             }
                             label.position.set(labelPositions[0]+conf.MetricsXposition, labelPositions[2]+conf.MetricsYposition, labelPositions[1]);
