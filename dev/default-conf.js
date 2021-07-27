@@ -30,7 +30,8 @@ console.log("Palindrome.js : configuration in use");
 console.dir(devConfig);
 
 //overwrite default parameters
-devConfig.labelSize = 18;
+devConfig.displayLabelsAll = true;
+devConfig.labelSize = 16;
 devConfig.layerMidColor = '#FF2C00';
 devConfig.mainAppColor = '#f1c232';
 devConfig.data = debugTwoLayersThreePoints();
