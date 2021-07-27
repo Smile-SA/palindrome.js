@@ -1,11 +1,11 @@
 {
   "name": "Palindrome",
-  "version": "1.0.0",
-  "description": "3D probe for metrics and KPIs",
+  "version": "0.2",
+  "description": "3D monitoring for metrics and KPIs",
   "main": "index.html",
   "repository": "https://github.com/alterway/palindrome.js",
   "author": "Alter Way RnD <rnd@alterway.fr>",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "devDependencies": {
     "@babel/core": "7.9.0",
     "@babel/plugin-transform-runtime": "7.13.15",
