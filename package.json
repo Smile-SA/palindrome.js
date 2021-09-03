@@ -32,7 +32,9 @@
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",
     "@storybook/theming": "^6.3.0",
+    "babel-polyfill": "^6.26.0",
     "load-bmfont": "^1.4.1",
+    "node": "^16.6.1",
     "storybook": "^6.3.2",
     "storybook-addon-knobs-color-options": "^6.2.0-rc.2",
     "three": "0.117.1",

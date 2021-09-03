@@ -11,5 +11,5 @@ export function* dataGenerator(model) {
             }
         }
         yield model;
-    }
-};
+   }
+}

@@ -11,9 +11,9 @@ DebugTwoLayersThreePoints.args = {
     layerMidColor: '#DFDF0B',
     mainAppColor: '#00FF06',
     subAppColor: '#9FC5E8',
-    statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
-    statusColorhigh: '#FF0000',
+    statusColorLow: '#9FC5E8',
+    statusColorMed:  '#00FF00',
+    statusColorHigh: '#FF0000',
     data: debugTwoLayersThreePoints(),
 };
 
@@ -22,9 +22,9 @@ DebugTwoLayersFourPoints.args = {
     layerMidColor: '#FF2C00',
     mainAppColor: '#FFCC00',
     subAppColor: '#FFFFFF',
-    statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
-    statusColorhigh: '#FF0000',
+    statusColorLow: '#9FC5E8',
+    statusColorMed:  '#00FF00',
+    statusColorHigh: '#FF0000',
     data: debugTwoLayersFourPoints(),
 };
 

@@ -3,7 +3,7 @@
 ![Palindrome.js](assets/img/Palindrome.js-logo-and-title.jpg "Palindrome.js")
 >***A palindrome is a word, number, phrase, or other sequence of characters which reads the same backward as forward, such as madam, racecar. There are also numeric palindromes, including date/time stamps using short digits 11/11/11 11:11 and long digits 02/02/2020.***
 
-```Palindrome.js``` is a ```three.js``` based library which provides 3D visualization for system metrics and KPIs. Presented as metrics sets within layers, ```Palindrome.js``` helps to easily identify relations between metrics, indicators, behaviors or trends for your realtime systems or any other data source. Custom algorithms, visual behaviors, styles and color schemes can easily be modified or added.
+```Palindrome.js``` is a ```three.js``` based library which provides 3D monitoring for system metrics and KPIs. Presented as metrics sets within layers, ```Palindrome.js``` helps to easily identify relations between metrics, indicators, behaviors or trends for your realtime systems or any other data source. Custom algorithms, visual behaviors, styles and color schemes can easily be modified or added.
 
 <p float="left">
 <img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="assets/img/Palindrome.js-default.png" width="32%" >
@@ -56,15 +56,16 @@ Configuration parameters and their options
 
 | Name| Description | type | Default | Options |
 | ------ | ------ | ------ |------ |------ |
-| Label style | Change the style of the labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
+| Labels rendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
 | Label character font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
 | Label size | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
 | Label color | Change the color of the labels | String| #000000 | - |
-| Bold label | Put the labels in bold or not | Boolean| True | -|
-| Italic label | Put the labels in italic or not | Boolean| False | -|
+| Bold label | Bold or not the labels | Boolean| True | -|
+| Italic label | Italicize or not the labels | Boolean| False | -|
 | Display units in labels | Display or not the units of labels | Boolean| True | -|
 | Display labels | Display or not the labels | Boolean| True | -|
-| Display all labels | Display or not all the labels| Boolean| False | -|
+| Display all labels | Display or not all labels| Boolean| False | -|
+| Fit camera position |Fit camera or not to display objets in plan| Boolean| True | -|
 | Metric Magnifier | Resize the metrics | Number | 10 | -  |
 | Palindrome size | Resize the palindrome | Number | 3 | -  |
 | Display layers mode | Configure the layers mode| String | dynamic | -|
@@ -84,12 +85,12 @@ Configuration parameters and their options
 | Zplane initial | Resize the initial zplane | Number | 0 | -  |
 | Zplane height | Resize the height zplane | Number | 40 | -  |
 | Zplane multilayer | Resize the multilayer zplane |Number | -20 | -  |
-| Status color low | Change the low status color | String |#9FC5E8 | - |
-| Status color med | Change the med status color | String |#00FF00 | - |
-| Status color high | Change the high status color | String |#FF0000 | - |
-| Status range low | Resize the low status range | Number | 0 | -  |
-| Status range med | Resize the med status range | Number | 30 | -  |
-| Status range high | Resize the high status range | Number | 60 | -  |
+| Status color low | Change low status color | String |#9FC5E8 | - |
+| Status color med | Change med status color | String |#00FF00 | - |
+| Status color high | Change high status color | String |#FF0000 | - |
+| Status range low | Resize low status range | Number | 0 | -  |
+| Status range med | Resize med status range | Number | 30 | -  |
+| Status range high | Resize high status range | Number | 60 | -  |
 | Data | The data we analyze | Json | Default json data | -|
 | Mockup data | Make dynamic the data | Boolean|True | -|
 
@@ -101,6 +102,7 @@ Todo : add a step by step integration documentation
 
 Todo : add integration details
 (Default option)
+
 ## Contribute
 
 Simply open a pull request over the repository to describe your changes.
@@ -111,7 +113,6 @@ Simply open a pull request over the repository to describe your changes.
 - Farooque Mustafa @farooquemustafa
 - Damien Gilles @gillesdami
 - Jonathan Rivalan (author) @JonRiv
-
 
 ## License
 Licensed under the Apache 2.0 license

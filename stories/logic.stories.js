@@ -15,9 +15,9 @@ Boolean.args = {
     layerMidColor: '#DFDF0B',
     mainAppColor: '#00FF06',
     subAppColor: '#9FC5E8',
-    statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
-    statusColorhigh: '#FF0000',
+    statusColorLow: '#9FC5E8',
+    statusColorMed:  '#00FF00',
+    statusColorHigh: '#FF0000',
     data: logicBoolean(),
 };
 
@@ -26,9 +26,9 @@ Ternary.args = {
     layerMidColor: '#DFDF0B',
     mainAppColor: '#00FF06',
     subAppColor: '#9FC5E8',
-    statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
-    statusColorhigh: '#FF0000',
+    statusColorLow: '#9FC5E8',
+    statusColorMed:  '#00FF00',
+    statusColorHigh: '#FF0000',
     data: logicTernary(),
 };
 
@@ -37,9 +37,9 @@ FourValued.args = {
     layerMidColor: '#FF2C00',
     mainAppColor: '#FFCC00',
     subAppColor: '#FFFFFF',
-    statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
-    statusColorhigh: '#FF0000',
+    statusColorLow: '#9FC5E8',
+    statusColorMed:  '#00FF00',
+    statusColorHigh: '#FF0000',
     data: logicFourValued(),
 };
 
@@ -48,8 +48,8 @@ FiveThreeTwoPyramid.args = {
     layerMidColor: '#FF2C00',
     mainAppColor: '#FFCC00',
     subAppColor: '#FFFFFF',
-    statusColorlow: '#9FC5E8',
-    statusColormed:  '#00FF00',
-    statusColorhigh: '#FF0000',
+    statusColorLow: '#9FC5E8',
+    statusColorMed:  '#00FF00',
+    statusColorHigh: '#FF0000',
     data: logicFiveThreeTwo(),
 };

@@ -1,6 +1,6 @@
-import palindrome from '../src/index';
 import { defaultControls } from '../stories/controls/default_controls.js';
 import { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
+import {getPalindrome} from "../stories/controls/getPalindrome";
 
 //output the default Storybook controls to the console
 //console.log("Palindrome.js : default Storybook controls");
@@ -30,13 +30,11 @@ console.log("Palindrome.js : configuration in use");
 console.dir(devConfig);
 
 //overwrite default parameters
-devConfig.displayLabelsAll = true;
+devConfig.displayLabelsAll = false;
 devConfig.labelSize = 16;
 devConfig.layerMidColor = '#FF2C00';
 devConfig.mainAppColor = '#f1c232';
 devConfig.data = debugTwoLayersThreePoints();
 
 //instanciate palindrome with configuration
-const container = document.getElementById('palindrome');
-palindrome(container, JSON.parse(JSON.stringify(devConfig)));
-
+getPalindrome(devConfig);
