@@ -57,43 +57,43 @@ Configuration parameters and their options
 
 | Name| Description | type | Default | Options |
 | ------ | ------ | ------ |------ |------ |
-| Labels rendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
-| Label character font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
-| Label size | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
-| Label color | Change the color of the labels | String| #000000 | - |
-| Bold label | Bold or not the labels | Boolean| True | -|
-| Italic label | Italicize or not the labels | Boolean| False | -|
-| Display units in labels | Display or not the units of labels | Boolean| True | -|
-| Display labels | Display or not the labels | Boolean| True | -|
-| Display all labels | Display or not all labels| Boolean| False | -|
-| Fit camera position |Fit camera or not to display objets in plan| Boolean| True | -|
-| Metric Magnifier | Resize the metrics | Number | 10 | -  |
-| Palindrome size | Resize the palindrome | Number | 3 | -  |
-| Display layers mode | Configure the layers mode| String | dynamic | -|
-| Layer mid color | Change the layer mid color | String | #DFDF0B | - |
-| Display layers | Display or not the layers of palindrome| Boolean| True | -|
-| Layer status control | Resize the metrics | Boolean| True | -|
-| Line opacity | Change the line opacity | Number | 1 | -  |
-| Line width | Resize the line widht | Number | 0,5 | -  |
-| Line color | Change the line color | String | #000000 | - |
-| Display sides mode | Configure the sides mode| String | dynamic | -|
-| Main app color | Change the main app color | String | #00FF06 | - |
-| Sub app color | Change the sub app color | String |#9FC5E8 | - |
-| Display sides | Display or not the sides of palindrome | Boolean| True | -|
-| Grid size | Resize the grid | Number | 100 | -  |
-| Grid divisions | Define the divisions of the grid | Number | 100 | -  |
-| Display grid | Display or not the grid of the plan| Boolean| True | -|
-| Zplane initial | Resize the initial zplane | Number | 0 | -  |
-| Zplane height | Resize the height zplane | Number | 40 | -  |
-| Zplane multilayer | Resize the multilayer zplane |Number | -20 | -  |
-| Status color low | Change low status color | String |#9FC5E8 | - |
-| Status color med | Change med status color | String |#00FF00 | - |
-| Status color high | Change high status color | String |#FF0000 | - |
-| Status range low | Resize low status range | Number | 0 | -  |
-| Status range med | Resize med status range | Number | 30 | -  |
-| Status range high | Resize high status range | Number | 60 | -  |
-| Data | The data we analyze | Json | Default json data | -|
-| Mockup data | Make dynamic the data | Boolean|True | -|
+| labelsRendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
+| labelCharacter font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
+| labelSize | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
+| labelColor | Change the color of the labels | String| #000000 | - |
+| boldLabel | Bold or not the labels | Boolean| True | -|
+| italicLabel | Italicize or not the labels | Boolean| False | -|
+| displayUnits | Display or not the units of labels | Boolean| True | -|
+| displayLabels | Display or not the labels | Boolean| True | -|
+| displayAllLabels | Display or not all labels| Boolean| False | -|
+| fitCameraPosition |Fit camera or not to display objets in plan| Boolean| True | -|
+| metricMagnifier | Resize the metrics | Number | 10 | -  |
+| palindromeSize | Resize the palindrome | Number | 3 | -  |
+| displayLayersMode | Configure the layers mode| String | dynamic | -|
+| layerMidColor | Change the layer mid color | String | #DFDF0B | - |
+| displayLayers | Display or not the layers of palindrome| Boolean| True | -|
+| layerStatusControl | Resize the metrics | Boolean| True | -|
+| lineOpacity | Change the line opacity | Number | 1 | -  |
+| lineWidth | Resize the line widht | Number | 0,5 | -  |
+| lineColor | Change the line color | String | #000000 | - |
+| displaySides | Configure the sides mode| String | dynamic | -|
+| mainAppColor | Change the main app color | String | #00FF06 | - |
+| subAppColor | Change the sub app color | String |#9FC5E8 | - |
+| displaySides | Display or not the sides of palindrome | Boolean| True | -|
+| gridSize | Resize the grid | Number | 100 | -  |
+| gridDivisions | Define the divisions of the grid | Number | 100 | -  |
+| displayGrid | Display or not the grid of the plan| Boolean| True | -|
+| zPlaneInitial | Resize the initial zplane | Number | 0 | -  |
+| zPlaneHeight | Resize the height zplane | Number | 40 | -  |
+| zPlaneMultilayer | Resize the multilayer zplane |Number | -20 | -  |
+| status color low | Change low status color | String |#9FC5E8 | - |
+| status color med | Change med status color | String |#00FF00 | - |
+| status color high | Change high status color | String |#FF0000 | - |
+| statusRangeLow | Resize low status range | Number | 0 | -  |
+| statusRangeMed | Resize med status range | Number | 30 | -  |
+| statusRangeHigh | Resize high status range | Number | 60 | -  |
+| data | The data we analyze | Json | Default json data | -|
+| mockupData | Make dynamic the data | Boolean|True | -|
 
 ## How to add your usecase ?
 
