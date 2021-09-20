@@ -41,13 +41,14 @@ yarn storybook
 
 <img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
 
-
+<!-- commented as the dev install is bugged
 ## Default HTML
 Alternatively, you can run the default html session :
 
 ```
 yarn dev
 ```
+-->
 
 <img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/palindrome-html.png" width="93%">
 
