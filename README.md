@@ -58,12 +58,12 @@ Configuration parameters and their options
 | Name| Description | type | Default | Options |
 | ------ | ------ | ------ |------ |------ |
 | labelsRendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
-| labelCharacter font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
-| labelSize | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
-| labelColor | Change the color of the labels | String| #000000 | - |
-| boldLabel | Bold or not the labels | Boolean| True | -|
-| italicLabel | Italicize or not the labels | Boolean| False | -|
-| displayUnits | Display or not the units of labels | Boolean| True | -|
+| labelsCharacter font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
+| labelsSize | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
+| labelsColor | Change the color of the labels | String| #000000 | - |
+| labelsBold | Bold or not the labels | Boolean| True | -|
+| labelsItalic| Italicize or not the labels | Boolean| False | -|
+| displayLabelsUnits | Display or not the units of labels | Boolean| True | -|
 | displayLabels | Display or not the labels | Boolean| True | -|
 | displayAllLabels | Display or not all labels| Boolean| False | -|
 | fitCameraPosition |Fit camera or not to display objets in plan| Boolean| True | -|

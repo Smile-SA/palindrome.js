@@ -29,12 +29,12 @@ export default (function (parentElement, conf) {
         } = initThreeObjects();
 
         // init bold and italic option
-        let labelBold = '', labelItalic = '', borderThickness = 4;
-        if (conf.labelBold) {
-            labelBold = 'bold'
+        let metricsLabelsBold = '', metricsLabelsItalic = '', borderThickness = 4;
+        if (conf.metricsLabelsBold) {
+            metricsLabelsBold = 'bold'
         }
-        if (conf.labelItalic) {
-            labelItalic = 'Italic'
+        if (conf.metricsLabelsItalic) {
+            metricsLabelsItalic = 'Italic'
         }
 
         //3D related
@@ -82,7 +82,7 @@ export default (function (parentElement, conf) {
                 displayGrid(conf.gridSize, conf.gridDivisions);
             }
 
-            if (conf.displayLabels) {
+            if (conf.displayMetricsLabels) {
                 // configuration text parameters
                 createLabels(data);
             }
@@ -115,14 +115,14 @@ export default (function (parentElement, conf) {
             labelCanvas.setAttribute("className", labelName);
             labelCanvas.setAttribute("width", 900 + " px");
             labelCanvas.setAttribute("height", 450 + " px");
-            labelCanvas['textSize'] = conf.labelSize * 2;
+            labelCanvas['textSize'] = conf.metricsLabelsSize * 2;
 
             //prepare context
             let labelContext = labelCanvas.getContext('2d');
-            labelContext.font = labelItalic + " " + labelBold + " " + labelCanvas['textSize'] + "px " + conf.labelCharacterFont;
+            labelContext.font = metricsLabelsItalic + " " + metricsLabelsBold + " " + labelCanvas['textSize'] + "px " + conf.metricsLabelsCharacterFont;
             labelContext.lineWidth = borderThickness;
             labelContext.textAlign = 'center';
-            labelContext.fillStyle = conf.labelColor;
+            labelContext.fillStyle = conf.metricsLabelsColor;
 
             //reassign values (design pattern)
             let w = labelCanvas.width;
@@ -155,17 +155,17 @@ export default (function (parentElement, conf) {
                 for (let j = 0; j <= 3; j++) {
                     let td = tHead.insertCell();
                     td.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-                    td.style.color = conf.labelColor;
-                    td.style.fontFamily = conf.labelCharacterFont;
-                    td.style.fontWeight = labelBold;
-                    td.style.fontStyle = labelItalic;
-                    td.style.fontSize = conf.labelSize + ' px;';
+                    td.style.color = conf.metricsLabelsColor;
+                    td.style.fontFamily = conf.metricsLabelsCharacterFont;
+                    td.style.fontWeight = metricsLabelsBold;
+                    td.style.fontStyle = metricsLabelsItalic;
+                    td.style.fontSize = conf.metricsLabelsSize + ' px;';
                     td.style.padding = '5px 8px';
                     td.style.lineHeight = '20px';
                     td.style.verticalAlign = 'middle';
                     td.style.border = '1px solid #dbdbdb';
-                    if (i == 0) {
-                        td.style.background = conf.labelBackgroundColor;
+                    if (i === 0) {
+                        td.style.background = conf.metricsLabelsBackground;
                         switch (j) {
                             case 0:
                                 td.appendChild(document.createTextNode("Name"));
@@ -180,7 +180,7 @@ export default (function (parentElement, conf) {
                                 td.appendChild(document.createTextNode("Unit"));
                                 break;
                         }
-                    } else if (i == 1) {
+                    } else if (i === 1) {
                         td.style.background = 'white';
                         switch (j) {
                             case 0:
@@ -197,7 +197,6 @@ export default (function (parentElement, conf) {
                                 break;
                         }
                     }
-
                 }
             }
             let div = document.createElement('div');
@@ -232,12 +231,12 @@ export default (function (parentElement, conf) {
          */
         function createHtmlJson(labelName, labelType, labelValue, labelUnit) {
             let json = document.createElement('code');
-            json.style.background = conf.labelBackgroundColor;
-            json.style.color = conf.labelColor;
-            json.style.fontFamily = conf.labelCharacterFont;
-            json.style.fontWeight = labelBold;
-            json.style.fontStyle = conf.labelItalic;
-            json.style.fontSize = conf.labelSize + "px";
+            json.style.background = conf.metricsLabelsBackground;
+            json.style.color = conf.metricsLabelsColor;
+            json.style.fontFamily = conf.metricsLabelsCharacterFont;
+            json.style.fontWeight = metricsLabelsBold;
+            json.style.fontStyle = metricsLabelsItalic;
+            json.style.fontSize = conf.metricsLabelsSize + "px";
             json.style.padding = '5px';
             json.innerHTML = '{"Name":"' + labelName + '","Type":"' + labelType + '","Value":"' + labelValue + '","Unit":"' + labelUnit + '"}';
             let div = document.createElement('div');
@@ -398,16 +397,16 @@ export default (function (parentElement, conf) {
                         break;
                     } else {
                         labelsIds.push(key)
-                        if (conf.labelsRendering === "2D") {
+                        if (conf.metricsLabelsRendering === "2D") {
                             scene.add(create2DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
-                            if (conf.displayLabelsAll) {
+                            if (conf.displayAllMetricsLabels) {
                                 scene.add(create2DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
                                 scene.add(create2DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
                                 scene.add(create2DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
                             }
-                        } else if (conf.labelsRendering === "3D") {
+                        } else if (conf.metricsLabelsRendering === "3D") {
                             scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
-                            if (conf.displayLabelsAll) {
+                            if (conf.displayAllMetricsLabels) {
                                 scene.add(create3DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
                                 scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
                                 scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
@@ -432,19 +431,19 @@ export default (function (parentElement, conf) {
          * @param {string} labelUnit the unit of label
          */
         function create2DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
-            if (!conf.displayUnits || labelUnit === undefined) labelUnit = '';
+            if (!conf.displaysMetricsLabelsUnit || labelUnit === undefined) labelUnit = '';
             let div = document.createElement('div');
             div.className = 'label ' + labelName;
-            if (conf.labelsFormat === 'Classic') {
+            if (conf.metricsLabelsFormat === 'Classic') {
                 div.textContent = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
-                div.style.fontFamily = conf.labelCharacterFont;
-                div.style.color = conf.labelColor;
-                div.style.fontWeight = labelBold;
-                div.style.fontStyle = conf.labelItalic;
-                div.style.fontSize = conf.labelSize + "px";
-            } else if (conf.labelsFormat === 'Table') {
+                div.style.fontFamily = conf.metricsLabelsCharacterFont;
+                div.style.color = conf.metricsLabelsColor;
+                div.style.fontWeight = metricsLabelsBold;
+                div.style.fontStyle = metricsLabelsItalic;
+                div.style.fontSize = conf.metricsLabelsSize + "px";
+            } else if (conf.metricsLabelsFormat === 'Table') {
                 div.appendChild(createHtmlTable(labelName, labelType, labelValue, labelUnit));
-            } else if (conf.labelsFormat === 'Json') {
+            } else if (conf.metricsLabelsFormat === 'Json') {
                 div.appendChild(createHtmlJson(labelName, labelType, labelValue, labelUnit));
             }
             const metricLabel = new CSS2DObject(div);
@@ -467,23 +466,23 @@ export default (function (parentElement, conf) {
          * @param {string} labelUnit the unit of label
          */
         function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
-            if (!conf.displayUnits || labelUnit === undefined) labelUnit = '';
+            if (!conf.displaysMetricsLabelsUnit || labelUnit === undefined) labelUnit = '';
             let metricLabel, texture;
             let x, y, z;
-            x = 1.5 * (conf.labelSize);
-            y = 0.75 * (conf.labelSize);
-            z = 2.25 * (conf.labelSize);
-            if (conf.labelsFormat === 'Classic') {
+            x = 1.5 * (conf.metricsLabelsSize);
+            y = 0.75 * (conf.metricsLabelsSize);
+            z = 2.25 * (conf.metricsLabelsSize);
+            if (conf.metricsLabelsFormat === 'Classic') {
                 let labelText = labelName + ' - ' + labelType + ' : ' + labelValue + ' ' + labelUnit;
                 // canvas contents will be used for a texture
                 texture = new THREE.Texture(createLabelCanvas(labelName, labelText));
                 x = x * 1.25;
                 y = y * 1.25;
                 z = z * 1.25;
-            } else if (conf.labelsFormat === 'Table'){
+            } else if (conf.metricsLabelsFormat === 'Table'){
                 labelDiv[labelName] = createHtmlTable(labelName, labelType, labelValue, labelUnit);
                 texture = new THREE.Texture(htmlToSvg(labelDiv[labelName]));
-            } else if (conf.labelsFormat === 'Json'){
+            } else if (conf.metricsLabelsFormat === 'Json'){
                 labelDiv[labelName] = createHtmlJson(labelName, labelType, labelValue, labelUnit);
                 texture = new THREE.Texture(htmlToSvg(labelDiv[labelName]));
             }
@@ -582,7 +581,7 @@ export default (function (parentElement, conf) {
                 }
 
                 //update label position
-                if (conf.displayLabels) {
+                if (conf.displayMetricsLabels) {
                     let sortedLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
                     for (let i = 0; i < sortedLabels.length; i++) {
                         const metricLabel = sortedLabels[i];
@@ -598,25 +597,25 @@ export default (function (parentElement, conf) {
                                 debug = false;
                             }
                             // display units in label
-                            if (!conf.displayUnits || metricLabelUnit === undefined) metricLabelUnit = '';
+                            if (!conf.displaysMetricsLabelsUnit || metricLabelUnit === undefined) metricLabelUnit = '';
                             metricLabel.text = metricLabelName + ' - ' + metricLabelType + ' : ' + metricLabelValue + ' ' + metricLabelUnit;
-                            if (conf.labelsRendering === "2D") {
-                                if (conf.labelsFormat === "Classic") {
+                            if (conf.metricsmetricsLabelsRendering === "2D") {
+                                if (conf.metricsLabelsFormat === "Classic") {
                                     // update text label
                                     metricLabel.element.textContent = metricLabel.text;
-                                } else if (conf.labelsFormat === "Table") {
+                                } else if (conf.metricsLabelsFormat === "Table") {
                                     // update table
                                     let htmlTable = metricLabel.element.getElementsByTagName('div').item(0).childNodes.item(0);
                                     updateHtmlTable(metricLabelValue, htmlTable);
-                                } else if (conf.labelsFormat === "Json") {
+                                } else if (conf.metricsLabelsFormat === "Json") {
                                     // update json
                                     let htmlCode = metricLabel.element.getElementsByTagName('div').item(0).childNodes.item(0);
                                     updateHtmlJson(metricLabelName, metricLabelType, metricLabelValue, metricLabelUnit, htmlCode);
                                 }
-                            } else if (conf.labelsRendering === "3D") {
+                            } else if (conf.metricsLabelsRendering === "3D") {
                                 //get the label texture from the material map
                                 let metricLabelTexture = metricLabel.material.map.image;
-                                if (conf.labelsFormat === "Classic") {
+                                if (conf.metricsLabelsFormat === "Classic") {
                                     //here metricLabelTexture is a canvas
                                     let labelContext = metricLabelTexture.getContext('2d')
                                     //clear the canvas
@@ -625,7 +624,7 @@ export default (function (parentElement, conf) {
                                     addMultiLineText(metricLabel.text, metricLabelTexture.width / 2, metricLabelTexture.height / 2, metricLabelTexture['textSize'], metricLabelTexture.width,labelContext );
                                     //update the three.js object material map
                                     metricLabel.material.map.needsUpdate = true;
-                                } else if (conf.labelsFormat === "Table") {
+                                } else if (conf.metricsLabelsFormat === "Table") {
                                     // here metricLabelTexture is a table svg
                                     metricLabelTexture.onload = function() {
                                         let htmlTable = labelDiv[metricLabelName].childNodes.item(0).childNodes.item(0);
@@ -633,7 +632,7 @@ export default (function (parentElement, conf) {
                                         updateSvgSrc(metricLabelTexture, labelDiv[metricLabelName]);
                                         metricLabel.material.map.needsUpdate = true;
                                     };
-                                } else if (conf.labelsFormat === "Json") {
+                                } else if (conf.metricsLabelsFormat === "Json") {
                                     // here metricLabelTexture is a json svg
                                     metricLabelTexture.onload = function() {
                                         let htmlJson = labelDiv[metricLabelName].childNodes.item(0);
