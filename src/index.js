@@ -1,9 +1,9 @@
-import 'babel-polyfill';
+//import 'babel-polyfill';
 import * as THREE from 'three';
 import {CSS2DObject} from 'three-css2drender';
 import {Triangle, SimpleLine} from './ThreeGeometryObjects';
-import {dataGenerator} from './dataGenerator';
 import {initThreeObjects} from './ThreeJSBasicObjects';
+import {dataGenerator} from './dataGenerator';
 
 /**
  * @param {HTMLElement} parentElement perent element of three's renderer element
