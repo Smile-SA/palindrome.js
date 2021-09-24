@@ -24,7 +24,7 @@ Project is created with:
 * love <3
 
 ## Setup
-This project uses ```yarn``` as the dependency manager, ```parcel-bundler``` as the packager, ```three.js``` as its 3D renderer and ```storybook``` for functional testing.
+This project uses ```three.js``` as its 3D renderer, ```yarn``` as the dependency manager, ```storybook``` for functional testing and ```parcel-bundler``` as the stand-alone packager.
 
 First install the project dependencies :
 
@@ -41,14 +41,12 @@ yarn storybook
 
 <img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
 
-<!-- commented as the dev install is bugged
 ## Default HTML
 Alternatively, you can run the default html session :
 
 ```
 yarn dev
 ```
--->
 
 <img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/palindrome-html.png" width="93%">
 

@@ -365,48 +365,48 @@ export default (function (parentElement, conf) {
         function metricsLabelsComposition(labelName, labelType, labelValue, labelUnit) {
             let data = '';
             if (conf.metricsLabelsFormat === "Classic") {
-                if (conf.metricsLabelsComposition.indexOf("Name") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += labelName;
                 }
-                if (conf.metricsLabelsComposition.indexOf("Type") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Type") != -1) {
                     data += ' - ' + labelType;
                 }
-                if (conf.metricsLabelsComposition.indexOf("Value") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Value") != -1) {
                     data += ' : ' + labelValue;
                 }
-                if (conf.metricsLabelsComposition.indexOf("Unit") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Unit") != -1) {
                     data += ' ' + labelUnit;
                 }
             } else if (conf.metricsLabelsFormat === "Json") {
                 data += '{';
-                if (conf.metricsLabelsComposition.indexOf("Name") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += '"Name" : "' + labelName + '", ';
                 }
-                if (conf.metricsLabelsComposition.indexOf("Type") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Type") != -1) {
                     data += '"Type" : "' + labelType + '", ';
                 }
-                if (conf.metricsLabelsComposition.indexOf("Value") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Value") != -1) {
                     data += '"Value" : "' + labelValue + '", ';
                 }
-                if (conf.metricsLabelsComposition.indexOf("Unit") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Unit") != -1) {
                     data += '"Units" : "' + labelUnit + '"';
                 }
                 data += '}'
             } else if (conf.metricsLabelsFormat === "Table") {
                 let tbody = [], tHead = [];
-                if (conf.metricsLabelsComposition.indexOf("Name") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     tbody.push("Name");
                     tHead.push(labelName);
                 }
-                if (conf.metricsLabelsComposition.indexOf("Type") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Type") != -1) {
                     tbody.push("Type");
                     tHead.push(labelType);
                 }
-                if (conf.metricsLabelsComposition.indexOf("Value") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Value") != -1) {
                     tbody.push("Value");
                     tHead.push(labelValue);
                 }
-                if (conf.metricsLabelsComposition.indexOf("Unit") != -1) {
+                if (conf.metricsLabelsStructure.indexOf("Unit") != -1) {
                     tbody.push("Unit");
                     tHead.push(labelUnit);
                 }
