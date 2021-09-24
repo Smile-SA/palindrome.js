@@ -56,6 +56,7 @@ Configuration parameters and their options
 | Name| Description | type | Default | Options |
 | ------ | ------ | ------ |------ |------ |
 | labelsRendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
+| labelsStructure | To select the structure of the label to display | String | "Name","Type","Value","Unit" | "Name","Type","Value","Unit"  |
 | labelsCharacter font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
 | labelsSize | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
 | labelsColor | Change the color of the labels | String| #000000 | - |

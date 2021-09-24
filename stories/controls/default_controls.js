@@ -161,7 +161,7 @@ export function defaultControls(){
             },
         },
         metricsLabelsStructure:{
-            name:"labelsComposition", description:"To select the composition of the label to display",defaultValue:["Name","Type","Value","Unit"],
+            name:"labelsStructure", description:"To select the structure of the label to display",defaultValue:["Name","Type","Value","Unit"],
             control: {
                 type:"check",
                 options:["Name","Type","Value","Unit"]

@@ -362,7 +362,7 @@ export default (function (parentElement, conf) {
          * @param {string} labelValue label value
          * @param {string} labelUnit the unit of label
          */
-        function metricsLabelsComposition(labelName, labelType, labelValue, labelUnit) {
+        function getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit) {
             let data = '';
             if (conf.metricsLabelsFormat === "Classic") {
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
@@ -469,7 +469,7 @@ export default (function (parentElement, conf) {
          */
         function create2DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
             let div = document.createElement('div'),
-                data = metricsLabelsComposition(labelName, labelType, labelValue, labelUnit);
+                data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit);
             div.className = 'label ' + labelName;
             if (conf.metricsLabelsFormat === "Classic") {
                 div.textContent = data;
@@ -504,7 +504,7 @@ export default (function (parentElement, conf) {
          */
         function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
             let texture = new THREE.Texture(), textureImage, x, y, z,
-                data = metricsLabelsComposition(labelName, labelType, labelValue, labelUnit);
+                data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit);
             x = 1.5 * (conf.metricsLabelsSize);
             y = 0.75 * (conf.metricsLabelsSize);
             z = 2.25 * (conf.metricsLabelsSize);
@@ -633,7 +633,7 @@ export default (function (parentElement, conf) {
                                 debug = false;
                             }
                             // update label data
-                            metricsLabels.data = metricsLabelsComposition(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit)
+                            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit)
 
                             if (conf.metricsLabelsRendering === "2D") {
                                 if (conf.metricsLabelsFormat === "Classic") {
