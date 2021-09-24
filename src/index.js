@@ -194,21 +194,13 @@ export default (function (parentElement, conf) {
         /**
          * Update table data
          *
-         * @param {string} Tabledata label value
+         * @param {string} data label data
          * @param {*} htmlTable html object
          */
         function updateHtmlTable(htmlTable, data) {
-            // todo find the value cell and change them
-            // for (let i = 0; i < htmlTable.rows[1].cells.length; i++) {
-            //     if (htmlTable.rows[1].cells[i].innerHTML=="Value"){
-            //         break;
-            //         console.log(true);
-            //     }
-            // }
-
-            for (const [xKey, xValue] of Object.entries(data)) {
-                for (const [jKey, jValue] of Object.entries(xValue)) {
-                        htmlTable.rows[xKey].cells[jKey].innerText = jValue;
+            for (let i = 0; i < htmlTable.rows[0].cells.length; i++) {
+                if (htmlTable.rows[0].cells[i].innerHTML=="Value"){
+                    htmlTable.rows[1].cells[i].innerText = data[1][i];
                 }
             }
         }
