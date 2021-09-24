@@ -5,13 +5,13 @@
 
 ```Palindrome.js``` is a ```three.js``` based library which provides 3D monitoring for system metrics and KPIs. Presented as metrics sets within layers, ```Palindrome.js``` helps to easily identify relations between metrics, indicators, behaviors or trends for your realtime systems or any other data source. Custom algorithms, visual behaviors, styles and color schemes can easily be modified or added.
 
+_**```Palindrome.js``` is still considered as an experimental / beta prototype, be aware API can change at any moment. Feedbacks are more than welcome !**_
+
 <p float="left">
 <img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="assets/img/Palindrome.js-default.png" width="32%" >
 <img alt="Datacenter energy efficiency" desc="Datacenter energy efficiency" title="Datacenter energy efficiency" src="assets/img/dc-energy-efficency.png" width="33.5%">
 <img alt="Datacenter custom configuration" desc="Datacenter custom configuration" title="Datacenter custom configuration" src="assets/img/dc-custom-configuration.png" width="29.8%">
 </p>
-
-_**```Palindrome.js``` is still considered as an experimental / beta prototype, feedbacks are more than welcome !**_
 
 ## Motivation
 
