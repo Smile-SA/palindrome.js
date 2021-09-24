@@ -104,6 +104,25 @@ export default (function (parentElement, conf) {
         }
 
         /**
+         * Return a text in html balise p
+         *
+         * @param {string} labelText label text
+         */
+        function createHtmlText(labelText) {
+            let p = document.createElement('p');
+            p.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+            p.style.color = conf.metricsLabelsColor;
+            p.style.fontFamily = conf.metricsLabelsCharacterFont;
+            p.style.fontWeight = metricsLabelsBold;
+            p.style.fontStyle = metricsLabelsItalic;
+            p.style.fontSize = conf.metricsLabelsSize + ' px;';
+            p.style.padding = '5px';
+            p.innerText = labelText;
+            return p;
+        }
+
+
+        /**
          * Return a canvas element
          *
          * @param {string} labelName label name
@@ -115,7 +134,11 @@ export default (function (parentElement, conf) {
             labelCanvas.setAttribute("className", labelName);
             labelCanvas.setAttribute("width", 900 + " px");
             labelCanvas.setAttribute("height", 450 + " px");
-            labelCanvas['textSize'] = conf.metricsLabelsSize * 2;
+            if (conf.metricsLabelsRendering === '2D') {
+                labelCanvas['textSize'] = conf.metricsLabelsSize;
+            } else if (conf.metricsLabelsRendering === '3D') {
+                labelCanvas['textSize'] = conf.metricsLabelsSize * 2;
+            }
 
             //prepare context
             let labelContext = labelCanvas.getContext('2d');
@@ -178,6 +201,20 @@ export default (function (parentElement, conf) {
         }
 
         /**
+         * Update table data
+         *
+         * @param {string} data label data
+         * @param {*} htmlTable html object
+         */
+        function updateHtmlTable(htmlTable, data) {
+            for (let i = 0; i < htmlTable.rows[0].cells.length; i++) {
+                if (htmlTable.rows[0].cells[i].innerHTML == "Value") {
+                    htmlTable.rows[1].cells[i].innerText = data[1][i];
+                }
+            }
+        }
+
+        /**
          * Return a rgb Color
          *
          * @param {string} hex hec color
@@ -189,28 +226,6 @@ export default (function (parentElement, conf) {
                 g: parseInt(result[2], 16),
                 b: parseInt(result[3], 16)
             } : null;
-        }
-
-        /**
-         * Update table data
-         *
-         * @param {string} Tabledata label value
-         * @param {*} htmlTable html object
-         */
-        function updateHtmlTable(htmlTable, data) {
-            // todo find the value cell and change them
-            // for (let i = 0; i < htmlTable.rows[1].cells.length; i++) {
-            //     if (htmlTable.rows[1].cells[i].innerHTML=="Value"){
-            //         break;
-            //         console.log(true);
-            //     }
-            // }
-
-            for (const [xKey, xValue] of Object.entries(data)) {
-                for (const [jKey, jValue] of Object.entries(xValue)) {
-                        htmlTable.rows[xKey].cells[jKey].innerText = jValue;
-                }
-            }
         }
 
         /**
@@ -236,6 +251,20 @@ export default (function (parentElement, conf) {
         }
 
         /**
+         * Update Json data
+         *
+         * @param {string} labelName label name
+         * @param {string} labelType type of label
+         * @param {string} labelValue label value
+         * @param {string} labelUnit the unit of label
+         * @param {*} htmlCode html code object
+         */
+        function updateHtmlJson(labelName, labelType, labelValue, labelUnit, htmlCode) {
+            htmlCode.innerHTML = '{"Name":"' + labelName + '","Type":"' + labelType + '","Value":"' + labelValue + '","Unit":"' + labelUnit + '"}';
+        }
+
+
+        /**
          * Return a svg img
          *
          * @param {*} htmlElement html element
@@ -258,16 +287,20 @@ export default (function (parentElement, conf) {
          *
          * @param {*} svg svg img
          * @param {*} htmlElement html element
+         * @param {*} map material map
          */
-        function updateSvgSrc(svg, htmlElement) {
-            svg.src = 'data:image/svg+xml,' + encodeURIComponent(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250">' +
-                '   <foreignObject  width="100%" height="100%">' +
-                '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">'
-                + htmlElement.innerHTML +
-                '       </body>' +
-                '   </foreignObject>' +
-                '</svg>');
+        function updateSvgSrc(svg, htmlElement, map) {
+            svg.onload = function () {
+                map.needsUpdate = true;
+                svg.src = 'data:image/svg+xml,' + encodeURIComponent(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250">' +
+                    '   <foreignObject  width="100%" height="100%">' +
+                    '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">'
+                    + htmlElement.innerHTML +
+                    '       </body>' +
+                    '   </foreignObject>' +
+                    '</svg>');
+            }
         }
 
         /**
@@ -364,7 +397,7 @@ export default (function (parentElement, conf) {
          */
         function getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit) {
             let data = '';
-            if (conf.metricsLabelsFormat === "Classic") {
+            if (conf.metricsLabelsFormat === "ClassicSvg" || conf.metricsLabelsFormat === "ClassicCanvas") {
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += labelName;
                 }
@@ -471,13 +504,10 @@ export default (function (parentElement, conf) {
             let div = document.createElement('div'),
                 data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit);
             div.className = 'label ' + labelName;
-            if (conf.metricsLabelsFormat === "Classic") {
-                div.textContent = data;
-                div.style.fontFamily = conf.metricsLabelsCharacterFont;
-                div.style.color = conf.metricsLabelsColor;
-                div.style.fontWeight = metricsLabelsBold;
-                div.style.fontStyle = metricsLabelsItalic;
-                div.style.fontSize = conf.metricsLabelsSize + "px";
+            if (conf.metricsLabelsFormat === 'ClassicCanvas') {
+                div.appendChild(createLabelCanvas(labelName, data));
+            } else if (conf.metricsLabelsFormat === 'ClassicSvg') {
+                div.appendChild(createHtmlText(data));
             } else if (conf.metricsLabelsFormat === "Table") {
                 div.appendChild(createHtmlTable(labelName, data));
             } else if (conf.metricsLabelsFormat === "Json") {
@@ -508,12 +538,17 @@ export default (function (parentElement, conf) {
             x = 1.5 * (conf.metricsLabelsSize);
             y = 0.75 * (conf.metricsLabelsSize);
             z = 2.25 * (conf.metricsLabelsSize);
-            if (conf.metricsLabelsFormat === "Classic") {
-                // canvas contents will be used for a texture image
-                textureImage = createLabelCanvas(labelName, data)
+            if (conf.metricsLabelsFormat === 'ClassicCanvas') {
+                // canvas contents will be used for a texture
+                textureImage = createLabelCanvas(labelName, data);
                 x = x * 1.25;
                 y = y * 1.25;
                 z = z * 1.25;
+            } else if (conf.metricsLabelsFormat === 'ClassicSvg') {
+                labelDiv[labelName] = document.createElement('div');
+                labelDiv[labelName].className = 'label ' + labelName;
+                labelDiv[labelName].appendChild(createHtmlText(data));
+                textureImage = htmlToSvg(labelDiv[labelName]);
             } else if (conf.metricsLabelsFormat === "Table") {
                 labelDiv[labelName] = createHtmlTable(labelName, data);
                 textureImage = htmlToSvg(labelDiv[labelName]);
@@ -634,11 +669,16 @@ export default (function (parentElement, conf) {
                             }
                             // update label data
                             metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit)
-
                             if (conf.metricsLabelsRendering === "2D") {
-                                if (conf.metricsLabelsFormat === "Classic") {
-                                    // reset label text
-                                    metricsLabels.element.innerHTML = metricsLabels.data;
+                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
+                                    // update text label
+                                    let canvas = metricsLabels.element.childNodes.item(0);
+                                    let labelContext = canvas.getContext('2d');
+                                    labelContext.clearRect(0, 0, canvas.width, canvas.height);
+                                    addMultiLineText(metricsLabels.data, canvas.width / 2, canvas.height / 2, canvas['textSize'], canvas.width, labelContext);
+                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
+                                    // update text label
+                                    metricsLabels.element.childNodes.item(0).textContent = metricsLabels.data;
                                 } else if (conf.metricsLabelsFormat === "Table") {
                                     // update table
                                     let htmlTable = metricsLabels.element.getElementsByTagName('div').item(0).childNodes.item(0);
@@ -651,7 +691,7 @@ export default (function (parentElement, conf) {
                             } else if (conf.metricsLabelsRendering === "3D") {
                                 //get the label texture from the material map
                                 let metricsLabelsTexture = metricsLabels.material.map.image;
-                                if (conf.metricsLabelsFormat === "Classic") {
+                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
                                     //here metricsLabelsTexture is a canvas
                                     let labelContext = metricsLabelsTexture.getContext('2d')
                                     //clear the canvas
@@ -660,22 +700,20 @@ export default (function (parentElement, conf) {
                                     addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture['textSize'], metricsLabelsTexture.width, labelContext);
                                     //update the three.js object material map
                                     metricsLabels.material.map.needsUpdate = true;
+                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
+                                    // here metricLabelTexture is a table svg
+                                    labelDiv[metricsLabelsName].childNodes.item(0).innerHTML = metricsLabels.data;
+                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
                                 } else if (conf.metricsLabelsFormat === "Table") {
                                     // here metricsLabelsTexture is a table svg
-                                    metricsLabelsTexture.onload = function () {
-                                        let htmlTable = labelDiv[metricsLabelsName].childNodes.item(0).childNodes.item(0);
-                                        updateHtmlTable(htmlTable, metricsLabels.data);
-                                        updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName]);
-                                        metricsLabels.material.map.needsUpdate = true;
-                                    };
+                                    let htmlTable = labelDiv[metricsLabelsName].childNodes.item(0).childNodes.item(0);
+                                    updateHtmlTable(htmlTable, metricsLabels.data);
+                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
                                 } else if (conf.metricsLabelsFormat === "Json") {
                                     // here metricsLabelsTexture is a json svg
-                                    metricsLabelsTexture.onload = function () {
-                                        let htmlJson = labelDiv[metricsLabelsName].childNodes.item(0);
-                                        htmlJson.innerHTML = metricsLabels.data;
-                                        updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName]);
-                                        metricsLabels.material.map.needsUpdate = true;
-                                    };
+                                    let htmlJson = labelDiv[metricsLabelsName].childNodes.item(0);
+                                    htmlJson.innerHTML = metricsLabels.data;
+                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
                                 }
                             }
                             metricsLabels.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
