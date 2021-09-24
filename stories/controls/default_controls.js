@@ -151,10 +151,10 @@ export function defaultControls(){
         metricsLabelsFormat: {
             name: "labelsFormat",
             description: "To change the metrics labels format",
-            defaultValue: "Classic",
+            defaultValue: "ClassicSvg",
             control: {
                 type: "select",
-                options: ["Classic","Table","Json"]
+                options: ["ClassicCanvas","ClassicSvg","Table","Json"]
             },
             table: {
                 category: "Labels",subcategory:"Metrics"
