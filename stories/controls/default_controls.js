@@ -235,6 +235,147 @@ export function defaultControls(){
                 category: "Labels",subcategory:"Metrics"
             },
         },
+        // layer label configuration
+        layerLabelOrientation: {
+            name: 'layerLabelOrientation', description: 'Change the orientation of layers label',
+            defaultValue: "Sticky",
+            control: {
+                type: 'select',
+                options: ['Sticky', 'Free']
+            },
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layerLabelCharacterFont: {
+            name: 'layerLabelCharacterFont', defaultValue: 'Arial', description: 'Change the characters of layers label',
+            control: {
+                type: 'select',
+                options: ['Arial','Serif', 'Sans-serif']
+            },
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layerLabelSize: {
+            name: 'layerLabelSize',
+            defaultValue: 15,
+            description:'Change the size of layers labels',
+            control: {
+                type: 'select',
+                options: {
+                    Small: 13,
+                    Medium: 15,
+                    Large: 18,
+                }
+            },
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layerLabelColor: {
+            name: 'layerLabelColor', defaultValue: '#000000', control: 'color',
+            description:'Change the color of layers label',
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layerLabelBackground: {
+            name: 'layerLabelBackground', defaultValue: '#ffffff', control: 'color',
+            description:'Change the background color of layers label',
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layerLabelBold: {
+            name: 'layerLabelBold', defaultValue: true, control: 'boolean',description:'Bold or not the layers label', table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layerLabelItalic: {
+            name: 'layerLabelItalic', defaultValue: false,description:'Italicize or not the layers label', control: 'boolean', table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        displayLayerLabel: {
+            name: 'displayLayerLabel', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        // Frames
+        frameShape: {
+            name: "frameShape",
+            description: 'Change the style of shape frames',
+            defaultValue: "Rectangle",
+            control: {
+                type: 'select',
+                options: ['Rectangle','Dynamic']
+            },
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameBackgroundColor: {
+            name: 'frameBackgroundColor', defaultValue: '#ffffff', control: 'color',description:'Change the frame background color',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameOpacity: {
+            name: 'frameOpacity', defaultValue: 0.5, control: 'number',description:'Change the frame opacity',
+            table: {
+                category: 'Frames',
+            },
+        },
+        framePadding: {
+            name: 'framePadding', defaultValue: 2, control: 'number',description:'Change the frame padding',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameLineColor: {
+            name: 'frameLineColor', defaultValue: '#000000', control: 'color',description:'Change the frame line color',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameLineWidth: {
+            name: 'frameLineWidth', defaultValue: 0.5, control: 'number',description:'Resize the frame line width',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameDashLineSize: {
+            name: 'frameDashLineSize', defaultValue: 3, control: 'number',description:'Change the frame dash line size',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFrames: {
+            name: 'displayFrames', defaultValue: true,description:'Display or not the frames', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFramesLine: {
+            name: 'displayFramesLine', defaultValue: true,description:'Display or not the frames Line', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFramesBackground: {
+            name: 'displayFramesBackground', defaultValue: false,description:'Display or not the frames background', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFramesArrow: {
+            name: 'displayFramesArrow', defaultValue: true,description:'Display or not the frames arrows', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
         // status configurations
         // color
         statusColorLow: {
