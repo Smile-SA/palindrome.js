@@ -237,7 +237,7 @@ export function defaultControls(){
         },
         // layer label configuration
         layerLabelOrientation: {
-            name: 'layerLabelOrientation', description: 'Change the orientation of layers label',
+            name: 'labelsOrientation', description: 'Change the orientation of layers label',
             defaultValue: "Sticky",
             control: {
                 type: 'select',
@@ -248,7 +248,7 @@ export function defaultControls(){
             },
         },
         layerLabelCharacterFont: {
-            name: 'layerLabelCharacterFont', defaultValue: 'Arial', description: 'Change the characters of layers label',
+            name: 'labelsCharacterFont', defaultValue: 'Arial', description: 'Change the characters of layers label',
             control: {
                 type: 'select',
                 options: ['Arial','Serif', 'Sans-serif']
@@ -258,7 +258,7 @@ export function defaultControls(){
             },
         },
         layerLabelSize: {
-            name: 'layerLabelSize',
+            name: 'labelsSize',
             defaultValue: 15,
             description:'Change the size of layers labels',
             control: {
@@ -274,31 +274,31 @@ export function defaultControls(){
             },
         },
         layerLabelColor: {
-            name: 'layerLabelColor', defaultValue: '#000000', control: 'color',
+            name: 'labelsColor', defaultValue: '#000000', control: 'color',
             description:'Change the color of layers label',
             table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
         layerLabelBackground: {
-            name: 'layerLabelBackground', defaultValue: '#ffffff', control: 'color',
+            name: 'labelsBackground', defaultValue: '#ffffff', control: 'color',
             description:'Change the background color of layers label',
             table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
         layerLabelBold: {
-            name: 'layerLabelBold', defaultValue: true, control: 'boolean',description:'Bold or not the layers label', table: {
+            name: 'labelsBold', defaultValue: true, control: 'boolean',description:'Bold or not the layers label', table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
         layerLabelItalic: {
-            name: 'layerLabelItalic', defaultValue: false,description:'Italicize or not the layers label', control: 'boolean', table: {
+            name: 'labelsItalic', defaultValue: false,description:'Italicize or not the layers label', control: 'boolean', table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
         displayLayerLabel: {
-            name: 'displayLayerLabel', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
+            name: 'displayLabel', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
             table: {
                 category: 'Labels', subcategory:'Layers'
             },
