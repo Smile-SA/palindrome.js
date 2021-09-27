@@ -57,7 +57,8 @@ Configuration parameters and their options
 | ------ | ------ | ------ |------ |------ |
 | labelsRendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
 | labelsStructure | Select the structure of the label to display | String | "Name","Type","Value","Unit" | "Name","Type","Value","Unit"  |
-| labelsCharacter font | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
+| labelsCharacterFont | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
+| labelsOrientation | Change the orientation of layers label | String| Sticky | 'Sticky', 'Free'|
 | labelsSize | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
 | labelsColor | Change the color of the labels | String| #000000 | - |
 | labelsBold | Bold or not the labels | Boolean| True | -|
@@ -66,6 +67,17 @@ Configuration parameters and their options
 | displayLabels | Display or not the labels | Boolean| True | -|
 | displayAllLabels | Display or not all labels| Boolean| False | -|
 | fitCameraPosition |Fit camera or not to display objets in plan| Boolean| True | -|
+| frameShape | Change the frames style| String| Rectangle |'Rectangle', 'Dynamic' |
+| frameBackgroundColor | Change the frame background color | String | #FFFFFF | - |
+| frameOpacity | Change the frame opacity| Number |  0.5| - |
+| framePadding | Change the frame padding| Number |  2| - |
+| frameLineColor | Change the frame line color | String | #000000 | - |
+| frameLineWidth | Change the frame line width| Number |  0.5| - |
+| frameDashLineSize | Change the frame dash line size| Number |  3| - |
+| displayFrames | Display or not the frames | Boolean| True | -|
+| displayFramesLine | Display or not the frames Line | Boolean| True | -|
+| displayFramesBackground | Display or not the frames background | Boolean| False | -|
+| displayFramesArrow | Display or not the frames arrows | Boolean| True | -|
 | metricMagnifier | Resize the metrics | Number | 10 | -  |
 | palindromeSize | Resize the palindrome | Number | 3 | -  |
 | displayLayersMode | Configure the layers mode| String | dynamic | -|
@@ -73,7 +85,7 @@ Configuration parameters and their options
 | displayLayers | Display or not the layers of palindrome| Boolean| True | -|
 | layerStatusControl | Resize the metrics | Boolean| True | -|
 | lineOpacity | Change the line opacity | Number | 1 | -  |
-| lineWidth | Resize the line widht | Number | 0,5 | -  |
+| lineWidth | Resize the line width | Number | 0,5 | -  |
 | lineColor | Change the line color | String | #000000 | - |
 | displaySides | Configure the sides mode| String | dynamic | -|
 | mainAppColor | Change the main app color | String | #00FF06 | - |

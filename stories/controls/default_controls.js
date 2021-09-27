@@ -298,7 +298,7 @@ export function defaultControls(){
             },
         },
         displayLayerLabel: {
-            name: 'displayLabel', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
+            name: 'displayLabels', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
             table: {
                 category: 'Labels', subcategory:'Layers'
             },
@@ -306,7 +306,7 @@ export function defaultControls(){
         // Frames
         frameShape: {
             name: "frameShape",
-            description: 'Change the style of shape frames',
+            description: 'Change the frames style',
             defaultValue: "Rectangle",
             control: {
                 type: 'select',
@@ -341,7 +341,7 @@ export function defaultControls(){
             },
         },
         frameLineWidth: {
-            name: 'frameLineWidth', defaultValue: 0.5, control: 'number',description:'Resize the frame line width',
+            name: 'frameLineWidth', defaultValue: 0.5, control: 'number',description:'Change the frame line width',
             table: {
                 category: 'Frames',
             },
