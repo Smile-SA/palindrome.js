@@ -1,7 +1,7 @@
 //import 'babel-polyfill';
 import * as THREE from 'three';
 import {CSS2DObject} from 'three-css2drender';
-import {Triangle, SimpleLine} from './ThreeGeometryObjects';
+import {Triangle, SimpleLine, DasheLine} from './ThreeGeometryObjects';
 import {initThreeObjects} from './ThreeJSBasicObjects';
 import {dataGenerator} from './dataGenerator';
 
@@ -13,12 +13,10 @@ export default (function (parentElement, conf) {
         let debug = true;
 
         // data related
-        let dataIterator;
-        let newData;
+        let dataIterator, newData;
 
         // three.js related
-        let lineMaterial;
-        let lineMaterialTransparent;
+        let lineMaterial, dashLineMaterial, lineMaterialTransparent;
         const meshs = {};
         const {
             scene,
@@ -27,14 +25,33 @@ export default (function (parentElement, conf) {
             renderer,
             camera
         } = initThreeObjects();
-
-        // init bold and italic option
-        let metricsLabelsBold = '', metricsLabelsItalic = '', borderThickness = 4;
+        let metricParameters = {}, layerParameters = {}, borderThickness = 4;
+        //metrics
+        metricParameters["displayUnits"] = conf.displaysMetricsLabelsUnit;
+        metricParameters["characterFont"] = conf.metricsLabelsCharacterFont;
+        metricParameters["labelSize"] = conf.metricsLabelsSize;
+        metricParameters["labelColor"] = conf.metricsLabelsColor;
+        metricParameters["labelBackground"] = conf.metricsLabelsBackground;
+        metricParameters["labelBold"] = '';
+        metricParameters["labelItalic"] = '';
         if (conf.metricsLabelsBold) {
-            metricsLabelsBold = 'bold'
+            metricParameters["labelBold"] = 'bold'
         }
         if (conf.metricsLabelsItalic) {
-            metricsLabelsItalic = 'Italic'
+            metricParameters["labelItalic"] = 'Italic'
+        }
+        // layers
+        layerParameters["characterFont"] = conf.layersLabelsCharacterFont;
+        layerParameters["labelSize"] = conf.layersLabelsSize;
+        layerParameters["labelColor"] = conf.layersLabelsColor;
+        layerParameters["labelBackground"] = conf.layersLabelsBackground;
+        layerParameters["labelBold"] = '';
+        layerParameters["labelItalic"] = '';
+        if (conf.layersLabelsBold) {
+            layerParameters["labelBold"] = 'bold'
+        }
+        if (conf.layersLabelsItalic) {
+            layerParameters["labelItalic"] = 'Italic'
         }
 
         //3D related
@@ -69,7 +86,12 @@ export default (function (parentElement, conf) {
             lineMaterial = new THREE.LineDashedMaterial({
                 color: conf.lineColor,
                 linewidth: conf.lineWidth,
-                opacity: conf.lineOpacity
+                opacity: conf.lineOpacity,
+            });
+            dashLineMaterial = new THREE.LineDashedMaterial({
+                color: conf.frameLineColor,
+                linewidth: conf.frameLineWidth,
+                dashSize: conf.frameDashLineSize
             });
             lineMaterialTransparent = new THREE.LineDashedMaterial({
                 color: conf.mainAppColor,
@@ -81,7 +103,6 @@ export default (function (parentElement, conf) {
             if (conf.displayGrid) {
                 displayGrid(conf.gridSize, conf.gridDivisions);
             }
-
             if (conf.displayMetricsLabels) {
                 // configuration text parameters
                 createLabels(data);
@@ -107,63 +128,66 @@ export default (function (parentElement, conf) {
          * Return a text in html balise p
          *
          * @param {string} labelText label text
+         * @param {boolean} cardColor label card color
+         * @param {boolean} cardBackground label card color
+         * @param {*} parameters control label parameters
          */
-        function createHtmlText(labelText) {
+        function createHtmlText(labelText, cardColor, cardBackground, parameters) {
             let p = document.createElement('p');
             p.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            p.style.color = conf.metricsLabelsColor;
-            p.style.fontFamily = conf.metricsLabelsCharacterFont;
-            p.style.fontWeight = metricsLabelsBold;
-            p.style.fontStyle = metricsLabelsItalic;
-            p.style.fontSize = conf.metricsLabelsSize + ' px;';
+            p.style.color = parameters['labelColor'];
+            p.style.fontFamily = parameters['characterFont'];
+            p.style.fontWeight = parameters["labelBold"];
+            p.style.fontStyle = parameters["labelItalic"];
+            p.style.fontSize = parameters['labelSize'] + ' px;';
             p.style.padding = '5px';
+            if (cardColor) {
+                p.style.border = ' 2px ' + parameters['labelColor'] + ' dashed';
+            }
+            if (cardBackground) {
+                p.style.background = parameters["labelBackground"];
+            }
             p.innerText = labelText;
             return p;
         }
-
 
         /**
          * Return a canvas element
          *
          * @param {string} labelName label name
          * @param {string} labelText label text
+         * @param {*} parameters control label parameters
          */
-        function createLabelCanvas(labelName, labelText) {
+        function createLabelCanvas(labelName, labelText, parameters) {
             //prepare canvas
             let labelCanvas = document.createElement('canvas');
             labelCanvas.setAttribute("className", labelName);
             labelCanvas.setAttribute("width", 900 + " px");
             labelCanvas.setAttribute("height", 450 + " px");
-            if (conf.metricsLabelsRendering === '2D') {
-                labelCanvas['textSize'] = conf.metricsLabelsSize;
-            } else if (conf.metricsLabelsRendering === '3D') {
-                labelCanvas['textSize'] = conf.metricsLabelsSize * 2;
-            }
+            labelCanvas['textSize'] = parameters['labelSize'] * 2;
 
             //prepare context
             let labelContext = labelCanvas.getContext('2d');
-            labelContext.font = metricsLabelsItalic + " " + metricsLabelsBold + " " + labelCanvas['textSize'] + "px " + conf.metricsLabelsCharacterFont;
+            labelContext.font = parameters["labelItalic"] + " " + parameters["labelBold"] + " " + labelCanvas['textSize'] + "px " + parameters['characterFont'];
             labelContext.lineWidth = borderThickness;
             labelContext.textAlign = 'center';
-            labelContext.fillStyle = conf.metricsLabelsColor;
+            labelContext.fillStyle = parameters['labelColor'];
 
             //reassign values (design pattern)
-            let w = labelCanvas.width;
-            let h = labelCanvas.height;
+            let w = labelCanvas.width, h = labelCanvas.height;
 
             addTextBackground(labelContext, borderThickness / 2, borderThickness / 2, w + (borderThickness * labelCanvas['textSize']), h / 2 + (borderThickness * labelCanvas['textSize']), 'rgba(14,167,83,0)');
             addMultiLineText(labelText, w / 2, h / 2, labelCanvas['textSize'], w, labelContext);
             return labelCanvas;
-
         }
 
         /**
          * Return a html table
          *
-         * @param {string} labelName label name
          * @param {string} data table data
+         * @param {*} parameters control label parameters
          */
-        function createHtmlTable(labelName, data) {
+        function createHtmlTable(data, parameters) {
 
             let tbl = document.createElement("Table");
             tbl.style.display = "table-cell";
@@ -174,19 +198,19 @@ export default (function (parentElement, conf) {
                 let tRow = tbl.insertRow();
                 tRow.style.border = '1px solid #dbdbdb';
                 tRow.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-                let rgb = hexToRgb(conf.metricsLabelsBackground);
+                let rgb = hexToRgb(parameters["labelBackground"]);
                 tRow.style.backgroundColor = 'rgb(' + (rgb.r) + ',' + rgb.g + ',' + (rgb.b - 10) + ',' + 0.6 + ')';
                 if (parseInt(xKey) === 0) {
-                    tRow.style.backgroundColor = conf.metricsLabelsBackground
+                    tRow.style.backgroundColor = parameters["labelBackground"]
                 }
                 for (const [yKey, yValue] of Object.entries(xValue)) {
                     let tCel = tRow.insertCell();
                     tCel.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-                    tCel.style.color = conf.metricsLabelsColor;
-                    tCel.style.fontFamily = conf.metricsLabelsCharacterFont;
-                    tCel.style.fontWeight = metricsLabelsBold;
-                    tCel.style.fontStyle = metricsLabelsItalic;
-                    tCel.style.fontSize = conf.metricsLabelsSize + ' px;';
+                    tCel.style.color = parameters["labelColor"];
+                    tCel.style.fontFamily = parameters["characterFont"];
+                    tCel.style.fontWeight = parameters["labelBold"];
+                    tCel.style.fontStyle = parameters["labelItalic"];
+                    tCel.style.fontSize = parameters["labelSize"] + ' px;';
                     tCel.style.padding = '5px 8px';
                     tCel.style.lineHeight = '20px';
                     tCel.style.verticalAlign = 'middle';
@@ -194,10 +218,7 @@ export default (function (parentElement, conf) {
                     tCel.appendChild(document.createTextNode(yValue));
                 }
             }
-            let div = document.createElement('div');
-            div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            div.appendChild(tbl);
-            return div;
+            return tbl;
         }
 
         /**
@@ -227,42 +248,6 @@ export default (function (parentElement, conf) {
                 b: parseInt(result[3], 16)
             } : null;
         }
-
-        /**
-         * Return a html like json
-         *
-         * @param {string} labelName label name
-         * @param {string} labelText label text
-         */
-        function createHtmlJson(labelName, labelText) {
-            let json = document.createElement('code');
-            json.style.background = conf.metricsLabelsBackground;
-            json.style.color = conf.metricsLabelsColor;
-            json.style.fontFamily = conf.metricsLabelsCharacterFont;
-            json.style.fontWeight = metricsLabelsBold;
-            json.style.fontStyle = metricsLabelsItalic;
-            json.style.fontSize = conf.metricsLabelsSize + "px";
-            json.style.padding = '5px';
-            json.innerHTML = labelText;
-            let div = document.createElement('div');
-            div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            div.appendChild(json);
-            return div;
-        }
-
-        /**
-         * Update Json data
-         *
-         * @param {string} labelName label name
-         * @param {string} labelType type of label
-         * @param {string} labelValue label value
-         * @param {string} labelUnit the unit of label
-         * @param {*} htmlCode html code object
-         */
-        function updateHtmlJson(labelName, labelType, labelValue, labelUnit, htmlCode) {
-            htmlCode.innerHTML = '{"Name":"' + labelName + '","Type":"' + labelType + '","Value":"' + labelValue + '","Unit":"' + labelUnit + '"}';
-        }
-
 
         /**
          * Return a svg img
@@ -449,75 +434,34 @@ export default (function (parentElement, conf) {
         }
 
         /**
-         * Create labels for each metrics
-         *
-         * @param {*} data dataObject (conf.data)
-         */
-        function createLabels(data) {
-            let zAxis = conf.zPlaneInitial;
-            let layerIndex = 0;
-
-            for (let layer in data) {
-                let metrics = data[layer].metrics;
-                let labelsIds = [];
-
-                for (const [key, value] of Object.entries(metrics)) {
-                    if (labelsIds.includes(key) === true) {
-                        console.warn("This layer contains two times the same metric key", [layer]);
-                        break;
-                    } else {
-                        labelsIds.push(key)
-                        if (conf.metricsLabelsRendering === "2D") {
-                            scene.add(create2DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
-                            if (conf.displayAllMetricsLabels) {
-                                scene.add(create2DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
-                                scene.add(create2DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
-                                scene.add(create2DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
-                            }
-                        } else if (conf.metricsLabelsRendering === "3D") {
-                            scene.add(create3DLabel(key, value.label, 'current', value.current, layerIndex, value.unit));
-                            if (conf.displayAllMetricsLabels) {
-                                scene.add(create3DLabel(key, value.label, 'min', value.min, layerIndex, value.unit));
-                                scene.add(create3DLabel(key, value.label, 'med', value.med, layerIndex, value.unit));
-                                scene.add(create3DLabel(key, value.label, 'max', value.max, layerIndex, value.unit));
-                            }
-                        }
-                    }
-                }
-                zAxis -= conf.zPlaneHeight
-                layerIndex++;
-            }
-
-        }
-
-        /**
          * Create a label using CSS2DObject
          *
          * @param {string} key to keep track the label
          * @param {string} labelName label name
          * @param {string} labelType type of label
          * @param {string} labelValue label value
-         * @param {number} layerIndex to keep track layers and metric inside
-         * @param {string} labelUnit the unit of label
+         * @param {number} metricIndex to keep track layers and metric inside
+         * @param {string} labelUnit the unit of label3D
          */
-        function create2DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
-            let div = document.createElement('div'),
-                data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit);
+        function create2DMetricsLabels(key, labelName, labelType, labelValue, metricIndex, labelUnit) {
+            let data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit),
+                div = document.createElement('div');
             div.className = 'label ' + labelName;
+            div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
             if (conf.metricsLabelsFormat === 'ClassicCanvas') {
-                div.appendChild(createLabelCanvas(labelName, data));
+                div.appendChild(createLabelCanvas(labelName, data, metricParameters));
             } else if (conf.metricsLabelsFormat === 'ClassicSvg') {
-                div.appendChild(createHtmlText(data));
+                div.appendChild(createHtmlText(data, false, false, metricParameters));
             } else if (conf.metricsLabelsFormat === "Table") {
-                div.appendChild(createHtmlTable(labelName, data));
+                div.appendChild(createHtmlTable(data, metricParameters));
             } else if (conf.metricsLabelsFormat === "Json") {
-                div.appendChild(createHtmlJson(labelName, data));
+                div.appendChild(createHtmlText(data, false, true, metricParameters));
             }
             const metricsLabels = new CSS2DObject(div);
             metricsLabels.key = key;
             metricsLabels.name = labelName;
             metricsLabels.dataType = labelType;
-            metricsLabels.layerIndex = layerIndex;
+            metricsLabels.metricIndex = metricIndex;
             metricsLabels.labelUnit = labelUnit;
             return metricsLabels;
         }
@@ -529,42 +473,38 @@ export default (function (parentElement, conf) {
          * @param {string} labelName label name
          * @param {string} labelType type of label
          * @param {string} labelValue label value
-         * @param {number} layerIndex to keep track layers and metric inside
+         * @param {number} metricIndex to keep track layers and metric inside
          * @param {string} labelUnit the unit of label
          */
-        function create3DLabel(key, labelName, labelType, labelValue, layerIndex, labelUnit) {
-            let texture = new THREE.Texture(), textureImage, x, y, z,
+        function create3DMetricsLabels(key, labelName, labelType, labelValue, metricIndex, labelUnit) {
+            let texture = new THREE.Texture(), textureImage,
                 data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit);
-            x = 1.5 * (conf.metricsLabelsSize);
-            y = 0.75 * (conf.metricsLabelsSize);
-            z = 2.25 * (conf.metricsLabelsSize);
+            labelDiv[labelName] = document.createElement('div');
+            labelDiv[labelName].className = 'label ' + labelName;
+            labelDiv[labelName].setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
             if (conf.metricsLabelsFormat === 'ClassicCanvas') {
                 // canvas contents will be used for a texture
-                textureImage = createLabelCanvas(labelName, data);
-                x = x * 1.25;
-                y = y * 1.25;
-                z = z * 1.25;
+                textureImage = createLabelCanvas(labelName, data, metricParameters);
             } else if (conf.metricsLabelsFormat === 'ClassicSvg') {
-                labelDiv[labelName] = document.createElement('div');
-                labelDiv[labelName].className = 'label ' + labelName;
-                labelDiv[labelName].appendChild(createHtmlText(data));
+                labelDiv[labelName].appendChild(createHtmlText(data, false, false, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
             } else if (conf.metricsLabelsFormat === "Table") {
-                labelDiv[labelName] = createHtmlTable(labelName, data);
+                labelDiv[labelName].appendChild(createHtmlTable(data, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
             } else if (conf.metricsLabelsFormat === "Json") {
-                labelDiv[labelName] = createHtmlJson(labelName, data);
+                labelDiv[labelName].appendChild(createHtmlText(data, false, true, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
             }
             texture.image = textureImage;
+            texture.needsUpdate = true;
             texture.minFilter = THREE.NearestFilter;
             let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
                 metricsLabels = new THREE.Sprite(spriteMaterial);
-            metricsLabels.scale.set(x, y, z);
+            metricsLabels.scale.set(2*metricParameters["labelSize"], 1*metricParameters["labelSize"], metricParameters["labelSize"]);
             metricsLabels.key = key;
             metricsLabels.name = labelName;
             metricsLabels.dataType = labelType;
-            metricsLabels.layerIndex = layerIndex;
+            metricsLabels.metricIndex = metricIndex;
             metricsLabels.labelUnit = labelUnit;
             return metricsLabels;
 
@@ -583,32 +523,144 @@ export default (function (parentElement, conf) {
         }
 
         /**
+         * Create 2D layer label using CSS2DObject
+         *
+         * @param {string} key to keep track the label
+         * @param {string} labelName layer label name
+         * @param {number} layerIndex to keep track layers and metric inside
+         */
+        function create2DLayersLabels(key, labelName, layerIndex) {
+            let div = document.createElement('div');
+            div.className = 'label ' + labelName;
+            if (conf.layersLabelsFormat === 'ClassicCanvas') {
+                div.appendChild(createLabelCanvas(labelName, labelName, layerParameters));
+            } else if (conf.layersLabelsFormat === 'ClassicSvg') {
+                div.appendChild(createHtmlText(labelName, true, true, layerParameters));
+            }
+            const layersLabels = new CSS2DObject(div);
+            layersLabels.key = key;
+            layersLabels.name = labelName;
+            layersLabels.layerIndex = layerIndex;
+            return layersLabels;
+        }
+
+        /**
+         * Return 3d layer label with text sprite
+         *
+         * @param {string} key to keep track the label
+         * @param {string} labelName layer label name
+         * @param {number} layerIndex to keep track layers and metric inside
+         */
+        function create3DLayersLabels(key, labelName, layerIndex) {
+            let texture = new THREE.Texture(), textureImage;
+            if (conf.layersLabelsFormat === 'ClassicCanvas') {
+                // canvas contents will be used for a texture
+                textureImage = createLabelCanvas(labelName, labelName, layerParameters);
+            } else if (conf.layersLabelsFormat === 'ClassicSvg') {
+                labelDiv[labelName] = document.createElement('div');
+                labelDiv[labelName].className = labelName;
+                labelDiv[labelName].appendChild(createHtmlText(labelName, true, true, layerParameters));
+                textureImage = htmlToSvg(labelDiv[labelName]);
+            }
+            texture.image = textureImage;
+            texture.needsUpdate = true;
+            texture.minFilter = THREE.NearestFilter;
+            let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
+                layersLabels = new THREE.Sprite(spriteMaterial);
+            layersLabels.scale.set(2*layerParameters["labelSize"], 1*layerParameters["labelSize"], layerParameters["labelSize"]);
+            layersLabels.key = key;
+            layersLabels.name = labelName;
+            layersLabels.layerIndex = layerIndex;
+            return layersLabels;
+
+        }
+
+        /**
+         * Create labels for each metrics
+         *
+         * @param {*} data dataObject (conf.data)
+         */
+        function createLabels(data) {
+            let zAxis = conf.zPlaneInitial, metricIndex = 0, layerIndex = 0;
+            for (let layer in data) {
+                let layers = data[layer].layer;
+                let metrics = data[layer].metrics;
+                let metricLabelsIds = [], layersLabelsIds = [];
+                if (conf.displayMetricsLabels) {
+                    for (const [key, value] of Object.entries(metrics)) {
+                        if (metricLabelsIds.includes(key) === true) {
+                            console.warn("This layer contains two times the same metric key", [layer]);
+                            break;
+                        } else {
+                            metricLabelsIds.push(key)
+                            if (conf.labelsRendering === "2D") {
+                                scene.add(create2DMetricsLabels(key, value.label, 'current', value.current, metricIndex, value.unit));
+                                if (conf.displayAllMetricsLabels) {
+                                    scene.add(create2DMetricsLabels(key, value.label, 'min', value.min, metricIndex, value.unit));
+                                    scene.add(create2DMetricsLabels(key, value.label, 'med', value.med, metricIndex, value.unit));
+                                    scene.add(create2DMetricsLabels(key, value.label, 'max', value.max, metricIndex, value.unit));
+                                }
+                            } else if (conf.labelsRendering === "3D") {
+                                scene.add(create3DMetricsLabels(key, value.label, 'current', value.current, metricIndex, value.unit));
+                                if (conf.displayAllMetricsLabels) {
+                                    scene.add(create3DMetricsLabels(key, value.label, 'min', value.min, metricIndex, value.unit));
+                                    scene.add(create3DMetricsLabels(key, value.label, 'med', value.med, metricIndex, value.unit));
+                                    scene.add(create3DMetricsLabels(key, value.label, 'max', value.max, metricIndex, value.unit));
+                                }
+                            }
+                        }
+                    }
+                }
+                if (conf.displayLayersLabels && conf.displayMetricsLabels) {
+                    for (const [key, value] of Object.entries(layers)) {
+                        if (layersLabelsIds.includes(key) === true) {
+                            console.warn("This layer contains two times the same metric key", [layer]);
+                            break;
+                        } else {
+                            layersLabelsIds.push(key);
+                            if (conf.labelsRendering === "2D") {
+                                scene.add(create2DLayersLabels(key, value.label, layerIndex));
+                            } else if (conf.labelsRendering === "3D") {
+                                layersLabelsIds.push(key);
+                                scene.add(create3DLayersLabels(key, value.label, layerIndex));
+                            }
+                        }
+                    }
+                }
+                zAxis -= conf.zPlaneHeight;
+                layerIndex++;
+                metricIndex++;
+            }
+        }
+
+        /**
          * Create and update every mesh to match the latest data
          */
         function updateMeshs() {
             if (conf.mockupData) {
                 newData = dataIterator.next().value;
             }
-            let zAxis = conf.zPlaneInitial;
-            let previousLayer = null;
-            let layerIndex = 0;
+            let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, metricIndex = 0,
+                layerIndex = 0;
             for (let layer in newData) {
+                //Declaration of metrics variables
                 //this is the updated layer metrics
-                const metrics = newData[layer].metrics;
+                const metrics = newData[layer].metrics, layers = newData[layer].layer,
+                    metricsNumber = Object.values(metrics).length;
                 //this is the new total of current's
                 const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
                 //this is the new total of max's
                 const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
-
                 //todo : status colors shall map with default colors
-                const layerStatus = (metricCurrentTotal / metricMaxTotal) * 100;
-                let metricsDivider;
-                let metricValue = {};
+                const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
+                let metricsDivider, metricValue = {};
                 metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.max), zAxis);
                 metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.med), zAxis);
                 metricValue.min = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.min), zAxis);
                 metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.current), zAxis);
+                const metricsPositions = [metricValue.max, metricValue.med, metricValue.min];
 
+                // displayMode
                 if (conf.displayMode === "dynamic") {
                     metricsDivider = "current";
                 } else if (conf.displayMode === "static") {
@@ -618,8 +670,215 @@ export default (function (parentElement, conf) {
                     break;
                 }
 
-                const metricsNumber = Object.values(metrics).length;
-                const metricsPositions = [metricValue.max, metricValue.med, metricValue.min];
+                //draws and update layers outline
+                if (conf.displayLayersLines) {
+                    for (let i = 0; i < metricsNumber; i++) {
+                        for (let [index, metricsPosition] of metricsPositions.entries()) {
+                            //draws outside lines
+                            drawLayerOutline(layer + '_layerShapesEdges', metricsPosition, i, metricsNumber, lineMaterial, index);
+                        }
+                    }
+                }
+
+                let xTab = [], yTab = [], zTab = [];
+                //update metrics label, layers label and their positions
+                let sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex),
+                    sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
+
+                // update metrics
+                if (conf.displayMetricsLabels) {
+                    for (let i = 0; i < sortedMetricsLabels.length; i++) {
+                        const metricsLabels = sortedMetricsLabels[i];
+                        if (metrics[metricsLabels.key]) {
+                            const metricData = metrics[metricsLabels.key];
+                            const metricsLabelsName = metricData.label;
+                            const metricsLabelsType = metricsLabels.dataType;
+                            let metricsLabelsUnit = metricsLabels.labelUnit;
+                            const metricsLabelsIndex = Object.keys(metrics).indexOf(metricsLabels.key);
+                            const metricsLabelsValue = Object.values(metrics)[metricsLabelsIndex][metricsLabelsType].toFixed();
+                            const labelPositions = metricValue[metricsLabelsType][metricsLabelsIndex];
+                            if (debug === true) {
+                                debug = false;
+                            }
+                            // update label data
+                            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit)
+                            let x = labelPositions[0], y = labelPositions[2], z = labelPositions[1];
+                            if (conf.labelsRendering === "2D") {
+                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
+                                    // update text label
+                                    let canvas = metricsLabels.element.childNodes.item(0);
+                                    let labelContext = canvas.getContext('2d');
+                                    labelContext.clearRect(0, 0, canvas.width, canvas.height);
+                                    addMultiLineText(metricsLabels.data, canvas.width / 2, canvas.height / 2, canvas['textSize'], canvas.width, labelContext);
+                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
+                                    // update text label
+                                    metricsLabels.element.getElementsByTagName('p').item(0).textContent = metricsLabels.data;
+                                } else if (conf.metricsLabelsFormat === "Table") {
+                                    // update table
+                                    updateHtmlTable(metricsLabels.element.getElementsByTagName('table').item(0), metricsLabels.data);
+                                } else if (conf.metricsLabelsFormat === "Json") {
+                                    // update json
+                                    metricsLabels.element.getElementsByTagName('p').item(0).textContent = metricsLabels.data;
+                                }
+                            } else if (conf.labelsRendering === "3D") {
+                                //get the label texture from the material map
+                                let metricsLabelsTexture = metricsLabels.material.map.image;
+                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
+                                    //here metricsLabelsTexture is a canvas
+                                    let labelContext = metricsLabelsTexture.getContext('2d')
+                                    //clear the canvas
+                                    labelContext.clearRect(0, 0, metricsLabelsTexture.width, metricsLabelsTexture.height);
+                                    //update the canvas
+                                    addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture['textSize'], metricsLabelsTexture.width, labelContext);
+                                    //update the three.js object material map
+                                    metricsLabels.material.map.needsUpdate = true;
+                                    y = y + 0.5;
+                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
+                                    // here metricLabelTexture is a table svg
+                                    labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
+                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
+                                    y = y + 0.5;
+                                } else if (conf.metricsLabelsFormat === "Table") {
+                                    // here metricsLabelsTexture is a table svg
+                                    updateHtmlTable(labelDiv[metricsLabelsName].getElementsByTagName('table').item(0), metricsLabels.data);
+                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
+                                    y = y + 1.8;
+                                } else if (conf.metricsLabelsFormat === "Json") {
+                                    // here metricsLabelsTexture is a json svg
+                                    labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
+                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
+                                    y = y + 1;
+                                }
+                            }
+                            metricsLabels.position.set(x, y, z);
+                            // top x
+                            xTab.push(labelPositions[0]);
+                            zTab.push(labelPositions[2]);
+                            yTab.push(labelPositions[1]);
+                        }
+                    }
+                }
+
+                // display layer
+                let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1],resize = 0.5;
+                if (conf.displayLayersLabels && conf.displayMetricsLabels) {
+                    if(conf.labelsRendering==="2D"){
+                        resize = -1
+                    }
+                    // set label position
+                    if (conf.layersLabelsOrientation === "Sticky") {
+                        layersLabels.position.set(((xTab[xTab.length - 1][0] + xTab[xTab.length - 2][0]) / 2), ((zTab[zTab.length - 1][2])), (yTab[yTab.length - 1][1] + yTab[yTab.length - 2][1]) / 2);
+                    } else if (conf.layersLabelsOrientation === "Free") {
+                        layersLabels.position.set(((xTab[xTab.length - 1][0] + xTab[xTab.length - 2][0]) / 2), ((zTab[zTab.length - 1][2])), ((yTab[yTab.length - 1][1] + yTab[yTab.length - 2][1]) / 2) - (conf.framePadding + conf.framePadding * conf.framePadding));
+                    }
+                }
+
+                // frame variable
+                let positions = [], arrowPositions = [], frameName;
+                if (conf.frameShape === 'Dynamic') {
+                    // set frame name
+                    frameName = layer + '_Dynamic_Frame';
+                    // create dynamic frame positions
+                    positions = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * ((item.current * conf.framePadding) / 1.5)), zAxis);
+                    // set arrow position
+                    if (conf.displayLayersLabels) {
+                        let x = positions[positions.length - 1][0],
+                            z = positions[positions.length - 1][1],
+                            y = positions[positions.length - 1][2];
+                        arrowPositions.push([x, z, y]);
+                        if (conf.layersLabelsOrientation === "Sticky") {
+                            arrowPositions.push([x, z - (4 * conf.framePadding), y]);
+                            // set layer label position
+                            layersLabels.position.set(x, y + 0.5, z - (4 * conf.framePadding));
+                        } else if (conf.layersLabelsOrientation === "Free") {
+                            arrowPositions.push([x, z - (4 * conf.framePadding), y + conf.framePadding]);
+                            // set layer label position
+                            layersLabels.position.set(x, y + conf.framePadding, z - (4 * conf.framePadding));
+                        }
+                    }
+                } else if (conf.frameShape === 'Rectangle') {
+                    // set frame name
+                    frameName = layer + '_Rectangle_Frame';
+                    // create rectangle frame positions
+                    positions.push([Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding), Math.max.apply(Math, yTab) + (conf.framePadding * conf.framePadding), Math.max.apply(Math, zTab)]);
+                    positions.push([Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - (conf.framePadding * conf.framePadding), Math.max.apply(Math, zTab)]);
+                    positions.push([Math.min.apply(Math, xTab) - (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - (conf.framePadding * conf.framePadding), Math.max.apply(Math, zTab)]);
+                    positions.push([Math.min.apply(Math, xTab) - (conf.framePadding * conf.framePadding), Math.max.apply(Math, yTab) + (conf.framePadding * conf.framePadding), Math.max.apply(Math, zTab)]);
+                    // set arrow position
+                    if (conf.displayLayersLabels) {
+                        arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)), 0, Math.min.apply(Math, zTab)]);
+                        if (conf.layersLabelsOrientation === "Sticky") {
+                            arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab)]);
+                            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab)+(resize) , 0);
+                        } else if (conf.layersLabelsOrientation === "Free") {
+                            arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding)]);
+                            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), 0);
+                        }
+                    }
+                }
+
+                // display frames and arrow
+                if (conf.displayFrames) {
+                    // display frame line
+                    if (conf.displayFramesLine) {
+                        drawFrames([positions], frameName);
+                    }
+                    // display frame background
+                    if (conf.displayFramesBackground) {
+                        drawFramesBackground(positions, frameName, conf.frameBackgroundColor, conf.frameOpacity);
+                    }
+                    // display arrow Line
+                    if (conf.displayFramesArrow) {
+                        drawFrames([arrowPositions], layer + '_arrow')
+                    }
+                }
+
+                //extract into create / update functions
+                //draw and update sides lines and panels
+                if (conf.displaySides === true) {
+                    if (previousMetric !== null) {
+                        const previousValueMax = layerPoints(Object.values(previousMetric).map(item => (conf.palindromeSize / item.max) * item[metricsDivider]), zAxis + conf.zPlaneMultilayer);
+                        const previousPlaneLength = Object.values(previousMetric).length;
+                        //adds side texture if the palindrome is more than 1 plane
+
+                        //check if actual layer points is higher than previous ones to determine if the sides should be drawn from few to many OR from many to few
+                        //for the number of sides
+                        const sideDividerOdd = (metricsNumber >= previousPlaneLength) ? previousPlaneLength : metricsNumber;
+                        const sideDividerEven = (metricsNumber >= previousPlaneLength) ? metricsNumber : previousPlaneLength;
+                        //for the lengths of sides
+                        const sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
+                        const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
+
+                        for (let i = 0; i < sideDividerEven; i++) {
+                            //todo : refactor this part with better variable names ?
+                            let a = sideSizeEven[(i + 1) % sideDividerOdd];
+                            let b = sideSizeOdd[(i + 1) % sideDividerEven];
+                            let c = sideSizeEven[(i) % sideDividerOdd];
+                            let d = sideSizeOdd[(i) % sideDividerEven];
+
+                            if (meshs['side-bias-line' + layer + i]) {
+                                // if init done, update
+                                meshs['side-bias-line' + layer + i].update(sideSizeOdd[i], a)
+                                meshs['side-straight-line' + layer + i].update(b, a, lineMaterial)
+                                meshs['side-top-left-pane' + layer + i].update(c, a, d)
+                                meshs['side-bottom-right-pane' + layer + i].update(d, b, a)
+                            } else {
+                                //init objects
+                                meshs['side-bias-line' + layer + i] = new SimpleLine(sideSizeOdd[i], a, lineMaterialTransparent);
+                                scene.add(meshs['side-bias-line' + layer + i]);
+                                meshs['side-straight-line' + layer + i] = new SimpleLine(b, a, lineMaterial);
+                                scene.add(meshs['side-straight-line' + layer + i]);
+
+                                meshs['side-top-left-pane' + layer + i] = new Triangle(c, a, d, conf.mainAppColor);
+                                scene.add(meshs['side-top-left-pane' + layer + i]);
+                                meshs['side-bottom-right-pane' + layer + i] = new Triangle(d, b, a, conf.mainAppColor);
+                                scene.add(meshs['side-bottom-right-pane' + layer + i]);
+                            }
+                        }
+                    } else {
+                        //todo : describe this case
+                    }
+                }
 
                 //draws and update layers
                 //todo number of shapes shall be dynamic
@@ -641,134 +900,11 @@ export default (function (parentElement, conf) {
                     }
                 }
 
-                //draws and update layers outline
-                if (conf.displayLayersLines) {
-                    for (let i = 0; i < metricsNumber; i++) {
-                        for (let [index, metricsPosition] of metricsPositions.entries()) {
-                            //draws outside lines
-                            drawLayerOutline(layer + '_layerShapesEdges', metricsPosition, i, metricsNumber, lineMaterial, index);
-                        }
-                    }
-                }
-
-                //update label position
-                if (conf.displayMetricsLabels) {
-                    let sortedLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
-                    for (let i = 0; i < sortedLabels.length; i++) {
-                        const metricsLabels = sortedLabels[i];
-                        if (metrics[metricsLabels.key]) {
-                            const metricData = metrics[metricsLabels.key];
-                            const metricsLabelsName = metricData.label;
-                            const metricsLabelsType = metricsLabels.dataType;
-                            let metricsLabelsUnit = metricsLabels.labelUnit;
-                            const metricsLabelsIndex = Object.keys(metrics).indexOf(metricsLabels.key);
-                            const metricsLabelsValue = Object.values(metrics)[metricsLabelsIndex][metricsLabelsType].toFixed();
-                            const labelPositions = metricValue[metricsLabelsType][metricsLabelsIndex];
-                            if (debug === true) {
-                                debug = false;
-                            }
-                            // update label data
-                            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit)
-                            if (conf.metricsLabelsRendering === "2D") {
-                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
-                                    // update text label
-                                    let canvas = metricsLabels.element.childNodes.item(0);
-                                    let labelContext = canvas.getContext('2d');
-                                    labelContext.clearRect(0, 0, canvas.width, canvas.height);
-                                    addMultiLineText(metricsLabels.data, canvas.width / 2, canvas.height / 2, canvas['textSize'], canvas.width, labelContext);
-                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
-                                    // update text label
-                                    metricsLabels.element.childNodes.item(0).textContent = metricsLabels.data;
-                                } else if (conf.metricsLabelsFormat === "Table") {
-                                    // update table
-                                    let htmlTable = metricsLabels.element.getElementsByTagName('div').item(0).childNodes.item(0);
-                                    updateHtmlTable(htmlTable, metricsLabels.data);
-                                } else if (conf.metricsLabelsFormat === "Json") {
-                                    // update json
-                                    let htmlCode = metricsLabels.element.getElementsByTagName('div').item(0).childNodes.item(0);
-                                    htmlCode.innerHTML = metricsLabels.data;
-                                }
-                            } else if (conf.metricsLabelsRendering === "3D") {
-                                //get the label texture from the material map
-                                let metricsLabelsTexture = metricsLabels.material.map.image;
-                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
-                                    //here metricsLabelsTexture is a canvas
-                                    let labelContext = metricsLabelsTexture.getContext('2d')
-                                    //clear the canvas
-                                    labelContext.clearRect(0, 0, metricsLabelsTexture.width, metricsLabelsTexture.height);
-                                    //update the canvas
-                                    addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture['textSize'], metricsLabelsTexture.width, labelContext);
-                                    //update the three.js object material map
-                                    metricsLabels.material.map.needsUpdate = true;
-                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
-                                    // here metricLabelTexture is a table svg
-                                    labelDiv[metricsLabelsName].childNodes.item(0).innerHTML = metricsLabels.data;
-                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
-                                } else if (conf.metricsLabelsFormat === "Table") {
-                                    // here metricsLabelsTexture is a table svg
-                                    let htmlTable = labelDiv[metricsLabelsName].childNodes.item(0).childNodes.item(0);
-                                    updateHtmlTable(htmlTable, metricsLabels.data);
-                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
-                                } else if (conf.metricsLabelsFormat === "Json") {
-                                    // here metricsLabelsTexture is a json svg
-                                    let htmlJson = labelDiv[metricsLabelsName].childNodes.item(0);
-                                    htmlJson.innerHTML = metricsLabels.data;
-                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
-                                }
-                            }
-                            metricsLabels.position.set(labelPositions[0], labelPositions[2], labelPositions[1]);
-                        }
-                    }
-                }
-
-                //extract into create / update functions
-                //draw and update sides lines and panels
-                if (conf.displaySides === true) {
-                    if (previousLayer !== null) {
-                        const previousValueMax = layerPoints(Object.values(previousLayer).map(item => (conf.palindromeSize / item.max) * item[metricsDivider]), zAxis + conf.zPlaneMultilayer);
-                        const previousPlaneLength = Object.values(previousLayer).length;
-                        //adds side texture if the palindrome is more than 1 plane
-
-                        //check if actual layer points is higher than previous ones to determine if the sides should be drawn from few to many OR from many to few
-                        //for the number of sides
-                        const sideDividerOdd = (metricsNumber >= previousPlaneLength) ? previousPlaneLength : metricsNumber;
-                        const sideDividerEven = (metricsNumber >= previousPlaneLength) ? metricsNumber : previousPlaneLength;
-                        //for the lengths of sides
-                        const sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
-                        const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
-
-                        for (let i = 0; i < sideDividerEven; i++) {
-                            //todo : refactor this part with better variable names ?
-                            let calc1 = sideSizeEven[(i + 1) % sideDividerOdd];
-                            let calc2 = sideSizeOdd[(i + 1) % sideDividerEven];
-                            let calc3 = sideSizeEven[(i) % sideDividerOdd];
-                            let calc4 = sideSizeOdd[(i) % sideDividerEven];
-
-                            if (meshs['side-bias-line' + layer + i]) {
-                                // if init done, update
-                                meshs['side-bias-line' + layer + i].update(sideSizeOdd[i], calc1)
-                                meshs['side-straight-line' + layer + i].update(calc2, calc1, lineMaterial)
-                                meshs['side-top-left-pane' + layer + i].update(calc3, calc1, calc4)
-                                meshs['side-bottom-right-pane' + layer + i].update(calc4, calc2, calc1)
-                            } else {
-                                //init objects
-                                meshs['side-bias-line' + layer + i] = new SimpleLine(sideSizeOdd[i], calc1, lineMaterialTransparent);
-                                scene.add(meshs['side-bias-line' + layer + i]);
-                                meshs['side-straight-line' + layer + i] = new SimpleLine(calc2, calc1, lineMaterial);
-                                scene.add(meshs['side-straight-line' + layer + i]);
-                                meshs['side-top-left-pane' + layer + i] = new Triangle(calc3, calc1, calc4, conf.mainAppColor);
-                                scene.add(meshs['side-top-left-pane' + layer + i]);
-                                meshs['side-bottom-right-pane' + layer + i] = new Triangle(calc4, calc2, calc1, conf.mainAppColor);
-                                scene.add(meshs['side-bottom-right-pane' + layer + i]);
-                            }
-                        }
-                    } else {
-                        //todo : describe this case
-                    }
-                }
                 zAxis -= conf.zPlaneMultilayer;
-                previousLayer = metrics;
+                previousMetric = metrics;
+                previousLayer = layers;
                 layerIndex++;
+                metricIndex++;
             }
         }
 
@@ -913,7 +1049,80 @@ export default (function (parentElement, conf) {
             let newCameraPos = centerVector.clone().add(cameraOffs);
             camera.position.copy(newCameraPos);
         }
+
+        /**
+         * Draw a frame in a plane (layer)
+         * @param {[]} framePoints frame points position
+         * @param {string} frameName frame name
+         */
+        function drawFrames(framePoints, frameName) {
+            // card around metrics
+            for (let i = 0; i < framePoints[0].length; i++) {
+                for (let [index, point] of framePoints.entries()) {
+                    //draws outside lines
+                    if (conf.frameDashLineSize > 0) {
+                        drawLayerDashLine(frameName, point, i, framePoints[0].length, dashLineMaterial, index)
+                    } else {
+                        drawLayerOutline(frameName, point, i, framePoints[0].length, lineMaterial, index);
+                    }
+                }
+            }
+        }
+
+        /** Draw a frame background
+         * @param {[]} framePoints frame points position
+         * @param {string} frameName frame name
+         * @param {string} backgroundColor frame background color
+         * @param {int} opacity frame opacity
+         */
+        function drawFramesBackground(framePoints, frameName, backgroundColor, opacity) {
+            let j = 0
+            for (let i = 0; i < framePoints.length; i++) {
+                if (framePoints[j + 1]) {
+                    if (framePoints[j + 2]) {
+                        let a = [framePoints[0][0], framePoints[0][1], framePoints[0][2] - 0.005];
+                        let b = [framePoints[j + 1][0], framePoints[j + 1][1], framePoints[j + 1][2] - 0.005];
+                        let c = [framePoints[j + 2][0], framePoints[j + 2][1], framePoints[j + 2][2] - 0.005];
+                        if (meshs['side-top-left-pane' + frameName + i]) {
+                            meshs['side-top-left-pane' + frameName + i].update(a, b, c);
+                            meshs['side-bottom-right-pane' + frameName + i + 1].update(a, b, c);
+                        } else {
+                            meshs['side-top-left-pane' + frameName + i] = new Triangle(a, b, c, backgroundColor, opacity);
+                            scene.add(meshs['side-top-left-pane' + frameName + i]);
+                            meshs['side-bottom-right-pane' + frameName + i + 1] = new Triangle(a, b, c, backgroundColor, opacity);
+                            scene.add(meshs['side-bottom-right-pane' + frameName + i + 1]);
+                        }
+                        j = i + 1;
+                    }
+                }
+            }
+        }
+
+
+        /**
+         * Draw a dash line in a plane (layer)
+         *
+         * @param {string} layerName layer name
+         * @param {number[]} planePoints coordinates of the line
+         * @param {number} layerMetricIndex index of the line in the plane
+         * @param {number} planePointLength number of points in the plane
+         * @param {THREE.Material} material material to apply to the line
+         * @param {number} layerMetricRangeIndex index of layer metric range
+         */
+        function drawLayerDashLine(layerName, planePoints, layerMetricIndex, planePointLength, material, layerMetricRangeIndex) {
+            if (meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]) {
+                // if init done
+                meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength])
+            } else {
+                //init objects
+                meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex] = new DasheLine(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength], material);
+                scene.add(meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]);
+            }
+        }
+
+
     }
+
 );
 
 

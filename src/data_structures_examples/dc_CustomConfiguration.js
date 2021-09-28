@@ -48,8 +48,8 @@ export function dcCustomConfiguration() {
           "label": "System metrics",
           "_layerBehavior": "something",
           "_defaultColor": "green",
-          "_publicColorOption": "random calls function to pick a color"
-        }
+          "_publicColorOption": "random calls function to pick a color",
+        },
       },
     },
     "qosMetrics": {

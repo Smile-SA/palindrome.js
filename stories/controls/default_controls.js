@@ -136,18 +136,19 @@ export function defaultControls(){
             },
         },
         // metrics labels configuration
-        metricsLabelsRendering: {
+        labelsRendering: {
             name: "labelsRendering",
-            description: "Change the rendering style of metrics labels",
-            defaultValue: "3D",
+            description: "Change the rendering style of labels",
+            defaultValue: "2D",
             control: {
                 type: "select",
                 options: ["2D","3D"]
             },
             table: {
-                category: "Labels", subcategory:"Metrics"
+                category: "Labels",
             },
         },
+
         metricsLabelsFormat: {
             name: "labelsFormat",
             description: "To change the metrics labels format",
@@ -236,7 +237,19 @@ export function defaultControls(){
             },
         },
         // layer label configuration
-        layerLabelOrientation: {
+        layersLabelsFormat: {
+            name: "layersLabelsFormat",
+            description: "To change the layers labels format",
+            defaultValue: "ClassicSvg",
+            control: {
+                type: "select",
+                options: ["ClassicCanvas","ClassicSvg"]
+            },
+            table: {
+                category: "Labels",subcategory:"Layers"
+            },
+        },
+        layersLabelsOrientation: {
             name: 'labelsOrientation', description: 'Change the orientation of layers label',
             defaultValue: "Sticky",
             control: {
@@ -247,7 +260,7 @@ export function defaultControls(){
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        layerLabelCharacterFont: {
+        layersLabelsCharacterFont: {
             name: 'labelsCharacterFont', defaultValue: 'Arial', description: 'Change the characters of layers label',
             control: {
                 type: 'select',
@@ -257,7 +270,7 @@ export function defaultControls(){
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        layerLabelSize: {
+        layersLabelsSize: {
             name: 'labelsSize',
             defaultValue: 15,
             description:'Change the size of layers labels',
@@ -273,31 +286,31 @@ export function defaultControls(){
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        layerLabelColor: {
+        layersLabelsColor: {
             name: 'labelsColor', defaultValue: '#000000', control: 'color',
             description:'Change the color of layers label',
             table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        layerLabelBackground: {
+        layersLabelsBackground: {
             name: 'labelsBackground', defaultValue: '#ffffff', control: 'color',
             description:'Change the background color of layers label',
             table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        layerLabelBold: {
+        layersLabelsBold: {
             name: 'labelsBold', defaultValue: true, control: 'boolean',description:'Bold or not the layers label', table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        layerLabelItalic: {
+        layersLabelsItalic: {
             name: 'labelsItalic', defaultValue: false,description:'Italicize or not the layers label', control: 'boolean', table: {
                 category: 'Labels', subcategory:'Layers'
             },
         },
-        displayLayerLabel: {
+        displayLayersLabels: {
             name: 'displayLabels', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
             table: {
                 category: 'Labels', subcategory:'Layers'
