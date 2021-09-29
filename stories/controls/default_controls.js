@@ -136,18 +136,19 @@ export function defaultControls(){
             },
         },
         // metrics labels configuration
-        metricsLabelsRendering: {
+        labelsRendering: {
             name: "labelsRendering",
-            description: "Change the rendering style of metrics labels",
-            defaultValue: "3D",
+            description: "Change the rendering style of labels",
+            defaultValue: "2D",
             control: {
                 type: "select",
                 options: ["2D","3D"]
             },
             table: {
-                category: "Labels", subcategory:"Metrics"
+                category: "Labels",
             },
         },
+
         metricsLabelsFormat: {
             name: "labelsFormat",
             description: "To change the metrics labels format",
@@ -233,6 +234,159 @@ export function defaultControls(){
             name: "displayAllLabels", defaultValue: false,description:"Display or not all metrics labels", control: "boolean",
             table: {
                 category: "Labels",subcategory:"Metrics"
+            },
+        },
+        // layer label configuration
+        layersLabelsFormat: {
+            name: "layersLabelsFormat",
+            description: "To change the layers labels format",
+            defaultValue: "ClassicSvg",
+            control: {
+                type: "select",
+                options: ["ClassicCanvas","ClassicSvg"]
+            },
+            table: {
+                category: "Labels",subcategory:"Layers"
+            },
+        },
+        layersLabelsOrientation: {
+            name: 'labelsOrientation', description: 'Change the orientation of layers label',
+            defaultValue: "Sticky",
+            control: {
+                type: 'select',
+                options: ['Sticky', 'Free']
+            },
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layersLabelsCharacterFont: {
+            name: 'labelsCharacterFont', defaultValue: 'Arial', description: 'Change the characters of layers label',
+            control: {
+                type: 'select',
+                options: ['Arial','Serif', 'Sans-serif']
+            },
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layersLabelsSize: {
+            name: 'labelsSize',
+            defaultValue: 15,
+            description:'Change the size of layers labels',
+            control: {
+                type: 'select',
+                options: {
+                    Small: 13,
+                    Medium: 15,
+                    Large: 18,
+                }
+            },
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layersLabelsColor: {
+            name: 'labelsColor', defaultValue: '#000000', control: 'color',
+            description:'Change the color of layers label',
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layersLabelsBackground: {
+            name: 'labelsBackground', defaultValue: '#ffffff', control: 'color',
+            description:'Change the background color of layers label',
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layersLabelsBold: {
+            name: 'labelsBold', defaultValue: true, control: 'boolean',description:'Bold or not the layers label', table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        layersLabelsItalic: {
+            name: 'labelsItalic', defaultValue: false,description:'Italicize or not the layers label', control: 'boolean', table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        displayLayersLabels: {
+            name: 'displayLabels', defaultValue: true,description:'Display or not the layers label', control: 'boolean',
+            table: {
+                category: 'Labels', subcategory:'Layers'
+            },
+        },
+        // Frames
+        frameShape: {
+            name: "frameShape",
+            description: 'Change the frames style',
+            defaultValue: "Rectangle",
+            control: {
+                type: 'select',
+                options: ['Rectangle','Dynamic']
+            },
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameBackgroundColor: {
+            name: 'frameBackgroundColor', defaultValue: '#ffffff', control: 'color',description:'Change the frame background color',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameOpacity: {
+            name: 'frameOpacity', defaultValue: 0.5, control: 'number',description:'Change the frame opacity',
+            table: {
+                category: 'Frames',
+            },
+        },
+        framePadding: {
+            name: 'framePadding', defaultValue: 2, control: 'number',description:'Change the frame padding',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameLineColor: {
+            name: 'frameLineColor', defaultValue: '#000000', control: 'color',description:'Change the frame line color',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameLineWidth: {
+            name: 'frameLineWidth', defaultValue: 0.5, control: 'number',description:'Change the frame line width',
+            table: {
+                category: 'Frames',
+            },
+        },
+        frameDashLineSize: {
+            name: 'frameDashLineSize', defaultValue: 3, control: 'number',description:'Change the frame dash line size',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFrames: {
+            name: 'displayFrames', defaultValue: true,description:'Display or not the frames', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFramesLine: {
+            name: 'displayFramesLine', defaultValue: true,description:'Display or not the frames Line', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFramesBackground: {
+            name: 'displayFramesBackground', defaultValue: false,description:'Display or not the frames background', control: 'boolean',
+            table: {
+                category: 'Frames',
+            },
+        },
+        displayFramesArrow: {
+            name: 'displayFramesArrow', defaultValue: true,description:'Display or not the frames arrows', control: 'boolean',
+            table: {
+                category: 'Frames',
             },
         },
         // status configurations

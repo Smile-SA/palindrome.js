@@ -20,12 +20,15 @@ export function dcFullMap() {
         }
       },
       "layer": {
-        "layerBehavior": "something",
-        "defaultColor": "green",
-        "publicColorOption": "random calls function to pick a color"
+        "requests-layer": {
+          "label": "Requests",
+          "_layerBehavior": "something",
+          "_defaultColor": "green",
+          "_publicColorOption": "random calls function to pick a color"
+        }
       }
     },
-    "systemRessources": {
+    "systemResources": {
       "metrics": {
         "cpu": {
           "label": "CPU",
@@ -69,9 +72,12 @@ export function dcFullMap() {
         }
       },
       "layer": {
-        "layerBehavior": "something",
-        "defaultColor": "green",
-        "publicColorOption": "random calls function to pick a color"
+        "systemResources-layer": {
+          "label": "System resources ",
+          "_layerBehavior": "something",
+          "_defaultColor": "green",
+          "_publicColorOption": "random calls function to pick a color"
+        }
       }
     },
     "qosMetrics": {
@@ -118,9 +124,12 @@ export function dcFullMap() {
         }
       },
       "layer": {
-        "layerBehavior": "something",
-        "defaultColor": "green",
-        "publicColorOption": "random calls function to pick a color"
+        "qosMetrics-layer": {
+          "label": "Qos metrics",
+          "_layerBehavior": "something",
+          "_defaultColor": "green",
+          "_publicColorOption": "random calls function to pick a color"
+        }
       }
     },
     "businessKPIs": {
@@ -159,9 +168,12 @@ export function dcFullMap() {
         }
       },
       "layer": {
-        "layerBehavior": "something",
-        "defaultColor": "green",
-        "publicColorOption": "random calls function to pick a color"
+        "businessKPIs-layer": {
+          "label": "Business KPIs",
+          "_layerBehavior": "something",
+          "_defaultColor": "green",
+          "_publicColorOption": "random calls function to pick a color"
+        }
       }
     }
   }
