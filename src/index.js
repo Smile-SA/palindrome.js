@@ -58,6 +58,10 @@ export default (function(parentElement, conf) {
 
         //3D related
         let labelDiv = [];
+        if (conf.labelsRenderingMode === "3D") {
+            layerParameters['labelSize'] = layerParameters['labelSize'] * 1.8;
+            metricParameters['labelSize'] = metricParameters['labelSize'] * 1.8;
+        }
 
         parentElement.appendChild(renderer.domElement);
         parentElement.appendChild(labelsRenderer.domElement);
@@ -138,10 +142,10 @@ export default (function(parentElement, conf) {
             let p = document.createElement('p');
             p.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
             p.style.color = parameters['labelColor'];
+            p.style.fontSize = parameters['labelSize'] + 'px';
             p.style.fontFamily = parameters['characterFont'];
             p.style.fontWeight = parameters["labelBold"];
             p.style.fontStyle = parameters["labelItalic"];
-            p.style.fontSize = parameters['labelSize'] + ' px;';
             p.style.padding = '5px';
             if (cardColor) {
                 p.style.border = ' 2px ' + parameters['labelColor'] + ' dashed';
@@ -164,13 +168,12 @@ export default (function(parentElement, conf) {
             //prepare canvas
             let labelCanvas = document.createElement('canvas');
             labelCanvas.setAttribute("className", labelName);
-            labelCanvas.setAttribute("width", 900 + " px");
-            labelCanvas.setAttribute("height", 450 + " px");
-            labelCanvas['textSize'] = parameters['labelSize'] * 2;
+            labelCanvas.setAttribute("width", 1200 + " px");
+            labelCanvas.setAttribute("height", 600 + " px");
 
             //prepare context
             let labelContext = labelCanvas.getContext('2d');
-            labelContext.font = parameters["labelItalic"] + " " + parameters["labelBold"] + " " + labelCanvas['textSize'] + "px " + parameters['characterFont'];
+            labelContext.font = parameters["labelItalic"] + " " + parameters["labelBold"] + " " + parameters['labelSize'] + "px " + parameters['characterFont'];
             labelContext.lineWidth = borderThickness;
             labelContext.textAlign = 'center';
             labelContext.fillStyle = parameters['labelColor'];
@@ -179,8 +182,8 @@ export default (function(parentElement, conf) {
             let w = labelCanvas.width,
                 h = labelCanvas.height;
 
-            addTextBackground(labelContext, borderThickness / 2, borderThickness / 2, w + (borderThickness * labelCanvas['textSize']), h / 2 + (borderThickness * labelCanvas['textSize']), 'rgba(14,167,83,0)');
-            addMultiLineText(labelText, w / 2, h / 2, labelCanvas['textSize'], w, labelContext);
+            addTextBackground(labelContext, borderThickness / 2, borderThickness / 2, w + (borderThickness * parameters['labelSize']), h / 2 + (borderThickness * parameters['labelSize']), 'rgba(14,167,83,0)');
+            addMultiLineText(labelText, w / 2, h / 2, parameters['labelSize'], w, labelContext);
             return labelCanvas;
         }
 
@@ -213,7 +216,7 @@ export default (function(parentElement, conf) {
                     tCel.style.fontFamily = parameters["characterFont"];
                     tCel.style.fontWeight = parameters["labelBold"];
                     tCel.style.fontStyle = parameters["labelItalic"];
-                    tCel.style.fontSize = parameters["labelSize"] + ' px;';
+                    tCel.style.fontSize = parameters["labelSize"] + 'px;';
                     tCel.style.padding = '5px 8px';
                     tCel.style.lineHeight = '20px';
                     tCel.style.verticalAlign = 'middle';
@@ -260,7 +263,7 @@ export default (function(parentElement, conf) {
         function htmlToSvg(htmlElement) {
             const img = document.createElement('img');
             img.src = 'data:image/svg+xml,' + encodeURIComponent(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600">' +
                 '   <foreignObject  width="100%" height="100%">' +
                 '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">' +
                 htmlElement.innerHTML +
@@ -281,7 +284,7 @@ export default (function(parentElement, conf) {
             svg.onload = function() {
                 map.needsUpdate = true;
                 svg.src = 'data:image/svg+xml,' + encodeURIComponent(
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250">' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600">' +
                     '   <foreignObject  width="100%" height="100%">' +
                     '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">' +
                     htmlElement.innerHTML +
@@ -733,15 +736,15 @@ export default (function(parentElement, conf) {
                                             //clear the canvas
                                         labelContext.clearRect(0, 0, metricsLabelsTexture.width, metricsLabelsTexture.height);
                                         //update the canvas
-                                        addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture['textSize'], metricsLabelsTexture.width, labelContext);
+                                        addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture.style.fontSize, metricsLabelsTexture.width, labelContext);
                                         //update the three.js object material map
                                         metricsLabels.material.map.needsUpdate = true;
-                                        y = y + 0.5;
+                                        y = y + 0.4;
                                     } else if (conf.labels3DRenderingMode === "Svg") {
                                         // here metricLabelTexture is a table svg
                                         labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
                                         updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
-                                        y = y + 0.5;
+                                        y = y + 1;
                                     }
                                 } else if (conf.labelsRenderingFormat === "Table") {
                                     // here metricsLabelsTexture is a table svg
