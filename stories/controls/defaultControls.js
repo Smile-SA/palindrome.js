@@ -285,7 +285,7 @@ export function defaultControls() {
             control: {
                 type: "select",
                 options: {
-                    Small: 13,
+                    Small: 12,
                     Medium: 15,
                     Large: 18,
                 }
@@ -399,7 +399,7 @@ export function defaultControls() {
             control: {
                 type: 'select',
                 options: {
-                    Small: 13,
+                    Small: 12,
                     Medium: 15,
                     Large: 18,
                 }
