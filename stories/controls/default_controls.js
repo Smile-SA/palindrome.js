@@ -218,10 +218,10 @@ export function defaultControls() {
             },
         },
         // metrics labels configuration
-        labelsRendering: {
-            name: "labelsRendering",
+        labelsRenderingMode: {
+            name: "labelRenderingMode",
             description: "Change the rendering style of labels",
-            defaultValue: "2D",
+            defaultValue: "3D",
             control: {
                 type: "select",
                 options: ["2D", "3D"]
@@ -230,18 +230,29 @@ export function defaultControls() {
                 category: "Labels",
             },
         },
-
-        metricsLabelsFormat: {
-            name: "metricsLabelsFormat",
+        labels3DRenderingMode: {
+            name: "labels3DRenderingMode",
             description: "To change the metrics labels format",
-            defaultValue: "ClassicSvg",
+            defaultValue: "Canvas",
             control: {
                 type: "select",
-                options: ["ClassicCanvas", "ClassicSvg", "Table", "Json"]
+                options: ["Canvas", "Svg"]
             },
             table: {
                 category: "Labels",
-                subcategory: "Metrics"
+            },
+        },
+
+        labelsRenderingFormat: {
+            name: "labelsRenderingFormat",
+            description: "To change the metrics labels format",
+            defaultValue: "Text",
+            control: {
+                type: "select",
+                options: ["Text", "Table", "Json"]
+            },
+            table: {
+                category: "Labels",
             },
         },
         metricsLabelsStructure: {
@@ -355,19 +366,6 @@ export function defaultControls() {
             },
         },
         // layer label configuration
-        layersLabelsFormat: {
-            name: "layersLabelsFormat",
-            description: "To change the layers labels format",
-            defaultValue: "ClassicSvg",
-            control: {
-                type: "select",
-                options: ["ClassicCanvas", "ClassicSvg"]
-            },
-            table: {
-                category: "Labels",
-                subcategory: "Layers"
-            },
-        },
         layersLabelsOrientation: {
             name: 'layersLabelsOrientation',
             description: 'Change the orientation of layers label',

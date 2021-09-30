@@ -1,15 +1,15 @@
 //import 'babel-polyfill';
 import * as THREE from 'three';
-import {CSS2DObject} from 'three-css2drender';
-import {Triangle, SimpleLine, DasheLine} from './ThreeGeometryObjects';
-import {initThreeObjects} from './ThreeJSBasicObjects';
-import {dataGenerator} from './dataGenerator';
+import { CSS2DObject } from 'three-css2drender';
+import { Triangle, SimpleLine, DasheLine } from './ThreeGeometryObjects';
+import { initThreeObjects } from './ThreeJSBasicObjects';
+import { dataGenerator } from './dataGenerator';
 
 /**
  * @param {HTMLElement} parentElement perent element of three's renderer element
  * @param {*} conf model's configuration
  */
-export default (function (parentElement, conf) {
+export default (function(parentElement, conf) {
         let debug = true;
 
         // data related
@@ -25,7 +25,9 @@ export default (function (parentElement, conf) {
             renderer,
             camera
         } = initThreeObjects();
-        let metricParameters = {}, layerParameters = {}, borderThickness = 4;
+        let metricParameters = {},
+            layerParameters = {},
+            borderThickness = 4;
         //metrics
         metricParameters["displayUnits"] = conf.displaysMetricsLabelsUnit;
         metricParameters["characterFont"] = conf.metricsLabelsCharacterFont;
@@ -174,7 +176,8 @@ export default (function (parentElement, conf) {
             labelContext.fillStyle = parameters['labelColor'];
 
             //reassign values (design pattern)
-            let w = labelCanvas.width, h = labelCanvas.height;
+            let w = labelCanvas.width,
+                h = labelCanvas.height;
 
             addTextBackground(labelContext, borderThickness / 2, borderThickness / 2, w + (borderThickness * labelCanvas['textSize']), h / 2 + (borderThickness * labelCanvas['textSize']), 'rgba(14,167,83,0)');
             addMultiLineText(labelText, w / 2, h / 2, labelCanvas['textSize'], w, labelContext);
@@ -259,8 +262,8 @@ export default (function (parentElement, conf) {
             img.src = 'data:image/svg+xml,' + encodeURIComponent(
                 '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250">' +
                 '   <foreignObject  width="100%" height="100%">' +
-                '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">'
-                + htmlElement.innerHTML +
+                '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">' +
+                htmlElement.innerHTML +
                 '       </body>' +
                 '   </foreignObject>' +
                 '</svg>');
@@ -275,13 +278,13 @@ export default (function (parentElement, conf) {
          * @param {*} map material map
          */
         function updateSvgSrc(svg, htmlElement, map) {
-            svg.onload = function () {
+            svg.onload = function() {
                 map.needsUpdate = true;
                 svg.src = 'data:image/svg+xml,' + encodeURIComponent(
                     '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="250">' +
                     '   <foreignObject  width="100%" height="100%">' +
-                    '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">'
-                    + htmlElement.innerHTML +
+                    '       <body xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;justify-content:center;align-items:center;">' +
+                    htmlElement.innerHTML +
                     '       </body>' +
                     '   </foreignObject>' +
                     '</svg>');
@@ -322,8 +325,9 @@ export default (function (parentElement, conf) {
             // for the management of manual line breaks
             text = text.replace(/(\r\n|\n\r|\r|\n)/g, "\n");
             let sections = text.split("\n");
-            let str, wordWidth, currentLine = 0, maxHeight, maxWidth = 0;
-            let printNextLine = function (str) {
+            let str, wordWidth, currentLine = 0,
+                maxHeight, maxWidth = 0;
+            let printNextLine = function(str) {
                 if (draw) {
                     oContext.fillText(str, x, y + (lineHeight * currentLine));
                     currentLine++;
@@ -382,7 +386,7 @@ export default (function (parentElement, conf) {
          */
         function getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit) {
             let data = '';
-            if (conf.metricsLabelsFormat === "ClassicSvg" || conf.metricsLabelsFormat === "ClassicCanvas") {
+            if (conf.labelsRenderingFormat === "Text") {
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += labelName;
                 }
@@ -395,7 +399,7 @@ export default (function (parentElement, conf) {
                 if (conf.metricsLabelsStructure.indexOf("Unit") != -1) {
                     data += ' ' + labelUnit;
                 }
-            } else if (conf.metricsLabelsFormat === "Json") {
+            } else if (conf.labelsRenderingFormat === "Json") {
                 data += '{';
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += '"Name" : "' + labelName + '", ';
@@ -410,8 +414,9 @@ export default (function (parentElement, conf) {
                     data += '"Units" : "' + labelUnit + '"';
                 }
                 data += '}'
-            } else if (conf.metricsLabelsFormat === "Table") {
-                let tbody = [], tHead = [];
+            } else if (conf.labelsRenderingFormat === "Table") {
+                let tbody = [],
+                    tHead = [];
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     tbody.push("Name");
                     tHead.push(labelName);
@@ -428,7 +433,7 @@ export default (function (parentElement, conf) {
                     tbody.push("Unit");
                     tHead.push(labelUnit);
                 }
-                data = {0: tbody, 1: tHead};
+                data = { 0: tbody, 1: tHead };
             }
             return data;
         }
@@ -448,13 +453,11 @@ export default (function (parentElement, conf) {
                 div = document.createElement('div');
             div.className = 'label ' + labelName;
             div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            if (conf.metricsLabelsFormat === 'ClassicCanvas') {
-                div.appendChild(createLabelCanvas(labelName, data, metricParameters));
-            } else if (conf.metricsLabelsFormat === 'ClassicSvg') {
+            if (conf.labelsRenderingFormat === 'Text') {
                 div.appendChild(createHtmlText(data, false, false, metricParameters));
-            } else if (conf.metricsLabelsFormat === "Table") {
+            } else if (conf.labelsRenderingFormat === "Table") {
                 div.appendChild(createHtmlTable(data, metricParameters));
-            } else if (conf.metricsLabelsFormat === "Json") {
+            } else if (conf.labelsRenderingFormat === "Json") {
                 div.appendChild(createHtmlText(data, false, true, metricParameters));
             }
             const metricsLabels = new CSS2DObject(div);
@@ -477,30 +480,34 @@ export default (function (parentElement, conf) {
          * @param {string} labelUnit the unit of label
          */
         function create3DMetricsLabels(key, labelName, labelType, labelValue, metricIndex, labelUnit) {
-            let texture = new THREE.Texture(), textureImage,
+            let texture = new THREE.Texture(),
+                textureImage,
                 data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit);
             labelDiv[labelName] = document.createElement('div');
             labelDiv[labelName].className = 'label ' + labelName;
             labelDiv[labelName].setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            if (conf.metricsLabelsFormat === 'ClassicCanvas') {
+            if (conf.labelsRenderingFormat === 'Text') {
                 // canvas contents will be used for a texture
-                textureImage = createLabelCanvas(labelName, data, metricParameters);
-            } else if (conf.metricsLabelsFormat === 'ClassicSvg') {
-                labelDiv[labelName].appendChild(createHtmlText(data, false, false, metricParameters));
-                textureImage = htmlToSvg(labelDiv[labelName]);
-            } else if (conf.metricsLabelsFormat === "Table") {
+                if (conf.labels3DRenderingMode === 'Canvas') {
+                    // canvas contents will be used for a texture
+                    textureImage = createLabelCanvas(labelName, data, metricParameters);
+                } else if (conf.labels3DRenderingMode === 'Svg') {
+                    labelDiv[labelName].appendChild(createHtmlText(data, false, false, metricParameters));
+                    textureImage = htmlToSvg(labelDiv[labelName]);
+                }
+            } else if (conf.labelsRenderingFormat === "Table") {
                 labelDiv[labelName].appendChild(createHtmlTable(data, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
-            } else if (conf.metricsLabelsFormat === "Json") {
+            } else if (conf.labelsRenderingFormat === "Json") {
                 labelDiv[labelName].appendChild(createHtmlText(data, false, true, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
             }
             texture.image = textureImage;
             texture.needsUpdate = true;
             texture.minFilter = THREE.NearestFilter;
-            let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
+            let spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true }),
                 metricsLabels = new THREE.Sprite(spriteMaterial);
-            metricsLabels.scale.set(2*metricParameters["labelSize"], 1*metricParameters["labelSize"], metricParameters["labelSize"]);
+            metricsLabels.scale.set(2 * metricParameters["labelSize"], 1 * metricParameters["labelSize"], metricParameters["labelSize"]);
             metricsLabels.key = key;
             metricsLabels.name = labelName;
             metricsLabels.dataType = labelType;
@@ -532,11 +539,7 @@ export default (function (parentElement, conf) {
         function create2DLayersLabels(key, labelName, layerIndex) {
             let div = document.createElement('div');
             div.className = 'label ' + labelName;
-            if (conf.layersLabelsFormat === 'ClassicCanvas') {
-                div.appendChild(createLabelCanvas(labelName, labelName, layerParameters));
-            } else if (conf.layersLabelsFormat === 'ClassicSvg') {
-                div.appendChild(createHtmlText(labelName, true, true, layerParameters));
-            }
+            div.appendChild(createHtmlText(labelName, true, true, layerParameters));
             const layersLabels = new CSS2DObject(div);
             layersLabels.key = key;
             layersLabels.name = labelName;
@@ -552,22 +555,18 @@ export default (function (parentElement, conf) {
          * @param {number} layerIndex to keep track layers and metric inside
          */
         function create3DLayersLabels(key, labelName, layerIndex) {
-            let texture = new THREE.Texture(), textureImage;
-            if (conf.layersLabelsFormat === 'ClassicCanvas') {
-                // canvas contents will be used for a texture
-                textureImage = createLabelCanvas(labelName, labelName, layerParameters);
-            } else if (conf.layersLabelsFormat === 'ClassicSvg') {
-                labelDiv[labelName] = document.createElement('div');
-                labelDiv[labelName].className = labelName;
-                labelDiv[labelName].appendChild(createHtmlText(labelName, true, true, layerParameters));
-                textureImage = htmlToSvg(labelDiv[labelName]);
-            }
+            let texture = new THREE.Texture(),
+                textureImage;
+            labelDiv[labelName] = document.createElement('div');
+            labelDiv[labelName].className = labelName;
+            labelDiv[labelName].appendChild(createHtmlText(labelName, true, true, layerParameters));
+            textureImage = htmlToSvg(labelDiv[labelName]);
             texture.image = textureImage;
             texture.needsUpdate = true;
             texture.minFilter = THREE.NearestFilter;
-            let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
+            let spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true }),
                 layersLabels = new THREE.Sprite(spriteMaterial);
-            layersLabels.scale.set(2*layerParameters["labelSize"], 1*layerParameters["labelSize"], layerParameters["labelSize"]);
+            layersLabels.scale.set(2 * layerParameters["labelSize"], 1 * layerParameters["labelSize"], layerParameters["labelSize"]);
             layersLabels.key = key;
             layersLabels.name = labelName;
             layersLabels.layerIndex = layerIndex;
@@ -581,11 +580,14 @@ export default (function (parentElement, conf) {
          * @param {*} data dataObject (conf.data)
          */
         function createLabels(data) {
-            let zAxis = conf.zPlaneInitial, metricIndex = 0, layerIndex = 0;
+            let zAxis = conf.zPlaneInitial,
+                metricIndex = 0,
+                layerIndex = 0;
             for (let layer in data) {
                 let layers = data[layer].layer;
                 let metrics = data[layer].metrics;
-                let metricLabelsIds = [], layersLabelsIds = [];
+                let metricLabelsIds = [],
+                    layersLabelsIds = [];
                 if (conf.displayMetricsLabels) {
                     for (const [key, value] of Object.entries(metrics)) {
                         if (metricLabelsIds.includes(key) === true) {
@@ -593,14 +595,14 @@ export default (function (parentElement, conf) {
                             break;
                         } else {
                             metricLabelsIds.push(key)
-                            if (conf.labelsRendering === "2D") {
+                            if (conf.labelsRenderingMode === "2D") {
                                 scene.add(create2DMetricsLabels(key, value.label, 'current', value.current, metricIndex, value.unit));
                                 if (conf.displayAllMetricsLabels) {
                                     scene.add(create2DMetricsLabels(key, value.label, 'min', value.min, metricIndex, value.unit));
                                     scene.add(create2DMetricsLabels(key, value.label, 'med', value.med, metricIndex, value.unit));
                                     scene.add(create2DMetricsLabels(key, value.label, 'max', value.max, metricIndex, value.unit));
                                 }
-                            } else if (conf.labelsRendering === "3D") {
+                            } else if (conf.labelsRenderingMode === "3D") {
                                 scene.add(create3DMetricsLabels(key, value.label, 'current', value.current, metricIndex, value.unit));
                                 if (conf.displayAllMetricsLabels) {
                                     scene.add(create3DMetricsLabels(key, value.label, 'min', value.min, metricIndex, value.unit));
@@ -618,9 +620,9 @@ export default (function (parentElement, conf) {
                             break;
                         } else {
                             layersLabelsIds.push(key);
-                            if (conf.labelsRendering === "2D") {
+                            if (conf.labelsRenderingMode === "2D") {
                                 scene.add(create2DLayersLabels(key, value.label, layerIndex));
-                            } else if (conf.labelsRendering === "3D") {
+                            } else if (conf.labelsRenderingMode === "3D") {
                                 layersLabelsIds.push(key);
                                 scene.add(create3DLayersLabels(key, value.label, layerIndex));
                             }
@@ -640,12 +642,16 @@ export default (function (parentElement, conf) {
             if (conf.mockupData) {
                 newData = dataIterator.next().value;
             }
-            let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, metricIndex = 0,
+            let zAxis = conf.zPlaneInitial,
+                previousMetric = null,
+                previousLayer = null,
+                metricIndex = 0,
                 layerIndex = 0;
             for (let layer in newData) {
                 //Declaration of metrics variables
                 //this is the updated layer metrics
-                const metrics = newData[layer].metrics, layers = newData[layer].layer,
+                const metrics = newData[layer].metrics,
+                    layers = newData[layer].layer,
                     metricsNumber = Object.values(metrics).length;
                 //this is the new total of current's
                 const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
@@ -665,8 +671,7 @@ export default (function (parentElement, conf) {
                     metricsDivider = "current";
                 } else if (conf.displayMode === "static") {
                     metricsDivider = "max";
-                } else if (conf.displayMode === "debug") {
-                } else {
+                } else if (conf.displayMode === "debug") {} else {
                     break;
                 }
 
@@ -680,7 +685,9 @@ export default (function (parentElement, conf) {
                     }
                 }
 
-                let xTab = [], yTab = [], zTab = [];
+                let xTab = [],
+                    yTab = [],
+                    zTab = [];
                 //update metrics label, layers label and their positions
                 let sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex),
                     sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
@@ -702,48 +709,46 @@ export default (function (parentElement, conf) {
                             }
                             // update label data
                             metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit)
-                            let x = labelPositions[0], y = labelPositions[2], z = labelPositions[1];
-                            if (conf.labelsRendering === "2D") {
-                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
-                                    // update text label
-                                    let canvas = metricsLabels.element.childNodes.item(0);
-                                    let labelContext = canvas.getContext('2d');
-                                    labelContext.clearRect(0, 0, canvas.width, canvas.height);
-                                    addMultiLineText(metricsLabels.data, canvas.width / 2, canvas.height / 2, canvas['textSize'], canvas.width, labelContext);
-                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
+                            let x = labelPositions[0],
+                                y = labelPositions[2],
+                                z = labelPositions[1];
+                            if (conf.labelsRenderingMode === "2D") {
+                                if (conf.labelsRenderingFormat === "Text") {
                                     // update text label
                                     metricsLabels.element.getElementsByTagName('p').item(0).textContent = metricsLabels.data;
-                                } else if (conf.metricsLabelsFormat === "Table") {
+                                } else if (conf.labelsRenderingFormat === "Table") {
                                     // update table
                                     updateHtmlTable(metricsLabels.element.getElementsByTagName('table').item(0), metricsLabels.data);
-                                } else if (conf.metricsLabelsFormat === "Json") {
+                                } else if (conf.labelsRenderingFormat === "Json") {
                                     // update json
                                     metricsLabels.element.getElementsByTagName('p').item(0).textContent = metricsLabels.data;
                                 }
-                            } else if (conf.labelsRendering === "3D") {
+                            } else if (conf.labelsRenderingMode === "3D") {
                                 //get the label texture from the material map
                                 let metricsLabelsTexture = metricsLabels.material.map.image;
-                                if (conf.metricsLabelsFormat === "ClassicCanvas") {
-                                    //here metricsLabelsTexture is a canvas
-                                    let labelContext = metricsLabelsTexture.getContext('2d')
-                                    //clear the canvas
-                                    labelContext.clearRect(0, 0, metricsLabelsTexture.width, metricsLabelsTexture.height);
-                                    //update the canvas
-                                    addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture['textSize'], metricsLabelsTexture.width, labelContext);
-                                    //update the three.js object material map
-                                    metricsLabels.material.map.needsUpdate = true;
-                                    y = y + 0.5;
-                                } else if (conf.metricsLabelsFormat === "ClassicSvg") {
-                                    // here metricLabelTexture is a table svg
-                                    labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
-                                    updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
-                                    y = y + 0.5;
-                                } else if (conf.metricsLabelsFormat === "Table") {
+                                if (conf.labelsRenderingFormat === "Text") {
+                                    if (conf.labels3DRenderingMode === "Canvas") {
+                                        //here metricsLabelsTexture is a canvas
+                                        let labelContext = metricsLabelsTexture.getContext('2d')
+                                            //clear the canvas
+                                        labelContext.clearRect(0, 0, metricsLabelsTexture.width, metricsLabelsTexture.height);
+                                        //update the canvas
+                                        addMultiLineText(metricsLabels.data, metricsLabelsTexture.width / 2, metricsLabelsTexture.height / 2, metricsLabelsTexture['textSize'], metricsLabelsTexture.width, labelContext);
+                                        //update the three.js object material map
+                                        metricsLabels.material.map.needsUpdate = true;
+                                        y = y + 0.5;
+                                    } else if (conf.labels3DRenderingMode === "Svg") {
+                                        // here metricLabelTexture is a table svg
+                                        labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
+                                        updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
+                                        y = y + 0.5;
+                                    }
+                                } else if (conf.labelsRenderingFormat === "Table") {
                                     // here metricsLabelsTexture is a table svg
                                     updateHtmlTable(labelDiv[metricsLabelsName].getElementsByTagName('table').item(0), metricsLabels.data);
                                     updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
                                     y = y + 1.8;
-                                } else if (conf.metricsLabelsFormat === "Json") {
+                                } else if (conf.labelsRenderingFormat === "Json") {
                                     // here metricsLabelsTexture is a json svg
                                     labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
                                     updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
@@ -760,9 +765,10 @@ export default (function (parentElement, conf) {
                 }
 
                 // display layer
-                let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1],resize = 0.5;
+                let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1],
+                    resize = 0.5;
                 if (conf.displayLayersLabels && conf.displayMetricsLabels) {
-                    if(conf.labelsRendering==="2D"){
+                    if (conf.labelsRenderingMode === "2D") {
                         resize = -1
                     }
                     // set label position
@@ -774,7 +780,9 @@ export default (function (parentElement, conf) {
                 }
 
                 // frame variable
-                let positions = [], arrowPositions = [], frameName;
+                let positions = [],
+                    arrowPositions = [],
+                    frameName;
                 if (conf.frameShape === 'Dynamic') {
                     // set frame name
                     frameName = layer + '_Dynamic_Frame';
@@ -809,7 +817,7 @@ export default (function (parentElement, conf) {
                         arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)), 0, Math.min.apply(Math, zTab)]);
                         if (conf.layersLabelsOrientation === "Sticky") {
                             arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab)]);
-                            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab)+(resize) , 0);
+                            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab) + (resize), 0);
                         } else if (conf.layersLabelsOrientation === "Free") {
                             arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding)]);
                             layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), 0);
@@ -1016,7 +1024,10 @@ export default (function (parentElement, conf) {
          * @param {*} meshs three.js mesh
          */
         function fitCameraToObjects(meshs) {
-            let tabRad = [], tabX = [], tabY = [], tabZ = [];
+            let tabRad = [],
+                tabX = [],
+                tabY = [],
+                tabZ = [];
             //get min fov
             let vFoV = camera.getEffectiveFOV();
             let hFoV = camera.fov * camera.aspect;
@@ -1124,6 +1135,3 @@ export default (function (parentElement, conf) {
     }
 
 );
-
-
-
