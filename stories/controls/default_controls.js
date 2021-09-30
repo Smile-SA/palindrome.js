@@ -232,7 +232,7 @@ export function defaultControls() {
         },
 
         metricsLabelsFormat: {
-            name: "labelsFormat",
+            name: "metricsLabelsFormat",
             description: "To change the metrics labels format",
             defaultValue: "ClassicSvg",
             control: {
@@ -245,7 +245,7 @@ export function defaultControls() {
             },
         },
         metricsLabelsStructure: {
-            name: "labelsStructure",
+            name: "metricsLabelsStructure",
             description: "To select the structure of the label to display",
             defaultValue: ["Name", "Type", "Value", "Unit"],
             control: {
@@ -255,7 +255,7 @@ export function defaultControls() {
             table: { category: "Labels", subcategory: "Metrics" }
         },
         metricsLabelsCharacterFont: {
-            name: "labelsCharacterFont",
+            name: "metricsLabelsCharacterFont",
             defaultValue: "Arial",
             description: "Change the characters of the metrics labels",
             control: {
@@ -268,7 +268,7 @@ export function defaultControls() {
             },
         },
         metricsLabelsSize: {
-            name: "labelsSize",
+            name: "metricsLabelsSize",
             defaultValue: 15,
             description: "Change the size of the metrics labels",
             control: {
@@ -285,7 +285,7 @@ export function defaultControls() {
             },
         },
         metricsLabelsColor: {
-            name: "labelsColor",
+            name: "metricsLabelsColor",
             defaultValue: "#000000",
             control: "color",
             description: "Change the color of metrics labels",
@@ -295,7 +295,7 @@ export function defaultControls() {
             },
         },
         metricsLabelsBackground: {
-            name: "labelsBackground",
+            name: "metricsLabelsBackground",
             defaultValue: "#f0f0f0",
             control: "color",
             description: "Change the background color of metrics labels",
@@ -305,7 +305,7 @@ export function defaultControls() {
             },
         },
         metricsLabelsBold: {
-            name: "labelsBold",
+            name: "metricsLabelsBold",
             defaultValue: true,
             control: "boolean",
             description: "Bold or not the metrics labels",
@@ -315,7 +315,7 @@ export function defaultControls() {
             },
         },
         metricsLabelsItalic: {
-            name: "labelsItalic",
+            name: "metricsLabelsItalic",
             defaultValue: false,
             description: "Italicize or not the metrics labels ",
             control: "boolean",
@@ -325,7 +325,7 @@ export function defaultControls() {
             },
         },
         displaysMetricsLabelsUnit: {
-            name: "displayLabelsUnit",
+            name: "displayMetricsLabelsUnit",
             defaultValue: true,
             description: "Display or not the units of metrics labels",
             control: "boolean",
@@ -335,7 +335,7 @@ export function defaultControls() {
             },
         },
         displayMetricsLabels: {
-            name: "displayLabels",
+            name: "displayMetricsLabels",
             defaultValue: true,
             description: "Display or not the metrics labels",
             control: "boolean",
@@ -345,7 +345,7 @@ export function defaultControls() {
             },
         },
         displayAllMetricsLabels: {
-            name: "displayAllLabels",
+            name: "displayAllMetricsLabels",
             defaultValue: false,
             description: "Display or not all metrics labels",
             control: "boolean",
