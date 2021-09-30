@@ -233,7 +233,7 @@ export function defaultControls() {
         labels3DRenderingMode: {
             name: "labels3DRenderingMode",
             description: "To change the metrics labels format",
-            defaultValue: "Canvas",
+            defaultValue: "Svg",
             control: {
                 type: "select",
                 options: ["Canvas", "Svg"]

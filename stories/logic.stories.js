@@ -2,8 +2,8 @@ import { logicBoolean } from '../src/data_structures_examples/logic_Boolean';
 import { logicTernary } from '../src/data_structures_examples/logic_Ternary';
 import { logicFourValued } from '../src/data_structures_examples/logic_FourValued';
 import { logicFiveThreeTwo } from '../src/data_structures_examples/logic_FiveThreeTwo';
-import {defaultControls} from './controls/default_controls';
-import {createPalindrome} from './controls/createPalindrome';
+import { defaultControls } from './controls/defaultControls';
+import { createPalindrome } from './controls/createPalindrome';
 
 export default {
     title: 'Use Cases/Palindrome/Multi-values logic example',
@@ -16,7 +16,7 @@ Boolean.args = {
     mainAppColor: '#00FF06',
     subAppColor: '#9FC5E8',
     statusColorLow: '#9FC5E8',
-    statusColorMed:  '#00FF00',
+    statusColorMed: '#00FF00',
     statusColorHigh: '#FF0000',
     data: logicBoolean(),
 };
@@ -27,7 +27,7 @@ Ternary.args = {
     mainAppColor: '#00FF06',
     subAppColor: '#9FC5E8',
     statusColorLow: '#9FC5E8',
-    statusColorMed:  '#00FF00',
+    statusColorMed: '#00FF00',
     statusColorHigh: '#FF0000',
     data: logicTernary(),
 };
@@ -38,7 +38,7 @@ FourValued.args = {
     mainAppColor: '#FFCC00',
     subAppColor: '#FFFFFF',
     statusColorLow: '#9FC5E8',
-    statusColorMed:  '#00FF00',
+    statusColorMed: '#00FF00',
     statusColorHigh: '#FF0000',
     data: logicFourValued(),
 };
@@ -49,7 +49,7 @@ FiveThreeTwoPyramid.args = {
     mainAppColor: '#FFCC00',
     subAppColor: '#FFFFFF',
     statusColorLow: '#9FC5E8',
-    statusColorMed:  '#00FF00',
+    statusColorMed: '#00FF00',
     statusColorHigh: '#FF0000',
     data: logicFiveThreeTwo(),
 };
