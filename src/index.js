@@ -58,9 +58,11 @@ export default (function(parentElement, conf) {
 
         //3D related
         let labelDiv = [];
-        if (conf.labelsRenderingMode === "3D") {
-            layerParameters['labelSize'] = layerParameters['labelSize'] * 1.8;
+        if (conf.metricsLabelsRenderingMode === "3D") {
             metricParameters['labelSize'] = metricParameters['labelSize'] * 1.8;
+        }
+        if (conf.layersLabelsRenderingMode === "3D") {
+            layerParameters['labelSize'] = layerParameters['labelSize'] * 1.8;
         }
 
         parentElement.appendChild(renderer.domElement);
@@ -389,7 +391,7 @@ export default (function(parentElement, conf) {
          */
         function getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit) {
             let data = '';
-            if (conf.labelsRenderingFormat === "Text") {
+            if (conf.metricsLabelsRenderingFormat === "Text") {
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += labelName;
                 }
@@ -402,7 +404,7 @@ export default (function(parentElement, conf) {
                 if (conf.metricsLabelsStructure.indexOf("Unit") != -1) {
                     data += ' ' + labelUnit;
                 }
-            } else if (conf.labelsRenderingFormat === "Json") {
+            } else if (conf.metricsLabelsRenderingFormat === "Json") {
                 data += '{';
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
                     data += '"Name" : "' + labelName + '", ';
@@ -417,7 +419,7 @@ export default (function(parentElement, conf) {
                     data += '"Units" : "' + labelUnit + '"';
                 }
                 data += '}'
-            } else if (conf.labelsRenderingFormat === "Table") {
+            } else if (conf.metricsLabelsRenderingFormat === "Table") {
                 let tbody = [],
                     tHead = [];
                 if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
@@ -456,11 +458,11 @@ export default (function(parentElement, conf) {
                 div = document.createElement('div');
             div.className = 'label ' + labelName;
             div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            if (conf.labelsRenderingFormat === 'Text') {
+            if (conf.metricsLabelsRenderingFormat === 'Text') {
                 div.appendChild(createHtmlText(data, false, false, metricParameters));
-            } else if (conf.labelsRenderingFormat === "Table") {
+            } else if (conf.metricsLabelsRenderingFormat === "Table") {
                 div.appendChild(createHtmlTable(data, metricParameters));
-            } else if (conf.labelsRenderingFormat === "Json") {
+            } else if (conf.metricsLabelsRenderingFormat === "Json") {
                 div.appendChild(createHtmlText(data, false, true, metricParameters));
             }
             const metricsLabels = new CSS2DObject(div);
@@ -489,19 +491,19 @@ export default (function(parentElement, conf) {
             labelDiv[labelName] = document.createElement('div');
             labelDiv[labelName].className = 'label ' + labelName;
             labelDiv[labelName].setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-            if (conf.labelsRenderingFormat === 'Text') {
+            if (conf.metricsLabelsRenderingFormat === 'Text') {
                 // canvas contents will be used for a texture
-                if (conf.labels3DRenderingMode === 'Canvas') {
+                if (conf.metricsLabels3DRenderingMode === 'Canvas') {
                     // canvas contents will be used for a texture
                     textureImage = createLabelCanvas(labelName, data, metricParameters);
-                } else if (conf.labels3DRenderingMode === 'Svg') {
+                } else if (conf.metricsLabels3DRenderingMode === 'Svg') {
                     labelDiv[labelName].appendChild(createHtmlText(data, false, false, metricParameters));
                     textureImage = htmlToSvg(labelDiv[labelName]);
                 }
-            } else if (conf.labelsRenderingFormat === "Table") {
+            } else if (conf.metricsLabelsRenderingFormat === "Table") {
                 labelDiv[labelName].appendChild(createHtmlTable(data, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
-            } else if (conf.labelsRenderingFormat === "Json") {
+            } else if (conf.metricsLabelsRenderingFormat === "Json") {
                 labelDiv[labelName].appendChild(createHtmlText(data, false, true, metricParameters));
                 textureImage = htmlToSvg(labelDiv[labelName]);
             }
@@ -598,14 +600,14 @@ export default (function(parentElement, conf) {
                             break;
                         } else {
                             metricLabelsIds.push(key)
-                            if (conf.labelsRenderingMode === "2D") {
+                            if (conf.metricsLabelsRenderingMode === "2D") {
                                 scene.add(create2DMetricsLabels(key, value.label, 'current', value.current, metricIndex, value.unit));
                                 if (conf.displayAllMetricsLabels) {
                                     scene.add(create2DMetricsLabels(key, value.label, 'min', value.min, metricIndex, value.unit));
                                     scene.add(create2DMetricsLabels(key, value.label, 'med', value.med, metricIndex, value.unit));
                                     scene.add(create2DMetricsLabels(key, value.label, 'max', value.max, metricIndex, value.unit));
                                 }
-                            } else if (conf.labelsRenderingMode === "3D") {
+                            } else if (conf.metricsLabelsRenderingMode === "3D") {
                                 scene.add(create3DMetricsLabels(key, value.label, 'current', value.current, metricIndex, value.unit));
                                 if (conf.displayAllMetricsLabels) {
                                     scene.add(create3DMetricsLabels(key, value.label, 'min', value.min, metricIndex, value.unit));
@@ -623,9 +625,9 @@ export default (function(parentElement, conf) {
                             break;
                         } else {
                             layersLabelsIds.push(key);
-                            if (conf.labelsRenderingMode === "2D") {
+                            if (conf.layersLabelsRenderingMode === "2D") {
                                 scene.add(create2DLayersLabels(key, value.label, layerIndex));
-                            } else if (conf.labelsRenderingMode === "3D") {
+                            } else if (conf.layersLabelsRenderingMode === "3D") {
                                 layersLabelsIds.push(key);
                                 scene.add(create3DLayersLabels(key, value.label, layerIndex));
                             }
@@ -715,22 +717,22 @@ export default (function(parentElement, conf) {
                             let x = labelPositions[0],
                                 y = labelPositions[2],
                                 z = labelPositions[1];
-                            if (conf.labelsRenderingMode === "2D") {
-                                if (conf.labelsRenderingFormat === "Text") {
+                            if (conf.metricsLabelsRenderingMode === "2D") {
+                                if (conf.metricsLabelsRenderingFormat === "Text") {
                                     // update text label
                                     metricsLabels.element.getElementsByTagName('p').item(0).textContent = metricsLabels.data;
-                                } else if (conf.labelsRenderingFormat === "Table") {
+                                } else if (conf.metricsLabelsRenderingFormat === "Table") {
                                     // update table
                                     updateHtmlTable(metricsLabels.element.getElementsByTagName('table').item(0), metricsLabels.data);
-                                } else if (conf.labelsRenderingFormat === "Json") {
+                                } else if (conf.metricsLabelsRenderingFormat === "Json") {
                                     // update json
                                     metricsLabels.element.getElementsByTagName('p').item(0).textContent = metricsLabels.data;
                                 }
-                            } else if (conf.labelsRenderingMode === "3D") {
+                            } else if (conf.metricsLabelsRenderingMode === "3D") {
                                 //get the label texture from the material map
                                 let metricsLabelsTexture = metricsLabels.material.map.image;
-                                if (conf.labelsRenderingFormat === "Text") {
-                                    if (conf.labels3DRenderingMode === "Canvas") {
+                                if (conf.metricsLabelsRenderingFormat === "Text") {
+                                    if (conf.metricsLabels3DRenderingMode === "Canvas") {
                                         //here metricsLabelsTexture is a canvas
                                         let labelContext = metricsLabelsTexture.getContext('2d')
                                             //clear the canvas
@@ -740,18 +742,18 @@ export default (function(parentElement, conf) {
                                         //update the three.js object material map
                                         metricsLabels.material.map.needsUpdate = true;
                                         y = y + 0.4;
-                                    } else if (conf.labels3DRenderingMode === "Svg") {
+                                    } else if (conf.metricsLabels3DRenderingMode === "Svg") {
                                         // here metricLabelTexture is a table svg
                                         labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
                                         updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
                                         y = y + 1;
                                     }
-                                } else if (conf.labelsRenderingFormat === "Table") {
+                                } else if (conf.metricsLabelsRenderingFormat === "Table") {
                                     // here metricsLabelsTexture is a table svg
                                     updateHtmlTable(labelDiv[metricsLabelsName].getElementsByTagName('table').item(0), metricsLabels.data);
                                     updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
                                     y = y + 1.8;
-                                } else if (conf.labelsRenderingFormat === "Json") {
+                                } else if (conf.metricsLabelsRenderingFormat === "Json") {
                                     // here metricsLabelsTexture is a json svg
                                     labelDiv[metricsLabelsName].getElementsByTagName('p').item(0).innerHTML = metricsLabels.data;
                                     updateSvgSrc(metricsLabelsTexture, labelDiv[metricsLabelsName], metricsLabels.material.map);
@@ -771,7 +773,7 @@ export default (function(parentElement, conf) {
                 let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1],
                     resize = 0.5;
                 if (conf.displayLayersLabels && conf.displayMetricsLabels) {
-                    if (conf.labelsRenderingMode === "2D") {
+                    if (conf.layersLabelsRenderingMode === "2D") {
                         resize = -1
                     }
                     // set label position

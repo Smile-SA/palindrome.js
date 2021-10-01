@@ -218,9 +218,9 @@ export function defaultControls() {
             },
         },
         // metrics labels configuration
-        labelsRenderingMode: {
-            name: "labelRenderingMode",
-            description: "Change the rendering style of labels",
+        metricsLabelsRenderingMode: {
+            name: "metricsLabelsRenderingMode",
+            description: "Change the rendering style of metrics labels",
             defaultValue: "3D",
             control: {
                 type: "select",
@@ -228,10 +228,11 @@ export function defaultControls() {
             },
             table: {
                 category: "Labels",
+                subcategory: "Metrics"
             },
         },
-        labels3DRenderingMode: {
-            name: "labels3DRenderingMode",
+        metricsLabels3DRenderingMode: {
+            name: "metricsLabels3DRenderingMode",
             description: "To change the metrics labels format",
             defaultValue: "Canvas",
             control: {
@@ -240,11 +241,11 @@ export function defaultControls() {
             },
             table: {
                 category: "Labels",
+                subcategory: "Metrics"
             },
         },
-
-        labelsRenderingFormat: {
-            name: "labelsRenderingFormat",
+        metricsLabelsRenderingFormat: {
+            name: "metricsLabelsRenderingFormat",
             description: "To change the metrics labels format",
             defaultValue: "Text",
             control: {
@@ -253,6 +254,7 @@ export function defaultControls() {
             },
             table: {
                 category: "Labels",
+                subcategory: "Metrics"
             },
         },
         metricsLabelsStructure: {
@@ -366,6 +368,20 @@ export function defaultControls() {
             },
         },
         // layer label configuration
+        // metrics labels configuration
+        layersLabelsRenderingMode: {
+            name: "layersLabelsRenderingMode",
+            description: "Change the rendering style of layers labels",
+            defaultValue: "3D",
+            control: {
+                type: "select",
+                options: ["2D", "3D"]
+            },
+            table: {
+                category: "Labels",
+                subcategory: "Layers"
+            },
+        },
         layersLabelsOrientation: {
             name: 'layersLabelsOrientation',
             description: 'Change the orientation of layers label',
