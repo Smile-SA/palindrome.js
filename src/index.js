@@ -116,9 +116,7 @@ export default (function(parentElement, conf) {
                 createLabels(data);
             }
             render(data);
-            if (conf.fitCameraPosition) {
-                fitCameraToObjects(meshs);
-            }
+            cameraVewOptions(meshs);
         }
 
         /**
@@ -1025,46 +1023,59 @@ export default (function(parentElement, conf) {
         }
 
         /**
-         * Fit camera
+         * Camera vew options
          * @param {*} meshs three.js mesh
          */
-        function fitCameraToObjects(meshs) {
-            let tabRad = [],
-                tabX = [],
+        function cameraVewOptions(meshs) {
+            let tabX = [],
                 tabY = [],
                 tabZ = [];
             //get min fov
-            let vFoV = camera.getEffectiveFOV();
-            let hFoV = camera.fov * camera.aspect;
-            let FoV = Math.min(vFoV, hFoV) / 2;
+            let vFoV = camera.getEffectiveFOV(),
+                hFoV = camera.fov * camera.aspect,
+                FoV = Math.min(vFoV, hFoV) / 2;
 
             //get the center of position of objects
             for (let key in meshs) {
-                let object = meshs[key];
-                let bs = object.geometry.boundingSphere;
-                tabRad.push(bs.radius);
-                let vector = bs.center.clone();
+                let object = meshs[key],
+                    bs = object.geometry.boundingSphere,
+                    vector = bs.center.clone();
                 tabX.push(vector.x);
                 tabY.push(vector.y);
                 tabZ.push(vector.z);
             }
             // calculate the center of objects
-            let x = ((Math.max.apply(Math, tabX) + Math.min.apply(Math, tabX)) / 2);
-            let y = ((Math.max.apply(Math, tabY) + Math.min.apply(Math, tabY)) / 2);
-            let z = ((Math.max.apply(Math, tabZ) + Math.min.apply(Math, tabZ)) / 2);
-            let centerVector = new THREE.Vector3(x, y, z);
+            let xMax = (Math.max.apply(Math, tabX)),
+                xMin = (Math.min.apply(Math, tabX)),
+                yMax = (Math.max.apply(Math, tabY)),
+                yMin = (Math.min.apply(Math, tabY)),
+                zMax = (Math.max.apply(Math, tabZ)),
+                zMin = (Math.min.apply(Math, tabZ));
 
-            // set camera position
-            let sin = Math.sin(FoV * Math.PI / 360);
-            let r = (Math.max.apply(Math, tabRad));
-            let scale = (r / sin);
-            let cameraDir = new THREE.Vector3();
-            camera.getWorldDirection(cameraDir);
-            let cameraOffs = cameraDir.clone();
-            cameraOffs.multiplyScalar(-(scale + y));
-            let newCameraPos = centerVector.clone().add(cameraOffs);
-            camera.position.copy(newCameraPos);
+            let cameraDir = new THREE.Vector3(),
+                centerMaxVector = new THREE.Vector3(xMax, yMax, zMax),
+                centerMinVector = new THREE.Vector3(xMin, yMin, zMax),
+                dis = centerMaxVector.distanceTo(centerMinVector),
+                sin = Math.sin(FoV * Math.PI / 160);
+            if (dis < 36) {
+                dis = 36
+            }
+            let scale = dis / sin;
+            // calculate the center of objects
+            if (conf.cameraOptions.indexOf("Fit") != -1) {
+                camera.getWorldDirection(cameraDir);
+                let cameraOffs = cameraDir.clone();
+                cameraOffs.multiplyScalar(-scale);
+                let newCameraPos = centerMaxVector.clone().add(cameraOffs);
+                camera.position.copy(newCameraPos);
+            }
+            if (conf.cameraOptions.indexOf("Top") != -1) {
+                // set camera position
+                camera.position.set(0, scale, 0);
+                camera.lookAt(0, 0, 0);
+            }
         }
+
 
         /**
          * Draw a frame in a plane (layer)
