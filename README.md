@@ -55,19 +55,19 @@ Configuration parameters and their options
 
 | Name| Description | type | Default | Options |
 | ------ | ------ | ------ |------ |------ |
-| labelsRendering | Change the rendering style of labels | String | 3D TextSprite | '2D', '3D TextSprite', '3D TextWebGlFont'  |
+| labelsRendering | Change the rendering style of labels | String | 3D TextSprite | "2D", "3D TextSprite", "3D TextWebGlFont"  |
 | labelsStructure | Select the structure of the label to display | String | "Name","Type","Value","Unit" | "Name","Type","Value","Unit"  |
-| labelsCharacterFont | Change the characters of the labels | String| Serif | 'Arial', 'Serif', 'Sans-serif' |
-| labelsOrientation | Change the orientation of layers label | String| Sticky | 'Sticky', 'Free'|
-| labelsSize | Change the size of the labels| String| Medium |'Small', 'Medium', 'Large' |
+| labelsCharacterFont | Change the characters of the labels | String| Serif | "Arial", "Serif", "Sans-serif" |
+| labelsOrientation | Change the orientation of layers label | String| Sticky | "Sticky", "Free"|
+| labelsSize | Change the size of the labels| String| Medium |"Small", "Medium", "Large" |
 | labelsColor | Change the color of the labels | String| #000000 | - |
 | labelsBold | Bold or not the labels | Boolean| True | -|
 | labelsItalic| Italicize or not the labels | Boolean| False | -|
 | displayLabelsUnits | Display or not the units of labels | Boolean| True | -|
 | displayLabels | Display or not the labels | Boolean| True | -|
 | displayAllLabels | Display or not all labels| Boolean| False | -|
-| fitCameraPosition |Fit camera or not to display objets in plan| Boolean| True | -|
-| frameShape | Change the frames style| String| Rectangle |'Rectangle', 'Dynamic' |
+| cameraOptions |Select camera vew options| String| "Fit" |"Fit", "Top"|
+| frameShape | Change the frames style| String| Rectangle |"Rectangle", "Dynamic" |
 | frameBackgroundColor | Change the frame background color | String | #FFFFFF | - |
 | frameOpacity | Change the frame opacity| Number |  0.5| - |
 | framePadding | Change the frame padding| Number |  2| - |
