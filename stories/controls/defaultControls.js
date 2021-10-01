@@ -22,15 +22,19 @@ export function defaultControls() {
                 category: "Palindrome"
             },
         },
-        fitCameraPosition: {
-            name: "fitCameraPosition",
-            defaultValue: true,
-            control: "boolean",
-            description: "Fit camera or not to display the objets in plan",
+        cameraOptions: {
+            name: "cameraOptions",
+            defaultValue: ["Fit"],
+            description: "Select camera vew options",
+            control: {
+                type: "check",
+                options: ["Fit", "Top"]
+            },
             table: {
                 category: "Palindrome",
             },
         },
+
         //metrics
         metricMagnifier: {
             name: "metricMagnifier",
@@ -368,7 +372,6 @@ export function defaultControls() {
             },
         },
         // layer label configuration
-        // metrics labels configuration
         layersLabelsRenderingMode: {
             name: "layersLabelsRenderingMode",
             description: "Change the rendering style of layers labels",
