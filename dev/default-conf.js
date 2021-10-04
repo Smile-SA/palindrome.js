@@ -1,4 +1,4 @@
-import { defaultControls } from '../stories/controls/default_controls.js';
+import { defaultControls } from '../stories/controls/defaultControls.js';
 import { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
 import {getPalindrome} from "../stories/controls/getPalindrome";
 
