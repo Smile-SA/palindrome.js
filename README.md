@@ -8,9 +8,7 @@
 _**```Palindrome.js``` is still considered as an experimental / beta prototype, be aware API can change at any moment. Feedbacks are more than welcome !**_
 
 <p float="left">
-<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="assets/img/Palindrome.js-default.png" width="32%" >
-<img alt="Datacenter energy efficiency" desc="Datacenter energy efficiency" title="Datacenter energy efficiency" src="assets/img/dc-energy-efficency.png" width="33.5%">
-<img alt="Datacenter custom configuration" desc="Datacenter custom configuration" title="Datacenter custom configuration" src="assets/img/dc-custom-configuration.png" width="29.8%">
+<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="assets/img/Palindrome.js-examples.png" width="93%" >
 </p>
 
 ## Motivation
@@ -39,7 +37,7 @@ Then, run ```storybook``` for an interactive session :
 yarn storybook
 ```
 
-<img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/palindrome-storybook.png" width="93%">
+<img alt="Palindrome Storybook" desc="Palindrome Storybook" title="Palindrome Storybook" src="assets/img/Palindrome.js-storybook.png" width="93%">
 
 ## Default HTML
 Alternatively, you can run the default html session :
@@ -48,7 +46,7 @@ Alternatively, you can run the default html session :
 yarn dev
 ```
 
-<img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/palindrome-html.png" width="93%">
+<img alt="Palindrome HTML" desc="Palindrome HTML" title="Palindrome HTML" src="assets/img/Palindrome.js-html.png" width="93%">
 
 ## API Reference
 Configuration parameters and their options
