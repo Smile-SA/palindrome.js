@@ -656,7 +656,7 @@ export function defaultControls() {
         },
         mockupData: {
             name: "mockupData",
-            defaultValue: true,
+            defaultValue: false,
             control: "boolean",
             description: "Make dynamic the data ",
             table: {
