@@ -1,0 +1,21 @@
+/// <reference types="cypress" />
+
+describe ("layerMidColor | lineColor | mainAppColor | metricsLabelsColor | layersLabelsColor | frameLineColor", function () { 
+
+  it ('layerMidColor', function () {
+    const elements = ["layerMidColor", "lineColor", "mainAppColor", "metricsLabelsColor", "layersLabelsColor", "frameLineColor" ]
+    cy.visit(Cypress.env("theurl"))
+    
+    elements.forEach(element => {
+      var ele = "#control-" + element
+      
+      if (element == "layerMidColor") {
+        cy.get(ele).eval_color_blue(ele)
+      }
+      else{
+        cy.get(ele).eval_color_red(ele)
+      }
+
+    })
+  })
+})

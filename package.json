@@ -1,5 +1,5 @@
 {
-  "name": "Palindrome",
+  "name": "palindromecypress",
   "version": "0.2",
   "description": "3D monitoring for metrics and KPIs",
   "default": "index.html",
@@ -7,13 +7,18 @@
   "author": "Alter Way RnD <rnd@alterway.fr>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "cypress": "^9.2.1",
+    "cypress-match-screenshot": "^1.1.0",
     "parcel-bundler": "^1.12.5"
   },
   "scripts": {
     "dev": "parcel index.html",
     "build": "parcel build index.html",
     "storybook": "start-storybook -p 6006 -s assets",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "cy:run": "cypress run",
+    "cypress:open": "cypress open",
+    "cypress": "cypress run"
   },
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",
@@ -24,7 +29,10 @@
     "@storybook/html": "6.3.4",
     "@storybook/theming": "^6.3.0",
     "@types/node": "15.12.2",
+    "cypress-visual-regression": "^1.6.3",
     "node": "^16.6.1",
+    "node-gyp": "^8.4.1",
+    "parcel": "^2.0.1",
     "storybook": "^6.3.2",
     "three": "0.117.1",
     "three-bmfont-text": "3.0.1",
