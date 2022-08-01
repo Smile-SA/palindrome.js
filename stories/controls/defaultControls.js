@@ -6,16 +6,11 @@ export function defaultControls() {
         // Palindrome configurations
         displayArea: {
             name: "displayArea",
-            defaultValue: "palindrome",
             description: "",
             control: "text",
-            table: {
-                category: "Palindrome"
-            },
         },
         palindromeSize: {
             name: "palindromeSize",
-            defaultValue: 3,
             description: "Resize the palindrome",
             control: "number",
             table: {
@@ -24,12 +19,11 @@ export function defaultControls() {
         },
         cameraOptions: {
             name: "cameraOptions",
-            defaultValue: ["Fit"],
             description: "Select camera vew options",
             control: {
                 type: "check",
-                options: ["Fit", "Top"]
             },
+            options: ["Fit", "Top"],
             table: {
                 category: "Palindrome",
             },
@@ -38,7 +32,6 @@ export function defaultControls() {
         //metrics
         metricMagnifier: {
             name: "metricMagnifier",
-            defaultValue: 10,
             description: "Resize the metrics",
             control: "number",
             table: {
@@ -47,21 +40,20 @@ export function defaultControls() {
             },
         },
         // layers
-        layerDisplayMode: {
-            name: "layerDisplayMode",
-            defaultValue: "dynamic",
-            description: "Configure the layers mode",
-            control: "text",
+        displayLayersLines: {
+            name: "displayLayersLines",
+            description: "display or not layer lines",
+            control: "boolean",
             table: {
                 category: "Palindrome",
                 subcategory: "Layer"
             },
         },
-        layerMidColor: {
-            name: "layerMidColor",
-            defaultValue: "#DFDF0B",
-            description: "Change the layer mid color",
-            control: "color",
+        layerDisplayMode: {
+            name: "layerDisplayMode",
+            description: "Configure the layers mode",
+            control: "select",
+            options: ["static", "dynamic", "mixed"],
             table: {
                 category: "Palindrome",
                 subcategory: "Layer"
@@ -69,18 +61,7 @@ export function defaultControls() {
         },
         displayLayers: {
             name: "displayLayers",
-            defaultValue: true,
             description: "Display or not the layers of palindrome",
-            control: "boolean",
-            table: {
-                category: "Palindrome",
-                subcategory: "Layer"
-            },
-        },
-        layerStatusControl: {
-            name: "layerStatusControl",
-            defaultValue: true,
-            description: "Control the state of the layer",
             control: "boolean",
             table: {
                 category: "Palindrome",
@@ -90,7 +71,6 @@ export function defaultControls() {
         // line
         lineOpacity: {
             name: "layerStatusControl",
-            defaultValue: 1,
             control: "number",
             description: "Change the line opacity",
             table: {
@@ -100,7 +80,6 @@ export function defaultControls() {
         },
         lineWidth: {
             name: "lineWidth",
-            defaultValue: 0.5,
             control: "number",
             description: "Resize the line widht",
             table: {
@@ -110,7 +89,6 @@ export function defaultControls() {
         },
         lineColor: {
             name: "lineColor",
-            defaultValue: "#000000",
             control: "color",
             description: "Change the line color",
             table: {
@@ -121,29 +99,9 @@ export function defaultControls() {
         //  sides
         displayMode: {
             name: "displayMode",
-            defaultValue: "dynamic",
-            control: "text",
+            control: "select",
+            options: ['static', 'dynamic', 'debug'],
             description: "Configure the sides mode",
-            table: {
-                category: "Palindrome",
-                subcategory: "Sides"
-            },
-        },
-        mainAppColor: {
-            name: "mainAppColor",
-            defaultValue: "#00FF06",
-            control: "color",
-            description: "Change the main app color",
-            table: {
-                category: "Palindrome",
-                subcategory: "Sides"
-            },
-        },
-        subAppColor: {
-            name: "subAppColor",
-            defaultValue: "#9FC5E8",
-            control: "color",
-            description: "Change the sub app color",
             table: {
                 category: "Palindrome",
                 subcategory: "Sides"
@@ -151,7 +109,6 @@ export function defaultControls() {
         },
         displaySides: {
             name: "displaySides",
-            defaultValue: true,
             control: "boolean",
             description: "Display or not the sides of palindrome",
             table: {
@@ -162,7 +119,6 @@ export function defaultControls() {
         // grid
         gridSize: {
             name: "gridSize",
-            defaultValue: 100,
             control: "number",
             description: "Resize the grid",
             table: {
@@ -172,7 +128,7 @@ export function defaultControls() {
         },
         gridDivisions: {
             name: "gridDivisions",
-            defaultValue: 100,
+
             control: "number",
             description: "Define the divisions of the grid",
             table: {
@@ -182,7 +138,6 @@ export function defaultControls() {
         },
         displayGrid: {
             name: "displayGrid",
-            defaultValue: true,
             control: "boolean",
             description: "Display or not the grid of the plan",
             table: {
@@ -193,7 +148,6 @@ export function defaultControls() {
         // zPlane
         zPlaneInitial: {
             name: "zPlaneInitial",
-            defaultValue: 0,
             control: "number",
             description: "Resize the initial zPlane",
             table: {
@@ -203,7 +157,6 @@ export function defaultControls() {
         },
         zPlaneHeight: {
             name: "zPlaneHeight",
-            defaultValue: 40,
             control: "number",
             description: "Resize the height zPlane",
             table: {
@@ -213,7 +166,6 @@ export function defaultControls() {
         },
         zPlaneMultilayer: {
             name: "zPlaneMultilayer",
-            defaultValue: -20,
             control: "number",
             description: "Resize the multilayer zPlane",
             table: {
@@ -225,11 +177,10 @@ export function defaultControls() {
         metricsLabelsRenderingMode: {
             name: "metricsLabelsRenderingMode",
             description: "Change the rendering style of metrics labels",
-            defaultValue: "3D",
             control: {
                 type: "select",
-                options: ["2D", "3D"]
             },
+            options: ["2D", "3D"],
             table: {
                 category: "Labels",
                 subcategory: "Metrics"
@@ -238,11 +189,10 @@ export function defaultControls() {
         metricsLabels3DRenderingMode: {
             name: "metricsLabels3DRenderingMode",
             description: "To change the metrics labels format",
-            defaultValue: "Canvas",
             control: {
                 type: "select",
-                options: ["Canvas", "Svg"]
             },
+            options: ["Canvas", "Svg"],
             table: {
                 category: "Labels",
                 subcategory: "Metrics"
@@ -251,11 +201,11 @@ export function defaultControls() {
         metricsLabelsRenderingFormat: {
             name: "metricsLabelsRenderingFormat",
             description: "To change the metrics labels format",
-            defaultValue: "Text",
+
             control: {
                 type: "select",
-                options: ["Text", "Table", "Json"]
             },
+            options: ["Text", "Table", "Json"],
             table: {
                 category: "Labels",
                 subcategory: "Metrics"
@@ -264,21 +214,19 @@ export function defaultControls() {
         metricsLabelsStructure: {
             name: "metricsLabelsStructure",
             description: "To select the structure of the label to display",
-            defaultValue: ["Name", "Type", "Value", "Unit"],
             control: {
                 type: "check",
-                options: ["Name", "Type", "Value", "Unit"]
             },
-            table: { category: "Labels", subcategory: "Metrics" }
+            options: ["Name", "Type", "Value", "Unit"],
+            table: {category: "Labels", subcategory: "Metrics"}
         },
         metricsLabelsCharacterFont: {
             name: "metricsLabelsCharacterFont",
-            defaultValue: "Arial",
             description: "Change the characters of the metrics labels",
             control: {
                 type: "select",
-                options: ["Serif", "Sans-serif", "Arial", ]
             },
+            options: ["Serif", "San,s-serif", "Arial",],
             table: {
                 category: "Labels",
                 subcategory: "Metrics"
@@ -286,16 +234,20 @@ export function defaultControls() {
         },
         metricsLabelsSize: {
             name: "metricsLabelsSize",
-            defaultValue: 15,
             description: "Change the size of the metrics labels",
             control: {
                 type: "select",
-                options: {
-                    Small: 12,
-                    Medium: 15,
-                    Large: 18,
+                labels: {
+                    12: 'Small',
+                    15: 'Medium',
+                    18: 'Large'
                 }
             },
+            options: [
+                12,
+                15,
+                18,
+            ],
             table: {
                 category: "Labels",
                 subcategory: "Metrics"
@@ -303,7 +255,6 @@ export function defaultControls() {
         },
         metricsLabelsColor: {
             name: "metricsLabelsColor",
-            defaultValue: "#000000",
             control: "color",
             description: "Change the color of metrics labels",
             table: {
@@ -313,7 +264,6 @@ export function defaultControls() {
         },
         metricsLabelsBackground: {
             name: "metricsLabelsBackground",
-            defaultValue: "#f0f0f0",
             control: "color",
             description: "Change the background color of metrics labels",
             table: {
@@ -323,7 +273,6 @@ export function defaultControls() {
         },
         metricsLabelsBold: {
             name: "metricsLabelsBold",
-            defaultValue: true,
             control: "boolean",
             description: "Bold or not the metrics labels",
             table: {
@@ -333,18 +282,7 @@ export function defaultControls() {
         },
         metricsLabelsItalic: {
             name: "metricsLabelsItalic",
-            defaultValue: false,
             description: "Italicize or not the metrics labels ",
-            control: "boolean",
-            table: {
-                category: "Labels",
-                subcategory: "Metrics"
-            },
-        },
-        displaysMetricsLabelsUnit: {
-            name: "displayMetricsLabelsUnit",
-            defaultValue: true,
-            description: "Display or not the units of metrics labels",
             control: "boolean",
             table: {
                 category: "Labels",
@@ -353,7 +291,6 @@ export function defaultControls() {
         },
         displayMetricsLabels: {
             name: "displayMetricsLabels",
-            defaultValue: true,
             description: "Display or not the metrics labels",
             control: "boolean",
             table: {
@@ -363,7 +300,6 @@ export function defaultControls() {
         },
         displayAllMetricsLabels: {
             name: "displayAllMetricsLabels",
-            defaultValue: false,
             description: "Display or not all metrics labels",
             control: "boolean",
             table: {
@@ -371,15 +307,45 @@ export function defaultControls() {
                 subcategory: "Metrics"
             },
         },
+        displayMetricSpheres: {
+            name: "displayMetricSpheres",
+            description: "Display or not all metrics spheres",
+            control: "boolean",
+            table: {
+                category: "Labels",
+                subcategory: "Metrics"
+            },
+        },
+        displayValuesOnSphereHover: {
+            name: "displayValuesOnSphereHover",
+
+            description: "Display or not all metrics spheres",
+            control: "boolean",
+            table: {
+                category: "Labels",
+                subcategory: "Metrics"
+            },
+        },
         // layer label configuration
+        layerBehavior: {
+            name: "layerBehavior",
+            description: "Change the rendering color behavior of layers",
+            control: {
+                type: "radio",
+            },
+            options: ["static", "dynamic", 'ranges',],
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
         layersLabelsRenderingMode: {
             name: "layersLabelsRenderingMode",
             description: "Change the rendering style of layers labels",
-            defaultValue: "3D",
             control: {
                 type: "select",
-                options: ["2D", "3D"]
             },
+            options: ["2D", "3D"],
             table: {
                 category: "Labels",
                 subcategory: "Layers"
@@ -388,11 +354,11 @@ export function defaultControls() {
         layersLabelsOrientation: {
             name: 'layersLabelsOrientation',
             description: 'Change the orientation of layers label',
-            defaultValue: "Sticky",
+
             control: {
                 type: 'select',
-                options: ['Sticky', 'Free']
             },
+            options: ['Sticky', 'Free'],
             table: {
                 category: 'Labels',
                 subcategory: 'Layers'
@@ -400,12 +366,11 @@ export function defaultControls() {
         },
         layersLabelsCharacterFont: {
             name: 'layersLabelsCharacterFont',
-            defaultValue: 'Arial',
             description: 'Change the characters of layers label',
             control: {
                 type: 'select',
-                options: ['Arial', 'Serif', 'Sans-serif']
             },
+            options: ['Arial', 'Serif', 'Sans-serif'],
             table: {
                 category: 'Labels',
                 subcategory: 'Layers'
@@ -413,16 +378,21 @@ export function defaultControls() {
         },
         layersLabelsSize: {
             name: 'layersLabelsSize',
-            defaultValue: 15,
+
             description: 'Change the size of layers labels',
             control: {
                 type: 'select',
-                options: {
-                    Small: 12,
-                    Medium: 15,
-                    Large: 18,
-                }
+                labels: {
+                    12: 'Small',
+                    15: 'Medium',
+                    18: 'Large',
+                },
             },
+            options: [
+                12,
+                15,
+                18,
+            ],
             table: {
                 category: 'Labels',
                 subcategory: 'Layers'
@@ -430,7 +400,6 @@ export function defaultControls() {
         },
         layersLabelsColor: {
             name: 'layersLabelsColor',
-            defaultValue: '#000000',
             control: 'color',
             description: 'Change the color of layers label',
             table: {
@@ -440,7 +409,6 @@ export function defaultControls() {
         },
         layersLabelsBackground: {
             name: 'layersLabelsBackground',
-            defaultValue: '#ffffff',
             control: 'color',
             description: 'Change the background color of layers label',
             table: {
@@ -450,7 +418,7 @@ export function defaultControls() {
         },
         layersLabelsBold: {
             name: 'layersLabelsBold',
-            defaultValue: true,
+
             control: 'boolean',
             description: 'Bold or not the layers label',
             table: {
@@ -460,7 +428,6 @@ export function defaultControls() {
         },
         layersLabelsItalic: {
             name: 'layersLabelsItalic',
-            defaultValue: false,
             description: 'Italicize or not the layers label',
             control: 'boolean',
             table: {
@@ -470,7 +437,7 @@ export function defaultControls() {
         },
         displayLayersLabels: {
             name: 'displayLayersLabels',
-            defaultValue: true,
+
             description: 'Display or not the layers label',
             control: 'boolean',
             table: {
@@ -482,18 +449,24 @@ export function defaultControls() {
         frameShape: {
             name: "frameShape",
             description: 'Change the frames style',
-            defaultValue: "Rectangle",
             control: {
                 type: 'select',
-                options: ['Rectangle', 'Dynamic']
             },
+            options: ['Rectangle', 'Dynamic'],
+            table: {
+                category: 'Frames',
+            },
+        },
+        animateFrameDashedLine: {
+            name: 'animateFrameDashedLine',
+            description: 'static or dynamic frame line',
+            control: 'boolean',
             table: {
                 category: 'Frames',
             },
         },
         frameBackgroundColor: {
             name: 'frameBackgroundColor',
-            defaultValue: '#ffffff',
             control: 'color',
             description: 'Change the frame background color',
             table: {
@@ -502,7 +475,7 @@ export function defaultControls() {
         },
         frameOpacity: {
             name: 'frameOpacity',
-            defaultValue: 0.5,
+
             control: 'number',
             description: 'Change the frame opacity',
             table: {
@@ -511,7 +484,6 @@ export function defaultControls() {
         },
         framePadding: {
             name: 'framePadding',
-            defaultValue: 2,
             control: 'number',
             description: 'Change the frame padding',
             table: {
@@ -520,7 +492,6 @@ export function defaultControls() {
         },
         frameLineColor: {
             name: 'frameLineColor',
-            defaultValue: '#000000',
             control: 'color',
             description: 'Change the frame line color',
             table: {
@@ -529,7 +500,6 @@ export function defaultControls() {
         },
         frameLineWidth: {
             name: 'frameLineWidth',
-            defaultValue: 0.5,
             control: 'number',
             description: 'Change the frame line width',
             table: {
@@ -538,7 +508,6 @@ export function defaultControls() {
         },
         frameDashLineSize: {
             name: 'frameDashLineSize',
-            defaultValue: 3,
             control: 'number',
             description: 'Change the frame dash line size',
             table: {
@@ -547,7 +516,6 @@ export function defaultControls() {
         },
         displayFrames: {
             name: 'displayFrames',
-            defaultValue: true,
             description: 'Display or not the frames',
             control: 'boolean',
             table: {
@@ -556,7 +524,6 @@ export function defaultControls() {
         },
         displayFramesLine: {
             name: 'displayFramesLine',
-            defaultValue: true,
             description: 'Display or not the frames Line',
             control: 'boolean',
             table: {
@@ -565,7 +532,6 @@ export function defaultControls() {
         },
         displayFramesBackground: {
             name: 'displayFramesBackground',
-            defaultValue: false,
             description: 'Display or not the frames background',
             control: 'boolean',
             table: {
@@ -574,7 +540,6 @@ export function defaultControls() {
         },
         displayFramesArrow: {
             name: 'displayFramesArrow',
-            defaultValue: true,
             description: 'Display or not the frames arrows',
             control: 'boolean',
             table: {
@@ -583,41 +548,87 @@ export function defaultControls() {
         },
         // status configurations
         // color
+        mainStaticColor: {
+            name: "mainColorStatic",
+            control: "color",
+            description: "Change the main app color",
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
+        spheresBehavior: {
+            name: "spheresBehavior",
+            control: "radio",
+            description: "Make sphere dynamic or static",
+            options: ['static', 'dynamic', 'ranges'],
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer",
+            },
+        },
         statusColorLow: {
-            name: "statusColorLow",
-            defaultValue: "#9FC5E8",
+            name: "layerColorLow",
             control: "color",
             description: "Change the low status color",
             table: {
-                category: "Status",
-                subcategory: "Colors"
+                category: "Palindrome",
+                subcategory: "Layer"
             },
         },
         statusColorMed: {
-            name: "statusColorMed",
-            defaultValue: "#00FF00",
+            name: "layerColorMed",
             control: "color",
             description: "change the med status color",
             table: {
-                category: "Status",
-                subcategory: "Colors"
+                category: "Palindrome",
+                subcategory: "Layer"
             },
         },
         statusColorHigh: {
-            name: "statusColorHigh",
-            defaultValue: "#FF0000",
+            name: "layerColorHigh",
             control: "color",
             description: "Change the high status color",
             table: {
-                category: "Status",
-                subcategory: "Colors"
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
+        sphereColorLow: {
+            name: "sphereColorLow",
+
+            control: "color",
+            description: "change the med status color",
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
+        sphereColorMed: {
+            name: "sphereColorMed",
+
+            control: "color",
+            description: "Change the high status color",
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
+        sphereColorHigh: {
+            name: "sphereColorHigh",
+
+            control: "color",
+            description: "Change the very high status color",
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
             },
         },
         // range
         statusRangeLow: {
             name: "statusRangeLow",
-            defaultValue: 0,
-            control: "number",
+
+            control: {type: 'range', min: 0, max: 100, step: 1},
             description: "Resize the low status range",
             table: {
                 category: "Status",
@@ -626,8 +637,8 @@ export function defaultControls() {
         },
         statusRangeMed: {
             name: "statusRangeMed",
-            defaultValue: 30,
-            control: "number",
+
+            control: {type: 'range', min: 0, max: 100, step: 1},
             description: "Resize the med status range",
             table: {
                 category: "Status",
@@ -636,8 +647,8 @@ export function defaultControls() {
         },
         statusRangeHigh: {
             name: "statusRangeHigh",
-            defaultValue: 60,
-            control: "number",
+
+            control: {type: 'range', min: 0, max: 100, step: 1},
             description: "Resize the high status range",
             table: {
                 category: "Status",
@@ -647,7 +658,7 @@ export function defaultControls() {
         // data configuration
         data: {
             name: "Data",
-            defaultValue: "palindrome",
+
             control: "object",
             description: " The data we analyze ",
             table: {
@@ -656,12 +667,157 @@ export function defaultControls() {
         },
         mockupData: {
             name: "mockupData",
-            defaultValue: false,
+
             control: "boolean",
             description: "Make dynamic the data ",
             table: {
                 category: "Data"
             },
         },
+
+        //benchamark
+        benchmark: {
+            name: "benchmark",
+            control: 'inline-radio',
+            description: "Turn on or off benchmark mode",
+            options: ['Active', 'Inactive'],
+            table: {
+                category: "Benchmark"
+            },
+        },
+
+        testBothVersions: {
+            name: "basicAndWorkers",
+            control: 'boolean',
+            description: "test with and without web workers",
+            table: {
+                category: "Benchmark"
+            },
+        },
+
+        testDuration: {
+            name: "testDuration (minutes)",
+            control: "number",
+            description: "benchmark execution duration in minutes",
+            table: {
+                category: "Benchmark"
+            }
+        },
+        clearHistory: {
+            name: "clearHistory",
+            control: "boolean",
+            description: "allow or not clearing history after benchmark execution",
+            table: {
+                category: "Benchmark"
+            }
+        },
+
+        showResultsHistory: {
+            name: "showResultsHistory",
+            control: "boolean",
+            description: "show benchmark history",
+            table: {
+                category: "Benchmark"
+            }
+        },
+
+        webWorkers: {
+            name: "Web workers",
+            control: "boolean",
+            description: "enable or disable web workers",
+            table: {
+                category: "web workers"
+            }
+        },
+
+        resourcesLevel: {
+            name: "resourcesLevel (%)",
+            control: {type: 'range', min: 20, max: 80, step: 1},
+            description: "enable or disable web workers",
+            table: {
+                category: "web workers"
+            }
+        },
+    }
+}
+
+export function defaultValues() {
+    return {
+        displayArea: 'palindrome',
+        palindromeSize: 3,
+        cameraOptions: ['Fit'],
+        metricMagnifier: 10,
+        layerDisplayMode: 'dynamic',
+        mainStaticColor: '#f3c60a',
+        displayLayers: true,
+        lineOpacity: 1,
+        lineWidth: 0.5,
+        lineColor: '#000000',
+        displayMode: 'dynamic',
+        displaySides: true,
+        gridSize: 100,
+        gridDivisions: 100,
+        displayGrid: true,
+        zPlaneInitial: 0,
+        zPlaneHeight: 40,
+        zPlaneMultilayer: 20,
+        metricsLabelsRenderingMode: '3D',
+        metricsLabels3DRenderingMode: 'Canvas',
+        metricsLabelsRenderingFormat: 'Text',
+        metricsLabelsStructure: ['Name', 'Type', 'Value', 'Unit'],
+        metricsLabelsCharacterFont: 'Arial',
+        metricsLabelsSize: 15,
+        metricsLabelsColor: '#000000',
+        metricsLabelsBackground: '#f0f0f0',
+        metricsLabelsBold: true,
+        metricsLabelsItalic: false,
+        displaysMetricsLabelsUnit: true,
+        displayMetricsLabels: true,
+        displayAllMetricsLabels: false,
+        displayMetricSpheres: true,
+        displayValuesOnSphereHover: false,
+        layersLabelsRenderingMode: '3D',
+        layersLabelsOrientation: 'Sticky',
+        layersLabelsCharacterFont: 'Arial',
+        layersLabelsSize: 15,
+        layersLabelsColor: '#000000',
+        layersLabelsBackground: '#ffffff',
+        layersLabelsBold: true,
+        layersLabelsItalic: false,
+        displayLayersLines: false,
+        layerBehavior: 'ranges',
+        displayLayersLabels: true,
+        frameShape: 'Rectangle',
+        animateFrameDashedLine: false,
+        frameBackgroundColor: '#ffffff',
+        frameOpacity: 0.5,
+        framePadding: 2,
+        frameLineColor: '#000000',
+        frameLineWidth: 1,
+        frameDashLineSize: 3,
+        displayFrames: true,
+        displayFramesLine: true,
+        displayFramesBackground: false,
+        displayMetricsLabelsUnit: true,
+        displayFramesArrow: true,
+        statusColorLow: '#319b31',
+        statusColorMed: '#f3c60a',
+        statusColorHigh: '#FF0000',
+        spheresBehavior: 'ranges',
+        sphereColorLow: '#319b31',
+        sphereColorMed: '#f3c60a',
+        sphereColorHigh: '#FF0000',
+        statusRangeLow: 0,
+        statusRangeMed: 33,
+        statusRangeHigh: 66,
+        data: 'palindrome',
+        mockupData: false,
+        benchmark: 'Inactive',
+        testBothVersions: true,
+        testDuration: 1,
+        clearHistory: false,
+        webWorkers: false,
+        showResultsHistory: false,
+        resourcesLevel: 50,
     }
 }

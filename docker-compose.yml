@@ -1,12 +1,12 @@
-version: '3.4'
-
+version: '3.9'
 services:
   palindrome:
-    image: palindrome
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    build: .
+    container_name: palindrome_c
     environment:
       NODE_ENV: production
     ports:
-      - 3000:3000
+      - 1234:1234
+    volumes:
+      - .:/app/palindromeJS
+      - ./app/palindromeJS/node_modules

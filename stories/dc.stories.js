@@ -1,55 +1,46 @@
-import { dcBasicConfiguration } from '../src/data_structures_examples/dc_BasicConfiguration';
-import { dcCustomConfiguration } from '../src/data_structures_examples/dc_CustomConfiguration';
-import { dcEnergeticEfficiency } from '../src/data_structures_examples/dc_EnergeticEfficiency';
-import { dcFullMap } from '../src/data_structures_examples/dc_FullMap';
-import { defaultControls } from './controls/defaultControls';
-import { createPalindrome } from './controls/createPalindrome';
+import {dcBasicConfiguration} from '../data-examples/dc_BasicConfiguration';
+import {dcCustomConfiguration} from '../data-examples/dc_CustomConfiguration';
+import {dcEnergeticEfficiency} from '../data-examples/dc_EnergeticEfficiency';
+import {dcFullMap} from '../data-examples/dc_FullMap';
+import {defaultControls, defaultValues} from './controls/defaultControls';
+import {createPalindrome} from './controls/createPalindrome';
 
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
     argTypes: defaultControls(),
+    args: defaultValues(),
 };
 
 export const BasicConfiguration = createPalindrome.bind({});
 BasicConfiguration.args = {
-    layerMidColor: '#DFDF0B',
-    mainAppColor: '#00FF06',
-    subAppColor: '#9FC5E8',
-    statusColorLow: '#9FC5E8',
-    statusColorMed: '#00FF00',
-    statusColorHigh: '#FF0000',
+    mainStaticColor: '#FFCC00',
     data: dcBasicConfiguration(),
 };
 
 export const CustomConfiguration = createPalindrome.bind({});
 CustomConfiguration.args = {
     layerMidColor: '#FF2C00',
-    mainAppColor: '#FFCC00',
+    mainStaticColor: '#b700ff',
     subAppColor: '#FFFFFF',
-    statusColorLow: '#9FC5E8',
-    statusColorMed: '#00FF00',
+    statusColorLow: '#e8e49f',
+    statusColorMed: '#8400ff',
     statusColorHigh: '#FF0000',
+    statusColorVeryHigh: '#FF0000',
+    sphereColorLow: '#9b317d',
+    sphereColorMed: '#f3c60a',
+    sphereColorHigh: '#FF0000',
     data: dcCustomConfiguration(),
 };
 
 export const FullMap = createPalindrome.bind({});
 FullMap.args = {
-    layerMidColor: '#FF2C00',
-    mainAppColor: '#FFCC00',
-    subAppColor: '#FFFFFF',
-    statusColorLow: '#9FC5E8',
-    statusColorMed: '#00FF00',
-    statusColorHigh: '#FF0000',
+    mainStaticColor: '#FFCC00',
     data: dcFullMap(),
 };
 
 export const EnergeticEfficiency = createPalindrome.bind({});
 EnergeticEfficiency.args = {
-    layerMidColor: '#FF2C00',
-    mainAppColor: '#7AEDF3',
-    subAppColor: '#FFFFFF',
-    statusColorLow: '#9FC5E8',
-    statusColorMed: '#00FF00',
-    statusColorHigh: '#FF0000',
+    mainStaticColor: '#FFCC00',
     data: dcEnergeticEfficiency(),
 };
+

@@ -2,7 +2,6 @@
 *.DS_Store
 
 # yarn, packagers...
-dist
 node_modules
 .cache
 *log
@@ -13,4 +12,7 @@ yarn.lock
 # IDE 
 *.swp
 .idea
+.vscode
 
+# BUIlD
+dist
