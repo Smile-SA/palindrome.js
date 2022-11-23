@@ -25,17 +25,17 @@ import './commands'
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
+const fullscreen = '.sto-1k5e3f'
 Cypress.Commands.add('eval_snapshot', ($el) => {
   // Goes fullscreen takes a snapshot with element's name
 
-  cy.get('.css-18i2ql3 > .css-xddykm > .css-ha8kg').click({force: true})
+  cy.get(fullscreen).eq(7).click()
   cy.wait(3000)
   cy.matchScreenshot($el,{
     threshold: 0.0001,
     thresholdType: "pixel"
   })
-  cy.get('.css-18i2ql3 > .css-xddykm > .css-ha8kg').click({force: true})
+  cy.get(fullscreen).eq(7).click( )
 
 })
 
@@ -43,7 +43,7 @@ Cypress.Commands.add('eval_snapshot', ($el) => {
 Cypress.Commands.add('eval_click', ($el) => {
   // Clicks first option wrapped around element and calls the eval_snapshot command
     cy.wait(1000)
-    cy.get($el).first().click()
+    cy.get($el).first().click({force: true})
   
     cy.eval_snapshot($el)
   
@@ -52,7 +52,7 @@ Cypress.Commands.add('eval_click', ($el) => {
 Cypress.Commands.add('eval_type', ($el) => {
   // Clears the element contents, types in 7 and calls the eval_snapshot command
   cy.wait(1000)
-  cy.get($el).clear()
+  cy.get($el).clear({force: true})
   cy.get($el).type(7) 
   
   cy.eval_snapshot($el)
@@ -84,6 +84,12 @@ Cypress.Commands.add('eval_color_green', ($el) => {
 
   cy.eval_snapshot($el)
 })
+
+export function defaultValues() {
+  return {
+
+  }
+}
 
 const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
 

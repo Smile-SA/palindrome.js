@@ -11,9 +11,6 @@ describe ('Camera Options and Frame', function () {
       cy.get(ele).eval_click(ele)
   
     })
-
-    cy.get('.css-1xonygc').last().click()
-
   })
   
   it ('frameLineWidth | frameDashLineSize', function () { 

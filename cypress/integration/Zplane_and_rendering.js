@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+const fullscreen = '.sto-1k5e3f'
 
 describe ('Z plane and rendering modes', function () { 
 
@@ -19,13 +20,13 @@ describe ('Z plane and rendering modes', function () {
         }
     
       })
-      cy.get('.css-18i2ql3 > .css-xddykm > .css-ha8kg').click({force: true})
+      cy.get(fullscreen).eq(7).click()
       cy.wait(2000)
       cy.matchScreenshot("Zplane",{
           threshold: 0.0001,
           thresholdType: 'pixel'
       })
-      cy.get('.css-18i2ql3 > .css-xddykm > .css-ha8kg').click({force: true})
+      cy.get(fullscreen).eq(7).click()
     })
 
     it('metricsLabelsRenderingMode | layersLabelsRenderingMode | metricsLabelsRenderingFormat', () => {
@@ -43,14 +44,13 @@ describe ('Z plane and rendering modes', function () {
           cy.get(ele).select('2D') 
         }
 
-        cy.get('.css-18i2ql3 > .css-xddykm > .css-ha8kg').click({force: true})
+        cy.get(fullscreen).eq(7).click()
         cy.wait(1500)
         cy.matchScreenshot(ele,{
         threshold: 0.0001,
         thresholdType: 'pixel'
         })    
-        cy.get('.css-18i2ql3 > .css-xddykm > .css-ha8kg').click({force: true})
-
+        cy.get(fullscreen).eq(7).click()
      })
 
     })

@@ -4,7 +4,7 @@
   "updateScreenshots": false,
   "waitForAnimations": true,
   "env": {
-    "theurl": "http://10.8.2.23:6006/", 
+    "theurl": "http://localhost:6006/", 
     "cypress-plugin-snapshots": {
       "autoCleanUp": true  } 
   }
