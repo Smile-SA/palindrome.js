@@ -49,6 +49,7 @@
     "parcel": "^2.7.0",
     "storybook": "6.5.10",
     "stream": "^0.0.2",
+    "tailwindcss": "3.1.4",
     "three": "0.140.2",
     "three-bmfont-text": "3.0.1",
     "three-css2drender": "1.0.0",
