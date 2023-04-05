@@ -1,11 +1,10 @@
-import {scrappers} from "./scrappersUtils";
 import {applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer} from "./layersUtils";
 import {makeSphereContextsStatus} from "./spheresUtils";
 import {layerPoints} from "./metricsUtils2D";
 import {drawSideStraightLine} from "./sidesUtils";
 import {displayFramesAndArrows, setArrowPostion, setRectangleFramePositions} from "./framesUtils";
 import {setLabelsPositions, settingLabelFormat} from "./labelsUtils3D";
-import {gradient, hexToRgb, layerColorDecidedByLayerStatus, rgbToHex} from "./colorsUtils";
+import {layerColorDecidedByLayerStatus} from "./colorsUtils";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -27,26 +26,50 @@ export async function updateMeshes(params, renderingType) {
         scrapperUpdateInitTime,
         newData,
         dataIterator,
-        lowValueGradient,
-        highValueGradient,
-        bicolorGradient
+        refreshedData,
     } = params;
-    let layers_pool, sides_pool, frames_pool;
+    let layers_pool, sides_pool, frames_pool, httpRequests_pool;
     if (renderingType === "workers") {
         layers_pool = params.layers_pool;
         sides_pool = params.sides_pool;
         frames_pool = params.frames_pool;
     }
-    if (conf.mockupData && !(conf.hasScrapper)) {
-        newData = dataIterator.next().value;
-    }
-    if (conf.hasScrapper) {
-        let currentHours = new Date().getHours();
-        if (currentHours > scrapperUpdateInitTime) {
-            console.info("Getting updates ...")
-            scrapperUpdateInitTime = currentHours;
-            newData = await scrappers[conf.scrapper]();
+   
+    httpRequests_pool = params.httpRequests_pool;
+    if (conf.isRemoteDataSource && !conf.mockupData && conf.liveData) {
+        const currentTime = new Date();
+        const timeDifferenceInMilliseconds = currentTime - (refreshedData["scrapperUpdateInitTime"] ? refreshedData["scrapperUpdateInitTime"] : scrapperUpdateInitTime);
+        const remoteDataFetchPace = conf.remoteDataFetchPace; // in ms
+        if (timeDifferenceInMilliseconds >= remoteDataFetchPace) {
+                // Getting updates...
+                if (renderingType === "workers") { // Making http requests using web workers
+                    const worker = httpRequests_pool.getWorker();
+                    
+                    worker.onmessage = function (e) {
+                        newData = e.data.newData;
+                        refreshedData["newData"] = e.data.newData;
+                        refreshedData["scrapperUpdateInitTime"] = new Date();
+                    }
+
+                    httpRequests_pool.releaseWorker(worker);
+                    worker.postMessage({
+                        subject:"httpRequests",
+                        fn: conf.fetchFunction.toString()
+                    });
+                }
+                else { // Making http requests using main thread
+                    newData = await conf.fetchFunction();
+                    scrapperUpdateInitTime = new Date();         
+            }
         }
+    }
+    
+    if(refreshedData["newData"]) {
+        newData = refreshedData["newData"];
+    }
+
+    if (conf.mockupData && !conf.liveData) {
+        newData = dataIterator.next().value;
     }
     let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null,
         metricIndex = 0, layerIndex = 0, zAxisWorker = conf.zPlaneInitial;
@@ -336,4 +359,6 @@ export async function updateMeshes(params, renderingType) {
             metricIndex++;
         }
     }
+
+    return {scrapperUpdateInitTime, newData, httpRequests_pool};
 }

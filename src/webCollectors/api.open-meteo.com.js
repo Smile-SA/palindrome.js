@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function getWeatherData () {
+export const getWeatherData = async function  () {
     let countries = [];
 
     //France

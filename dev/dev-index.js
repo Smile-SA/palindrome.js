@@ -65,10 +65,16 @@ function appendPalindromeOptions(palindromes) {
  */
 function applyDefaultOptions(devConfig) {
     for (let toggleId of toggleFields) {
+        let checkboxliveData = document.getElementById('liveData');
+        let checkboxMockupData = document.getElementById('mockupData');
         let element = document.getElementById(toggleId);
         element.addEventListener("click", toggle, false);
         const urlParams = new URLSearchParams(window.location.search);
         let toggleParam = urlParams.get(toggleId);
+        let toggleLiveData = urlParams.get('liveData');
+        let toggleMockupData = urlParams.get('mockupData');   
+        checkboxMockupData.disabled = toggleLiveData ?  (toggleLiveData === "true") : false;
+        checkboxliveData.disabled = toggleMockupData ? (toggleMockupData === "true") : false;
         if (toggleParam == null) {
             toggleParam = devConfig[toggleId];
             devConfig[toggleId] = toggleParam;
@@ -106,9 +112,12 @@ function applyDefaultOptions(devConfig) {
             let category = findCategoryByPalindromeName(palindromeName);
             let palindrome = findPalindromeByCategoryAndName(category, palindromeName);
             if (palindrome) {
-                if (palindrome.hasScrapper) {
-                    devConfig.hasScrapper = true;
-                    devConfig.scrapper = palindrome.scrapper;
+                if (palindrome.isRemoteDataSource) {
+                    devConfig.isRemoteDataSource = true;
+                    devConfig.fetchFunction = palindrome.fetchFunction;
+                    if(palindrome.remoteDataFetchPace) {
+                        devConfig.remoteDataFetchPace = palindrome.remoteDataFetchPace;
+                    }
                 } else {
                     devConfig.data = palindrome["data"]();
                     if (palindrome?.customConfig) {

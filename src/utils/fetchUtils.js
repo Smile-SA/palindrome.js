@@ -1,10 +1,3 @@
-import {getWeatherData} from "../webCollectors/api.open-meteo.com";
-
-/**
- * We declare all our webCollectors
- */
-export let scrappers = {getWeatherData};
-
 /**
  * Returning "fetching data..." span that can be displayed while data is being fetched
  */

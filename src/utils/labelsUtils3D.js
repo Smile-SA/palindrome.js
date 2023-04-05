@@ -158,7 +158,7 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
             const metricsLabelsType = metricsLabels.dataType;
             let metricsLabelsUnit = metricsLabels.labelUnit;
             const metricsLabelsIndex = Object.keys(metrics).indexOf(metricsLabels.key);
-            const metricsLabelsValue = Object.values(metrics)[metricsLabelsIndex][metricsLabelsType].toFixed();
+            const metricsLabelsValue = Object.values(metrics)[metricsLabelsIndex][metricsLabelsType]?.toFixed();
             const labelPositions = metricValue[metricsLabelsType][metricsLabelsIndex];
 
             if (debug === true) {

@@ -713,12 +713,30 @@ export function defaultControls() {
             name: "mockupData",
 
             control: "boolean",
+            if: { arg: 'liveData', truthy: false },            
             description: "Make dynamic the data ",
             table: {
                 category: "Data"
             },
         },
-
+        liveData: {
+            name: "liveData",
+            control: "boolean",
+            if: { arg: 'mockupData', truthy: false },            
+            description: "Enable or disable live use case",
+            table: {
+                category: "Data"
+            },
+        },
+        remoteDataFetchPace: {
+            name: "remoteDataFetchPace (ms)",
+            control: "number",
+            if: { arg: 'mockupData', truthy: false },            
+            description: "Choose monitoring pace in ms",
+            table: {
+                category: "Data"
+            },
+        },
         //benchamark
         benchmark: {
             name: "benchmark",
@@ -869,6 +887,7 @@ export function defaultValues() {
         statusRangeHigh: 66,
         data: 'palindrome',
         mockupData: false,
+        liveData: false,
         benchmark: 'Inactive',
         testBothVersions: true,
         testDuration: 1,
@@ -876,6 +895,7 @@ export function defaultValues() {
         webWorkers: false,
         showResultsHistory: false,
         resourcesLevel: 50,
+        remoteDataFetchPace: 1000
         sideLabelDisplay: false,
         rotatedMetricsAngle: 0,
         mergedMetricsNames: false,

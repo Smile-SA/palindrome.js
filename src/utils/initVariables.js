@@ -119,11 +119,12 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
     }
 
     // creating pools for layer, sides and frames
-    let layers_pool, sides_pool, frames_pool;
+    let layers_pool, sides_pool, frames_pool, httpRequests_pool;
     layers_pool = new WorkerPool("worker.js", conf.resourcesLevel);
     sides_pool = new WorkerPool("worker.js", conf.resourcesLevel);
     frames_pool = new WorkerPool("worker.js", conf.resourcesLevel);
+    httpRequests_pool = new WorkerPool("worker.js", conf.resourcesLevel);
 
 
-    return [layers_pool, sides_pool, frames_pool];
+    return [layers_pool, sides_pool, frames_pool, httpRequests_pool];
 }

@@ -8,7 +8,7 @@ import {initVariables} from './utils/initVariables';
 import {cameraViewOptions} from './utils/cameraUtils';
 import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
 import {setPreviousPalindrome} from "./utils/destructionUtils";
-import {loadingText, scrappers} from "./utils/scrappersUtils";
+import {loadingText} from "./utils/fetchUtils";
 import {updateMeshes} from "./utils/renderingUtils";
 import {applyLayerRotationToData} from './utils/layersUtils';
 import { gradient } from './utils/colorsUtils';
@@ -25,17 +25,17 @@ export default (function (parentElement, conf) {
      */
     async function run(src) {
         let data;
-        if (!conf?.hasScrapper) {
+        if (!conf?.isRemoteDataSource) {
             data = conf.data;
         } else {
             try {
                 //Getting time, so we can update later on the scrapper palindrome
-                scrapperUpdateInitTime = new Date().getHours();
+                scrapperUpdateInitTime = new Date();
                 //Displaying loading text while fetching data
                 let loading = loadingText();
                 parentElement.appendChild(loading);
                 //fetching data
-                data = await scrappers[conf.scrapper]();
+                data = await conf.fetchFunction();
                 //removing loading text when data is ready
                 parentElement.removeChild(loading);
                 console.log("client response :", data);
@@ -47,6 +47,7 @@ export default (function (parentElement, conf) {
         applyLayerRotationToData(data, conf);
         newData = data;
         dataIterator = dataGenerator(data);
+
         // init materials
         [dashLineMaterial, lineMaterialTransparent, lineMaterial] = initMaterials(conf);
         let globalParams = {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes};
@@ -55,12 +56,13 @@ export default (function (parentElement, conf) {
         await render();
         //saving previous palindrome
         setPreviousPalindrome(renderer, scene, meshes, parentElement, frameId);
-        if (!conf.webWorkers) {
+        if (!(conf.webWorkers || conf.liveData)) {
             //setting camera for default version
             cameraViewOptions(meshes, camera, conf);
         }
     }
 
+    let refreshedData = {};
     //init palindrome parameters
     let init_camera = true;
     localStorage.setItem("isInitComplete", false);
@@ -79,13 +81,10 @@ export default (function (parentElement, conf) {
     //init global parameters
     let debug = false;
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
-    const lowValueGradient = gradient(conf.statusColorLow, conf.statusColorMed, conf.colorShadesDepth);
-    const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorShadesDepth);
-    const bicolorGradient = gradient(conf.statusColorLow, conf.statusColorHigh, conf.colorSteps);
     const meshes = {};
     const {scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
     let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
-    let [layers_pool, sides_pool, frames_pool] = initVariables(conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshes, camera, stats, statsVariables);
+    let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables(conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshes, camera, stats, statsVariables);
     const clock = new THREE.Clock();
     const fileContent = new Request("default-data.json");
     //calling main function
@@ -115,19 +114,18 @@ export default (function (parentElement, conf) {
             layers_pool,
             sides_pool,
             frames_pool,
-            lowValueGradient,
-            highValueGradient,
-            bicolorGradient
+            httpRequests_pool,
+            refreshedData,
         }
         //rendering with or without web workers
-        if (conf.webWorkers) {
-            updateMeshes(updateMeshesParams, "workers");
-        } else {
-            updateMeshes(updateMeshesParams, "default");
-        }
+        const renderingMode = conf.webWorkers ? "workers" : "default";
+        const liveDataInfo = await updateMeshes(updateMeshesParams, renderingMode);
+        scrapperUpdateInitTime = liveDataInfo.scrapperUpdateInitTime;
+        newData = liveDataInfo.newData;
+        httpRequests_pool = liveDataInfo.httpRequests_pool;
         try {
             renderer.render(scene, camera);
-            if (conf.webWorkers && init_camera && (localStorage.getItem("isInitComplete") === "true")) {
+            if ((conf.webWorkers) && init_camera && (localStorage.getItem("isInitComplete") === "true")) {
                 //setting camera for web workers
                 cameraViewOptions(meshes, camera, conf);
                 init_camera = false;

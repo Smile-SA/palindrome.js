@@ -340,13 +340,6 @@ export var createLabels = function (data, globalParams) {
                     let min = value.min;
                     let med = value.med;
                     let max = value.max;
-                    if (value.unit === '%') {
-                        current = ((value.current / value.max) * 100).toFixed(3);
-                        min = ((value.min / value.max) * 100).toFixed(3);
-                        med = ((value.med / value.max) * 100).toFixed(3);
-                        max = ((value.max / value.max) * 100).toFixed(3);
-
-                    }
                     if (conf.metricsLabelsRenderingMode === "2D") {
                         const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, conf, metricParameters);
                         layerMetricsLabels.add(currentLabel2d);
