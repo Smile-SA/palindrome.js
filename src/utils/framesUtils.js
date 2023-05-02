@@ -116,10 +116,10 @@ export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLa
         arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)), 0, Math.min.apply(Math, zTab)]);
         if (conf.layersLabelsOrientation === "Sticky") {
             arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab)]);
-            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab) + (resize), 0);
+            layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (resize), Math.min.apply(Math, yTab) - 5);
         } else if (conf.layersLabelsOrientation === "Free") {
             arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding)]);
-            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), 0);
+            layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - 5);
         }
     }
 }

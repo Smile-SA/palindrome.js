@@ -4,6 +4,7 @@ import {dcEnergeticEfficiency} from '../data-examples/dc_EnergeticEfficiency';
 import {dcFullMap} from '../data-examples/dc_FullMap';
 import {defaultControls, defaultValues} from './controls/defaultControls';
 import {createPalindrome} from './controls/createPalindrome';
+import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
@@ -31,6 +32,13 @@ CustomConfiguration.args = {
     sphereColorHigh: '#FF0000',
     data: dcCustomConfiguration(),
 };
+
+export const BasicConfigurationThreeLayers = createPalindrome.bind({});
+BasicConfigurationThreeLayers.args = {
+    mainStaticColor: '#FFCC00',
+    data: dcBasicConfigurationThreeLayers(),
+};
+
 
 export const FullMap = createPalindrome.bind({});
 FullMap.args = {

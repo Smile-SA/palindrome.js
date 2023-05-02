@@ -21,11 +21,15 @@ import {createHtmlText} from './labelsUtils2D';
  * @param {string} labelUnit the unit of label
  * @param globalParams
  */
+
+let metrics = {}
+let check = []
+
 export var create3DMetricsLabels = function (key, labelName, labelType, labelValue, metricIndex, labelUnit, globalParams) {
     let {conf, labelDiv, metricParameters, borderThickness} = globalParams;
     let texture = new THREE.Texture(),
-        textureImage,
-        data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, null, conf);
+    textureImage,
+    data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, null, conf);
 
     labelDiv[labelName] = document.createElement('div');
     labelDiv[labelName].className = 'label ' + labelName;
@@ -56,7 +60,7 @@ export var create3DMetricsLabels = function (key, labelName, labelType, labelVal
     texture.minFilter = THREE.NearestFilter;
 
     let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
-        metricsLabels = new THREE.Sprite(spriteMaterial);
+    metricsLabels = new THREE.Sprite(spriteMaterial);
     spriteMaterial.needsUpdate = true;
     metricsLabels.scale.set(2 * metricParameters["labelSize"], 1 * metricParameters["labelSize"], metricParameters["labelSize"]);
     metricsLabels.key = key;
@@ -68,6 +72,19 @@ export var create3DMetricsLabels = function (key, labelName, labelType, labelVal
         metricsLabels.visible = false;
     }
     //console.log("data",metricsLabels);
+
+    !metrics[metricIndex] ? metrics[metricIndex] = [metricsLabels.key] : metrics[metricIndex] = [...metrics[metricIndex], metricsLabels.key];
+
+    for(key in metrics){
+        if(metricIndex == 0 || key == metricIndex){
+            continue
+        }
+
+        if(metrics[key][metrics[metricIndex].length-1] == metricsLabels.key){
+            return
+        }
+        
+    }
 
     return metricsLabels;
 

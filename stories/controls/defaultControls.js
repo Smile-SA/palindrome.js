@@ -23,7 +23,7 @@ export function defaultControls() {
             control: {
                 type: "check",
             },
-            options: ["Fit", "Top"],
+            options: ["Fit", "Top", "Flat"],
             table: {
                 category: "Palindrome",
             },
@@ -799,7 +799,7 @@ export function defaultValues() {
         displayFramesLine: true,
         displayFramesBackground: false,
         displayMetricsLabelsUnit: true,
-        displayFramesArrow: true,
+        displayFramesArrow: false,
         statusColorLow: '#319b31',
         statusColorMed: '#f3c60a',
         statusColorHigh: '#FF0000',

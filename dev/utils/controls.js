@@ -1,6 +1,7 @@
 import {dcCustomConfiguration} from "../../data-examples/dc_CustomConfiguration";
 import {debugTwoLayersThreePoints} from "../../data-examples/debug_TwoLayersThreePoints";
 import {dcBasicConfiguration} from "../../data-examples/dc_BasicConfiguration";
+import { dcBasicConfigurationThreeLayers } from "../../data-examples/dc_BasicConfigurationThreeLayers";
 import {dcEnergeticEfficiency} from "../../data-examples/dc_EnergeticEfficiency";
 import {dcFullMap} from "../../data-examples/dc_FullMap";
 import {benckLoadTestData} from "../../data-examples/oth_LoadTest";
@@ -45,6 +46,7 @@ export let palindromes = {
 
             }
         },
+        {name: "Basic Configuration Three Layers", data: dcBasicConfigurationThreeLayers},
         {name: "dcEnergeticEfficiency", data: dcEnergeticEfficiency},
         {name: "dcFullMap", data: dcFullMap},
         {name: "debugTwoLayersThreePoints", data: debugTwoLayersThreePoints},

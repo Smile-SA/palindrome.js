@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { controls } from '../../dev/utils/controls';
 
 /**
  * Camera view options
@@ -8,6 +9,8 @@ import * as THREE from 'three';
  */
 
 export var cameraViewOptions = function (meshes, camera, conf) {
+
+    
 
     let tabX = [],
         tabY = [],
@@ -23,14 +26,17 @@ export var cameraViewOptions = function (meshes, camera, conf) {
         if (!key.includes("_text"))
             if (meshes[key].visible) {
                 let object = meshes[key],
-                    bs = object.geometry.boundingSphere,
-                    vector = bs.center.clone();
+                bs = object.geometry.boundingSphere
+                if(!bs){
+                    continue
+                }
+                let vector = bs.center.clone();
                 tabX.push(vector.x);
                 tabY.push(vector.y);
                 tabZ.push(vector.z);
             }
     }
-
+    
     // calculate the center of objects
     let xMax = (Math.max.apply(Math, tabX)),
         xMin = (Math.min.apply(Math, tabX)),
@@ -49,7 +55,6 @@ export var cameraViewOptions = function (meshes, camera, conf) {
     }
     let scale = dis / sin;
     // calculate the center of objects
-
     if (conf.cameraOptions.indexOf("Fit") !== -1) {
         camera.getWorldDirection(cameraDir);
         let cameraOffs = cameraDir.clone();
@@ -61,6 +66,10 @@ export var cameraViewOptions = function (meshes, camera, conf) {
         // set camera position
         camera.position.set(0, scale, 0);
         camera.lookAt(0, 0, 0);
+    }
+    if (conf.cameraOptions.indexOf("Flat") !== -1) {
+        conf.displaySides = false;
+        conf.zPlaneMultilayer = 0;
     }
 
 }
