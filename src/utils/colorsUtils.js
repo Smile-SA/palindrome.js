@@ -4,10 +4,14 @@
  * @param {number} value
  * @param {*} conf current palindrome configuration
  */
-export var layerColorDecidedByLayerStatus = function (value, conf) {
+
+export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradient, highValueGradient, bicolorGradient) {
     let intValue = value.toFixed(0);
     let layerStatusColor = conf.statusColorLow;
     if (conf.layerBehavior === 'ranges') {
+        if(conf.bicolorDisplay){
+            return intValue < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
+        }
         if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
             return layerStatusColor;
         } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
@@ -20,13 +24,47 @@ export var layerColorDecidedByLayerStatus = function (value, conf) {
     } else if (conf.layerBehavior === 'static') {
         return conf.mainStaticColor;
     } else if (conf.layerBehavior === 'dynamic') {
-        if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
-            return conf.mainStaticColor;
-        } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
-            return adjustHEXLightness(conf.mainStaticColor, -100);
-        } else if (intValue >= conf.statusRangeHigh) {
-            return adjustHEXLightness(conf.mainStaticColor, -200);
+        if (conf.bicolorDisplay) {
+            let step = (conf.statusRangeHigh - conf.statusRangeLow) / conf.colorSteps;
+            let baseValue = conf.statusRangeLow;
+    
+            //select an index to take a color depending of the value given and return it
+            let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorShadesDepth);
+            return bicolorGradient[index];
+    } else {
+        if(conf.dynamicColorShades){
+            //take the difference between the statuses and devide it by 1 if the statusColorBehavior is static, 100 if dynamic
+            const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
+            const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
+        
+            let colorArray;
+            let step;
+            let baseValue;
+        
+            //create multiples colors in between the two status colors
+            if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
+                colorArray = lowValueGradient;
+                step = lowStep;
+                baseValue = conf.statusRangeLow;
+            } else if (intValue >= conf.statusRangeMed) {
+                colorArray = highValueGradient;
+                step = highStep;
+                baseValue = conf.statusRangeMed;
+            }
+            //select an index to take a color depending of the value given and return it
+            let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorShadesDepth);
+            return colorArray[index];
+    }
         }
+
+        if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
+            return conf.statusColorLow;
+        } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
+            return conf.statusColorMed;
+        } else if (intValue >= conf.statusRangeHigh) {
+            return conf.statusColorHigh;
+        }
+
     } else if (conf.layerBehavior === 'dynamicRanges') {
         let dynamicRangesColor1RGB = hexToRgb(conf.dynamicRangesColor1);
         let dynamicRangesColor2RGB = hexToRgb(conf.dynamicRangesColor2);
@@ -50,12 +88,15 @@ export var layerColorDecidedByLayerStatus = function (value, conf) {
  * @param {number} value sphere current value
  * @param conf current palindrome configuration
  */
-export var metricColor = function (value, conf) {
+export var metricColor = function (value, conf, lowValueGradient, highValueGradient, bicolorGradient) {
     let cur = value.current;
     let max = value.max;
     let color = conf.sphereColorLow;
     let percentageThreshold = ((cur / max) * 100).toFixed(0);
     if (conf.spheresBehavior === 'ranges') {
+        if(conf.bicolorDisplay){
+            return percentageThreshold < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
+        }
         if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
             return color;
         } else if (percentageThreshold >= conf.statusRangeMed && percentageThreshold < conf.statusRangeHigh) {
@@ -68,14 +109,52 @@ export var metricColor = function (value, conf) {
     } else if (conf.spheresBehavior === 'static') {
         return conf.mainStaticColor;
     } else if (conf.spheresBehavior === 'dynamic') {
-        if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
-            return conf.mainStaticColor;
-        } else if (percentageThreshold >= conf.statusRangeMed && percentageThreshold < conf.statusRangeHigh) {
-            return adjustHEXLightness(conf.mainStaticColor, -100);
-        } else if (percentageThreshold >= conf.statusRangeHigh) {
-            return adjustHEXLightness(conf.mainStaticColor, -200);
+        if(conf.dynamicColorShades){
+            if (conf.bicolorDisplay) {
+                let step = (conf.statusRangeHigh - conf.statusRangeLow) / conf.colorShadesDepth;
+                let baseValue = conf.statusRangeLow;
+        
+                //select an index to take a color depending of the value given and return it
+                let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorShadesDepth);
+                return bicolorGradient[index];
+            } else {
+                const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
+                const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
+            
+                let colorShadesDepth;
+                let step;
+                let baseValue;
+            
+                if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
+                    colorShadesDepth = lowValueGradient;
+                    step = lowStep;
+                    baseValue = conf.statusRangeLow;
+                } else if (percentageThreshold >= conf.statusRangeMed) {
+                    colorShadesDepth = highValueGradient;
+                    step = highStep;
+                    baseValue = conf.statusRangeMed;
+                }
+            
+                let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorShadesDepth);
+                return colorShadesDepth[index];
+            } 
+    } else {
+        if(conf.bicolorDisplay){
+            return percentageThreshold < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
+        } else {
+            if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
+                return color;
+            } else if (percentageThreshold >= conf.statusRangeMed && percentageThreshold < conf.statusRangeHigh) {
+                color = conf.sphereColorMed;
+                return color;
+            } else if (percentageThreshold >= conf.statusRangeHigh) {
+                color = conf.sphereColorHigh;
+                return color;
+            }
         }
+
     }
+}
 }
 
 
@@ -121,3 +200,34 @@ export function componentToHex(c) {
 export function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
+
+export function gradient(startColor, endColor, steps) {
+    var start = {
+        'Hex' : startColor,
+        'R' : parseInt(startColor.slice(1,3), 16),
+        'G' : parseInt(startColor.slice(3,5), 16),
+        'B' : parseInt(startColor.slice(5,7), 16)
+    }
+    var end = {
+        'Hex' : endColor,
+        'R' : parseInt(endColor.slice(1,3), 16),
+        'G' : parseInt(endColor.slice(3,5), 16),
+        'B' : parseInt(endColor.slice(5,7), 16)
+    }
+    let diffR = end['R'] - start['R'];
+    let diffG = end['G'] - start['G'];
+    let diffB = end['B'] - start['B'];
+    let stepsHex = new Array();
+    let stepsR = new Array();
+    let stepsG = new Array();
+    let stepsB = new Array();
+    for(var i = 0; i <= steps; i++) {
+        stepsR[i] = start['R'] + ((diffR / steps) * i);
+        stepsG[i] = start['G'] + ((diffG / steps) * i);
+        stepsB[i] = start['B'] + ((diffB / steps) * i);
+        stepsHex[i] = '#' + Math.round(stepsR[i]).toString(16).padStart(2, '0') + '' +
+        Math.round(stepsG[i]).toString(16).padStart(2, '0') + '' + Math.round(stepsB[i]).toString(16).padStart(2, '0');
+    }
+    return stepsHex;
+}
+

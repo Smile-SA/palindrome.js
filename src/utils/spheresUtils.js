@@ -11,10 +11,10 @@ import * as THREE from 'three';
  * @param {*} sphereCoords spheres coordinates
  * @param globalParams
  */
-export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics, globalParams) {
+export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics, globalParams, lowValueGradient, highValueGradient, bicolorGradient) {
     let {scene, meshs, conf, camera, labelDiv, layerParameters} = globalParams;
     for (var i = 0; i < sphereCoords.current.length; i++) {
-        makeSphereContext(sphereCoords.current[i], layerName, i.toString(), metricColor(metrics[i], conf), metrics[i], scene, meshs, conf, camera, labelDiv, layerParameters);
+        makeSphereContext(sphereCoords.current[i], layerName, i.toString(), metricColor(metrics[i], conf, lowValueGradient, highValueGradient, bicolorGradient), metrics[i], scene, meshs, conf, camera, labelDiv, layerParameters);
     }
 }
 

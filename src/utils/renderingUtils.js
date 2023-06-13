@@ -5,7 +5,7 @@ import {layerPoints} from "./metricsUtils2D";
 import {drawSideStraightLine} from "./sidesUtils";
 import {displayFramesAndArrows, setArrowPostion, setRectangleFramePositions} from "./framesUtils";
 import {setLabelsPositions, settingLabelFormat} from "./labelsUtils3D";
-import {hexToRgb, layerColorDecidedByLayerStatus, rgbToHex} from "./colorsUtils";
+import {gradient, hexToRgb, layerColorDecidedByLayerStatus, rgbToHex} from "./colorsUtils";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -26,7 +26,10 @@ export async function updateMeshes(params, renderingType) {
         debug,
         scrapperUpdateInitTime,
         newData,
-        dataIterator
+        dataIterator,
+        lowValueGradient,
+        highValueGradient,
+        bicolorGradient
     } = params;
     let layers_pool, sides_pool, frames_pool;
     if (renderingType === "workers") {
@@ -77,11 +80,18 @@ export async function updateMeshes(params, renderingType) {
                     const metricsPositions = [e.data.metricValue.max, e.data.metricValue.med, e.data.metricValue.min];
                     if (e.data.subject === 'computations') {
                         let globalParams = {conf, meshs: meshes, scene};
-                        let destinationColorRGB = hexToRgb(layerColorDecidedByLayerStatus(e.data.layerStatus, conf));
-                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, rgbToHex(destinationColorRGB.r, destinationColorRGB.g, destinationColorRGB.b), globalParams);
+                         //this is the updated layer metrics
+                        const metrics = newData[layer].metrics, layers = newData[layer].layer;
+                        //this is the new total of current's
+                        const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
+                        //this is the new total of max's
+                        const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
+                        //todo : status colors shall map with default colors
+                        const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
+                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters};
-                            makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams);
+                            makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
                         }
                     }
                     let metricsNumber = e.data.metricsNumber;
@@ -108,14 +118,14 @@ export async function updateMeshes(params, renderingType) {
             if (sidesWorker) {
                 sidesWorker.onmessage = function (e) {
                     const layerStatus = e.data.layerStatus;
-                    if (conf.displaySides === true) {
+                    if (conf.displaySides === true && conf.cameraOptions.indexOf("Flat") == -1) {
                         let sideDividerOdd = e.data.sideDividerOdd,
                             sideDividerEven = e.data.sideDividerEven,
                             sideSizeOdd = e.data.sideSizeOdd,
                             sideSizeEven = e.data.sideSizeEven,
                             layer = e.data.layer;
                         if (sideDividerOdd && sideDividerEven && sideSizeOdd && sideSizeEven && previousLayerStatus_sides) {
-                            drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus_sides, conf, layerStatus, meshes, layer, lineMaterial, scene);
+                            drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus_sides, conf, layerStatus, meshes, layer, lineMaterial, scene, lowValueGradient, highValueGradient, bicolorGradient);
                         }
                     }
                     previousLayerStatus_sides = layerStatus;
@@ -248,12 +258,12 @@ export async function updateMeshes(params, renderingType) {
             const metricsPositions = [metricValue.max, metricValue.med, metricValue.min];
             //draws and update layers
             let globalParams = {conf, meshs: meshes, scene};
-            let destinationColorRGB = hexToRgb(layerColorDecidedByLayerStatus(layerStatus, conf));
-            drawLayer(layer, metricValue, metricsNumber, rgbToHex(destinationColorRGB.r, destinationColorRGB.g, destinationColorRGB.b), globalParams);
+            
+            drawLayer(layer, metricValue, metricsNumber, layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
                 let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters};
-                makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams);
+                makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
             }
             // displayMode
             if (conf.displayMode === "dynamic") {
@@ -291,7 +301,7 @@ export async function updateMeshes(params, renderingType) {
             }
             // display frames and arrow
             displayFramesAndArrows(conf, positions, frameName, dashLineMaterial, lineMaterial, meshes, scene, arrowPositions, layer);
-            if (conf.displaySides === true) {
+            if (conf.displaySides === true && conf.cameraOptions.indexOf("Flat") == -1) {
                 if (previousMetric !== null) {
                     const previousValueMax = layerPoints(Object.values(previousMetric).map(item => (conf.palindromeSize / item.max) * item[metricsDivider]), zAxis + conf.zPlaneMultilayer, conf);
                     const previousPlaneLength = Object.values(previousMetric).length;
@@ -302,7 +312,7 @@ export async function updateMeshes(params, renderingType) {
                     //for the lengths of sides
                     const sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
                     const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
-                    drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus, conf, layerStatus, meshes, layer, lineMaterial, scene);
+                    drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus, conf, layerStatus, meshes, layer, lineMaterial, scene, lowValueGradient, highValueGradient, bicolorGradient);
                 }
             }
             zAxis -= conf.zPlaneMultilayer;

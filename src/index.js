@@ -10,6 +10,7 @@ import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
 import {setPreviousPalindrome} from "./utils/destructionUtils";
 import {loadingText, scrappers} from "./utils/scrappersUtils";
 import {updateMeshes} from "./utils/renderingUtils";
+import { gradient } from './utils/colorsUtils';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
@@ -76,6 +77,9 @@ export default (function (parentElement, conf) {
     //init global parameters
     let debug = false;
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
+    const lowValueGradient = gradient(conf.statusColorLow, conf.statusColorMed, conf.colorShadesDepth);
+    const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorShadesDepth);
+    const bicolorGradient = gradient(conf.statusColorLow, conf.statusColorHigh, conf.colorSteps);
     const meshes = {};
     const {scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
     let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
@@ -109,6 +113,9 @@ export default (function (parentElement, conf) {
             layers_pool,
             sides_pool,
             frames_pool,
+            lowValueGradient,
+            highValueGradient,
+            bicolorGradient
         }
         //rendering with or without web workers
         if (conf.webWorkers) {

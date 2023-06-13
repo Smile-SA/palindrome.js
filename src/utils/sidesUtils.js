@@ -15,14 +15,14 @@ import {SimpleLine, Triangle} from "../threeJSUtils/ThreeJSGeometryObjects";
  * @param lineMaterial
  * @param scene
  */
-export function drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus_sides, conf, layerStatus, meshes, layer, lineMaterial, scene) {
+export function drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus_sides, conf, layerStatus, meshes, layer, lineMaterial, scene, lowValueGradient, highValueGradient, bicolorGradient) {
     for (let i = 0; i < sideDividerEven; i++) {
         let a = sideSizeEven[(i + 1) % sideDividerOdd];
         let b = sideSizeOdd[(i + 1) % sideDividerEven];
         let c = sideSizeEven[(i) % sideDividerOdd];
         let d = sideSizeOdd[(i) % sideDividerEven];
-        let colorA = layerColorDecidedByLayerStatus(previousLayerStatus_sides, conf);
-        let colorB = layerColorDecidedByLayerStatus(layerStatus, conf);
+        let colorA = layerColorDecidedByLayerStatus(previousLayerStatus_sides, conf, lowValueGradient, highValueGradient, bicolorGradient);
+        let colorB = layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient);
         if (meshes['side-straight-line' + layer + i]) {
             // if init done, update
             //meshes['side-bias-line' + layer + i].update(sideSizeOdd[i], a);
@@ -40,9 +40,9 @@ export function drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerO
             meshes['side-straight-line1' + layer + i] = new SimpleLine(d, c, lineMaterial);
             scene.add(meshes['side-straight-line1' + layer + i]);
 
-            meshes['side-top-left-pane' + layer + i] = new Triangle(c, a, d, colorA, colorB, null);
+            meshes['side-top-left-pane' + layer + i] = new Triangle(c, a, d, colorA, colorB, conf.opacity);
             scene.add(meshes['side-top-left-pane' + layer + i]);
-            meshes['side-bottom-right-pane' + layer + i] = new Triangle(d, b, a, colorA, colorB, null);
+            meshes['side-bottom-right-pane' + layer + i] = new Triangle(d, b, a, colorA, colorB, conf.opacity);
             scene.add(meshes['side-bottom-right-pane' + layer + i]);
         }
     }

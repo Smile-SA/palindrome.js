@@ -42,7 +42,7 @@ export let palindromes = {
                 statusColorVeryHigh: '#FF0000',
                 sphereColorLow: '#9b317d',
                 sphereColorMed: '#f3c60a',
-                sphereColorHigh: '#FF0000',
+                sphereColorHigh: '#ffFF0000',
 
             }
         },
@@ -93,6 +93,12 @@ export let controls = {
         description: "Enable or disable web workers",
         category: categories[0],
     },
+    DynamicColorShades: {
+        name: "DynamicColorShades",
+        control: "boolean",
+        description: "Change the behavior of colors to be static or dynamic",
+        category: categories[1],
+    },
     displayLayers: {
         name: "displayLayers",
         description: "Display or not the layers of palindrome",
@@ -104,7 +110,7 @@ export let controls = {
         description: "Change the rendering color behavior of layers",
         control: "select",
         type: "static",
-        options: ["static", "dynamic", 'ranges',],
+        options: ["static", "dynamic", 'ranges', "dynamicGradient"],
         category: categories[1],
     },
     spheresBehavior: {
@@ -112,8 +118,15 @@ export let controls = {
         control: "select",
         description: "Make sphere dynamic or static",
         type: "static",
-        options: ['static', 'dynamic', 'ranges'],
+        options: ['static', 'dynamic', 'ranges', "dynamicGradient"],
         category: categories[1],
+    },
+    dynamicBicolorDisplay: {
+        name: "dynamicBicolorDisplay",
+        control: "boolean",
+        description: "Switch between a gradient made of 3 colors or 2 colors",
+        type: "static",
+        category: categories[1]
     },
     displayLayersLines: {
         name: "displayLayersLines",

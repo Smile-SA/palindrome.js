@@ -28,7 +28,25 @@ export function defaultControls() {
                 category: "Palindrome",
             },
         },
-
+        dynamicColorShades: {
+            name: "dynamicColorShades",
+            description: "Change the behavior of colors to be static or dynamic",
+            type: "boolean",
+            control: "boolean",
+            table: {
+                category: "Palindrome",
+                subcategory: "Color Behavior"
+            },
+        },
+        colorShadesDepth: {
+            name: "colorShadesDepth",
+            description: "Change the numbers of steps before achieving a color",
+            control: "number",
+            table: {
+                category: "Palindrome",
+                subcategory: "Color Behavior"
+            },
+        },
         //metrics
         metricMagnifier: {
             name: "metricMagnifier",
@@ -333,10 +351,28 @@ export function defaultControls() {
             control: {
                 type: "radio",
             },
-            options: ["static", "dynamic", 'ranges',],
+            options: ["static", "dynamic", 'ranges'],
             table: {
                 category: "Palindrome",
                 subcategory: "Layer"
+            },
+        },
+        bicolorDisplay: {
+            name: 'bicolorDisplay',
+            control: 'boolean',
+            description: 'Switch between a gradient made of 3 colors or 2 colors',
+            table: {
+                category: 'Palindrome',
+                subcategory: 'Layer'
+            },
+        },
+        bicolorDisplay: {
+            name: 'bicolorDisplay',
+            control: 'boolean',
+            description: 'Switch between a gradient made of 3 colors or 2 colors',
+            table: {
+                category: 'Palindrome',
+                subcategory: 'Layer'
             },
         },
         layersLabelsRenderingMode: {
@@ -746,6 +782,8 @@ export function defaultValues() {
         displayArea: 'palindrome',
         palindromeSize: 3,
         cameraOptions: ['Fit'],
+        colorShadesDepth: 100,
+        opacity: 0.5,
         metricMagnifier: 10,
         layerDisplayMode: 'dynamic',
         mainStaticColor: '#f3c60a',
@@ -753,6 +791,7 @@ export function defaultValues() {
         lineOpacity: 1,
         lineWidth: 0.5,
         lineColor: '#000000',
+        bicolorDisplay: false,
         displayMode: 'dynamic',
         displaySides: true,
         gridSize: 100,
@@ -800,6 +839,7 @@ export function defaultValues() {
         displayFramesBackground: false,
         displayMetricsLabelsUnit: true,
         displayFramesArrow: false,
+        dynamicColorShades: true,
         statusColorLow: '#319b31',
         statusColorMed: '#f3c60a',
         statusColorHigh: '#FF0000',
