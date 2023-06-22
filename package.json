@@ -21,7 +21,7 @@
   "scripts": {
     "dev": "parcel dev/index.html",
     "build": "parcel build dev/index.html --public-url ./",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "cy:run": "cypress run",
     "cypress:open": "cypress open",
