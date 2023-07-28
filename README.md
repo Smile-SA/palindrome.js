@@ -82,12 +82,12 @@ Simply open a pull request over the repository to describe your changes.
 
 ## Credits
 
-- Rnd Team @ Alter Way
+- Rnd Team @ SMILE
 - Koku Ulrich GBLOKPO @koku-ulrich.gblokpo
 - Mohamed Ali YACOUBI @yacoubii
 - Farooque Mustafa @farooquemustafa
 - Damien Gilles @gillesdami
-- Jonathan Rivalan (author) @JonRiv
+- JonRiv (author) @JonRiv
 
 ## License
 

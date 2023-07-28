@@ -1,11 +1,11 @@
 {
-  "name": "palindromecypress",
-  "version": "1.0.0",
+  "name": "palindrome",
+  "version": "1.0.1",
   "homepage": "https://Smile-SA.github.io/palindrome.js",
   "description": "3D monitoring for metrics and KPIs",
   "default": "index.html",
-  "repository": "https://github.com/alterway/palindrome.js",
-  "author": "Alter Way RnD <rnd@alterway.fr>",
+  "repository": "https://github.com/Smile-SA/palindrome.js",
+  "author": "Smile RnD <rnd@smile.fr>",
   "license": "Apache-2.0",
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.18.6",
