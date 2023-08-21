@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Rivalan"
+  given-names: "Jonathan"
+  orcid: "https://orcid.org/0000-0002-3779-556X"
+title: "Palindrome.js"
+version: 1.0
+date-released: 2019-05-21
+url: "https://github.com/Smile-SA/palindrome.js"
+
