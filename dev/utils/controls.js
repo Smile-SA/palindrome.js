@@ -4,7 +4,7 @@ import {dcBasicConfiguration} from "../../data-examples/dc_BasicConfiguration";
 import { dcBasicConfigurationThreeLayers } from "../../data-examples/dc_BasicConfigurationThreeLayers";
 import {dcEnergeticEfficiency} from "../../data-examples/dc_EnergeticEfficiency";
 import {dcFullMap} from "../../data-examples/dc_FullMap";
-import {benckLoadTestData} from "../../data-examples/oth_LoadTest";
+import {benchLoadTestData} from "../../data-examples/oth_LoadTest";
 import {debugTwoLayersFourPoints} from "../../data-examples/debug_TwoLayersFourPoints";
 import {logicBoolean} from "../../data-examples/logic_Boolean";
 import {logicFiveThreeTwo} from "../../data-examples/logic_FiveThreeTwo";
@@ -59,7 +59,7 @@ export let palindromes = {
         {name: "logicTernary", data: logicTernary},
     ],
     otherExamples: [
-        {name: "benckLoadTest", data: benckLoadTestData},
+        {name: "benchLoadTest", data: benchLoadTestData},
         {name: "pyramidOfMaslows", data: pyramidOfMaslows},
         {name: "api.open-meteo.com", hasScrapper: true, scrapper: "getWeatherData"},
     ],

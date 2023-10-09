@@ -1,4 +1,4 @@
-export function benckLoadTestData() {
+export function benchLoadTestData() {
     return {
         "debug_0": {
             "metrics": {

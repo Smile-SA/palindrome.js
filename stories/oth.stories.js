@@ -1,7 +1,6 @@
 import {defaultControls, defaultValues} from "./controls/defaultControls";
 import {createPalindrome} from "./controls/createPalindrome";
 import {pyramidOfMaslows} from "../data-examples/oth_pyramid_of_maslows";
-import {benckLoadTestData} from "../data-examples/oth_LoadTest";
 
 export default {
     title: 'Use Cases/Palindrome/Other examples',
