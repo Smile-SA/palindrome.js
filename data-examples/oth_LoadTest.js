@@ -30,9 +30,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_0-layer": {
                     "label": "debug_0_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -82,9 +80,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_1-layer": {
                     "label": "debug_1_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -134,9 +130,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_2-layer": {
                     "label": "debug_2_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -178,9 +172,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_3-layer": {
                     "label": "debug_3_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -326,9 +318,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_6-layer": {
                     "label": "debug_6_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -378,9 +368,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_7-layer": {
                     "label": "debug_7_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -430,9 +418,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_8-layer": {
                     "label": "debug_8_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -482,9 +468,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_9-layer": {
                     "label": "debug_9_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -518,9 +502,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_10-layer": {
                     "label": "debug_10_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -562,9 +544,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_11-layer": {
                     "label": "debug_11_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -614,9 +594,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_12-layer": {
                     "label": "debug_12_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -658,9 +636,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_13-layer": {
                     "label": "debug_13_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -702,9 +678,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_14-layer": {
                     "label": "debug_14_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -754,9 +728,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_15-layer": {
                     "label": "debug_15_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -806,9 +778,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_16-layer": {
                     "label": "debug_16_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -858,9 +828,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_17-layer": {
                     "label": "debug_17_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -894,9 +862,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_18-layer": {
                     "label": "debug_18_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -930,9 +896,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_19-layer": {
                     "label": "debug_19_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -982,9 +946,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_20-layer": {
                     "label": "debug_20_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1034,9 +996,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_21-layer": {
                     "label": "debug_21_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1086,9 +1046,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_22-layer": {
                     "label": "debug_22_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1122,9 +1080,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_23-layer": {
                     "label": "debug_23_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1158,9 +1114,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_24-layer": {
                     "label": "debug_24_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1194,9 +1148,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_25-layer": {
                     "label": "debug_25_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1230,9 +1182,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_26-layer": {
                     "label": "debug_26_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1266,9 +1216,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_27-layer": {
                     "label": "debug_27_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1310,9 +1258,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_28-layer": {
                     "label": "debug_28_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1346,9 +1292,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_29-layer": {
                     "label": "debug_29_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1398,9 +1342,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_30-layer": {
                     "label": "debug_30_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1450,9 +1392,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_31-layer": {
                     "label": "debug_31_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1502,9 +1442,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_32-layer": {
                     "label": "debug_32_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1554,9 +1492,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_33-layer": {
                     "label": "debug_33_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         },
@@ -1606,9 +1542,7 @@ export function benchLoadTestData() {
             "layer": {
                 "debug_34-layer": {
                     "label": "debug_34_layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         }

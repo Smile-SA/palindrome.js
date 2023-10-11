@@ -10,8 +10,8 @@ import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
 import {setPreviousPalindrome} from "./utils/destructionUtils";
 import {loadingText} from "./utils/fetchUtils";
 import {updateMeshes} from "./utils/renderingUtils";
-import {applyLayerRotationToData} from './utils/layersUtils';
-import { gradient } from './utils/colorsUtils';
+import {behavioredMetricsTotalValues } from './utils/labelsUtils2D';
+import {l2Normalize} from './utils/metricsUtils2D';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
@@ -46,6 +46,70 @@ export default (function (parentElement, conf) {
         }
         applyLayerRotationToData(data, conf);
         newData = data;
+
+        // Layer constraints behavior for percent
+        for (const layer in data) {
+            const layerInfo = data[layer].layer;
+            const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
+            const behavior = ( layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
+            const metrics = data[layer].metrics;
+            if (behavior === "percent") {
+
+                // Getting total values for current, min, med, and max
+                const {
+                    totalCurrentValues,
+                    totalMinValues,
+                    totalMaxValues,
+                    totalMedValues,
+                } = behavioredMetricsTotalValues(metrics);
+          
+                for (const [key, value] of Object.entries(metrics)) {
+                    const { current, min, med, max } = value;
+
+                    // Computing new layerBehaviored metrics
+                    const layerBehavioredMin = totalMinValues > 0 ? (min / totalMinValues) * 100 : 0;
+                    const layerBehavioredMax = totalMaxValues > 0 ? (max / totalMaxValues) * 100 : 0;
+                    const layerBehavioredMed = totalMedValues > 0 ? (med / totalMedValues) * 100 : 0;
+                    const layerBehavioredCurrent = totalCurrentValues > 0 ? (current / totalCurrentValues) * 100 : 0;
+
+                    data[layer].metrics[key]["_min"] = layerBehavioredMin;
+                    data[layer].metrics[key]["_max"] = layerBehavioredMax;
+                    data[layer].metrics[key]["_med"] = layerBehavioredMed;
+                    data[layer].metrics[key]["_current"] = layerBehavioredCurrent;
+                    data[layer].metrics[key]["_unit"] = "%";
+                    data[layer].metrics[key]["isLayerBehaviored"] = true;
+                }
+            }
+            else if(behavior === "normalized") {
+                let currents = [];
+                let mins = [];
+                let meds = [];
+                let maxs = [];
+                for (const [_, value] of Object.entries(metrics)) {
+                    const { current, min, med, max } = value;
+                    // Computing new layerBehaviored metrics
+                    currents.push(current);
+                    mins.push(min);
+                    meds.push(med);
+                    maxs.push(max);
+                }
+                const normilizedCurrents = l2Normalize(currents);
+                const normalizeArraydMeds = l2Normalize(meds);
+                const normalizeArraydMaxs = l2Normalize(maxs);
+                const normalizeArraydMins = l2Normalize(mins);
+                let i = 0;
+                for (const [key, _] of Object.entries(metrics)) {
+                    data[layer].metrics[key]["_min"] = normalizeArraydMins[i];
+                    data[layer].metrics[key]["_max"] = normalizeArraydMaxs[i];
+                    data[layer].metrics[key]["_med"] = normalizeArraydMeds[i];
+                    data[layer].metrics[key]["_current"] = normilizedCurrents[i];
+                    data[layer].metrics[key]["_unit"] = "";
+                    data[layer].metrics[key]["isLayerBehaviored"] = true;
+                    i++;
+                }
+            }
+        }          
+
         dataIterator = dataGenerator(data);
 
         // init materials

@@ -29,9 +29,7 @@ let obj = {
         "layer": {
             "requests-layer": {
                 "label": "Requests",
-                "_layerBehavior": "something",
-                "_defaultColor": "green",
-                "_publicColorOption": "random calls function to pick a color"
+                "layerMetricsUnits": "something",
             }
         }
     },
@@ -81,9 +79,7 @@ let obj = {
         "layer": {
             "systemResources-layer": {
                 "label": "System resources ",
-                "_layerBehavior": "something",
-                "_defaultColor": "green",
-                "_publicColorOption": "random calls function to pick a color"
+                "layerMetricsUnits": "something",
             }
         }
     },
@@ -133,9 +129,7 @@ let obj = {
         "layer": {
             "qosMetrics-layer": {
                 "label": "Qos metrics",
-                "_layerBehavior": "something",
-                "_defaultColor": "green",
-                "_publicColorOption": "random calls function to pick a color"
+                "layerMetricsUnits": "something",
             }
         }
     },
@@ -177,9 +171,7 @@ let obj = {
         "layer": {
             "businessKPIs-layer": {
                 "label": "Business KPIs",
-                "_layerBehavior": "something",
-                "_defaultColor": "green",
-                "_publicColorOption": "random calls function to pick a color"
+                "layerMetricsUnits": "something",
             }
         }
     }

@@ -8,9 +8,8 @@ import {polarTo3DPoint} from './metricsUtils3D';
  * @param {string} labelValue label value
  * @param {string} labelUnit the unit of label
  */
-export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf) {
-    if (labelName === "merged") return "";
-    if (metricData && labelUnit === '%') {
+export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored) {
+    if (!isLayerBehaviored && metricData && labelUnit === '%') {
         //percentage handle
         labelValue = ((labelValue / metricData.max) * 100).toFixed(3);
     }
@@ -84,3 +83,24 @@ export var layerPoints = function (metricValue, zPlaneValue, conf) {
     return planepoints;
 }
 
+
+/**
+ * 
+ * @param {*} arr the array to be normalized
+ * @returns array with normalized values
+ */
+export var l2Normalize = function (vector) {
+    // Calculate the L2 norm (Euclidean norm)
+    const l2Norm = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0));
+    
+    // Check if the norm is not zero (to avoid division by zero)
+    if (l2Norm !== 0) {
+      // Divide each element by the L2 norm to normalize
+      return vector.map(value => value / l2Norm);
+    } else {
+      // If the L2 norm is zero (vector is all zeros), return the original vector
+      return vector;
+    }
+}
+  
+  

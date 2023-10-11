@@ -22,9 +22,7 @@ export function dcFullMap() {
             "layer": {
                 "requests-layer": {
                     "label": "Requests",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "percent",
                 }
             }
         },
@@ -74,9 +72,7 @@ export function dcFullMap() {
             "layer": {
                 "systemResources-layer": {
                     "label": "System resources ",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "absolute",
                 }
             }
         },
@@ -126,9 +122,7 @@ export function dcFullMap() {
             "layer": {
                 "qosMetrics-layer": {
                     "label": "Qos metrics",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "normalized",
                 }
             }
         },
@@ -170,9 +164,7 @@ export function dcFullMap() {
             "layer": {
                 "businessKPIs-layer": {
                     "label": "Business KPIs",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         }

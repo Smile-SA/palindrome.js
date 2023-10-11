@@ -309,6 +309,18 @@ export var create2DLayersLabels = function (key, labelName, layerIndex, layerPar
 }
 
 
+export var behavioredMetricsTotalValues = function (metrics) {
+    const metricsValues = Object.values(metrics);
+    return metricsValues.reduce(
+        (acc, { current, min, max, med }) => ({
+            totalCurrentValues: acc.totalCurrentValues + current,
+            totalMinValues: acc.totalMinValues + min,
+            totalMaxValues: acc.totalMaxValues + max,
+            totalMedValues: acc.totalMedValues + med,
+        }), { totalCurrentValues: 0, totalMinValues: 0, totalMaxValues: 0, totalMedValues: 0 }
+    );
+}
+
 /**
  * Create labels for each metrics
  *
@@ -336,24 +348,20 @@ export var createLabels = function (data, globalParams) {
                     break;
                 } else {
                     metricLabelsIds.push(key)
-                    let current = value.current;
-                    let min = value.min;
-                    let med = value.med;
-                    let max = value.max;
+                    if (value.unit === '%') {
+                        current = ((value.current / value.max) * 100).toFixed(3);
+                        min = ((value.min / value.max) * 100).toFixed(3);
+                        med = ((value.med / value.max) * 100).toFixed(3);
+                        max = ((value.max / value.max) * 100).toFixed(3);
+
+                    }
+                    let { current, min, med, max, unit, _current, _max, _med, _min, _unit, isLayerBehaviored } = value;
                     if (conf.metricsLabelsRenderingMode === "2D") {
-                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, conf, metricParameters);
-                        layerMetricsLabels.add(currentLabel2d);
-                        //scene.add(currentLabel2d);
+                        scene.add(create2DMetricsLabels(key, value.label, 'current', isLayerBehaviored ? _current : current, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
                         if (conf.displayAllMetricsLabels) {
-                            const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters);
-                            const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters);
-                            const maxLabel2d = create2DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, conf, metricParameters);
-                            layerMetricsLabels.add(minLabel2d);
-                            layerMetricsLabels.add(medLabel2d);
-                            layerMetricsLabels.add(maxLabel2d);
-                            // scene.add(minLabel2d);
-                            // scene.add(medLabel2d);
-                            // scene.add(maxLabel2d);
+                            scene.add(create2DMetricsLabels(key, value.label, 'min', isLayerBehaviored ? _min : min, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
+                            scene.add(create2DMetricsLabels(key, value.label, 'med', isLayerBehaviored ? _med : med, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
+                            scene.add(create2DMetricsLabels(key, value.label, 'max', isLayerBehaviored ? _max : max, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
                         }
                     } else if (conf.metricsLabelsRenderingMode === "3D") {
                         let globalParams = {
@@ -362,20 +370,13 @@ export var createLabels = function (data, globalParams) {
                             metricParameters,
                             borderThickness
                         }
-                        const currentLabel3d = create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams);
-                        layerMetricsLabels.add(currentLabel3d);
-                        // scene.add(currentLabel3d);
+                        scene.add(create3DMetricsLabels(key, value.label, 'current', isLayerBehaviored ? _current : current, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
+
 
                         if (conf.displayAllMetricsLabels) {
-                            const minLabel3d = create3DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, globalParams);
-                            const medLabel3d = create3DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, globalParams);
-                            const maxLabel3d = create3DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, globalParams);
-                            layerMetricsLabels.add(minLabel3d);
-                            layerMetricsLabels.add(medLabel3d);
-                            layerMetricsLabels.add(maxLabel3d);
-                            // scene.add(minLabel3d);
-                            // scene.add(medLabel3d);
-                            // scene.add(maxLabel3d);
+                            scene.add(create3DMetricsLabels(key, value.label, 'min', isLayerBehaviored ? _min : min, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
+                            scene.add(create3DMetricsLabels(key, value.label, 'med', isLayerBehaviored ? _med : med, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
+                            scene.add(create3DMetricsLabels(key, value.label, 'max', isLayerBehaviored ? _max : max, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
                         }
                     }
                 }

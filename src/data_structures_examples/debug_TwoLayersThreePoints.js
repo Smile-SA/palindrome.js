@@ -30,9 +30,7 @@ export function debugTwoLayersThreePoints() {
       "layer": {
         "layer-0": {
           "label": "Layer 0",
-          "_layerBehavior": "something",
-          "_defaultColor": "green",
-          "_publicColorOption": "random calls function to pick a color"
+          "layerMetricsUnits": "something",
         }
       }
     },
@@ -66,9 +64,7 @@ export function debugTwoLayersThreePoints() {
       "layer": {
         "layer-1": {
           "label": "Layer 1",
-          "_layerBehavior": "something",
-          "_defaultColor": "green",
-          "_publicColorOption": "random calls function to pick a color"
+          "layerMetricsUnits": "something",
         }
       }
     }

@@ -165,7 +165,11 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
                 debug = false;
             }
             // update label data
-            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelsValue, metricsLabelsUnit, metricData, conf)
+            // Layer behaviored metrics display
+            const isMetricLayerBehaviored = metrics[metricsLabels.key].isLayerBehaviored;
+            const metricsLabelBehavioredValue = isMetricLayerBehaviored ? Object.values(metrics)[metricsLabelsIndex]["_" + metricsLabelsType].toFixed(2) : metricsLabelsValue;
+            const metricsLabelBehavioredUnit = isMetricLayerBehaviored ? metrics[metricsLabels.key]["_unit"] : metricsLabelsUnit;
+            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelBehavioredValue, metricsLabelBehavioredUnit, metricData, conf, isMetricLayerBehaviored);
             let x = labelPositions[0],
                 y = labelPositions[2],
                 z = labelPositions[1];

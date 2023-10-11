@@ -22,9 +22,7 @@ export function logicBoolean() {
             "layer": {
                 "boolean-layer": {
                     "label": "Boolean layer",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color"
+                    "layerMetricsUnits": "something",
                 }
             }
         }

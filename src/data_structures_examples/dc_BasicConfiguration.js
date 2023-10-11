@@ -46,9 +46,7 @@ export function dcBasicConfiguration() {
       "layer": {
         "systemMetrics-layer": {
           "label": "System metrics",
-          "_layerBehavior": "something",
-          "_defaultColor": "green",
-          "_publicColorOption": "random calls function to pick a color"
+          "layerMetricsUnits": "something",
         }
       }
     },
@@ -98,9 +96,7 @@ export function dcBasicConfiguration() {
       "layer": {
         "qosMetrics-layer": {
           "label": "Qos metrics",
-          "_layerBehavior": "something",
-          "_defaultColor": "green",
-          "_publicColorOption": "random calls function to pick a color",
+          "layerMetricsUnits": "something",
         },
 
       }

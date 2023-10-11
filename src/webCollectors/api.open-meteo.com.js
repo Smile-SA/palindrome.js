@@ -92,9 +92,7 @@ export const getWeatherData = async function  () {
         data[layerLabel]["layer"] = {};
         data[layerLabel]["layer"][layerLabel + '-layer'] = {};
         data[layerLabel]["layer"][layerLabel + '-layer']["label"] = layerLabel;
-        data[layerLabel]["layer"][layerLabel + '-layer']["_layerBehavior"] = "something";
-        data[layerLabel]["layer"][layerLabel + '-layer']["_defaultColor"] = "green";
-        data[layerLabel]["layer"][layerLabel + '-layer']["_publicColorOption"] = "random calls function to pick a color";
+        data[layerLabel]["layer"][layerLabel + '-layer']["layerMetricsUnits"] = "something";
     }
     ;
     return data;

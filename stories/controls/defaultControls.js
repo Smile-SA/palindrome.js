@@ -365,6 +365,18 @@ export function defaultControls() {
                 subcategory: "Layer"
             },
         },
+        layerMetricsUnits: {
+            name: "layerMetricsUnits",
+            description: "Change the representation of the layers",
+            control: {
+                type: "radio",
+            },
+            options: ["absolute", "percent", "normalized",],
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
         bicolorDisplay: {
             name: 'bicolorDisplay',
             control: 'boolean',
@@ -895,6 +907,7 @@ export function defaultValues() {
         webWorkers: false,
         showResultsHistory: false,
         resourcesLevel: 50,
+        layerMetricsUnits: "absolute"
         remoteDataFetchPace: 1000
         sideLabelDisplay: false,
         rotatedMetricsAngle: 0,
