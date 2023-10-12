@@ -8,8 +8,19 @@ export var createPalindrome = ({...args}) => {
         console.log("Destroying previous palindrome...");
         cancelAnimationFrame(frameId);
         for (let key in meshes) {
-            meshes[key].geometry.dispose();
-            meshes[key].material.dispose();
+            if (key === "meshRenderingOrder") continue;
+            if (meshes[key]?.isGroup) {
+                meshes[key].traverse((child) => {
+                    if (child?.isMesh) {
+                        child.geometry.dispose();
+                        child.material.dispose();
+                    }
+                });                  
+            } 
+            else {
+                meshes[key].geometry.dispose();
+                meshes[key].material.dispose();
+            }
             delete meshes[key];
         }
         meshes = undefined;

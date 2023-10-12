@@ -213,9 +213,11 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
                     y = y + 1;
                 }
             }
-
-            // Making metrics text little bit above the spheres
-            x = (x >= 0) ? x + 2 : x - 2;
+            
+            if (conf.displayMetricSpheres) {
+                // Making metrics text little bit above the spheres
+                x = (x >= 0) ? x + 2 : x - 2;
+            }
             metricsLabels.position.set(x, y, z);
             // top x
             xTab.push(labelPositions[0]);

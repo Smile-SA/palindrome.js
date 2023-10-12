@@ -7,6 +7,8 @@
   "repository": "https://github.com/Smile-SA/palindrome.js",
   "author": "Smile RnD <rnd@smile.fr>",
   "license": "Apache-2.0",
+  "source": "dev/palindrome.js",
+  "main": "dist/palindrome.js",
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.18.6",
     "@storybook/cli": "^6.5.10",
@@ -21,6 +23,7 @@
   "scripts": {
     "dev": "parcel dev/index.html",
     "build": "parcel build dev/index.html --public-url ./",
+    "build:lib": "yarn parcel build dev/dev-index.js --public-url ./ --out-file=dist/palindrome.js",
     "storybook": "export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "cy:run": "cypress run",

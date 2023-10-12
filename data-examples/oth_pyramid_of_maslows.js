@@ -45,7 +45,7 @@ export function pyramidOfMaslows() {
 
             },
             "layer": {
-                "physiological-needs": {
+                "physiologicalNeeds-layer": {
                     "label": "Physiological needs",
                     "layerBehavior": "something",
                     "defaultColor": "green",
@@ -97,7 +97,7 @@ export function pyramidOfMaslows() {
                 }
             },
             "layer": {
-                "Security-needs": {
+                "SecurityNeeds-layer": {
                     "label": "Security needs",
                     "layerBehavior": "something",
                     "defaultColor": "green",
@@ -149,7 +149,7 @@ export function pyramidOfMaslows() {
                 }
             },
             "layer": {
-                "membership-needs": {
+                "energeticKPIS-layer": {
                     "label": "Membership needs",
                     "layerBehavior": "something",
                     "defaultColor": "green",
@@ -201,7 +201,7 @@ export function pyramidOfMaslows() {
                 }
             },
             "layer": {
-                "esteem-needs": {
+                "esteemNeeds-layer": {
                     "label": "Esteem needs",
                     "layerBehavior": "something",
                     "defaultColor": "green",

@@ -2,6 +2,7 @@ import {dcBasicConfiguration} from '../data-examples/dc_BasicConfiguration';
 import {dcCustomConfiguration} from '../data-examples/dc_CustomConfiguration';
 import {dcEnergeticEfficiency} from '../data-examples/dc_EnergeticEfficiency';
 import {dcFullMap} from '../data-examples/dc_FullMap';
+import {dcBasicConfigurationThreeLayers} from '../data-examples/dc_BasicConfigurationThreeLayers';
 import {defaultControls, defaultValues} from './controls/defaultControls';
 import {createPalindrome} from './controls/createPalindrome';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
@@ -31,6 +32,12 @@ CustomConfiguration.args = {
     sphereColorMed: '#f3c60a',
     sphereColorHigh: '#FF0000',
     data: dcCustomConfiguration(),
+};
+
+export const BasicConfigurationThreeLayers = createPalindrome.bind({});
+BasicConfigurationThreeLayers.args = {
+    mainStaticColor: '#FFCC00',
+    data: dcBasicConfigurationThreeLayers(),
 };
 
 export const BasicConfigurationThreeLayers = createPalindrome.bind({});

@@ -94,7 +94,8 @@ export class Triangle extends THREE.Mesh {
                 color: colorA,
                 transparent: true,
                 opacity: opacity,
-                side: THREE.DoubleSide
+                side: THREE.DoubleSide,
+                depthWrite: false
             });
         } else {
             material_front = new THREE.ShaderMaterial({

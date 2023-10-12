@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 
 describe ('Camera Options and Frame', function () { 
-    it ("displayFrames | displayFramesLine | displayFramesBackground | displayFramesArrow | DocsPage", function () {
+    it ("displayFrames | displayFramesLine | displayFramesBackground | displayLabelLine | DocsPage", function () {
     // Iterates over all elements of camera options
-    const elements = ["displayFrames", "displayFramesLine", "displayFramesBackground", "displayFramesArrow"]
+    const elements = ["displayFrames", "displayFramesLine", "displayFramesBackground", "displayLabelLine"]
     cy.visit(Cypress.env("theurl"))
 
     elements.forEach(element => {

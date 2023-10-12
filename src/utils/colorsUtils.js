@@ -8,10 +8,11 @@
 export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradient, highValueGradient, bicolorGradient) {
     let intValue = value.toFixed(0);
     let layerStatusColor = conf.statusColorLow;
+    
+    if(conf.bicolorDisplay){
+        return intValue < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
+    }
     if (conf.layerBehavior === 'ranges') {
-        if(conf.bicolorDisplay){
-            return intValue < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
-        }
         if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
             return layerStatusColor;
         } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
@@ -21,64 +22,35 @@ export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradi
             layerStatusColor = conf.statusColorHigh;
             return layerStatusColor;
         }
-    } else if (conf.layerBehavior === 'static') {
+    } 
+    else if (conf.layerBehavior === 'static') {
         return conf.mainStaticColor;
-    } else if (conf.layerBehavior === 'dynamic') {
-        if (conf.bicolorDisplay) {
-            let step = (conf.statusRangeHigh - conf.statusRangeLow) / conf.colorSteps;
-            let baseValue = conf.statusRangeLow;
-    
-            //select an index to take a color depending of the value given and return it
-            let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorShadesDepth);
-            return bicolorGradient[index];
-    } else {
-        if(conf.dynamicColorShades){
-            //take the difference between the statuses and devide it by 1 if the statusColorBehavior is static, 100 if dynamic
-            const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
-            const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
-        
-            let colorArray;
-            let step;
-            let baseValue;
-        
-            //create multiples colors in between the two status colors
-            if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
-                colorArray = lowValueGradient;
-                step = lowStep;
-                baseValue = conf.statusRangeLow;
-            } else if (intValue >= conf.statusRangeMed) {
-                colorArray = highValueGradient;
-                step = highStep;
-                baseValue = conf.statusRangeMed;
-            }
-            //select an index to take a color depending of the value given and return it
-            let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorShadesDepth);
-            return colorArray[index];
-    }
-        }
+    } 
+    else if (conf.layerBehavior === 'dynamicShades') {
+        //take the difference between the statuses and devide it by 1 if the statusColorBehavior is static, 100 if dynamic
+        const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
+        const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
 
-        if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
-            return conf.statusColorLow;
-        } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
-            return conf.statusColorMed;
-        } else if (intValue >= conf.statusRangeHigh) {
-            return conf.statusColorHigh;
-        }
+        let colorArray;
+        let step;
+        let baseValue;
 
-    } else if (conf.layerBehavior === 'dynamicRanges') {
-        let dynamicRangesColor1RGB = hexToRgb(conf.dynamicRangesColor1);
-        let dynamicRangesColor2RGB = hexToRgb(conf.dynamicRangesColor2);
-        let redDistance = -(dynamicRangesColor1RGB.r - dynamicRangesColor2RGB.r),
-            greenDistance = -(dynamicRangesColor1RGB.g - dynamicRangesColor2RGB.g),
-            blueDistance = -(dynamicRangesColor1RGB.b - dynamicRangesColor2RGB.b);
+        //create multiples colors in between the two status colors
         if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
-            return conf.dynamicRangesColor1;
-        } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
-            return rgbToHex(dynamicRangesColor1RGB.r + parseInt((redDistance / 2).toFixed(0)), dynamicRangesColor1RGB.g + parseInt((greenDistance / 2).toFixed(0)), dynamicRangesColor1RGB.b + parseInt((blueDistance / 2).toFixed(0)));
-        } else if (intValue >= conf.statusRangeHigh) {
-            return conf.dynamicRangesColor2;
+            colorArray = lowValueGradient;
+            step = lowStep;
+            baseValue = conf.statusRangeLow;
+        } 
+        else if (intValue >= conf.statusRangeMed) {
+            colorArray = highValueGradient;
+            step = highStep;
+            baseValue = conf.statusRangeMed;
         }
-    }
+        //select an index to take a color depending of the value given and return it
+        let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorShadesDepth);
+        return colorArray[index];
+
+    } 
 }
 
 
@@ -108,53 +80,28 @@ export var metricColor = function (value, conf, lowValueGradient, highValueGradi
         }
     } else if (conf.spheresBehavior === 'static') {
         return conf.mainStaticColor;
-    } else if (conf.spheresBehavior === 'dynamic') {
-        if(conf.dynamicColorShades){
-            if (conf.bicolorDisplay) {
-                let step = (conf.statusRangeHigh - conf.statusRangeLow) / conf.colorShadesDepth;
-                let baseValue = conf.statusRangeLow;
-        
-                //select an index to take a color depending of the value given and return it
-                let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorShadesDepth);
-                return bicolorGradient[index];
-            } else {
-                const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
-                const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
-            
-                let colorShadesDepth;
-                let step;
-                let baseValue;
-            
-                if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
-                    colorShadesDepth = lowValueGradient;
-                    step = lowStep;
-                    baseValue = conf.statusRangeLow;
-                } else if (percentageThreshold >= conf.statusRangeMed) {
-                    colorShadesDepth = highValueGradient;
-                    step = highStep;
-                    baseValue = conf.statusRangeMed;
-                }
-            
-                let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorShadesDepth);
-                return colorShadesDepth[index];
-            } 
-    } else {
-        if(conf.bicolorDisplay){
-            return percentageThreshold < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
-        } else {
-            if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
-                return color;
-            } else if (percentageThreshold >= conf.statusRangeMed && percentageThreshold < conf.statusRangeHigh) {
-                color = conf.sphereColorMed;
-                return color;
-            } else if (percentageThreshold >= conf.statusRangeHigh) {
-                color = conf.sphereColorHigh;
-                return color;
-            }
-        }
+    } else if (conf.spheresBehavior === 'dynamicShades') {
 
+        const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
+        const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
+    
+        let colorShadesDepth;
+        let step;
+        let baseValue;
+    
+        if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
+            colorShadesDepth = lowValueGradient;
+            step = lowStep;
+            baseValue = conf.statusRangeLow;
+        } else if (percentageThreshold >= conf.statusRangeMed) {
+            colorShadesDepth = highValueGradient;
+            step = highStep;
+            baseValue = conf.statusRangeMed;
+        }
+    
+        let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorShadesDepth);
+        return colorShadesDepth[index];
     }
-}
 }
 
 

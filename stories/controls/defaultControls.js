@@ -28,16 +28,6 @@ export function defaultControls() {
                 category: "Palindrome",
             },
         },
-        dynamicColorShades: {
-            name: "dynamicColorShades",
-            description: "Change the behavior of colors to be static or dynamic",
-            type: "boolean",
-            control: "boolean",
-            table: {
-                category: "Palindrome",
-                subcategory: "Color Behavior"
-            },
-        },
         colorShadesDepth: {
             name: "colorShadesDepth",
             description: "Change the numbers of steps before achieving a color",
@@ -344,6 +334,24 @@ export function defaultControls() {
                 subcategory: "Metrics"
             },
         },
+        rotatedMetricsAngle: {
+            name: "rotatedMetricsAngle",
+            control: "number",
+            description: "Specify the rotation angle for the layer in degrees",
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
+        mergedMetricsNames: {
+            name: "mergedMetricsNames",
+            control: "boolean",
+            description: "Merge or not metric names when flat camera",
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
+            },
+        },
         // layer label configuration
         layerBehavior: {
             name: "layerBehavior",
@@ -351,7 +359,7 @@ export function defaultControls() {
             control: {
                 type: "radio",
             },
-            options: ["static", "dynamic", 'ranges'],
+            options: ["static", "dynamicShades", 'ranges'],
             table: {
                 category: "Palindrome",
                 subcategory: "Layer"
@@ -574,8 +582,8 @@ export function defaultControls() {
                 category: 'Frames',
             },
         },
-        displayFramesArrow: {
-            name: 'displayFramesArrow',
+        displayLabelLine: {
+            name: 'displayLabelLine',
             description: 'Display or not the frames arrows',
             control: 'boolean',
             table: {
@@ -597,7 +605,7 @@ export function defaultControls() {
             name: "spheresBehavior",
             control: "radio",
             description: "Make sphere dynamic or static",
-            options: ['static', 'dynamic', 'ranges'],
+            options: ['static', 'dynamicShades', 'ranges'],
             table: {
                 category: "Palindrome",
                 subcategory: "Layer",
@@ -774,6 +782,16 @@ export function defaultControls() {
                 category: "web workers"
             }
         },
+        sideLabelDisplay: {
+            name: "sideLabelDisplay",
+            control: "boolean",
+            description: 'Display layers labels on the side',
+            control: 'boolean',
+            table: {
+                category: 'Labels',
+                subcategory: 'Layers'
+            },
+        }
     }
 }
 
@@ -838,8 +856,7 @@ export function defaultValues() {
         displayFramesLine: true,
         displayFramesBackground: false,
         displayMetricsLabelsUnit: true,
-        displayFramesArrow: false,
-        dynamicColorShades: true,
+        displayLabelLine: false,
         statusColorLow: '#319b31',
         statusColorMed: '#f3c60a',
         statusColorHigh: '#FF0000',
@@ -859,5 +876,8 @@ export function defaultValues() {
         webWorkers: false,
         showResultsHistory: false,
         resourcesLevel: 50,
+        sideLabelDisplay: false,
+        rotatedMetricsAngle: 0,
+        mergedMetricsNames: false,
     }
 }

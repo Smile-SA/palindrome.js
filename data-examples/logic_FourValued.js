@@ -36,7 +36,7 @@ export function logicFourValued() {
                 }
             },
             "layer": {
-                "Four-valued-layer": {
+                "four-valued-layer": {
                     "label": "Four-valued layer",
                     "_layerBehavior": "something",
                     "_defaultColor": "green",

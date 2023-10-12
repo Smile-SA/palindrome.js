@@ -10,6 +10,7 @@ import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
 import {setPreviousPalindrome} from "./utils/destructionUtils";
 import {loadingText, scrappers} from "./utils/scrappersUtils";
 import {updateMeshes} from "./utils/renderingUtils";
+import {applyLayerRotationToData} from './utils/layersUtils';
 import { gradient } from './utils/colorsUtils';
 
 /**
@@ -43,11 +44,12 @@ export default (function (parentElement, conf) {
                 console.error("client response :", error);
             }
         }
+        applyLayerRotationToData(data, conf);
         newData = data;
         dataIterator = dataGenerator(data);
         // init materials
         [dashLineMaterial, lineMaterialTransparent, lineMaterial] = initMaterials(conf);
-        let globalParams = {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness};
+        let globalParams = {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes};
         createLabels(data, globalParams);
         //rendering palindrome
         await render();

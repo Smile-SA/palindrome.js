@@ -28,7 +28,7 @@ export function debugTwoLayersThreePoints() {
                 },
             },
             "layer": {
-                "layer-0": {
+                "layer-0-layer": {
                     "label": "Layer 0",
                     "_layerBehavior": "something",
                     "_defaultColor": "green",
@@ -64,7 +64,7 @@ export function debugTwoLayersThreePoints() {
                 }
             },
             "layer": {
-                "layer-1": {
+                "layer-1-layer": {
                     "label": "Layer 1",
                     "_layerBehavior": "something",
                     "_defaultColor": "green",

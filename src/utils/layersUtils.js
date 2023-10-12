@@ -1,4 +1,7 @@
 import {Triangle, SimpleLine, DasheLine} from '../threeJSUtils/ThreeJSGeometryObjects';
+import * as THREE from 'three';
+import {createRenderOrderCounter} from './cameraUtils';
+import { layerPoints } from './metricsUtils2D';
 
 /**
  * drawTrianglesInALayer() caller
@@ -10,19 +13,18 @@ import {Triangle, SimpleLine, DasheLine} from '../threeJSUtils/ThreeJSGeometryOb
  * @param globalParams
  */
 export var drawLayer = function (layer, metricValue, metricsNumber, color, globalParams) {
-    let {conf, meshs, scene} = globalParams;
+    let {conf, meshs, scene, rotation} = globalParams;
     if (conf.displayLayers) {
         for (let i = 0; i < metricsNumber; i++) {
             //draws innner layer shapes
             if (conf.layerDisplayMode === "static") {
-                drawTrianglesInALayer(layer + '_mintoMedLayerShape', metricValue.min, metricValue.med, i, metricsNumber, conf.statusColorLow, meshs, scene, conf.opacity);
-                drawTrianglesInALayer(layer + '_medtoMaxLayerShape', metricValue.med, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, conf.opacity);
+                drawTrianglesInALayer(layer + '_mintoMedLayerShape', metricValue.min, metricValue.med, i, metricsNumber, conf.statusColorLow, meshs, scene, rotation, conf, conf.opacity);
+                drawTrianglesInALayer(layer + '_medtoMaxLayerShape', metricValue.med, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, rotation, conf, conf.opacity);
             } else if (conf.layerDisplayMode === "mixed") {
-                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, conf.statusColorLow, meshs, scene, conf.opacity);
-                drawTrianglesInALayer(layer + '_curtoMaxLayerShape', metricValue.current, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, conf.opacity);
+                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, conf.statusColorLow, meshs, scene, rotation, conf, conf.opacity);
+                drawTrianglesInALayer(layer + '_curtoMaxLayerShape', metricValue.current, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, rotation, conf, conf.opacity);
             } else if (conf.layerDisplayMode === "dynamic") {
-                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, color, meshs, scene, conf.opacity);
-
+                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, color, meshs, scene, conf.opacity, rotation, conf)
             }
         }
     }
@@ -40,8 +42,8 @@ export var drawLayer = function (layer, metricValue, metricsNumber, color, globa
  * @param meshs
  * @param scene
  */
-function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePointLength, color, meshs, scene, opacity) {
-    if (meshs['19' + layer + i]) { // if init done
+function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePointLength, color, meshs, scene, rotation, conf, opacity) {
+    if (meshs['_group'+ '19-20' + layer + i]) { // if init done
         meshs['19' + layer + i].update(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength])
         meshs['20' + layer + i].update(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength])
         meshs['19' + layer + i].material.color.set(color);
@@ -49,10 +51,29 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
     }
     //init objects
     else {
+        if (!meshs['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
+            meshs['meshRenderingOrder'] = createRenderOrderCounter();
+        }
+
+        //console.log(counter());
         meshs['19' + layer + i] = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength], color, null, opacity);
-        scene.add(meshs['19' + layer + i]);
+        //scene.add(meshs['19' + layer + i]);
         meshs['20' + layer + i] = new Triangle(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength], color, null, opacity);
-        scene.add(meshs['20' + layer + i]);
+        
+        if(conf.cameraOptions.indexOf("Flat") !== -1) {
+            meshs['19' + layer + i].renderOrder = meshs['meshRenderingOrder']();
+            meshs['20' + layer + i].renderOrder = meshs['meshRenderingOrder']();
+        }
+
+        //scene.add(meshs['20' + layer + i]);
+        const fullLayer = new THREE.Group();
+        fullLayer.add(meshs['19' + layer + i]);
+        fullLayer.add(meshs['20' + layer + i]);
+        meshs['_group'+ '19-20' + layer + i] = fullLayer;
+        scene.add(fullLayer);
+        if (rotation.angle){
+            meshs['_group'+ '19-20' + layer + i].rotation.y = rotation.angle;
+        }
     }
 }
 
@@ -93,7 +114,7 @@ export var drawLayerOutline = function (layerName, planePoints, layerMetricIndex
  * @param scene
  * @param meshs
  */
-export var drawLayerDashLine = function (layerName, planePoints, layerMetricIndex, planePointLength, material, layerMetricRangeIndex, scene, meshs) {
+export var drawLayerDashLine = function (layerName, planePoints, layerMetricIndex, planePointLength, material, layerMetricRangeIndex, scene, meshs, conf) {
 
     if (meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]) {
         // if init done
@@ -101,8 +122,13 @@ export var drawLayerDashLine = function (layerName, planePoints, layerMetricInde
         meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength])
     } else {
         //init objects
+        if (!meshs['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
+            meshs['meshRenderingOrder'] = createRenderOrderCounter();
+        }
         meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex] = new DasheLine(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength], material);
-
+        if (conf.cameraOptions.indexOf("Flat") !== -1) {
+            meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].renderOrder = meshs['meshRenderingOrder']();
+        }
         scene.add(meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]);
     }
 }
@@ -122,6 +148,64 @@ export function displayLayersLines(metricsNumber, metricsPositions, meshes, scen
             //draws outside lines
             let globalParams = {meshs: meshes, scene};
             drawLayerOutline(layer + '_layerShapesEdges', metricsPosition, i, metricsNumber, lineMaterial, index, globalParams);
+        }
+    }
+}
+
+/**
+ * Add rotation field to each layer of data
+ * @param {*} data the palindrome data structure 
+ * @param {*} conf the palindrome config
+ */
+export function applyLayerRotationToData(data, conf) {
+    if(conf.cameraOptions.indexOf("Flat") !== -1) {
+        let angle = 0;
+        if (conf.rotatedMetricsAngle !== 0) {
+            Object.keys(data).forEach(layer => {
+                data[layer].layer[layer + "-layer"]["rotation"] = angle;
+                angle += conf.rotatedMetricsAngle * (Math.PI / 180);
+            });
+        }
+    }
+}
+
+/**
+ * Merge palindrome metrics
+ * @param {*} data 
+ * @param {*} conf 
+ */
+export function applyLayerMetricsMergeToData(data, conf) {
+    if(conf.zPlaneMultilayer === 0){
+        let zAxis = conf.zPlaneInitial;
+        let allMetrics = {};
+        for (let layer in data) {
+            const metrics = data[layer].metrics;
+            let metricValue = {};
+            metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.max), zAxis, conf);
+            metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.med), zAxis, conf);
+            metricValue.min = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.min), zAxis, conf);
+            metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.current), zAxis, conf);
+            let counter = 0;
+            zAxis -= conf.zPlaneMultilayer;
+            for (const metric in metrics){
+                metrics[metric]["position"] = metricValue.current[counter];
+                metrics[metric]["layerLabel"] = layer;
+                counter ++;
+            }
+            allMetrics = {...allMetrics, ...metrics};
+        }
+        const positionMap = {};
+    
+        for (const metricName in allMetrics) {
+            const metric = allMetrics[metricName];
+            const positionKey = metric.position[0] + "-" + metric.position[1];
+        
+            if (positionMap[positionKey]) {
+                const layerLabel = metric.layerLabel;
+                data[layerLabel].metrics[metricName].label = "merged";
+            } else {
+                positionMap[positionKey] = true;
+            }
         }
     }
 }

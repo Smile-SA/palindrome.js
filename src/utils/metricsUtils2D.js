@@ -9,6 +9,7 @@ import {polarTo3DPoint} from './metricsUtils3D';
  * @param {string} labelUnit the unit of label
  */
 export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf) {
+    if (labelName === "merged") return "";
     if (metricData && labelUnit === '%') {
         //percentage handle
         labelValue = ((labelValue / metricData.max) * 100).toFixed(3);

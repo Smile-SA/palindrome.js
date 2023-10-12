@@ -1,7 +1,8 @@
 import {getMetricsLabelsStructureData} from './metricsUtils2D';
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {create3DMetricsLabels, create3DLayersLabels} from './labelsUtils3D';
-
+import * as THREE from 'three';
+import {createRenderOrderCounter} from './cameraUtils';
 /**
  * Return a text in html tag p
  *
@@ -315,11 +316,12 @@ export var create2DLayersLabels = function (key, labelName, layerIndex, layerPar
  * @param globalParams
  */
 export var createLabels = function (data, globalParams) {
-    let {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness} = globalParams;
+    let {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes} = globalParams;
     let metricIndex = 0,
         layerIndex = 0;
     if (data != null && Object.keys(data).length > 0) {
         for (let layer in data) {
+            const layerMetricsLabels = new THREE.Group();
             let layers = data[layer].layer;
             let metrics = data[layer].metrics;
             let metricLabelsIds = [],
@@ -346,11 +348,19 @@ export var createLabels = function (data, globalParams) {
 
                     }
                     if (conf.metricsLabelsRenderingMode === "2D") {
-                        scene.add(create2DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, conf, metricParameters));
+                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, conf, metricParameters);
+                        layerMetricsLabels.add(currentLabel2d);
+                        //scene.add(currentLabel2d);
                         if (conf.displayAllMetricsLabels) {
-                            scene.add(create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters));
-                            scene.add(create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters));
-                            scene.add(create2DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, conf, metricParameters));
+                            const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters);
+                            const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters);
+                            const maxLabel2d = create2DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, conf, metricParameters);
+                            layerMetricsLabels.add(minLabel2d);
+                            layerMetricsLabels.add(medLabel2d);
+                            layerMetricsLabels.add(maxLabel2d);
+                            // scene.add(minLabel2d);
+                            // scene.add(medLabel2d);
+                            // scene.add(maxLabel2d);
                         }
                     } else if (conf.metricsLabelsRenderingMode === "3D") {
                         let globalParams = {
@@ -359,19 +369,38 @@ export var createLabels = function (data, globalParams) {
                             metricParameters,
                             borderThickness
                         }
-                        scene.add(create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams));
-
+                        const currentLabel3d = create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams);
+                        layerMetricsLabels.add(currentLabel3d);
+                        // scene.add(currentLabel3d);
 
                         if (conf.displayAllMetricsLabels) {
-                            scene.add(create3DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, globalParams));
-                            scene.add(create3DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, globalParams));
-                            scene.add(create3DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, globalParams));
+                            const minLabel3d = create3DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, globalParams);
+                            const medLabel3d = create3DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, globalParams);
+                            const maxLabel3d = create3DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, globalParams);
+                            layerMetricsLabels.add(minLabel3d);
+                            layerMetricsLabels.add(medLabel3d);
+                            layerMetricsLabels.add(maxLabel3d);
+                            // scene.add(minLabel3d);
+                            // scene.add(medLabel3d);
+                            // scene.add(maxLabel3d);
                         }
                     }
                 }
             }
+            meshes["_group"+layer+"_metrics_labels"] = layerMetricsLabels;
 
+            if (!meshes['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
+                meshes['meshRenderingOrder'] = createRenderOrderCounter();
+            }
 
+            if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                meshes["_group"+layer+"_metrics_labels"].renderOrder = meshes['meshRenderingOrder']();
+            }
+            scene.add(layerMetricsLabels);
+            const rotation = data[layer].layer[layer + "-layer"]["rotation"];
+            if (rotation) {
+                meshes["_group"+layer+"_metrics_labels"].rotation.y = data[layer].layer[layer + "-layer"]["rotation"];
+            }
             if (conf.displayLayersLabels) {
                 for (const [key, value] of Object.entries(layers)) {
                     if (layersLabelsIds.includes(key) === true) {
@@ -380,11 +409,19 @@ export var createLabels = function (data, globalParams) {
                     } else {
                         layersLabelsIds.push(key);
                         if (conf.layersLabelsRenderingMode === "2D") {
-                            scene.add(create2DLayersLabels(key, value.label, layerIndex, layerParameters));
+                            const layerLabel2d = create2DLayersLabels(key, value.label, layerIndex, layerParameters);
+                            if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                                layerLabel2d.renderOrder = meshes['meshRenderingOrder']();
+                            }
+                            scene.add(layerLabel2d);
                         } else if (conf.layersLabelsRenderingMode === "3D") {
                             layersLabelsIds.push(key);
                             let globalParams = {labelDiv, layerParameters}
-                            scene.add(create3DLayersLabels(key, value.label, layerIndex, globalParams));
+                            const layerLabel3d = create3DLayersLabels(key, value.label, layerIndex, globalParams);
+                            if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                                layerLabel3d.renderOrder = Infinity;
+                            }
+                            scene.add(layerLabel3d);
                         }
                     }
                 }

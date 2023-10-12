@@ -44,7 +44,7 @@ export function logicFiveThreeTwo() {
                 }
             },
             "layer": {
-                "Five-valued-layer": {
+                "five-valued-layer": {
                     "label": "Five valued layer",
                     "layerBehavior": "something",
                     "defaultColor": "green",

@@ -14,5 +14,6 @@ yarn.lock
 .idea
 .vscode
 
-# BUIlD
+# BUILD
 dist
+storybook-static

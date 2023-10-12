@@ -12,9 +12,10 @@ import * as THREE from 'three';
  * @param globalParams
  */
 export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics, globalParams, lowValueGradient, highValueGradient, bicolorGradient) {
-    let {scene, meshs, conf, camera, labelDiv, layerParameters} = globalParams;
+    let {scene, meshs, conf, camera, labelDiv, layerParameters, rotation} = globalParams;
+    let numberOfMetrics = metrics.length;
     for (var i = 0; i < sphereCoords.current.length; i++) {
-        makeSphereContext(sphereCoords.current[i], layerName, i.toString(), metricColor(metrics[i], conf, lowValueGradient, highValueGradient, bicolorGradient), metrics[i], scene, meshs, conf, camera, labelDiv, layerParameters);
+        makeSphereContext(sphereCoords.current[i], layerName, i.toString(), metricColor(metrics[i], conf, lowValueGradient, highValueGradient, bicolorGradient), metrics[i], scene, meshs, conf, camera, labelDiv, layerParameters, numberOfMetrics, rotation);
     }
 }
 
@@ -33,7 +34,7 @@ export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics
  * @param labelDiv
  * @param layerParameters
  */
-function makeSphereContext(planePoints, layerName, metricIndex, metricColor, metricValues, scene, meshs, conf, camera, labelDiv, layerParameters) {
+function makeSphereContext(planePoints, layerName, metricIndex, metricColor, metricValues, scene, meshs, conf, camera, labelDiv, layerParameters, numberOfMetrics, rotation) {
     if (meshs['_sphere' + layerName + metricIndex]) {
         meshs['_sphere' + layerName + metricIndex].update(metricColor, planePoints[0], planePoints[2], planePoints[1]);
         if (meshs['_sphereHoverRegion' + layerName + metricIndex]) {
@@ -46,7 +47,20 @@ function makeSphereContext(planePoints, layerName, metricIndex, metricColor, met
         meshs['_sphere' + layerName + metricIndex] = new Sphere(metricColor);
         //x,z,y
         meshs['_sphere' + layerName + metricIndex].position.set(planePoints[0], planePoints[2], planePoints[1]);
-        scene.add(meshs['_sphere' + layerName + metricIndex]);
+        
+        if (metricIndex == numberOfMetrics - 1) {
+            const layerSpheres = new THREE.Group();
+            for (let i = 0; i < numberOfMetrics; i++) {
+                layerSpheres.add(meshs['_sphere' + layerName + i])
+            }
+            meshs['_group' + '_spheres'  + layerName] = layerSpheres;
+            scene.add(meshs['_group'+ '_spheres' + layerName]);
+            if (rotation.angle){
+                meshs['_group'+ '_spheres' + rotation.layer].rotation.y = rotation.angle;
+            }
+        }
+
+        //scene.add(meshs['_sphere' + layerName + metricIndex]);
 
         if (conf.displayValuesOnSphereHover) {
             meshs['_sphereHoverRegion' + layerName + metricIndex] = makeSphereFieldOfHover(layerName, metricIndex, planePoints, camera);

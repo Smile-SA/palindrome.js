@@ -1,5 +1,5 @@
 import {scrappers} from "./scrappersUtils";
-import {displayLayersLines, drawLayer} from "./layersUtils";
+import {applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer} from "./layersUtils";
 import {makeSphereContextsStatus} from "./spheresUtils";
 import {layerPoints} from "./metricsUtils2D";
 import {drawSideStraightLine} from "./sidesUtils";
@@ -50,6 +50,13 @@ export async function updateMeshes(params, renderingType) {
     }
     let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null,
         metricIndex = 0, layerIndex = 0, zAxisWorker = conf.zPlaneInitial;
+    if (conf.cameraOptions.indexOf("Flat") !== -1){
+        conf.displaySides = false;
+    }
+    applyLayerRotationToData(newData, conf);
+    if(conf.mergedMetricsNames) {
+        applyLayerMetricsMergeToData(newData, conf);
+    }
     if (renderingType === "workers") {
         const worker = layers_pool.getWorker();
         let keys = Object.keys(newData);
@@ -79,7 +86,10 @@ export async function updateMeshes(params, renderingType) {
                     let layer = e.data.layer;
                     const metricsPositions = [e.data.metricValue.max, e.data.metricValue.med, e.data.metricValue.min];
                     if (e.data.subject === 'computations') {
-                        let globalParams = {conf, meshs: meshes, scene};
+                        let rotation = {};
+                        rotation["layer"] = e.data.layer;
+                        rotation["angle"] = newData[e.data.layer].layer[e.data.layer + "-layer"]?.rotation;
+                        let globalParams = {conf, meshs: meshes, scene, rotation};
                          //this is the updated layer metrics
                         const metrics = newData[layer].metrics, layers = newData[layer].layer;
                         //this is the new total of current's
@@ -88,9 +98,9 @@ export async function updateMeshes(params, renderingType) {
                         const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
                         //todo : status colors shall map with default colors
                         const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
-                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
+                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
                         if (conf.displayMetricSpheres) {
-                            let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters};
+                            let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
                             makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
                         }
                     }
@@ -184,8 +194,8 @@ export async function updateMeshes(params, renderingType) {
                     let xTab = [], yTab = [], zTab = [];
                     const metrics = e.data.metrics;
                     //update metrics label, layers label and their positions
-                    let sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex_frames),
-                        sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
+                    let sortedMetricsLabels = meshes["_group"+e.data.layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex_frames) || [];
+                    let sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
                     settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, labelDiv, xTab, yTab, zTab, e.data.metricValue);
                     // display layer
                     let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1], resize = 0.5;
@@ -257,12 +267,15 @@ export async function updateMeshes(params, renderingType) {
             metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.current), zAxis, conf);
             const metricsPositions = [metricValue.max, metricValue.med, metricValue.min];
             //draws and update layers
-            let globalParams = {conf, meshs: meshes, scene};
+            let rotation = {};
+            rotation["layer"] = layer;
+            rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
+            let globalParams = {conf, meshs: meshes, scene, rotation};
             
             drawLayer(layer, metricValue, metricsNumber, layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
-                let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters};
+                let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
                 makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
             }
             // displayMode
@@ -279,8 +292,8 @@ export async function updateMeshes(params, renderingType) {
             }
             let xTab = [], yTab = [], zTab = [];
             //update metrics label, layers label and their positions
-            let sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex),
-                sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
+            let sortedMetricsLabels = meshes["_group"+layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex) || [];
+            let sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
             settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, labelDiv, xTab, yTab, zTab, metricValue);
             // display layer
             let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1], resize = 0.5;
@@ -297,7 +310,7 @@ export async function updateMeshes(params, renderingType) {
                 // set frame name
                 frameName = layer + '_Rectangle_Frame';
                 // create rectangle frame positions
-                setRectangleFramePositions(positions, xTab, yTab, zTab, layersLabels, conf, arrowPositions, resize);
+                setRectangleFramePositions(positions, xTab, yTab, zTab, layersLabels, conf, arrowPositions, resize, layerIndex);
             }
             // display frames and arrow
             displayFramesAndArrows(conf, positions, frameName, dashLineMaterial, lineMaterial, meshes, scene, arrowPositions, layer);

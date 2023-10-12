@@ -27,7 +27,7 @@ export var drawFrames = function (framePoints, frameName, globalParams) {
         for (let [index, point] of framePoints.entries()) {
             //draws outside lines
             if (conf.frameDashLineSize > 0) {
-                drawLayerDashLine(frameName, point, i, framePoints[0].length, dashLineMaterial, index, scene, meshs)
+                drawLayerDashLine(frameName, point, i, framePoints[0].length, dashLineMaterial, index, scene, meshs, conf)
             } else {
                 let globalParams = {meshs, scene};
                 drawLayerOutline(frameName, point, i, framePoints[0].length, lineMaterial, index, globalParams);
@@ -105,7 +105,7 @@ export function setArrowPostion(conf, positions, arrowPositions, layersLabels) {
  * @param arrowPositions
  * @param resize
  */
-export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLabels, conf, arrowPositions, resize) {
+export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLabels, conf, arrowPositions, resize, layerIndex) {
     // create rectangle frame positions
     positions.push([Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding), Math.max.apply(Math, yTab) + (conf.framePadding * conf.framePadding), Math.max.apply(Math, zTab)]);
     positions.push([Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - (conf.framePadding * conf.framePadding), Math.max.apply(Math, zTab)]);
@@ -114,12 +114,25 @@ export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLa
     // set arrow position
     if (layersLabels != null && xTab.length > 0 && yTab.length > 0 && zTab.length > 0 && conf.displayLayersLabels) {
         arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)), 0, Math.min.apply(Math, zTab)]);
+        if (conf.sideLabelDisplay) {
+            conf.displayLabelLine = false;
+        }
         if (conf.layersLabelsOrientation === "Sticky") {
             arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab)]);
             layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (resize), Math.min.apply(Math, yTab) - 5);
+            if (conf.sideLabelDisplay) {
+                layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (resize), Math.min.apply(Math, yTab) - 5);
+            }
         } else if (conf.layersLabelsOrientation === "Free") {
             arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding)]);
             layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - 5);
+            if (conf.sideLabelDisplay) {
+                layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - 5);
+            }
+        } 
+        if (conf.cameraOptions.indexOf("Flat") !== -1) {
+            conf.displayLabelLine = false;
+            layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)), Math.max.apply(Math, zTab) + (resize), layerIndex * conf.framePadding);
         }
     }
 }
@@ -149,7 +162,7 @@ export function displayFramesAndArrows(conf, positions, frameName, dashLineMater
             drawFramesBackground(positions, frameName, conf.frameBackgroundColor, conf.frameOpacity, globalParams);
         }
         // display arrow Line
-        if (conf.displayFramesArrow) {
+        if (conf.displayLabelLine) {
             let globalParams = {conf, scene, meshs: meshes, dashLineMaterial, lineMaterial};
             drawFrames([arrowPositions], layer + '_arrow', globalParams);
         }

@@ -23,13 +23,11 @@ export var cameraViewOptions = function (meshes, camera, conf) {
 
     //get the center of position of objects
     for (let key in meshes) {
-        if (!key.includes("_text"))
+        if (!key.includes("_text") && !key.includes("_group"))
             if (meshes[key].visible) {
-                let object = meshes[key],
-                bs = object.geometry.boundingSphere
-                if(!bs){
-                    continue
-                }
+                let object = meshes[key];
+                object.geometry.computeBoundingSphere();
+                let bs = object.geometry.boundingSphere;
                 let vector = bs.center.clone();
                 tabX.push(vector.x);
                 tabY.push(vector.y);
@@ -68,8 +66,20 @@ export var cameraViewOptions = function (meshes, camera, conf) {
         camera.lookAt(0, 0, 0);
     }
     if (conf.cameraOptions.indexOf("Flat") !== -1) {
-        conf.displaySides = false;
-        conf.zPlaneMultilayer = 0;
+        conf.zPlaneMultilayer = 0; // To avoid three.js z-fighting
     }
 
+}
+
+/**
+ * A function that returns that increments the rendering order by one every time it being called
+ * @returns rendering order
+ */
+export function createRenderOrderCounter() {
+    let staticVariable = 0;
+  
+    return function() {
+      staticVariable++;
+      return staticVariable;
+    };
 }

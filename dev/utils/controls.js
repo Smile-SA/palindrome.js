@@ -11,6 +11,7 @@ import {logicFiveThreeTwo} from "../../data-examples/logic_FiveThreeTwo";
 import {logicFourValued} from "../../data-examples/logic_FourValued";
 import {logicTernary} from "../../data-examples/logic_Ternary";
 import {pyramidOfMaslows} from "../../data-examples/oth_pyramid_of_maslows";
+import {dcBasicConfigurationThreeLayers} from "../../data-examples/dc_BasicConfigurationThreeLayers";
 
 // defining categories
 export let categories = [
@@ -93,12 +94,6 @@ export let controls = {
         description: "Enable or disable web workers",
         category: categories[0],
     },
-    DynamicColorShades: {
-        name: "DynamicColorShades",
-        control: "boolean",
-        description: "Change the behavior of colors to be static or dynamic",
-        category: categories[1],
-    },
     displayLayers: {
         name: "displayLayers",
         description: "Display or not the layers of palindrome",
@@ -110,7 +105,7 @@ export let controls = {
         description: "Change the rendering color behavior of layers",
         control: "select",
         type: "static",
-        options: ["static", "dynamic", 'ranges', "dynamicGradient"],
+        options: ["static", "dynamicShades", 'ranges'],
         category: categories[1],
     },
     spheresBehavior: {
@@ -118,11 +113,11 @@ export let controls = {
         control: "select",
         description: "Make sphere dynamic or static",
         type: "static",
-        options: ['static', 'dynamic', 'ranges', "dynamicGradient"],
+        options: ['static', 'dynamicShades', 'ranges'],
         category: categories[1],
     },
-    dynamicBicolorDisplay: {
-        name: "dynamicBicolorDisplay",
+    bicolorDisplay: {
+        name: "bicolorDisplay",
         control: "boolean",
         description: "Switch between a gradient made of 3 colors or 2 colors",
         type: "static",
@@ -215,8 +210,8 @@ export let controls = {
         control: 'boolean',
         category: categories[1],
     },
-    displayFramesArrow: {
-        name: 'displayFramesArrow',
+    displayLabelLine: {
+        name: 'displayLabelLine',
         description: 'Display or not the frames arrows',
         control: 'boolean',
         category: categories[1],
