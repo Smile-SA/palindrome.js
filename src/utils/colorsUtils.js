@@ -5,28 +5,35 @@
  * @param {*} conf current palindrome configuration
  */
 
-export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradient, highValueGradient, bicolorGradient) {
+export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradient, highValueGradient, layer) {
     let intValue = value.toFixed(0);
-    let layerStatusColor = conf.statusColorLow;
+    
+    const data = conf.data;
+    const {layerColorHigh, layerColorLow, layerColorMed, mainColorStatic} = data[layer].layer[`${layer}-layer`];
+    const lowColor = layerColorLow ? layerColorLow : conf.statusColorLow;
+    const medColor = layerColorMed ? layerColorMed : conf.statusColorMed;
+    const highColor = layerColorHigh ? layerColorHigh : conf.statusColorHigh;
+    const staticColor = mainColorStatic ? mainColorStatic : conf.mainStaticColor;
+
     
     if(conf.bicolorDisplay){
-        return intValue < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
+        return intValue < conf.statusRangeMed ? lowColor : highColor;
     }
     if (conf.layerBehavior === 'ranges') {
         if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
-            return layerStatusColor;
+            return lowColor;
         } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
-            layerStatusColor = conf.statusColorMed;
-            return layerStatusColor;
+            return medColor;
         } else if (intValue >= conf.statusRangeHigh) {
-            layerStatusColor = conf.statusColorHigh;
-            return layerStatusColor;
+            return highColor;
         }
     } 
     else if (conf.layerBehavior === 'static') {
-        return conf.mainStaticColor;
+        return staticColor;
     } 
     else if (conf.layerBehavior === 'dynamicShades') {
+        lowValueGradient = gradient(lowColor, medColor, conf.colorShadesDepth);
+        highValueGradient = gradient(medColor, highColor, conf.colorShadesDepth);
         //take the difference between the statuses and devide it by 1 if the statusColorBehavior is static, 100 if dynamic
         const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
         const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
@@ -60,26 +67,34 @@ export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradi
  * @param {number} value sphere current value
  * @param conf current palindrome configuration
  */
-export var metricColor = function (value, conf, lowValueGradient, highValueGradient, bicolorGradient) {
+export var metricColor = function (value, conf, lowValueGradient, highValueGradient, layer) {
+    const data = conf.data;
+    const {sphereColorHigh, sphereColorLow, sphereColorMed, mainColorStatic, layerColorLow, layerColorHigh} = data[layer].layer[`${layer}-layer`];
+    const lowColor = sphereColorLow ? sphereColorMed : conf.sphereColorLow;
+    const medColor = sphereColorMed ? sphereColorMed : conf.sphereColorMed;
+    const highColor = sphereColorHigh ? sphereColorHigh : conf.sphereColorHigh;
+    const staticColor = mainColorStatic ? mainColorStatic : conf.mainStaticColor;
+
+    const biColorLow = layerColorLow ? layerColorLow : conf.sphereColorLow;
+    const biColorHigh = layerColorHigh ? layerColorHigh : conf.sphereColorHigh;
+   
     let cur = value.current;
     let max = value.max;
-    let color = conf.sphereColorLow;
+    
     let percentageThreshold = ((cur / max) * 100).toFixed(0);
     if (conf.spheresBehavior === 'ranges') {
         if(conf.bicolorDisplay){
-            return percentageThreshold < conf.statusRangeMed ? conf.statusColorLow : conf.statusColorHigh
+            return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;
         }
         if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
-            return color;
+            return lowColor;
         } else if (percentageThreshold >= conf.statusRangeMed && percentageThreshold < conf.statusRangeHigh) {
-            color = conf.sphereColorMed;
-            return color;
+            return medColor;
         } else if (percentageThreshold >= conf.statusRangeHigh) {
-            color = conf.sphereColorHigh;
-            return color;
+            return highColor;
         }
     } else if (conf.spheresBehavior === 'static') {
-        return conf.mainStaticColor;
+        return staticColor;
     } else if (conf.spheresBehavior === 'dynamicShades') {
 
         const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;

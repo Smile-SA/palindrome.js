@@ -5,6 +5,7 @@ import {dcFullMap} from '../data-examples/dc_FullMap';
 import {dcBasicConfigurationThreeLayers} from '../data-examples/dc_BasicConfigurationThreeLayers';
 import {defaultControls, defaultValues} from './controls/defaultControls';
 import {createPalindrome} from './controls/createPalindrome';
+import {dc_BasicConfigurationLayerColoured} from '../data-examples/dc_BasicConfigurationLayerColoured';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 
 export default {
@@ -59,3 +60,7 @@ EnergeticEfficiency.args = {
     data: dcEnergeticEfficiency(),
 };
 
+export const BasicConfigurationLayerColoured = createPalindrome.bind({});
+BasicConfigurationLayerColoured.args = {
+    data: dc_BasicConfigurationLayerColoured(),
+};

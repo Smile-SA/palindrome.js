@@ -71,7 +71,15 @@ export async function updateMeshes(params, renderingType) {
     if (conf.mockupData && !conf.liveData) {
         newData = dataIterator.next().value;
     }
-    let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null,
+    if (conf.hasScrapper) {
+        let currentHours = new Date().getHours();
+        if (currentHours > scrapperUpdateInitTime) {
+            console.info("Getting updates ...")
+            scrapperUpdateInitTime = currentHours;
+            newData = await scrappers[conf.scrapper]();
+        }
+    }
+    let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null, previousLayerColor = null,
         metricIndex = 0, layerIndex = 0, zAxisWorker = conf.zPlaneInitial;
     if (conf.cameraOptions.indexOf("Flat") !== -1){
         conf.displaySides = false;
@@ -121,7 +129,8 @@ export async function updateMeshes(params, renderingType) {
                         const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
                         //todo : status colors shall map with default colors
                         const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
-                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
+                        const layerColor =  layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, e.data.layer);
+                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, layerColor, globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
                             makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
@@ -140,6 +149,7 @@ export async function updateMeshes(params, renderingType) {
         //second part declarations
         let previousMetric_sides = null,
             previousLayerStatus_sides = null,
+            previousLayerColor_sides = null,
             zAxisWorker_sides = conf.zPlaneInitial;
         let isFirst = true;
         //second part : sides
@@ -151,6 +161,8 @@ export async function updateMeshes(params, renderingType) {
             if (sidesWorker) {
                 sidesWorker.onmessage = function (e) {
                     const layerStatus = e.data.layerStatus;
+                    const layerColor =  layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, e.data.layer);
+
                     if (conf.displaySides === true && conf.cameraOptions.indexOf("Flat") == -1) {
                         let sideDividerOdd = e.data.sideDividerOdd,
                             sideDividerEven = e.data.sideDividerEven,
@@ -158,10 +170,16 @@ export async function updateMeshes(params, renderingType) {
                             sideSizeEven = e.data.sideSizeEven,
                             layer = e.data.layer;
                         if (sideDividerOdd && sideDividerEven && sideSizeOdd && sideSizeEven && previousLayerStatus_sides) {
-                            drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus_sides, conf, layerStatus, meshes, layer, lineMaterial, scene, lowValueGradient, highValueGradient, bicolorGradient);
+                            const sideDividers = {sideDividerEven, sideDividerOdd};
+                            const sideSizes = {sideSizeOdd, sideSizeEven};
+                            const layerStatuses = {layerStatus, previousLayerStatus: previousLayerStatus_sides};
+                            const gradients = {lowValueGradient, highValueGradient, bicolorGradient};
+                            const layersColors = {layerColor, previousLayerColor: previousLayerColor_sides};
+                            drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, gradients, layersColors);
                         }
                     }
                     previousLayerStatus_sides = layerStatus;
+                    previousLayerColor_sides = layerColor;
                     //releaseWorker when it finishes its job
                     sides_pool.releaseWorker(sidesWorker);
                 }
@@ -295,7 +313,8 @@ export async function updateMeshes(params, renderingType) {
             rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
             let globalParams = {conf, meshs: meshes, scene, rotation};
             
-            drawLayer(layer, metricValue, metricsNumber, layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
+            const layerColor =  layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, layer);
+            drawLayer(layer, metricValue, metricsNumber, layerColor, globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
                 let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
@@ -348,13 +367,19 @@ export async function updateMeshes(params, renderingType) {
                     //for the lengths of sides
                     const sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
                     const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
-                    drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus, conf, layerStatus, meshes, layer, lineMaterial, scene, lowValueGradient, highValueGradient, bicolorGradient);
+                    const sideDividers = {sideDividerEven, sideDividerOdd};
+                    const sideSizes = {sideSizeOdd, sideSizeEven};
+                    const layerStatuses = {layerStatus, previousLayerStatus};
+                    const gradients = {lowValueGradient, highValueGradient, bicolorGradient};
+                    const layersColors = {layerColor, previousLayerColor};
+                    drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, gradients, layersColors);
                 }
             }
             zAxis -= conf.zPlaneMultilayer;
             previousMetric = metrics;
             previousLayer = layers;
             previousLayerStatus = layerStatus;
+            previousLayerColor = layerColor;
             layerIndex++;
             metricIndex++;
         }

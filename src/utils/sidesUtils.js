@@ -8,7 +8,7 @@ import {createRenderOrderCounter} from "./cameraUtils";
  * @param sideSizeEven
  * @param sideDividerOdd
  * @param sideSizeOdd
- * @param previousLayerStatus_sides
+ * @param previousLayerStatus
  * @param conf
  * @param layerStatus
  * @param meshes
@@ -16,14 +16,19 @@ import {createRenderOrderCounter} from "./cameraUtils";
  * @param lineMaterial
  * @param scene
  */
-export function drawSideStraightLine(sideDividerEven, sideSizeEven, sideDividerOdd, sideSizeOdd, previousLayerStatus_sides, conf, layerStatus, meshes, layer, lineMaterial, scene, lowValueGradient, highValueGradient, bicolorGradient) {
+export function drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, gradients, layersColors) {
+    let {sideDividerEven, sideDividerOdd} = sideDividers;
+    let {sideSizeEven, sideSizeOdd} = sideSizes;
+    let {previousLayerStatus, layerStatus} = layerStatuses; 
+    let {lowValueGradient, highValueGradient, bicolorGradient} = gradients;
+    let {layerColor, previousLayerColor} = layersColors;
     for (let i = 0; i < sideDividerEven; i++) {
         let a = sideSizeEven[(i + 1) % sideDividerOdd];
         let b = sideSizeOdd[(i + 1) % sideDividerEven];
         let c = sideSizeEven[(i) % sideDividerOdd];
         let d = sideSizeOdd[(i) % sideDividerEven];
-        let colorA = layerColorDecidedByLayerStatus(previousLayerStatus_sides, conf, lowValueGradient, highValueGradient, bicolorGradient);
-        let colorB = layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient);
+        let colorA = previousLayerColor ? previousLayerColor : layerColorDecidedByLayerStatus(previousLayerStatus, conf, lowValueGradient, highValueGradient, layer);
+        let colorB = layerColor ? layerColor : layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, layer);
         if (meshes['side-straight-line' + layer + i]) {
             // if init done, update
             //meshes['side-bias-line' + layer + i].update(sideSizeOdd[i], a);
