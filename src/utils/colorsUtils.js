@@ -19,7 +19,8 @@ export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradi
     if(conf.bicolorDisplay){
         return intValue < conf.statusRangeMed ? lowColor : highColor;
     }
-    if (conf.layerBehavior === 'ranges') {
+    let layerStatusColor = conf.statusColorLow;
+    if (conf.colorsBehavior === 'ranges') {
         if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
             return lowColor;
         } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
@@ -28,15 +29,13 @@ export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradi
             return highColor;
         }
     } 
-    else if (conf.layerBehavior === 'static') {
-        return staticColor;
+    else if (conf.colorsBehavior === 'static') {
+        return conf.mainStaticColor;
     } 
-    else if (conf.layerBehavior === 'dynamicShades') {
-        lowValueGradient = gradient(lowColor, medColor, conf.colorShadesDepth);
-        highValueGradient = gradient(medColor, highColor, conf.colorShadesDepth);
+    else if (conf.colorsBehavior === 'dynamic') {
         //take the difference between the statuses and devide it by 1 if the statusColorBehavior is static, 100 if dynamic
-        const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
-        const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
+        const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorsDynamicDepth;
+        const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorsDynamicDepth;
 
         let colorArray;
         let step;
@@ -54,7 +53,7 @@ export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradi
             baseValue = conf.statusRangeMed;
         }
         //select an index to take a color depending of the value given and return it
-        let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorShadesDepth);
+        let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorsDynamicDepth);
         return colorArray[index];
 
     } 
@@ -82,7 +81,7 @@ export var metricColor = function (value, conf, lowValueGradient, highValueGradi
     let max = value.max;
     
     let percentageThreshold = ((cur / max) * 100).toFixed(0);
-    if (conf.spheresBehavior === 'ranges') {
+    if (conf.spheresColorsBehavior === 'ranges') {
         if(conf.bicolorDisplay){
             return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;
         }
@@ -93,29 +92,29 @@ export var metricColor = function (value, conf, lowValueGradient, highValueGradi
         } else if (percentageThreshold >= conf.statusRangeHigh) {
             return highColor;
         }
-    } else if (conf.spheresBehavior === 'static') {
-        return staticColor;
-    } else if (conf.spheresBehavior === 'dynamicShades') {
+    } else if (conf.spheresColorsBehavior === 'static') {
+        return conf.mainStaticColor;
+    } else if (conf.spheresColorsBehavior === 'dynamic') {
 
-        const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorShadesDepth;
-        const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorShadesDepth;
+        const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorsDynamicDepth;
+        const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorsDynamicDepth;
     
-        let colorShadesDepth;
+        let colorsDynamicDepth;
         let step;
         let baseValue;
     
         if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
-            colorShadesDepth = lowValueGradient;
+            colorsDynamicDepth = lowValueGradient;
             step = lowStep;
             baseValue = conf.statusRangeLow;
         } else if (percentageThreshold >= conf.statusRangeMed) {
-            colorShadesDepth = highValueGradient;
+            colorsDynamicDepth = highValueGradient;
             step = highStep;
             baseValue = conf.statusRangeMed;
         }
     
-        let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorShadesDepth);
-        return colorShadesDepth[index];
+        let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorsDynamicDepth);
+        return colorsDynamicDepth[index];
     }
 }
 
@@ -191,5 +190,23 @@ export function gradient(startColor, endColor, steps) {
         Math.round(stepsG[i]).toString(16).padStart(2, '0') + '' + Math.round(stepsB[i]).toString(16).padStart(2, '0');
     }
     return stepsHex;
+}
+
+/**
+ * Match color with opacity
+ * @param {*} color the color to test
+ * @param {*} colorRanges color ranges available
+ * @param {*} conf current config
+ * @returns opacity value
+ */
+export function getColorOpacityBasedOnRanges(color, colorRanges, conf) {
+    const {highColor, medColor, lowColor} = colorRanges;
+    if (color === highColor) {
+        return conf.transparencyHigh;
+    } else if (color === medColor) {
+        return conf.transparencyMed;
+    } else if (color === lowColor) {
+        return conf.transparencyLow;
+    }
 }
 

@@ -1,4 +1,4 @@
-import {metricColor} from "./colorsUtils";
+import {metricColor, getColorOpacityBasedOnRanges} from "./colorsUtils";
 import {Sphere} from '../threeJSUtils/ThreeJSGeometryObjects';
 import {htmlToSvg} from "./labelsUtils2D";
 import * as THREE from 'three';
@@ -35,8 +35,14 @@ export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics
  * @param layerParameters
  */
 function makeSphereContext(planePoints, layerName, metricIndex, metricColor, metricValues, scene, meshs, conf, camera, labelDiv, layerParameters, numberOfMetrics, rotation) {
+    let opacity = getColorOpacityBasedOnRanges(metricColor, {highColor: conf.sphereColorHigh, medColor: conf.sphereColorMed, lowColor: conf.sphereColorLow}, conf);
     if (meshs['_sphere' + layerName + metricIndex]) {
-        meshs['_sphere' + layerName + metricIndex].update(metricColor, planePoints[0], planePoints[2], planePoints[1]);
+        if(conf.transparentDisplay){
+            meshs['_sphere' + layerName + metricIndex].update(conf.sphereColorHigh, opacity, planePoints[0], planePoints[2], planePoints[1]);
+        }
+        else {
+            meshs['_sphere' + layerName + metricIndex].update(metricColor, null, planePoints[0], planePoints[2], planePoints[1]);
+        }
         if (meshs['_sphereHoverRegion' + layerName + metricIndex]) {
             meshs['_sphereHoverRegion' + layerName + metricIndex].position.set(planePoints[0], planePoints[2], planePoints[1])
         }
@@ -44,7 +50,12 @@ function makeSphereContext(planePoints, layerName, metricIndex, metricColor, met
             meshs['_text' + layerName + metricIndex].position.set(planePoints[0], planePoints[2] + 3, planePoints[1]);
         }
     } else {
-        meshs['_sphere' + layerName + metricIndex] = new Sphere(metricColor);
+        if(conf.transparentDisplay){
+            meshs['_sphere' + layerName + metricIndex] = new Sphere(conf.sphereColorHigh, opacity);
+        }
+        else {
+            meshs['_sphere' + layerName + metricIndex] = new Sphere(metricColor);
+        }
         //x,z,y
         meshs['_sphere' + layerName + metricIndex].position.set(planePoints[0], planePoints[2], planePoints[1]);
         

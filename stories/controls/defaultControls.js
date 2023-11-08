@@ -28,13 +28,13 @@ export function defaultControls() {
                 category: "Palindrome",
             },
         },
-        colorShadesDepth: {
-            name: "colorShadesDepth",
+        colorsDynamicDepth: {
+            name: "colorsDynamicDepth",
             description: "Change the numbers of steps before achieving a color",
             control: "number",
             table: {
                 category: "Palindrome",
-                subcategory: "Color Behavior"
+                subcategory: "Colors"
             },
         },
         //metrics
@@ -101,7 +101,7 @@ export function defaultControls() {
             description: "Change the line color",
             table: {
                 category: "Palindrome",
-                subcategory: "Line"
+                subcategory: "Colors"
             },
         },
         //  sides
@@ -266,8 +266,8 @@ export function defaultControls() {
             control: "color",
             description: "Change the color of metrics labels",
             table: {
-                category: "Labels",
-                subcategory: "Metrics"
+                category: "Palindrome",
+                subcategory: "Colors"
             },
         },
         metricsLabelsBackground: {
@@ -275,8 +275,8 @@ export function defaultControls() {
             control: "color",
             description: "Change the background color of metrics labels",
             table: {
-                category: "Labels",
-                subcategory: "Metrics"
+                category: "Palindrome",
+                subcategory: "Colors"
             },
         },
         metricsLabelsBold: {
@@ -353,8 +353,8 @@ export function defaultControls() {
             },
         },
         // layer label configuration
-        layerBehavior: {
-            name: "layerBehavior",
+        colorsBehavior: {
+            name: "colorsBehavior",
             description: "Change the rendering color behavior of layers",
             control: {
                 type: "radio",
@@ -374,7 +374,7 @@ export function defaultControls() {
             options: ["absolute", "percent", "normalized",],
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
         bicolorDisplay: {
@@ -383,16 +383,16 @@ export function defaultControls() {
             description: 'Switch between a gradient made of 3 colors or 2 colors',
             table: {
                 category: 'Palindrome',
-                subcategory: 'Layer'
+                subcategory: 'Colors'
             },
         },
-        bicolorDisplay: {
-            name: 'bicolorDisplay',
-            control: 'boolean',
-            description: 'Switch between a gradient made of 3 colors or 2 colors',
+        transparentDisplay: {
+            name: "transparentDisplay",
+            control: "boolean",
+            description: "Enable or disable max-to-transparent display",
             table: {
                 category: 'Palindrome',
-                subcategory: 'Layer'
+                subcategory: 'Colors'
             },
         },
         layersLabelsRenderingMode: {
@@ -459,8 +459,8 @@ export function defaultControls() {
             control: 'color',
             description: 'Change the color of layers label',
             table: {
-                category: 'Labels',
-                subcategory: 'Layers'
+                category: 'Palindrome',
+                subcategory: 'Colors'
             },
         },
         layersLabelsBackground: {
@@ -468,8 +468,8 @@ export function defaultControls() {
             control: 'color',
             description: 'Change the background color of layers labels',
             table: {
-                category: 'Labels',
-                subcategory: 'Layers'
+                category: 'Palindrome',
+                subcategory: 'Colors'
             },
         },
         layersLabelsBold: {
@@ -526,7 +526,8 @@ export function defaultControls() {
             control: 'color',
             description: 'Change the frame background color',
             table: {
-                category: 'Frames',
+                category: 'Palindrome',
+                subcategory: 'Colors'
             },
         },
         frameOpacity: {
@@ -551,7 +552,8 @@ export function defaultControls() {
             control: 'color',
             description: 'Change the frame line color',
             table: {
-                category: 'Frames',
+                category: 'Palindrome',
+                subcategory: 'Colors'
             },
         },
         frameLineWidth: {
@@ -610,17 +612,17 @@ export function defaultControls() {
             description: "Change the main app color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
-        spheresBehavior: {
-            name: "spheresBehavior",
+        spheresColorsBehavior: {
+            name: "spheresColorsBehavior",
             control: "radio",
             description: "Make sphere dynamic or static",
-            options: ['static', 'dynamicShades', 'ranges'],
+            options: ['static', 'dynamic', 'ranges'],
             table: {
                 category: "Palindrome",
-                subcategory: "Layer",
+                subcategory: "Colors",
             },
         },
         statusColorLow: {
@@ -629,7 +631,7 @@ export function defaultControls() {
             description: "Change the low status color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
         statusColorMed: {
@@ -638,7 +640,7 @@ export function defaultControls() {
             description: "change the med status color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
         statusColorHigh: {
@@ -647,7 +649,7 @@ export function defaultControls() {
             description: "Change the high status color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
         sphereColorLow: {
@@ -657,7 +659,7 @@ export function defaultControls() {
             description: "change the med status color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
         sphereColorMed: {
@@ -667,7 +669,7 @@ export function defaultControls() {
             description: "Change the high status color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
         sphereColorHigh: {
@@ -677,10 +679,40 @@ export function defaultControls() {
             description: "Change the very high status color",
             table: {
                 category: "Palindrome",
-                subcategory: "Layer"
+                subcategory: "Colors"
             },
         },
-        // range
+        // transparency range
+        transparencyLow: {
+            name: "transparencyLow",
+
+            control: {type: 'range', min: 0, max: 1, step: 0.1},
+            description: "Resize the low status range",
+            table: {
+                category: 'Palindrome',
+                subcategory: 'Colors'
+            },
+        },
+        transparencyMed: {
+            name: "transparencyMed",
+
+            control: {type: 'range', min: 0, max: 1, step: 0.1},
+            description: "Resize the med status range",
+            table: {
+                category: 'Palindrome',
+                subcategory: 'Colors'
+            },
+        },
+        transparencyHigh: {
+            name: "transparencyHigh",
+
+            control: {type: 'range', min: 0, max: 1, step: 0.1},
+            description: "Resize the high status range",
+            table: {
+                category: 'Palindrome',
+                subcategory: 'Colors'
+            },
+        },
         statusRangeLow: {
             name: "statusRangeLow",
 
@@ -845,19 +877,33 @@ export function defaultControls() {
 
 export function defaultValues() {
     return {
+        // Colors category
+        colorsBehavior: 'dynamic',
+        colorsDynamicDepth: 100,
+        statusColorLow: '#319b31',
+        statusColorMed: '#f3c60a',
+        statusColorHigh: '#FF0000',
+        spheresColorsBehavior: 'dynamic',
+        sphereColorLow: '#319b31',
+        sphereColorMed: '#f3c60a',
+        sphereColorHigh: '#FF0000',
+        bicolorDisplay: false,
+        transparentDisplay: false,
+        transparencyHigh: 1,
+        transparencyMed: 0.5,
+        transparencyLow: 0,
+        mainStaticColor: '#f3c60a',
+
         displayArea: 'palindrome',
         palindromeSize: 3,
         cameraOptions: ['Fit'],
-        colorShadesDepth: 100,
         opacity: 0.5,
         metricMagnifier: 10,
         layerDisplayMode: 'dynamic',
-        mainStaticColor: '#f3c60a',
         displayLayers: true,
         lineOpacity: 1,
         lineWidth: 0.5,
         lineColor: '#000000',
-        bicolorDisplay: false,
         displayMode: 'dynamic',
         displaySides: true,
         gridSize: 100,
@@ -889,7 +935,6 @@ export function defaultValues() {
         layersLabelsBold: true,
         layersLabelsItalic: false,
         displayLayersLines: false,
-        layerBehavior: 'ranges',
         displayLayersLabels: true,
         frameShape: 'Rectangle',
         animateFrameDashedLine: false,
@@ -904,13 +949,7 @@ export function defaultValues() {
         displayFramesBackground: false,
         displayMetricsLabelsUnit: true,
         displayLabelLine: false,
-        statusColorLow: '#319b31',
-        statusColorMed: '#f3c60a',
-        statusColorHigh: '#FF0000',
-        spheresBehavior: 'ranges',
-        sphereColorLow: '#319b31',
-        sphereColorMed: '#f3c60a',
-        sphereColorHigh: '#FF0000',
+
         statusRangeLow: 0,
         statusRangeMed: 33,
         statusRangeHigh: 66,

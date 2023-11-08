@@ -66,7 +66,7 @@ export var cameraViewOptions = function (meshes, camera, conf) {
         camera.lookAt(0, 0, 0);
     }
     if (conf.cameraOptions.indexOf("Flat") !== -1) {
-        conf.zPlaneMultilayer = 0; // To avoid three.js z-fighting
+        conf.zPlaneMultilayer = 0;
     }
 
 }

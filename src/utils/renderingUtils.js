@@ -129,8 +129,7 @@ export async function updateMeshes(params, renderingType) {
                         const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
                         //todo : status colors shall map with default colors
                         const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
-                        const layerColor =  layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, e.data.layer);
-                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, layerColor, globalParams);
+                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
                             makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
@@ -313,8 +312,7 @@ export async function updateMeshes(params, renderingType) {
             rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
             let globalParams = {conf, meshs: meshes, scene, rotation};
             
-            const layerColor =  layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, layer);
-            drawLayer(layer, metricValue, metricsNumber, layerColor, globalParams);
+            drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? layerStatus : layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
                 let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};

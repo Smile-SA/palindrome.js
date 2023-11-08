@@ -71,7 +71,7 @@ export class Triangle extends THREE.Mesh {
      * @param colorB
      * @param opacity
      */
-    constructor(a, b, c, colorA, colorB, opacity) {
+    constructor(a, b, c, colorA, colorB, opacity, opacityColor1, opacityColor2) {
         if (!opacity) {
             opacity = 0.5;
         }
@@ -139,6 +139,10 @@ export class Triangle extends THREE.Mesh {
                 side: THREE.DoubleSide,
                 transparent: true
             });
+            if (opacityColor1 !== undefined && opacityColor2 !== undefined) {
+                material_front.uniforms["opacity1"] = { value: opacityColor1 };
+                material_front.uniforms["opacity2"] = { value: opacityColor2 };
+            }
         }
 
         super(geometry, material_front);
@@ -153,7 +157,7 @@ export class Triangle extends THREE.Mesh {
      * @param colorA
      * @param colorB
      */
-    update(a, b, c, colorA, colorB) {
+    update(a, b, c, colorA, colorB, opacityColor1, opacityColor2) {
 
         this.geometry.attributes.position.setXYZ(0, a[0], a[2], a[1]);
         this.geometry.attributes.position.setXYZ(1, b[0], b[2], b[1]);
@@ -170,6 +174,28 @@ export class Triangle extends THREE.Mesh {
         if (colorA && colorB) {
             this.material.uniforms.color1.value = new THREE.Color(colorA);
             this.material.uniforms.color2.value = new THREE.Color(colorB);
+            if (opacityColor1 !== undefined && opacityColor2 !== undefined) {
+                this.material.uniforms["opacity2"] = { value: opacityColor2 };
+                this.material.uniforms["opacity1"] = { value: opacityColor1 };
+                this.material.fragmentShader =`
+                    uniform vec3 color1;
+                    uniform vec3 color2;
+                    uniform float opacity1;
+                    uniform float opacity2;
+                
+                    varying vec2 vUv;
+                    
+                    void main() {
+                        vec3 mixedColor = mix(color1, color2, vUv.y);
+                        vec4 colorWithOpacity1 = vec4(color1, 0.5);
+                        vec4 colorWithOpacity2 = vec4(color2, 0.5);
+
+                        colorWithOpacity1.a *= opacity1;
+                        colorWithOpacity2.a *= opacity2;
+                        
+                        gl_FragColor = mix(colorWithOpacity1, colorWithOpacity2, vUv.y);
+                    }`;
+            }
             this.material.needsUpdate = true;
         }
     }
@@ -180,12 +206,16 @@ export class Sphere extends THREE.Mesh {
      * construct sphere
      * @param color
      */
-    constructor(color) {
+    constructor(color, opacity) {
         const geometry = new THREE.SphereGeometry(0.8, 32, 16);
         const material = new THREE.MeshBasicMaterial({color});
         material.transparent = true;
         material.needsUpdate = true;
-        material.opacity = 1;
+        if(opacity){
+            material.opacity = opacity;
+        } else {
+            material.opacity = 1;
+        }
         super(geometry, material);
     }
 
@@ -196,8 +226,11 @@ export class Sphere extends THREE.Mesh {
      * @param y
      * @param z
      */
-    update(color, x, y, z) {
+    update(color, opacity, x, y, z) {
         this.position.set(x, y, z);
         this.material.color.set(color);
+        if(opacity){
+            this.material.opacity = opacity;
+        }
     };
 }

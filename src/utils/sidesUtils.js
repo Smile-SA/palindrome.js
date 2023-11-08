@@ -1,4 +1,4 @@
-import {layerColorDecidedByLayerStatus} from "./colorsUtils";
+import {getColorOpacityBasedOnRanges, layerColorDecidedByLayerStatus} from "./colorsUtils";
 import {SimpleLine, Triangle} from "../threeJSUtils/ThreeJSGeometryObjects";
 import {createRenderOrderCounter} from "./cameraUtils";
 
@@ -27,15 +27,31 @@ export function drawSideStraightLine(sideDividers, sideSizes, layerStatuses, con
         let b = sideSizeOdd[(i + 1) % sideDividerEven];
         let c = sideSizeEven[(i) % sideDividerOdd];
         let d = sideSizeOdd[(i) % sideDividerEven];
-        let colorA = previousLayerColor ? previousLayerColor : layerColorDecidedByLayerStatus(previousLayerStatus, conf, lowValueGradient, highValueGradient, layer);
-        let colorB = layerColor ? layerColor : layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, layer);
+        let colorA = layerColorDecidedByLayerStatus(previousLayerStatus_sides, conf, lowValueGradient, highValueGradient, bicolorGradient);
+        let colorB = layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient);
+        let opacityA, opacityB;
+        if (conf.transparentDisplay) {
+            opacityA = getColorOpacityBasedOnRanges(colorA, {highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow}, conf);
+            opacityB = getColorOpacityBasedOnRanges(colorB, {highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow}, conf);
+            if(conf.colorsBehavior==='dynamic' && conf.transparentDisplay) {
+                opacityA = previousLayerStatus_sides / 100;
+                opacityB = layerStatus / 100;
+            }
+        }
+
         if (meshes['side-straight-line' + layer + i]) {
             // if init done, update
             //meshes['side-bias-line' + layer + i].update(sideSizeOdd[i], a);
             meshes['side-straight-line' + layer + i].update(b, a, lineMaterial);
             meshes['side-straight-line1' + layer + i].update(d, c, lineMaterial);
-            meshes['side-top-left-pane' + layer + i].update(c, a, d, colorA, colorB)
-            meshes['side-bottom-right-pane' + layer + i].update(d, b, a, colorA, colorB);
+            if(conf.transparentDisplay) {
+                meshes['side-top-left-pane' + layer + i].update(c, a, d, conf.statusColorHigh, conf.statusColorHigh, opacityA, opacityB)
+                meshes['side-bottom-right-pane' + layer + i].update(d, b, a, conf.statusColorHigh, conf.statusColorHigh, opacityA, opacityB);
+            }
+            else {
+                meshes['side-top-left-pane' + layer + i].update(c, a, d, colorA, colorB)
+                meshes['side-bottom-right-pane' + layer + i].update(d, b, a, colorA, colorB);
+            }
         } else {
             //init objects
             //meshes['side-bias-line' + layer + i] = new SimpleLine(sideSizeOdd[i], a, lineMaterialTransparent);
@@ -45,8 +61,14 @@ export function drawSideStraightLine(sideDividers, sideSizes, layerStatuses, con
             }
             meshes['side-straight-line' + layer + i] = new SimpleLine(b, a, lineMaterial);
             meshes['side-straight-line1' + layer + i] = new SimpleLine(d, c, lineMaterial);
-            meshes['side-top-left-pane' + layer + i] = new Triangle(c, a, d, colorA, colorB, null);            
-            meshes['side-bottom-right-pane' + layer + i] = new Triangle(d, b, a, colorA, colorB, null);
+            if(conf.transparentDisplay) {
+                meshes['side-top-left-pane' + layer + i] = new Triangle(c, a, d, conf.statusColorHigh, conf.statusColorHigh, null, opacityA, opacityB);            
+                meshes['side-bottom-right-pane' + layer + i] = new Triangle(d, b, a, conf.statusColorHigh, conf.statusColorHigh, null, opacityA, opacityB);
+            }
+            else {
+                meshes['side-top-left-pane' + layer + i] = new Triangle(c, a, d, colorA, colorB, null);            
+                meshes['side-bottom-right-pane' + layer + i] = new Triangle(d, b, a, colorA, colorB, null);
+            }
             
             if(conf.cameraOptions.indexOf("Flat") !== -1) {
                 meshes['side-straight-line' + layer + i].renderOrder = meshes['meshRenderingOrder']();

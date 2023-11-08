@@ -2,6 +2,7 @@ import {Triangle, SimpleLine, DasheLine} from '../threeJSUtils/ThreeJSGeometryOb
 import * as THREE from 'three';
 import {createRenderOrderCounter} from './cameraUtils';
 import { layerPoints } from './metricsUtils2D';
+import { getColorOpacityBasedOnRanges } from './colorsUtils';
 
 /**
  * drawTrianglesInALayer() caller
@@ -43,11 +44,20 @@ export var drawLayer = function (layer, metricValue, metricsNumber, color, globa
  * @param scene
  */
 function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePointLength, color, meshs, scene, rotation, conf, opacity) {
+    let opacity = getColorOpacityBasedOnRanges(color, {highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow}, conf);
+    if(conf.colorsBehavior==='dynamic' && conf.transparentDisplay) {
+        opacity = color / 100;
+    }
     if (meshs['_group'+ '19-20' + layer + i]) { // if init done
         meshs['19' + layer + i].update(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength])
         meshs['20' + layer + i].update(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength])
-        meshs['19' + layer + i].material.color.set(color);
-        meshs['20' + layer + i].material.color.set(color);
+        if(conf.transparentDisplay && conf.transparentDisplay){
+            meshs['19' + layer + i].material.opacity = opacity * 0.5;
+            meshs['20' + layer + i].material.opacity = opacity * 0.5;
+        } else {
+            meshs['19' + layer + i].material.color.set(color);
+            meshs['20' + layer + i].material.color.set(color);
+        }
     }
     //init objects
     else {
@@ -55,10 +65,9 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
             meshs['meshRenderingOrder'] = createRenderOrderCounter();
         }
 
-        //console.log(counter());
-        meshs['19' + layer + i] = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength], color, null, opacity);
+        meshs['19' + layer + i] = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : opacity);
         //scene.add(meshs['19' + layer + i]);
-        meshs['20' + layer + i] = new Triangle(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength], color, null, opacity);
+        meshs['20' + layer + i] = new Triangle(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : opacity);
         
         if(conf.cameraOptions.indexOf("Flat") !== -1) {
             meshs['19' + layer + i].renderOrder = meshs['meshRenderingOrder']();

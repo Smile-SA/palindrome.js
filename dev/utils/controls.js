@@ -109,20 +109,20 @@ export let controls = {
         control: "boolean",
         category: categories[1],
     },
-    layerBehavior: {
-        name: "layerBehavior",
+    colorsBehavior: {
+        name: "colorsBehavior",
         description: "Change the rendering color behavior of layers",
         control: "select",
         type: "static",
-        options: ["static", "dynamicShades", 'ranges'],
+        options: ["static", "dynamic", 'ranges'],
         category: categories[1],
     },
-    spheresBehavior: {
-        name: "spheresBehavior",
+    spheresColorsBehavior: {
+        name: "spheresColorsBehavior",
         control: "select",
         description: "Make sphere dynamic or static",
         type: "static",
-        options: ['static', 'dynamicShades', 'ranges'],
+        options: ['static', 'dynamic', 'ranges'],
         category: categories[1],
     },
     bicolorDisplay: {

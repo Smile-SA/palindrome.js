@@ -146,6 +146,9 @@ export default (function (parentElement, conf) {
     //init global parameters
     let debug = false;
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
+    const lowValueGradient = gradient(conf.statusColorLow, conf.statusColorMed, conf.colorsDynamicDepth);
+    const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorsDynamicDepth);
+    const bicolorGradient = gradient(conf.statusColorLow, conf.statusColorHigh, conf.colorsDynamicDepth);
     const meshes = {};
     const {scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
     let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];

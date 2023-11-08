@@ -394,7 +394,7 @@ function appendControlsToCategories() {
             select.setAttribute("id", nameId);
             select.style.width = "50%";
             select.setAttribute("class", "ml-24 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
-            if (controls[nameId].name === "spheresBehavior" || controls[nameId].name === "sidesDisplayMode" || controls[nameId].name === "layerDisplayMode") select.setAttribute("class", "ml-20 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
+            if (controls[nameId].name === "spheresColorsBehavior" || controls[nameId].name === "sidesDisplayMode" || controls[nameId].name === "layerDisplayMode") select.setAttribute("class", "ml-20 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
             if (controls[nameId].type === "static") {
                 for (let option of controls[nameId].options) {
                     select.appendChild(new Option(option, option));
