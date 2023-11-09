@@ -10,7 +10,7 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
 
     if (localStorage.getItem('benchmarkResults')) {
         conf.testBothVersions = (localStorage.getItem('testBothVersions') === 'true');
-        conf.webWorkers = (localStorage.getItem('webWorkers') === 'true');
+        conf.webWorkersRendering = (localStorage.getItem('webWorkersRendering') === 'true');
     }
     // rendering
     if (conf.displayGrid) {
@@ -85,7 +85,7 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
         //count down
         let sec = conf.testDuration * 60;
         let timer = setInterval(function () {
-            if (conf.webWorkers) {
+            if (conf.webWorkersRendering) {
                 counter.innerHTML = "<pre style='background-color: rgba(255,255,255,0.8); position: absolute; left: 0px; top:0; width: 100%; padding-bottom: 80px; margin: 0px;'>" + "<span style='position: absolute; left:80px'>\n  Benchmark for <span style='color:#c90036; font-weight: bold'>Web Workers</span> version started, please do not touch your PC.    \n" + "  <b><span style='color:#c90036'>" + ("0" + Math.floor(sec / 60)).slice(-2) + ':' + ("0" + (sec - Math.floor(sec / 60) * 60)).slice(-2) + "</span></b> minute(s) remaining.    \n" + "</span></pre>";
             } else {
                 counter.innerHTML = "<pre style='background-color: rgba(255,255,255,0.8); position: absolute; left: 0px; top:0; width: 100%; padding-bottom: 80px; margin: 0px;'>" + "<span style='position: absolute; left:80px'>\n  Benchmark for <span style='color:#c90036; font-weight: bold'>default</span> version started, please do not touch your PC.    \n" + "  <b><span style='color:#c90036'>" + ("0" + Math.floor(sec / 60)).slice(-2) + ':' + ("0" + (sec - Math.floor(sec / 60) * 60)).slice(-2) + "</span></b> minute(s) remaining.    \n" + "</span></pre>";

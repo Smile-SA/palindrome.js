@@ -120,7 +120,7 @@ export default (function (parentElement, conf) {
         await render();
         //saving previous palindrome
         setPreviousPalindrome(renderer, scene, meshes, parentElement, frameId);
-        if (!(conf.webWorkers || conf.liveData)) {
+        if (!(conf.webWorkersRendering || conf.liveData)) {
             //setting camera for default version
             cameraViewOptions(meshes, camera, conf);
         }
@@ -182,14 +182,14 @@ export default (function (parentElement, conf) {
             refreshedData,
         }
         //rendering with or without web workers
-        const renderingMode = conf.webWorkers ? "workers" : "default";
+        const renderingMode = conf.webWorkersRendering ? "workers" : "default";
         const liveDataInfo = await updateMeshes(updateMeshesParams, renderingMode);
         scrapperUpdateInitTime = liveDataInfo.scrapperUpdateInitTime;
         newData = liveDataInfo.newData;
         httpRequests_pool = liveDataInfo.httpRequests_pool;
         try {
             renderer.render(scene, camera);
-            if ((conf.webWorkers) && init_camera && (localStorage.getItem("isInitComplete") === "true")) {
+            if ((conf.webWorkersRendering) && init_camera && (localStorage.getItem("isInitComplete") === "true")) {
                 //setting camera for web workers
                 cameraViewOptions(meshes, camera, conf);
                 init_camera = false;

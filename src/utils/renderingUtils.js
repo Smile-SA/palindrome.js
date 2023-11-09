@@ -42,7 +42,7 @@ export async function updateMeshes(params, renderingType) {
         const remoteDataFetchPace = conf.remoteDataFetchPace; // in ms
         if (timeDifferenceInMilliseconds >= remoteDataFetchPace) {
                 // Getting updates...
-                if (renderingType === "workers") { // Making http requests using web workers
+                if (conf.webWorkersHTTP) { // Making http requests using web workers
                     const worker = httpRequests_pool.getWorker();
                     
                     worker.onmessage = function (e) {

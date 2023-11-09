@@ -97,7 +97,7 @@ export let controls = {
         description: "Enable or disable live use case",
         category: categories[0],
     },
-    webWorkers: {
+    webWorkersRendering: {
         name: "Activate web workers",
         control: "boolean",
         description: "Enable or disable web workers",

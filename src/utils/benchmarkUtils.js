@@ -169,7 +169,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
             'Average MBytes of allocated memory': statsData.mem.length === 0 ? 0 : (((statsData.mem.value).reduce((a, b) => a + b, 0)) / statsData.mem.length).toFixed(2),
             'Minute(s) of test': duringTime,
         }
-        let versionString = conf.webWorkers ? 'Web workers' : 'Basic';
+        let versionString = conf.webWorkersRendering ? 'Web workers' : 'Basic';
         statsVariables.displayBenchmark = false;
         displayBenchmark = false;
 
@@ -178,7 +178,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
             console.log(versionString + ' version test finished.');
             localStorage.setItem('benchmarkResults', JSON.stringify(results));
             localStorage.setItem('testBothVersions', false);
-            localStorage.setItem('webWorkers', !conf.webWorkers);
+            localStorage.setItem('webWorkersRendering', !conf.webWorkersRendering);
             localStorage.setItem('version', versionString);
             localStorage.setItem('previousData', JSON.stringify(statsData));
             conf.testBothVersions = false;
@@ -195,7 +195,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
             //parentElement.removeChild(stats.dom);
             localStorage.removeItem('benchmarkResults');
             localStorage.removeItem('testBothVersions');
-            localStorage.removeItem('webWorkers');
+            localStorage.removeItem('webWorkersRendering');
             localStorage.removeItem('version');
             localStorage.removeItem('previousData');
             const previousResultsFormatted = {

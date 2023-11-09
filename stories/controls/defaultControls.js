@@ -795,10 +795,18 @@ export function defaultControls() {
             }
         },
 
-        webWorkers: {
-            name: "Web workers",
+        webWorkersRendering: {
+            name: "webWorkersRendering",
             control: "boolean",
             description: "enable or disable web workers",
+            table: {
+                category: "web workers"
+            }
+        },
+        webWorkersHTTP: {
+            name: "webWorkersHTTP",
+            control: "boolean",
+            description: "enable or disable http web workers",
             table: {
                 category: "web workers"
             }
@@ -904,13 +912,16 @@ export function defaultValues() {
         testBothVersions: true,
         testDuration: 1,
         clearHistory: false,
-        webWorkers: false,
+        webWorkersRendering: false,
         showResultsHistory: false,
+        webWorkersHTTP: false,
         resourcesLevel: 50,
-        layerMetricsUnits: "absolute"
-        remoteDataFetchPace: 1000
+        layerMetricsUnits: "absolute",
+        remoteDataFetchPace: 1000,
         sideLabelDisplay: false,
         rotatedMetricsAngle: 0,
         mergedMetricsNames: false,
+        remoteDataFetchPace: 1000,
+        layerMetricsUnits: "absolute",
     }
 }
