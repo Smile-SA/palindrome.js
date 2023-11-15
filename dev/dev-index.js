@@ -8,6 +8,7 @@ import {controls} from "./utils/controls";
 /**
  * Main
  */
+const palindromeType = process.env.PALINDROME_TYPE || 'basic';
 render();
 
 /**
@@ -16,7 +17,6 @@ render();
  */
 function toggle(e) {
     const urlParams = new URLSearchParams(window.location.search);
-    console.log(e.target.id);
     if (document.getElementById(e.target.id).checked) {
         urlParams.set(e.target.name, "true");
         location.search = urlParams;
@@ -31,7 +31,6 @@ function toggle(e) {
  * @param {event} e
  */
 function onSelect(e) {
-    console.log(e.target.value);
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set(e.target.id, e.target.value);
     location.search = urlParams;
@@ -65,7 +64,7 @@ function applyDefaultOptions(devConfig) {
         const urlParams = new URLSearchParams(window.location.search);
         let toggleParam = urlParams.get(toggleId);
         if (toggleParam == null) {
-            toggleParam = defaultValues()[toggleId];
+            toggleParam = devConfig[toggleId];
             devConfig[toggleId] = toggleParam;
             document.getElementById(toggleId).checked = toggleParam;
         } else {
@@ -79,10 +78,17 @@ function applyDefaultOptions(devConfig) {
         element.addEventListener('change', onSelect, false);
         const urlParams = new URLSearchParams(window.location.search);
         let selectParam = urlParams.get(selectId);
-        if (selectParam == null) selectParam = defaultValues()[selectId];
-        devConfig[selectId] = selectParam;
-        document.getElementById(selectId).value = selectParam;
-        if (selectId === "data") {
+        if (selectParam == null) selectParam = devConfig[selectId];
+        let isUserDefinedConfig = false;
+        if (selectId === "data" && typeof(devConfig.data) === 'object') {
+            isUserDefinedConfig = true;
+        }
+        if (!isUserDefinedConfig) {
+            devConfig[selectId] = selectParam;
+            document.getElementById(selectId).value = selectParam;
+        }
+        
+        if (selectId === "data" && !isUserDefinedConfig) {
             let palindromeName = urlParams.get('data');
             if (palindromeName) {
                 document.getElementById("data").value = palindromeName;
@@ -199,6 +205,8 @@ function createSideBar() {
     let logo = document.createElement("img");
     logo.setAttribute("src", palindromeLogo);
     logo.setAttribute("alt", "Palindrome.js Logo");
+    logo.style.overflow = "hidden";
+    logo.style.fontSize = "10px";
     logo.style.position = "absolute";
     logo.style.left = "140px";
     logo.style.top = "58px";
@@ -207,6 +215,9 @@ function createSideBar() {
 
     burgerMenu.appendChild(logo);
     aside.appendChild(burgerMenu);
+    if (palindromeType === 'basic') {
+        aside.style.display = "none";
+    }
     let body = document.getElementsByTagName("body")[0];
     body.insertBefore(aside, body.firstChild);
 }
@@ -346,7 +357,7 @@ function appendControlsToCategories() {
             label.innerText = nameId;
             let input = document.createElement("input");
             input.setAttribute("id", nameId);
-            input.setAttribute("value", defaultValues()[nameId] ?? "");
+            input.setAttribute("value", devConfig[nameId] ?? "");
             input.setAttribute("class", "absolute ml-56 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
             input.style.width = "38%";
 
@@ -383,6 +394,26 @@ function appendControlsToCategories() {
 }
 
 /**
+ * Apply custom user args to Palindrome
+ * @param {*} config devConfig
+ */
+function applyParamsToConfig(config) {
+    if (palindromeType === 'basic') {
+        const userConfig = document.getElementById("palindromeScript")?.dataset?.structure;
+        if (userConfig) {
+            const dataStructure = JSON.parse(userConfig);
+            if (dataStructure) {
+                config["data"] = dataStructure;
+            }
+        }
+    }
+    const props = JSON.parse(document.getElementById("palindromeScript")?.dataset?.configuration || "{}");
+    for(const prop in props) {
+        config[prop] = props[prop];
+    }
+}
+
+/**
  * Renders Palindrome with config
  */
 function render() {
@@ -392,6 +423,7 @@ function render() {
     appendControlsToCategories();
     init();
     const devConfig = defaultValues();
+    applyParamsToConfig(devConfig);
     applyDefaultOptions(devConfig);
     getPalindrome(devConfig);
 }
