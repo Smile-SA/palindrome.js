@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
 describe ('Display layers', function () { 
-  it ("displayLayers | displaySides | displayGrid", function () {
-    const elements = [ "displayLayers" , "displaySides" , "displayGrid"]
+  it ("displayLayers | layerStatusControl | displaySides | displayGrid", function () {
+    const elements = [ "displayLayers" , "lineOpacity" , "displaySides" , "displayGrid"]
     cy.visit(Cypress.env("theurl"))
 
     elements.forEach(element => {

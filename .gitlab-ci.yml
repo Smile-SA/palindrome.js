@@ -1,26 +1,111 @@
-  push-to-deploy:
-    stage: deploy
-    image:
-      entrypoint: ['']
-      name: alpine/git:latest
+stages:
+  - test
+  - build
+  - deploy
 
-    before_script:
-      # Clone the repository via HTTPS inside a new directory
-      - git clone -b deploy "https://${GITLAB_USER_NAME}:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "${CI_COMMIT_SHA}"
+.install-dependencies:
+  before_script:
+    - yarn install
 
-      # Set the displayed user with the commits that are about to be made
-      - git config --global user.email "${GIT_USER_EMAIL:-$GITLAB_USER_EMAIL}"
-      - git config --global user.name "${GIT_USER_NAME:-$GITLAB_USER_NAME}"
-      
-    script:
-      # Go to the new directory
-      - cd "${CI_COMMIT_SHA}"
+.install-benchmark-dependencies:
+  before_script:
+    - /bin/bash benchmark-dependencies.sh
+    - yarn install
 
-      # Add all generated files to Git
-      - git add -- . :!.gitlab-ci.yml
-      
-      - git push origin deploy:deploy-test
+default:
+  image: node:18.18-alpine
 
+build-dev:
+  stage: build
+  extends: .install-dependencies
+  script:
+    - yarn build
+  artifacts:
+    paths:
+      - "dist/"
+  allow_failure: false
+  when: manual
 
-    allow_failure: false
-    when : manual
+cypress-test:
+  stage: test
+  extends: .install-dependencies
+  dependencies: []
+  image: cypress/base:latest
+  script:
+    - yarn storybook &
+    - yarn dev &
+    - rm -rf cypress/match-screenshots/ .cache/
+    - for i in 1 2; do yarn cypress:run; done
+  allow_failure: false
+
+benchmark:
+  image: ubuntu:20.04
+  stage: test
+  dependencies: []
+  extends: .install-benchmark-dependencies
+  script:
+    - /bin/bash benchmark.sh
+  allow_failure: false
+
+benchmark-test:
+  image: ubuntu:20.04
+  stage: test
+  dependencies: []
+  extends: .install-benchmark-dependencies
+  script:
+    - /bin/bash benchmark-eval.sh
+  allow_failure: false
+
+push-to-dev:
+  stage: deploy
+  image:
+    entrypoint: ['']
+    name: alpine/git:latest
+
+  before_script:
+    - git clone -b "${CI_COMMIT_REF_NAME}" "https://${GITLAB_USER_NAME}:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "${CI_COMMIT_SHA}"
+    - git config --global user.email "${GIT_USER_EMAIL:-$GITLAB_USER_EMAIL}"
+    - git config --global user.name "${GIT_USER_NAME:-$GITLAB_USER_NAME}"
+
+  script:
+    - cd "${CI_COMMIT_SHA}"
+    - git checkout dev-CI/CD-issue-168
+    - git merge "${CI_COMMIT_REF_NAME}"
+    - git push origin dev-CI/CD-issue-168
+  allow_failure: false
+  when: manual
+
+pages:
+  stage: deploy
+  image: busybox
+  dependencies:
+    - build-dev
+  script:
+    - mv dist/ public/
+  artifacts:
+    paths:
+      - "public/"
+  allow_failure: false
+
+mirror-wiki:
+  stage: deploy
+  image:
+    entrypoint: ['']
+    name: alpine/git:latest
+
+  before_script:
+    - git clone "https://${GITLAB_USER_NAME}:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.wiki.git" "${CI_COMMIT_SHA}"
+    - git config --global user.email "${GIT_USER_EMAIL:-$GITLAB_USER_EMAIL}"
+    - git config --global user.name "${GIT_USER_NAME:-$GITLAB_USER_NAME}"
+
+  script:
+    - cd "${CI_COMMIT_SHA}"
+    - rm -rf .git
+    - git init
+    - git config --global user.name "${GH_USERNAME}"
+    - git remote add origin "https://${GH_USERNAME}:${GH_TOKEN}@github.com/Smile-SA/palindrome.js.wiki.git"
+    - git add .
+    - git commit -m "wiki update"
+    - git push -f origin master
+  allow_failure: false
+  when: manual

@@ -8,7 +8,7 @@ describe ("lineColor | metricsLabelsColor | layersLabelsColor | frameLineColor",
     
     elements.forEach(element => {
       var ele = "#control-" + element
-      cy.wait(1000)
+      cy.wait(2000)
       cy.get(ele).eval_color_red(ele)
        
 

@@ -166,7 +166,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
         let results = {
             'Average FPS rendered': (((statsData.fps.value).reduce((a, b) => a + b, 0)) / statsData.fps.length).toFixed(2),
             'Average Milliseconds needed to render a frame': (((statsData.ms.value).reduce((a, b) => a + b, 0)) / statsData.ms.length).toFixed(2),
-            'Average MBytes of allocated memory': (((statsData.mem.value).reduce((a, b) => a + b, 0)) / statsData.mem.length).toFixed(2),
+            'Average MBytes of allocated memory': statsData.mem.length === 0 ? 0 : (((statsData.mem.value).reduce((a, b) => a + b, 0)) / statsData.mem.length).toFixed(2),
             'Minute(s) of test': duringTime,
         }
         let versionString = conf.webWorkers ? 'Web workers' : 'Basic';
@@ -198,7 +198,19 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
             localStorage.removeItem('webWorkers');
             localStorage.removeItem('version');
             localStorage.removeItem('previousData');
+            const previousResultsFormatted = {
+                'Average FPS rendered': previousResults[0],
+                'Average Milliseconds needed to render a frame': previousResults[1],
+                'Average MBytes of allocated memory': previousResults[2],
+                'Minute(s) of test': previousResults[3],
+            }
+            if (process.env.IS_BENCHMARK) {
+                const fileContent = `\n${previousVersion} version results: ${JSON.stringify(previousResultsFormatted, null, 2)}\n\n${versionString} version results: ${JSON.stringify(results, null, 2)}\n\nPalindrome config: ${JSON.stringify(conf, null, 2)}\n`;
+                const fileName = process.env.OUTPUT_FILENAME ? process.env.OUTPUT_FILENAME : "benchmarkResults";
+                exportBenchMarkResultsToFile(fileContent, fileName, "text/plain");
+            }
             await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);
+            localStorage.setItem("testFinished", "true");
         }
         //Saving benchmark results into history (localStorage)
         let currentDate = new Date().toISOString();
@@ -552,4 +564,18 @@ function padData(data1, data2, data3) {
         data3.push(data3.at(-1));
     }
     return [data1, data2, data3];
+}
+
+
+export const exportBenchMarkResultsToFile = function (content, fileName, contentType) {
+    const a = document.createElement("a");
+    const file = new Blob([content], { type: contentType });
+
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
 }

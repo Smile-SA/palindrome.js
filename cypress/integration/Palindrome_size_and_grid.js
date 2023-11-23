@@ -17,13 +17,13 @@ describe('Palindrome size and Grid', function () {
         cy.get(ele).clear()
         cy.get(ele).type(50)
 
-        cy.get(fullscreen).eq(7).click()
-        cy.wait(2000)
+        cy.get('[title="Go full screen [F]"]').click()
+        cy.wait(2500)
         cy.matchScreenshot(ele,{
             threshold: 0.0001,
             thresholdType: 'pixel'
         })
-        cy.get(fullscreen).eq(7).click()
+        cy.get('[title="Exit full screen [F]"]').click()
       }
       else{
         cy.get(ele).eval_type(ele)

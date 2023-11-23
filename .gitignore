@@ -15,5 +15,5 @@ yarn.lock
 .vscode
 
 # BUILD
-dist
 storybook-static
+dist

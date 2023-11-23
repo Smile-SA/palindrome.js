@@ -29,13 +29,13 @@ const fullscreen = '.sto-1k5e3f'
 Cypress.Commands.add('eval_snapshot', ($el) => {
   // Goes fullscreen takes a snapshot with element's name
 
-  cy.get(fullscreen).eq(7).click()
+  cy.get('[title="Go full screen [F]"]').click()
   cy.wait(3000)
   cy.matchScreenshot($el,{
     threshold: 0.0001,
     thresholdType: "pixel"
   })
-  cy.get(fullscreen).eq(7).click( )
+  cy.get('[title="Exit full screen [F]"]').click()
 
 })
 

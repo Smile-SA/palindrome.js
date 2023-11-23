@@ -20,13 +20,13 @@ describe ('Z plane and rendering modes', function () {
         }
     
       })
-      cy.get(fullscreen).eq(7).click()
+      cy.get('[title="Go full screen [F]"]').click()
       cy.wait(2000)
       cy.matchScreenshot("Zplane",{
           threshold: 0.0001,
           thresholdType: 'pixel'
       })
-      cy.get(fullscreen).eq(7).click()
+      cy.get('[title="Exit full screen [F]"]').click()
     })
 
     it('metricsLabelsRenderingMode | layersLabelsRenderingMode | metricsLabelsRenderingFormat', () => {
@@ -44,13 +44,14 @@ describe ('Z plane and rendering modes', function () {
           cy.get(ele).select('2D') 
         }
 
-        cy.get(fullscreen).eq(7).click()
+        cy.get('[title="Go full screen [F]"]').click()
         cy.wait(1500)
         cy.matchScreenshot(ele,{
         threshold: 0.0001,
         thresholdType: 'pixel'
         })    
-        cy.get(fullscreen).eq(7).click()
+        cy.get('[title="Exit full screen [F]"]').click()
+
      })
 
     })

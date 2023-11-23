@@ -31,7 +31,6 @@
     "build-storybook": "export NODE_OPTIONS=--openssl-legacy-provider && build-storybook",
     "cy:run": "cypress run",
     "cypress:open": "cypress open",
-    "cypress": "cypress run",
     "storybook-deploy": "gh-pages -d storybook-static",
     "dev-deploy": "gh-pages -d dist"
   },

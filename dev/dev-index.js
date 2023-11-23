@@ -9,6 +9,12 @@ import {controls} from "./utils/controls";
  * Main
  */
 const palindromeType = process.env.PALINDROME_TYPE || 'basic';
+const isBenchmark = process.env.IS_BENCHMARK === 'true';
+const testDuration = process.env.BENCHMARK_DURATION || 1;
+const ressourcesLevel = process.env.WORKERS_RESSOURES_LEVEL || 100;
+const useCaseName = process.env.USE_CASE_NAME || 'benchLoadTest';
+const fileName = process.env.OUTPUT_FILENAME;
+console.log("env:",{palindromeType, isBenchmark, testDuration, ressourcesLevel, useCaseName, fileName});
 render();
 
 /**
@@ -114,7 +120,14 @@ function applyDefaultOptions(devConfig) {
             }
         }
     }
-
+    if (isBenchmark) {
+        devConfig.benchmark = 'Active';
+        let category = findCategoryByPalindromeName(useCaseName);
+        devConfig.data = findPalindromeByCategoryAndName(category, useCaseName)["data"]();
+        devConfig.mockupData = true;
+        devConfig.testDuration = testDuration;
+        devConfig.resourcesLevel = ressourcesLevel;
+    }
     //output the configuration in use to the console
     console.log("Palindrome.js : configuration in use");
     console.dir(devConfig);
@@ -416,7 +429,7 @@ function applyParamsToConfig(config) {
 /**
  * Renders Palindrome with config
  */
-function render() {
+function render() {    
     createSideBar();
     createSideBarContent();
     createCategories();

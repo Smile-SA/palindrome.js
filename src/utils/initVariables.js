@@ -59,6 +59,9 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
     parentElement.appendChild(renderer.domElement);
     parentElement.appendChild(labelsRenderer.domElement);
     if (conf.benchmark === 'Active') {
+        if(localStorage.getItem('testFinished') === 'true') {
+            localStorage.clear();
+        }
         //screen blocker
         let blocker = document.createElement("div");
         blocker.id = "benchmarkInteractionBlocker";
