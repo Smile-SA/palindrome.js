@@ -1,52 +1,72 @@
 #!/bin/bash
 
+# Set up benchmark parameters
+source ./benchmark.env.sh
 # Trap SIGINT to clean up before exiting
 trap cleanup INT
 
 cleanup() {
+    echo -e "\033[1m[INFO] Cleaning up and exiting...\n\033[0m"
     pkill -f firefox
     pkill -f parcel
-    rm ~/.mozilla/firefox/profiles.ini
-    echo -e "\033[1m\n[INFO] Cleaning up and exiting...\n\033[0m"
-    exit 1
+    firefoxProfile=~/.mozilla/firefox/profiles.ini
+    if [ -n "$GITLAB_CI" ]; then
+        [ -e "$firefoxProfile" ] && rm "$firefoxProfile"
+    fi
+    [ -e "$outputFile" ] && rm "$outputFile"
+    [ -e "$outputFile.txt" ] && rm "$outputFile.txt"
+    exit 0
 }
 
-# Set up benchmark parameters
-export PALINDROME_TYPE=basic
-export IS_BENCHMARK=true
-export BENCHMARK_DURATION=1
-export USE_CASE_NAME=dcFullMap
-export WORKERS_RESSOURES_LEVEL=100
-export OUTPUT_FILENAME=benchmark_results
-
 # Set the base path and construct the output file path
-homeDirectory="$HOME"
-downloadsDirectory="Downloads"
-basePath="${homeDirectory}/${downloadsDirectory}/"
-outputFile="${basePath}${OUTPUT_FILENAME}"
+mkdir -p "${HOME}/Downloads"
+outputFile="${HOME}/Downloads/${OUTPUT_FILENAME}"
 
 # Remove cache and existing output file
-
 rm -rf .cache
 [ -e "$outputFile" ] && rm "$outputFile"
+[ -e "$outputFile.txt" ] && rm "$outputFile.txt"
 
-# Kill processes on port 1234 and start Parcel
-fuser -k 1234/tcp
-yarn parcel dev/index.html &
-parcelPid=$!
+if [[ "$USE_WEBSERVER" = true ]]; then
+    # Kill processes on port 1234 and start Parcel
+    fuser -k 1234/tcp
+    yarn parcel dev/index.html &
+    parcelPid=$!
 
-# Wait for Parcel to start
-sleep 30
+    # Wait for Parcel to start
+    sleep 30
+    url="http://localhost:1234"
+else
+    yarn parcel build dev/index.html --public-url ./ --no-cache
+    url="./dist/index.html"
+fi
 
-# Launch Firefox in headless mode
-firefox --headless -url http://localhost:1234/ &
+# Launch browser
+Xvfb :1 -screen 0 1024x768x16 &
+export DISPLAY=:1
 
-# Wait for firefox to start
-sleep 5
-
-# Display benchmark start message
-currentDateTime=$(date '+%Y-%m-%d %H:%M:%S')
-echo -e "\033[1m\n[INFO] Execution starting time: $currentDateTime.\n\033[0m"
+if [[ "$HEADLESS_MODE" = false ]]; then
+    if [[ "$USE_GPU" = true ]]; then
+        firefox -url $url &
+    else
+        google-chrome --disable-gpu --no-sandbox $url&
+    fi
+else
+    if [[ "$USE_GPU" = true ]]; then
+        firefox --headless -url $url &
+    else
+        if [ -n "$GITLAB_CI" ]; then
+            google-chrome --no-sandbox &
+            chromePid=$!
+            sleep 10
+            kill -9 "$chromePid"
+            sleep 30
+            google-chrome --disable-gpu --no-sandbox $url&
+        else
+            firefox --headless -url $url &
+        fi;
+    fi
+fi
 
 # Calculate sleep duration based on BENCHMARK_DURATION or default to 60 seconds
 if declare -p | grep -q "BENCHMARK_DURATION"; then
@@ -56,21 +76,13 @@ else
 fi
 
 # Display benchmark total duration
-echo -e "\033[1m[INFO] Benchmark total duration: $sleepDuration seconds.\n\033[0m"
-
-# Start loading spinner
-spinner=( ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏ )
-i=0
-start_time=$(date +%s)
-while [ ! -e "$outputFile" ]; do
-    current_time=$(date +%s)
-    elapsed_time=$((current_time - start_time))
-    echo -n -e "\033[1m[INFO] Benchmark started. Time elapsed: ${elapsed_time}s  ${spinner[i]}  \r\033[0m"
+echo -e "\033[1m[INFO] $(date '+%Y-%m-%dT%H:%M:%S') Benchmark started. Total duration: $sleepDuration seconds.\n\033[0m"
+while [ ! -e "$outputFile" ] && [ ! -e "$outputFile.txt" ]; do
     sleep 0.1
-    i=$(( (i+1) % ${#spinner[@]} ))
 done
-# Display output file path
-echo -e "\033[1m\n[INFO] Output file: $outputFile\n\033[0m"
+
+# Wait for file to be downloaded
+sleep 1
 
 # Display benchmark finish message
 echo -e "\033[1m\n[INFO] Benchmark done, displaying results.\n\033[0m"
@@ -81,13 +93,48 @@ ramCapacity=$(free -h | awk '/^Mem:/ {print $2}')
 ramCapacityFormatted="RAM: $ramCapacity"
 
 # Append benchmark context and Palindrome.js config to the output file
-fileContent=$(cat "$outputFile")
-echo -e "\n\n************************* Benchmark context:\n" > "$outputFile"
-echo "$cpuInfo" >> "$outputFile"
-echo "$ramCapacityFormatted" >> "$outputFile"
-echo -e "\n\n************************* Palindrome.js benchmark results:\n" >> "$outputFile"
-echo "$fileContent" >> "$outputFile"
-cat "$outputFile"
+if [[ "$USE_GPU" = true ]]; then
+    fileContent=$(cat "$outputFile")
+else
+    if [ -n "$GITLAB_CI" ]; then
+        fileContent=$(cat "$outputFile.txt")
+    else
+        fileContent=$(cat "$outputFile")
+    fi
+fi
+
+# Getting JSON Data from results file
+fpsBasicVersion=$(echo "$fileContent" | jq -r '.Basic_version_results."Average FPS rendered"')
+fpsWorkersVersion=$(echo "$fileContent" | jq -r '."Web workers_version_results"."Average FPS rendered"')
+
+msBasicVersion=$(echo "$fileContent" | jq -r '.Basic_version_results."Average Milliseconds needed to render a frame"')
+msWorkersVersion=$(echo "$fileContent" | jq -r '."Web workers_version_results"."Average Milliseconds needed to render a frame"')
+
+dataStructure=$(echo "$fileContent" | jq -r '.palindrome_config')
+
+# Display output files path
+echo -e "\033[1m\n[INFO] Output files:\n- $outputFile.context \n- $outputFile.results \n- $outputFile.data\033[0m"
+
+echo -e "-------$currentDateTime Benchmark context:\n" > "$outputFile.context"
+echo "$dataStructure" > "$outputFile.data"
+echo "$cpuInfo" >> "$outputFile.context"
+echo "$ramCapacityFormatted" >> "$outputFile.context"
+echo "$fileContent" > "$outputFile.results_"
+jq 'del(.palindrome_config)' $outputFile.results_ > $outputFile.results
+rm $outputFile.results_
+cat "$outputFile.context"
+echo -e "\033[1m[INFO] $(date '+%Y-%m-%dT%H:%M:%S') Palindrome.js benchmark results:\n\033[0m"
+#cat "$outputFile.results"
+echo -e "\n-------------------------------------------------------------------------------------"
+echo "                                  Basic version                   Web workes version"
+echo "-------------------------------------------------------------------------------------"
+echo "FPS (Frames per second)      |    $fpsBasicVersion                           $fpsWorkersVersion"
+echo "MS needed to render a frame  |    $msBasicVersion                           $msWorkersVersion"
+echo "-------------------------------------------------------------------------------------"
+echo "Total duration (seconds)     |    $sleepDuration"
+echo "-------------------------------------------------------------------------------------"
+
+#echo -e "\033[1m[INFO] $(date '+%Y-%m-%dT%H:%M:%S') Benchmark total time $sleepDuration seconds.\n\033[0m" 
 
 # Clean up and exit
 cleanup

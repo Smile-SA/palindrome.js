@@ -59,7 +59,7 @@ function makeSphereContext(planePoints, layerName, metricIndex, metricColor, met
         //x,z,y
         meshs['_sphere' + layerName + metricIndex].position.set(planePoints[0], planePoints[2], planePoints[1]);
         
-        if (metricIndex == numberOfMetrics - 1) {
+        if ((metricIndex == numberOfMetrics - 1) && conf.cameraOptions.indexOf("Flat") !== -1) {
             const layerSpheres = new THREE.Group();
             for (let i = 0; i < numberOfMetrics; i++) {
                 layerSpheres.add(meshs['_sphere' + layerName + i])
@@ -71,7 +71,9 @@ function makeSphereContext(planePoints, layerName, metricIndex, metricColor, met
             }
         }
 
-        //scene.add(meshs['_sphere' + layerName + metricIndex]);
+        if (!conf.cameraOptions.indexOf("Flat") !== -1) {
+            scene.add(meshs['_sphere' + layerName + metricIndex]);
+        }
 
         if (conf.displayValuesOnSphereHover) {
             meshs['_sphereHoverRegion' + layerName + metricIndex] = makeSphereFieldOfHover(layerName, metricIndex, planePoints, camera);

@@ -186,7 +186,7 @@ function copySingleObject(obj, index) {
     return result;
 }
 
-function makeCase(nLayers, obj) {
+export function makeCase(nLayers) {
     let result = {};
     for (let index = 0; index < nLayers; index++) {
         let partial_result = copySingleObject(obj, index);

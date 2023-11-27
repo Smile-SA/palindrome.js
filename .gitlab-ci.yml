@@ -33,9 +33,10 @@ cypress-test:
   image: cypress/base:latest
   script:
     - yarn storybook &
-    - yarn dev &
-    - rm -rf cypress/match-screenshots/ .cache/
-    - for i in 1 2; do yarn cypress:run; done
+    - yarn cypress:run
+  rules:
+    - exists:
+        - cypress/match-screenshots/*
   allow_failure: false
 
 benchmark:
@@ -46,6 +47,7 @@ benchmark:
   script:
     - /bin/bash benchmark.sh
   allow_failure: false
+  when: manual
 
 benchmark-test:
   image: ubuntu:20.04
@@ -55,6 +57,7 @@ benchmark-test:
   script:
     - /bin/bash benchmark-eval.sh
   allow_failure: false
+  when: manual
 
 push-to-dev:
   stage: deploy

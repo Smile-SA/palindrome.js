@@ -59,9 +59,6 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
     parentElement.appendChild(renderer.domElement);
     parentElement.appendChild(labelsRenderer.domElement);
     if (conf.benchmark === 'Active') {
-        if(localStorage.getItem('testFinished') === 'true') {
-            localStorage.clear();
-        }
         //screen blocker
         let blocker = document.createElement("div");
         blocker.id = "benchmarkInteractionBlocker";
@@ -120,9 +117,9 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
 
     // creating pools for layer, sides and frames
     let layers_pool, sides_pool, frames_pool, httpRequests_pool;
-    layers_pool = new WorkerPool("worker.js", conf.resourcesLevel);
-    sides_pool = new WorkerPool("worker.js", conf.resourcesLevel);
-    frames_pool = new WorkerPool("worker.js", conf.resourcesLevel);
+    layers_pool = new WorkerPool(conf.resourcesLevel);
+    sides_pool = new WorkerPool(conf.resourcesLevel);
+    frames_pool = new WorkerPool(conf.resourcesLevel);
     httpRequests_pool = new WorkerPool("worker.js", conf.resourcesLevel);
 
 

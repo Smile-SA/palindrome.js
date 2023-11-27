@@ -10,6 +10,7 @@ export var Stats = function () {
     let fps = 0, ms = 0, mem = 0;
     var container = document.createElement('div');
     container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
+    container.setAttribute("id","performanceMetering");
     container.addEventListener('click', function (event) {
         event.preventDefault();
         showPanel(++mode % container.children.length);
@@ -166,7 +167,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
         let results = {
             'Average FPS rendered': (((statsData.fps.value).reduce((a, b) => a + b, 0)) / statsData.fps.length).toFixed(2),
             'Average Milliseconds needed to render a frame': (((statsData.ms.value).reduce((a, b) => a + b, 0)) / statsData.ms.length).toFixed(2),
-            'Average MBytes of allocated memory': statsData.mem.length === 0 ? 0 : (((statsData.mem.value).reduce((a, b) => a + b, 0)) / statsData.mem.length).toFixed(2),
+            'Average MBytes of allocated memory': statsData.mem.length === 0 ? "N/A" : (((statsData.mem.value).reduce((a, b) => a + b, 0)) / statsData.mem.length).toFixed(2),
             'Minute(s) of test': duringTime,
         }
         let versionString = conf.webWorkersRendering ? 'Web workers' : 'Basic';
@@ -183,6 +184,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
             localStorage.setItem('previousData', JSON.stringify(statsData));
             conf.testBothVersions = false;
             //Reload to execute the other version of Palindrome.js
+            localStorage.setItem('reloadTime', new Date().toISOString());
             document.location.reload();
         } else {
             //Getting second version results in case of two versions test OR getting results of the only version to test in the case of a single test
@@ -205,12 +207,22 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
                 'Minute(s) of test': previousResults[3],
             }
             if (process.env.IS_BENCHMARK) {
-                const fileContent = `\n${previousVersion} version results: ${JSON.stringify(previousResultsFormatted, null, 2)}\n\n${versionString} version results: ${JSON.stringify(results, null, 2)}\n\nPalindrome config: ${JSON.stringify(conf, null, 2)}\n`;
+                const fileResults = {};
+                fileResults[`${previousVersion}_version_results`] = previousResultsFormatted;
+                fileResults[`${versionString}_version_results`] = results;
+                fileResults['palindrome_config'] = conf;
+                const fileContent = JSON.stringify(fileResults, null, 2);
                 const fileName = process.env.OUTPUT_FILENAME ? process.env.OUTPUT_FILENAME : "benchmarkResults";
                 exportBenchMarkResultsToFile(fileContent, fileName, "text/plain");
             }
-            await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);
-            localStorage.setItem("testFinished", "true");
+            await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);            
+            // mutate benchmark control to Inactive
+            conf.benchmark = 'Inactive';
+            localStorage.removeItem('benchmarkResults');
+            localStorage.removeItem('testBothVersions');
+            localStorage.removeItem('webWorkers');
+            localStorage.removeItem('version');
+            localStorage.removeItem('previousData');
         }
         //Saving benchmark results into history (localStorage)
         let currentDate = new Date().toISOString();
@@ -283,21 +295,28 @@ function createModalElements(isHistory) {
         //if we click outside the modal, the modal will close
         window.onclick = function (event) {
             if (event.target === modalDiv) {
-                modalDiv.style.display = "none";
-                if(document.getElementById("benchmarkInteractionBlocker")){
-                    document.getElementById("benchmarkInteractionBlocker").style.display = "none";
-                }
+                closeModal(modalDiv);
             }
         }
         //if we click on the closing button, the modal will close
-        span.onclick = function () {
-            modalDiv.style.display = "none";
-            if(document.getElementById("benchmarkInteractionBlocker")){
-                document.getElementById("benchmarkInteractionBlocker").style.display = "none";
-            }
-        }
+        span.onclick = () => closeModal(modalDiv);
+
     }
     return [modalDiv, modalContent, span, style];
+}
+
+/**
+ * Close benchmark results modal and deletes interaction blocker
+ * @param {*} modalDiv the modal div that displays benchmark results
+ */
+const closeModal = (modalDiv) => {
+    modalDiv.parentNode.removeChild(modalDiv);
+    const benchmarkInteractionBlocker = document.getElementById("benchmarkInteractionBlocker");
+    if(benchmarkInteractionBlocker){
+        benchmarkInteractionBlocker.parentNode.removeChild(benchmarkInteractionBlocker);
+    }
+    const monitoringDisplay = document.getElementById("performanceMetering");
+    monitoringDisplay.parentNode.removeChild(monitoringDisplay);
 }
 
 /**
@@ -578,4 +597,22 @@ export const exportBenchMarkResultsToFile = function (content, fileName, content
 
     document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
+}
+
+
+/**
+ * Cleans up benchmark variables when browser restores after crash
+ */
+export const benchmarkCleanUp = () => {
+    const reloadTimeString = localStorage.getItem('reloadTime', new Date().toISOString());
+    if (reloadTimeString) {
+        const reloadTime = new Date(reloadTimeString);
+        if( Math.floor((new Date() - reloadTime) / (1000 * 60)) >= 1 ) {
+            localStorage.removeItem('benchmarkResults');
+            localStorage.removeItem('testBothVersions');
+            localStorage.removeItem('webWorkers');
+            localStorage.removeItem('version');
+            localStorage.removeItem('previousData');
+        }
+    }
 }

@@ -234,8 +234,14 @@ export async function updateMeshes(params, renderingType) {
                     let xTab = [], yTab = [], zTab = [];
                     const metrics = e.data.metrics;
                     //update metrics label, layers label and their positions
-                    let sortedMetricsLabels = meshes["_group"+e.data.layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex_frames) || [];
-                    let sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
+                    let sortedLayersLabels, sortedMetricsLabels;
+                    if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                        sortedMetricsLabels = meshes["_group"+e.data.layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex_frames) || [];
+                        sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
+                    } else {
+                        sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex_frames);
+                        sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
+                    }
                     settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, labelDiv, xTab, yTab, zTab, e.data.metricValue);
                     // display layer
                     let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1], resize = 0.5;
@@ -332,8 +338,14 @@ export async function updateMeshes(params, renderingType) {
             }
             let xTab = [], yTab = [], zTab = [];
             //update metrics label, layers label and their positions
-            let sortedMetricsLabels = meshes["_group"+layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex) || [];
-            let sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
+            let sortedLayersLabels, sortedMetricsLabels;
+            if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                sortedMetricsLabels = meshes["_group"+layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex) || [];
+                sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
+            } else {
+                sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex);
+                sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
+            }
             settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, labelDiv, xTab, yTab, zTab, metricValue);
             // display layer
             let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1], resize = 0.5;

@@ -22,17 +22,20 @@
     "storybook-addon-turbo-build": "^1.1.0"
   },
   "scripts": {
-    "dev": "cross-env PALINDROME_TYPE=dev parcel dev/index.html",
-    "basic": "cross-env PALINDROME_TYPE=basic parcel dev/index.html",
-    "build": "parcel build dev/index.html --public-url ./",
-    "build:dev": "cross-env PALINDROME_TYPE=DEV yarn parcel build dev/dev-index.js --public-url ./ --out-file=dist/palindrome.dev.js",
-    "build:basic": "cross-env PALINDROME_TYPE=basic yarn parcel build dev/dev-index.js --public-url ./ --out-file=dist/palindrome.js",
+    "dev": "cross-env PALINDROME_TYPE=dev parcel dev/index.html --no-cache",
+    "basic": "cross-env PALINDROME_TYPE=basic parcel dev/index.html --no-cache",
+    "build": "cross-env PALINDROME_TYPE=dev parcel build dev/index.html --public-url ./ --no-cache",
+    "build:dev": "cross-env PALINDROME_TYPE=dev-build yarn parcel build src/index.js --public-url ./ --out-file=dist/palindrome.dev.js --no-source-maps --no-cache",
+    "build:basic": "cross-env PALINDROME_TYPE=basic-build yarn parcel build src/index.js --public-url ./ --out-file=dist/palindrome.js --no-source-maps --no-cache",
     "storybook": "export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006",
     "build-storybook": "export NODE_OPTIONS=--openssl-legacy-provider && build-storybook",
     "cy:run": "cypress run",
     "cypress:open": "cypress open",
     "storybook-deploy": "gh-pages -d storybook-static",
-    "dev-deploy": "gh-pages -d dist"
+    "dev-deploy": "gh-pages -d dist",
+    "benchmark:install": "sudo /bin/bash ./benchmark-dependencies.sh",
+    "benchmark:run": "/bin/bash ./benchmark.sh",
+    "benchmark:eval": "/bin/bash ./benchmark-eval.sh"
   },
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",

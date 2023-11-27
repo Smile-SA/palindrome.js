@@ -48,7 +48,7 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
     if(conf.colorsBehavior==='dynamic' && conf.transparentDisplay) {
         opacity = color / 100;
     }
-    if (meshs['_group'+ '19-20' + layer + i]) { // if init done
+    if (meshs['19' + layer + i] || (meshs['_group'+ '19-20' + layer + i] && conf.cameraOptions.indexOf("Flat") !== -1 )) { // if init done
         meshs['19' + layer + i].update(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength])
         meshs['20' + layer + i].update(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength])
         if(conf.transparentDisplay && conf.transparentDisplay){
@@ -72,17 +72,19 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
         if(conf.cameraOptions.indexOf("Flat") !== -1) {
             meshs['19' + layer + i].renderOrder = meshs['meshRenderingOrder']();
             meshs['20' + layer + i].renderOrder = meshs['meshRenderingOrder']();
+            const fullLayer = new THREE.Group();
+            fullLayer.add(meshs['19' + layer + i]);
+            fullLayer.add(meshs['20' + layer + i]);
+            meshs['_group'+ '19-20' + layer + i] = fullLayer;
+            scene.add(fullLayer);
+            if (rotation.angle){
+                meshs['_group'+ '19-20' + layer + i].rotation.y = rotation.angle;
+            }
+        } else {
+            scene.add(meshs['19' + layer + i]);
+            scene.add(meshs['20' + layer + i]);
         }
-
-        //scene.add(meshs['20' + layer + i]);
-        const fullLayer = new THREE.Group();
-        fullLayer.add(meshs['19' + layer + i]);
-        fullLayer.add(meshs['20' + layer + i]);
-        meshs['_group'+ '19-20' + layer + i] = fullLayer;
-        scene.add(fullLayer);
-        if (rotation.angle){
-            meshs['_group'+ '19-20' + layer + i].rotation.y = rotation.angle;
-        }
+        
     }
 }
 

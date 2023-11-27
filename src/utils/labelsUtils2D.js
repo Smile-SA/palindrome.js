@@ -333,7 +333,10 @@ export var createLabels = function (data, globalParams) {
         layerIndex = 0;
     if (data != null && Object.keys(data).length > 0) {
         for (let layer in data) {
-            const layerMetricsLabels = new THREE.Group();
+            let layerMetricsLabels;
+            if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                layerMetricsLabels = new THREE.Group();
+            }
             let layers = data[layer].layer;
             let metrics = data[layer].metrics;
             let metricLabelsIds = [],
@@ -357,11 +360,27 @@ export var createLabels = function (data, globalParams) {
                     }
                     let { current, min, med, max, unit, _current, _max, _med, _min, _unit, isLayerBehaviored } = value;
                     if (conf.metricsLabelsRenderingMode === "2D") {
-                        scene.add(create2DMetricsLabels(key, value.label, 'current', isLayerBehaviored ? _current : current, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
+                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, conf, metricParameters);
+                        if (conf.cameraOptions.indexOf("Flat") !== -1){
+                            layerMetricsLabels.add(currentLabel2d);
+                        }
+                        else {
+                            scene.add(currentLabel2d);
+                        }
                         if (conf.displayAllMetricsLabels) {
-                            scene.add(create2DMetricsLabels(key, value.label, 'min', isLayerBehaviored ? _min : min, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
-                            scene.add(create2DMetricsLabels(key, value.label, 'med', isLayerBehaviored ? _med : med, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
-                            scene.add(create2DMetricsLabels(key, value.label, 'max', isLayerBehaviored ? _max : max, metricIndex, isLayerBehaviored ? _unit : unit, conf, metricParameters));
+                            const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters);
+                            const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters);
+                            const maxLabel2d = create2DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, conf, metricParameters);
+                            if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                                layerMetricsLabels.add(minLabel2d);
+                                layerMetricsLabels.add(medLabel2d);
+                                layerMetricsLabels.add(maxLabel2d);
+                            }
+                            else {
+                                scene.add(minLabel2d);
+                                scene.add(medLabel2d);
+                                scene.add(maxLabel2d);
+                            }
                         }
                     } else if (conf.metricsLabelsRenderingMode === "3D") {
                         let globalParams = {
@@ -370,31 +389,49 @@ export var createLabels = function (data, globalParams) {
                             metricParameters,
                             borderThickness
                         }
-                        scene.add(create3DMetricsLabels(key, value.label, 'current', isLayerBehaviored ? _current : current, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
-
+                        const currentLabel3d = create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams);
+                        if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                            layerMetricsLabels.add(currentLabel3d);
+                        } else {
+                            scene.add(currentLabel3d);
+                        }
 
                         if (conf.displayAllMetricsLabels) {
-                            scene.add(create3DMetricsLabels(key, value.label, 'min', isLayerBehaviored ? _min : min, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
-                            scene.add(create3DMetricsLabels(key, value.label, 'med', isLayerBehaviored ? _med : med, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
-                            scene.add(create3DMetricsLabels(key, value.label, 'max', isLayerBehaviored ? _max : max, metricIndex, isLayerBehaviored ? _unit : unit, globalParams));
+                            const minLabel3d = create3DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, globalParams);
+                            const medLabel3d = create3DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, globalParams);
+                            const maxLabel3d = create3DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, globalParams);
+                            if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                                layerMetricsLabels.add(minLabel3d);
+                                layerMetricsLabels.add(medLabel3d);
+                                layerMetricsLabels.add(maxLabel3d);
+                            }
+                            else {
+                                scene.add(minLabel3d);
+                                scene.add(medLabel3d);
+                                scene.add(maxLabel3d);
+                            }
                         }
                     }
                 }
             }
-            meshes["_group"+layer+"_metrics_labels"] = layerMetricsLabels;
 
-            if (!meshes['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
-                meshes['meshRenderingOrder'] = createRenderOrderCounter();
+            if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                meshes["_group"+layer+"_metrics_labels"] = layerMetricsLabels;
+    
+                if (!meshes['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
+                    meshes['meshRenderingOrder'] = createRenderOrderCounter();
+                }
+    
+                if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                    meshes["_group"+layer+"_metrics_labels"].renderOrder = meshes['meshRenderingOrder']();
+                }
+                scene.add(layerMetricsLabels);
+                const rotation = data[layer].layer[layer + "-layer"]?.rotation;
+                if (rotation) {
+                    meshes["_group"+layer+"_metrics_labels"].rotation.y = data[layer].layer[layer + "-layer"]["rotation"];
+                }
             }
-
-            if(conf.cameraOptions.indexOf("Flat") !== -1) {
-                meshes["_group"+layer+"_metrics_labels"].renderOrder = meshes['meshRenderingOrder']();
-            }
-            scene.add(layerMetricsLabels);
-            const rotation = data[layer].layer[layer + "-layer"]?.rotation;
-            if (rotation) {
-                meshes["_group"+layer+"_metrics_labels"].rotation.y = data[layer].layer[layer + "-layer"]["rotation"];
-            }
+            
             if (conf.displayLayersLabels) {
                 for (const [key, value] of Object.entries(layers)) {
                     if (layersLabelsIds.includes(key) === true) {

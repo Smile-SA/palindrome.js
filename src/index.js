@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {initThreeObjects} from './threeJSUtils/ThreeJSBasicObjects';
 import {dataGenerator} from './threeJSUtils/dataGenerator';
-import {Stats, collectStatsData} from './utils/benchmarkUtils';
+import {Stats, benchmarkCleanUp, collectStatsData} from './utils/benchmarkUtils';
 import {createLabels} from './utils/labelsUtils2D';
 import {animateFrameDashedLine} from './utils/framesUtils';
 import {initVariables} from './utils/initVariables';
@@ -129,6 +129,7 @@ export default (function (parentElement, conf) {
 
     let refreshedData = {};
     //init palindrome parameters
+    benchmarkCleanUp();
     let init_camera = true;
     localStorage.setItem("isInitComplete", false);
     let frameId;
