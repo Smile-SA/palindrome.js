@@ -22,7 +22,7 @@ export var initVariables = function (conf, metricParameters, layerParameters, pa
         sphereHoverInit(meshs, camera, scene, conf);
     }
     //metrics
-    metricParameters["displayUnits"] = conf.displaysMetricsLabelsUnit;
+    metricParameters["displayUnits"] = conf.displayMetricsLabelsUnit;
     metricParameters["characterFont"] = conf.metricsLabelsCharacterFont;
     metricParameters["labelSize"] = conf.metricsLabelsSize;
     metricParameters["labelColor"] = conf.metricsLabelsColor;

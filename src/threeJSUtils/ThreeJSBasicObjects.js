@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 
+/**
+ * Creates and intializes the camera
+ */
 function initCamera() {
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
     camera.position.set(40, 40, 70);

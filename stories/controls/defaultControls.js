@@ -829,6 +829,16 @@ export function defaultControls() {
                 category: 'Labels',
                 subcategory: 'Layers'
             },
+        },
+        displayMetricsLabelsUnit: {
+            name: "displayMetricsLabelsUnit",
+            control: "boolean",
+            description: "Display or hide metrics labels units",
+            control: "boolean",
+            table: {
+                category: 'Labels',
+                subcategory: 'Metrics'
+            }
         }
     }
 }
@@ -866,7 +876,6 @@ export function defaultValues() {
         metricsLabelsBackground: '#f0f0f0',
         metricsLabelsBold: true,
         metricsLabelsItalic: false,
-        displaysMetricsLabelsUnit: true,
         displayMetricsLabels: true,
         displayAllMetricsLabels: false,
         displayMetricSpheres: true,

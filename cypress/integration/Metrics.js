@@ -13,8 +13,8 @@ it ('metricsLabelsStructure: Name | Type | Value | Unit', function () {
     
   })
  
-  it ('metricsLabelsBold | metricsLabelsItalic | displaysMetricsLabelsUnit | displayMetricsLabels | displayAllMetricsLabels', function() {
-    const elements = ["metricsLabelsBold", "metricsLabelsItalic", "displaysMetricsLabelsUnit", "displayMetricsLabels", "displayAllMetricsLabels"]
+  it ('metricsLabelsBold | metricsLabelsItalic | displayMetricsLabelsUnit | displayMetricsLabels | displayAllMetricsLabels', function() {
+    const elements = ["metricsLabelsBold", "metricsLabelsItalic", "displayMetricsLabelsUnit", "displayMetricsLabels", "displayAllMetricsLabels"]
     cy.visit(Cypress.env("theurl"))
 
     elements.forEach(element => {
