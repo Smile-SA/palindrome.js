@@ -76,16 +76,10 @@ function appendPalindromeOptions(palindromes) {
  */
 function applyDefaultOptions(devConfig) {
     for (let toggleId of toggleFields) {
-        let checkboxliveData = document.getElementById('liveData');
-        let checkboxMockupData = document.getElementById('mockupData');
         let element = document.getElementById(toggleId);
         element.addEventListener("click", toggle, false);
         const urlParams = new URLSearchParams(window.location.search);
         let toggleParam = urlParams.get(toggleId);
-        let toggleLiveData = urlParams.get('liveData');
-        let toggleMockupData = urlParams.get('mockupData');   
-        checkboxMockupData.disabled = toggleLiveData ?  (toggleLiveData === "true") : false;
-        checkboxliveData.disabled = toggleMockupData ? (toggleMockupData === "true") : false;
         if (toggleParam == null) {
             toggleParam = devConfig[toggleId];
             devConfig[toggleId] = toggleParam;
@@ -141,30 +135,6 @@ function applyDefaultOptions(devConfig) {
         }
     }
 
-    for (let radioId of radioFields) {
-        const elements = document.getElementsByName(radioId);
-        for(const element of elements) {
-            element.addEventListener("click", onRadioChange, false);
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        let radioParam = urlParams.get(radioId) ?? defaultValues()[radioId];        
-        devConfig[radioId] = radioParam;
-        for(const element of elements) {
-            if (element.value === radioParam) {
-                element.checked = true;
-            }
-        }
-    }
-    if (isBenchmark) {
-        const aside = document.getElementsByTagName('aside')[0];
-        aside.parentNode.removeChild(aside);
-        devConfig.benchmark = 'Active';
-        let category = findCategoryByPalindromeName(useCaseName);
-        devConfig.data = findPalindromeByCategoryAndName(category, useCaseName)["data"]();
-        //devConfig.mockupData = true;
-        devConfig.testDuration = testDuration;
-        devConfig.resourcesLevel = ressourcesLevel;
-    }
     //output the configuration in use to the console
     console.log("Palindrome.js : configuration in use");
     console.dir(devConfig);
@@ -292,13 +262,29 @@ function createSideBarContent() {
     close.style.cssText = "text-align: right; cursor: pointer; font-size: 16pt; font-weight: bold; display:flex; position: absolute; right:20px; z-index:1";
 
     let image = document.createElement("img");
+    let imageDark = document.createElement("img");
+
+    let logoContainer = document.createElement("div");
+    let lightLogoContainer = document.createElement("div");
+
+    logoContainer.setAttribute("class", "dark:hidden");
+    lightLogoContainer.setAttribute("class", "hidden dark:block");
+
     image.setAttribute("src", palindromeLogo);
     image.setAttribute("alt", "Palindrome.js Logo");
     image.style.cssText = "transform: scale(0.5); margin-right: absolute";
     image.style.cursor = "auto";
+    logoContainer.appendChild(image);
+
+    imageDark.setAttribute("src", palindromeLightLogo);
+    imageDark.setAttribute("alt", "Palindrome.js Logo");
+    imageDark.style.cssText = "transform: scale(0.5); margin-right: absolute";
+    imageDark.style.cursor = "auto";
+    lightLogoContainer.appendChild(imageDark);
 
     sideBarContent.appendChild(close);
-    sideBarContent.appendChild(image);
+    sideBarContent.appendChild(logoContainer);
+    sideBarContent.appendChild(lightLogoContainer);
     let body = document.getElementsByTagName("aside")[0];
     body.appendChild(sideBarContent);
 }
@@ -398,6 +384,7 @@ function appendControlsToCategories() {
 
             let div = document.createElement("div");
             div.setAttribute("class", "absolute ml-60 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[22px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600");
+            div.setAttribute("id", nameId + "-toggle-design");
 
             label.appendChild(span);
             label.appendChild(input);
@@ -477,6 +464,33 @@ function appendControlsToCategories() {
         }
 
 
+    }
+}
+
+/**
+ * Applies if condition to boolean controls
+ */
+function applyConditionsToControls() {
+    for(const id of Object.keys(controls)) {
+        const condition = controls[id]?.if;
+        const value = condition?.value ?? true;
+        if (!condition) {
+            continue;
+        }
+        const otherId = controls[id].if.control;
+        const element = document.getElementById(id);
+        const otherElement = document.getElementById(otherId);
+        if (controls[id].control !== 'boolean' || controls[otherId].control !== 'boolean') {
+            console.warn('Condition not supported yet for this type of control!');
+            return;
+        }
+        const toggleDesign = document.getElementById(id + '-toggle-design');
+
+        if (otherElement.checked === value) {
+            element.disabled = true;
+            console.log(toggleDesign)
+            toggleDesign.setAttribute("class", toggleDesign.getAttribute("class") + " opacity-30");
+        }
     }
 }
 

@@ -1,11 +1,14 @@
 import {drawLayerDashLine, drawLayerOutline} from './layersUtils';
 import {Triangle} from '../threeJSUtils/ThreeJSGeometryObjects';
-import {layerPoints} from "./metricsUtils2D";
-
 
 let time = 0;
+/**
+ * Animate the frame dashed line
+ * @param {*} meshs 
+ * @param {*} clock 
+ */
 export var animateFrameDashedLine = function (meshs, clock) {
-    for (const [key, value] of Object.entries(meshs)) {
+    for (const [key, _] of Object.entries(meshs)) {
         if (key.includes("_rangeDasheline")) {
             time += clock.getDelta() * 3;
             meshs[key].material.uniforms.time.value = time;

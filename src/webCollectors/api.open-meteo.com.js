@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+/**
+ * Gets weather data from api.open-meteo.com/
+ * @returns Palindrome.js compatible data structure
+ */
 export const getWeatherData = async function  () {
     let countries = [];
 

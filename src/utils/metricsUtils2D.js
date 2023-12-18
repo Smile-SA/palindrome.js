@@ -102,5 +102,124 @@ export var l2Normalize = function (vector) {
       return vector;
     }
 }
+
+/**
+ * Allows a representation of negative values
+ * @param {data} data the use case data
+ * @returns the shifted data
+ */
+export const shiftMetricsToPositive = (data) => {
+    let minOfMins = Number.POSITIVE_INFINITY;
+
+    for (const layerData of Object.values(data)) {
+        for(const metric of Object.values(layerData.metrics)) {
+            minOfMins = Math.min(minOfMins, metric.min);
+        }
+    }
+
+    if (minOfMins < 0) {
+        const offset = Math.abs(minOfMins);
+        // Shift all metrics by the minimum of the minimum values
+        for (const layerData of Object.values(data)) {
+            for(const metric of Object.values(layerData.metrics)) {
+                const {min, med, max, current} = metric;
+                metric["originalMin"] = min;
+                metric["originalMax"] = max;
+                metric["originalMed"] = med;
+                metric["originalCurrent"] = current;
+                metric["isPositiveShifted"] = true; 
+                metric.min += offset;
+                metric.med += offset;
+                metric.max += offset;
+                metric.current += offset;
+            }
+        }    
+    }
+    
+    return data;
+}
+
+/**
+ * Change the metrics of the layer to percent, absolute or normalized
+ * @param {*} data the use case data
+ */
+export const changeLayerMetricsBehavior = (data, conf) => {
+    for (const layer in data) {
+        const layerInfo = data[layer].layer;
+        const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
+        const behavior = ( layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
+        const metrics = data[layer].metrics;
+        if (behavior === "percent") {
+
+            // Getting total values for current, min, med, and max
+            const {
+                totalCurrentValues,
+                totalMinValues,
+                totalMaxValues,
+                totalMedValues,
+            } = behavioredMetricsTotalValues(metrics);
+      
+            for (const [key, value] of Object.entries(metrics)) {
+                const { current, min, med, max } = value;
+
+                // Computing new layerBehaviored metrics
+                const layerBehavioredMin = totalMinValues > 0 ? (min / totalMinValues) * 100 : 0;
+                const layerBehavioredMax = totalMaxValues > 0 ? (max / totalMaxValues) * 100 : 0;
+                const layerBehavioredMed = totalMedValues > 0 ? (med / totalMedValues) * 100 : 0;
+                const layerBehavioredCurrent = totalCurrentValues > 0 ? (current / totalCurrentValues) * 100 : 0;
+
+                data[layer].metrics[key]["_min"] = layerBehavioredMin;
+                data[layer].metrics[key]["_max"] = layerBehavioredMax;
+                data[layer].metrics[key]["_med"] = layerBehavioredMed;
+                data[layer].metrics[key]["_current"] = layerBehavioredCurrent;
+                data[layer].metrics[key]["_unit"] = "%";
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+            }
+        }
+        else if(behavior === "normalized") {
+            let currents = [];
+            let mins = [];
+            let meds = [];
+            let maxs = [];
+            for (const [_, value] of Object.entries(metrics)) {
+                const { current, min, med, max } = value;
+                // Computing new layerBehaviored metrics
+                currents.push(current);
+                mins.push(min);
+                meds.push(med);
+                maxs.push(max);
+            }
+            const normilizedCurrents = l2Normalize(currents);
+            const normalizeArraydMeds = l2Normalize(meds);
+            const normalizeArraydMaxs = l2Normalize(maxs);
+            const normalizeArraydMins = l2Normalize(mins);
+            let i = 0;
+            for (const [key, _] of Object.entries(metrics)) {
+                data[layer].metrics[key]["_min"] = normalizeArraydMins[i];
+                data[layer].metrics[key]["_max"] = normalizeArraydMaxs[i];
+                data[layer].metrics[key]["_med"] = normalizeArraydMeds[i];
+                data[layer].metrics[key]["_current"] = normilizedCurrents[i];
+                data[layer].metrics[key]["_unit"] = "";
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+                i++;
+            }
+        }
+    }
+}
   
-  
+/**
+ * Compute total metric values of a layer
+ * @param {*} metrics the use case metrics
+ * @returns the current, med, max, min totals
+ */
+export var behavioredMetricsTotalValues = function (metrics) {
+    const metricsValues = Object.values(metrics);
+    return metricsValues.reduce(
+        (acc, { current, min, max, med }) => ({
+            totalCurrentValues: acc.totalCurrentValues + current,
+            totalMinValues: acc.totalMinValues + min,
+            totalMaxValues: acc.totalMaxValues + max,
+            totalMedValues: acc.totalMedValues + med,
+        }), { totalCurrentValues: 0, totalMinValues: 0, totalMaxValues: 0, totalMedValues: 0 }
+    );
+}

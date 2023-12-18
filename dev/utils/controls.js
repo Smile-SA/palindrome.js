@@ -83,7 +83,8 @@ export let controls = {
         name: "Mockup data",
         control: "boolean",
         description: "Make the data dynamic",
-        category: categories[0],
+        if: {control: "liveData", value: true},
+        category: categories[0]
     },
     /*    displayArea: {
             name: "displayArea",
@@ -95,6 +96,7 @@ export let controls = {
         name: "Live data",
         control: "boolean",
         description: "Enable or disable live use case",
+        if: {control: "mockupData", value: true},
         category: categories[0],
     },
     webWorkersRendering: {

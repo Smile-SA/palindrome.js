@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { controls } from '../../dev/utils/controls';
 
 /**
  * Camera view options
@@ -9,8 +8,6 @@ import { controls } from '../../dev/utils/controls';
  */
 
 export var cameraViewOptions = function (meshes, camera, conf) {
-
-    
 
     let tabX = [],
         tabY = [],
@@ -76,7 +73,7 @@ export var cameraViewOptions = function (meshes, camera, conf) {
  * A function that returns that increments the rendering order by one every time it being called
  * @returns rendering order
  */
-export function createRenderOrderCounter() {
+export const createRenderOrderCounter = () => {
     let staticVariable = 0;
   
     return function() {

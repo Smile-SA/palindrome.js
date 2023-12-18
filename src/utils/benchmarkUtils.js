@@ -244,8 +244,9 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
 }
 
 /**
- * create modal elements : modal div, content div, background, closing button
- *
+ * Create modal elements : modal div, content div, background, closing button
+ * @param {Boolean} isHistory show or not the history panel
+ * @returns {[]} 
  */
 function createModalElements(isHistory) {
     let modalDiv = document.createElement("div");

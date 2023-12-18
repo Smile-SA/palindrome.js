@@ -1,10 +1,10 @@
-import {applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer} from "./layersUtils";
-import {makeSphereContextsStatus} from "./spheresUtils";
-import {layerPoints} from "./metricsUtils2D";
-import {drawSideStraightLine} from "./sidesUtils";
-import {displayFramesAndArrows, setArrowPostion, setRectangleFramePositions} from "./framesUtils";
-import {setLabelsPositions, settingLabelFormat} from "./labelsUtils3D";
-import {layerColorDecidedByLayerStatus} from "./colorsUtils";
+import { applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer } from "./layersUtils";
+import { makeSphereContextsStatus } from "./spheresUtils";
+import { layerPoints } from "./metricsUtils2D";
+import { drawSideStraightLine } from "./sidesUtils";
+import { displayFramesAndArrows, setArrowPostion, setRectangleFramePositions } from "./framesUtils";
+import { setLabelsPositions, settingLabelFormat } from "./labelsUtils3D";
+import { layerColorDecidedByLayerStatus } from "./colorsUtils";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -132,7 +132,7 @@ export async function updateMeshes(params, renderingType) {
                         drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
-                            makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
+                            makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams);
                         }
                     }
                     let metricsNumber = e.data.metricsNumber;
@@ -208,8 +208,6 @@ export async function updateMeshes(params, renderingType) {
         //third part declarations
         let metricIndex_frames = 0;
         let layerIndex_frames = 0;
-        let isFirst_frames = true;
-        let previousXValue;
         let zAxisWorker_frames = conf.zPlaneInitial;
         let newDataKeysLength = Object.keys(newData).length - 1;
 
@@ -300,12 +298,14 @@ export async function updateMeshes(params, renderingType) {
             //this is the updated layer metrics
             const metrics = newData[layer].metrics, layers = newData[layer].layer,
                 metricsNumber = Object.values(metrics).length;
-            //this is the new total of current's
+            //this is the new total of currents
             const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
-            //this is the new total of max's
+            //this is the new total of maxs
             const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
+            //this is the new total of mins
+            const metricMinTotal = Object.values(metrics).map(item => item.min).reduce((a, b) => a + b, 0);
             //todo : status colors shall map with default colors
-            const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
+            const layerStatus = (metricCurrentTotal - metricMinTotal) * 100 / (metricMaxTotal - metricMinTotal);
             let metricsDivider, metricValue = {};
             metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.max), zAxis, conf);
             metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.med), zAxis, conf);
@@ -322,7 +322,7 @@ export async function updateMeshes(params, renderingType) {
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
                 let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
-                makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams, lowValueGradient, highValueGradient, bicolorGradient);
+                makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams);
             }
             // displayMode
             if (conf.displayMode === "dynamic") {
@@ -395,5 +395,5 @@ export async function updateMeshes(params, renderingType) {
         }
     }
 
-    return {scrapperUpdateInitTime, newData, httpRequests_pool};
+    return { scrapperUpdateInitTime, newData, httpRequests_pool };
 }

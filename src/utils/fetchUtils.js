@@ -1,7 +1,7 @@
 /**
  * Returning "fetching data..." span that can be displayed while data is being fetched
  */
-export function loadingText() {
+export const loadingText = () => {
     let loading = document.createElement("span");
     loading.setAttribute("id", "remote-data-source-loader");
     loading.textContent = "Fetching data...";

@@ -167,9 +167,17 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
             // update label data
             // Layer behaviored metrics display
             const isMetricLayerBehaviored = metrics[metricsLabels.key].isLayerBehaviored;
-            const metricsLabelBehavioredValue = isMetricLayerBehaviored ? Object.values(metrics)[metricsLabelsIndex]["_" + metricsLabelsType].toFixed(2) : metricsLabelsValue;
+            const isMetricPositiveShifted = metrics[metricsLabels.key].isPositiveShifted;
+            let labelValue = metricsLabelsValue;
+            if (isMetricPositiveShifted) {
+                labelValue = Object.values(metrics)[metricsLabelsIndex]["original" + metricsLabelsType.charAt(0).toUpperCase() + metricsLabelsType.slice(1)].toFixed(2);
+            }
+            
+            if (isMetricLayerBehaviored) {
+                labelValue = Object.values(metrics)[metricsLabelsIndex]["_" + metricsLabelsType].toFixed(2);
+            }
             const metricsLabelBehavioredUnit = isMetricLayerBehaviored ? metrics[metricsLabels.key]["_unit"] : metricsLabelsUnit;
-            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, metricsLabelBehavioredValue, metricsLabelBehavioredUnit, metricData, conf, isMetricLayerBehaviored);
+            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, labelValue, metricsLabelBehavioredUnit, metricData, conf, isMetricLayerBehaviored);
             let x = labelPositions[0],
                 y = labelPositions[2],
                 z = labelPositions[1];

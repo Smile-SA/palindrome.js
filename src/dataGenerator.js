@@ -1,3 +1,7 @@
+/**
+ * Generates random data used in "mockupData" option
+ * @param {*} model 
+ */
 export function* dataGenerator(model) {
     const model_ = {...model };
 

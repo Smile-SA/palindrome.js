@@ -3,6 +3,7 @@ import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {create3DMetricsLabels, create3DLayersLabels} from './labelsUtils3D';
 import * as THREE from 'three';
 import {createRenderOrderCounter} from './cameraUtils';
+
 /**
  * Return a text in html tag p
  *
@@ -311,19 +312,6 @@ export var create2DLayersLabels = function (key, labelName, layerIndex, layerPar
     return layersLabels;
 }
 
-
-export var behavioredMetricsTotalValues = function (metrics) {
-    const metricsValues = Object.values(metrics);
-    return metricsValues.reduce(
-        (acc, { current, min, max, med }) => ({
-            totalCurrentValues: acc.totalCurrentValues + current,
-            totalMinValues: acc.totalMinValues + min,
-            totalMaxValues: acc.totalMaxValues + max,
-            totalMedValues: acc.totalMedValues + med,
-        }), { totalCurrentValues: 0, totalMinValues: 0, totalMaxValues: 0, totalMedValues: 0 }
-    );
-}
-
 /**
  * Create labels for each metrics
  *
@@ -344,7 +332,6 @@ export var createLabels = function (data, globalParams) {
             let metrics = data[layer].metrics;
             let metricLabelsIds = [],
                 layersLabelsIds = [];
-            //console.log(metrics);
             let metricsEntries;
 
             metricsEntries = Object.entries(metrics);
@@ -363,13 +350,9 @@ export var createLabels = function (data, globalParams) {
                     }
                     let { current, min, med, max, unit, _current, _max, _med, _min, _unit, isLayerBehaviored } = value;
                     if (conf.metricsLabelsRenderingMode === "2D") {
-                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, conf, metricParameters);
-                        if (conf.cameraOptions.indexOf("Flat") !== -1){
-                            layerMetricsLabels.add(currentLabel2d);
-                        }
-                        else {
-                            scene.add(currentLabel2d);
-                        }
+                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', currentLabelValue, metricIndex, unitLabel, conf, metricParameters);
+                        layerMetricsLabels.add(currentLabel2d);
+                        //scene.add(currentLabel2d);
                         if (conf.displayAllMetricsLabels) {
                             const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters);
                             const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters);

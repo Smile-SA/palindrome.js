@@ -2,9 +2,16 @@ import {sphereHoverInit} from "../threeJSUtils/ThreeJSBasicObjects";
 import {displayGrid} from "../threeJSUtils/ThreeJSBasicObjects";
 import {showBenchmarkHistory} from "./benchmarkUtils";
 import {WorkerPool} from "./workersUtils";
-import * as THREE from 'three';
 
-export var initVariables = function (conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshs, camera, stats, statsVariables) {    
+/**
+ * Initializes global variables
+ * @param {*} palindromeParameters 
+ * @param {*} threeJSParameters 
+ * @returns web workers pools
+ */
+export var initVariables = function (palindromeParameters, threeJSParameters) {
+    let {conf, metricParameters, layerParameters, parentElement} = palindromeParameters;
+    let {renderer, labelsRenderer, scene, camera, stats} = threeJSParameters;    
     //distance between planes is expressed in positive number
     conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
 

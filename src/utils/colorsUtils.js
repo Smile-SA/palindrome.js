@@ -1,11 +1,22 @@
 /**
+ * Gets color gradients
+ * @param {*} conf palindrome configuration
+ * @returns low and high color gradients
+ */
+export const getColorGradients = (conf) => {
+    const lowValueGradient = gradient(conf.statusColorLow, conf.statusColorMed, conf.colorShadesDepth);
+    const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorShadesDepth);
+    return {lowValueGradient, highValueGradient};
+};
+
+/**
  * Return the color corresponding to a given metric value
  *
  * @param {number} value
  * @param {*} conf current palindrome configuration
  */
-
-export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradient, highValueGradient, layer) {
+export var layerColorDecidedByLayerStatus = function (value, conf) {
+    const {lowValueGradient, highValueGradient} = getColorGradients(conf);
     let intValue = value.toFixed(0);
     
     const data = conf.data;
@@ -66,22 +77,11 @@ export var layerColorDecidedByLayerStatus = function (value, conf, lowValueGradi
  * @param {number} value sphere current value
  * @param conf current palindrome configuration
  */
-export var metricColor = function (value, conf, lowValueGradient, highValueGradient, layer) {
-    const data = conf.data;
-    const {sphereColorHigh, sphereColorLow, sphereColorMed, mainColorStatic, layerColorLow, layerColorHigh} = data[layer].layer[`${layer}-layer`];
-    const lowColor = sphereColorLow ? sphereColorMed : conf.sphereColorLow;
-    const medColor = sphereColorMed ? sphereColorMed : conf.sphereColorMed;
-    const highColor = sphereColorHigh ? sphereColorHigh : conf.sphereColorHigh;
-    const staticColor = mainColorStatic ? mainColorStatic : conf.mainStaticColor;
-
-    const biColorLow = layerColorLow ? layerColorLow : conf.sphereColorLow;
-    const biColorHigh = layerColorHigh ? layerColorHigh : conf.sphereColorHigh;
-   
-    let cur = value.current;
-    let max = value.max;
-    
-    let percentageThreshold = ((cur / max) * 100).toFixed(0);
-    if (conf.spheresColorsBehavior === 'ranges') {
+export var metricColor = function (value, conf) {
+    const {lowValueGradient, highValueGradient} = getColorGradients(conf);
+    let color = conf.sphereColorLow;
+    let percentageThreshold = ((value.current - value.min) * 100 / (value.max - value.min)).toFixed(0);
+    if (conf.spheresBehavior === 'ranges') {
         if(conf.bicolorDisplay){
             return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;
         }
@@ -118,17 +118,6 @@ export var metricColor = function (value, conf, lowValueGradient, highValueGradi
     }
 }
 
-
-/**
- * Lighten or darken colors by amount
- *
- * @param {string} color
- * @param {number} amount
- */
-function adjustHEXLightness(color, amount) {
-    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
-}
-
 /**
  * Converting hexValueToRGB
  * @param hex
@@ -162,6 +151,13 @@ export function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
+/**
+ * Creates a gradient color from startColor to endColor using a number of steps
+ * @param {*} startColor the first color
+ * @param {*} endColor the second color
+ * @param {*} steps the steps between the two colors
+ * @returns 
+ */
 export function gradient(startColor, endColor, steps) {
     var start = {
         'Hex' : startColor,

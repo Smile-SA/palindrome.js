@@ -14,6 +14,10 @@ export function WorkerPool(resourcesLevel, number_of_workers = 0) {
     this.number_of_workers = number_of_workers;
 }
 
+/**
+ * Gets a worker
+ * @returns a free worker
+ */
 const code = palindromeWebWorker.toString();
 const blob = new Blob(['('+code+')()']);
 WorkerPool.prototype.getWorker = function () {
@@ -31,6 +35,11 @@ WorkerPool.prototype.getWorker = function () {
     }
     return w;
 }
+
+/**
+ * Pushes the newly free worker to the list of the free workers
+ * @param {*} w 
+ */
 WorkerPool.prototype.releaseWorker = function (w) {
     if(!this.pool.includes(w)) {
         this.pool.push(w);

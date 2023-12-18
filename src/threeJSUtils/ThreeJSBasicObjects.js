@@ -16,6 +16,10 @@ function initCamera(conf) {
     return camera;
 }
 
+/**
+ * Creates and initializes the renderer
+ * @returns renderer
+ */
 function initRenderer(conf) {
     const renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -33,6 +37,10 @@ function initRenderer(conf) {
     return renderer;
 }
 
+/**
+ * Creates and initializes the label renderer
+ * @returns labelRenderer
+ */
 function initLabelsRenderer() {
     const labelsRenderer = new CSS2DRenderer();
     labelsRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,10 +49,20 @@ function initLabelsRenderer() {
     return labelsRenderer;
 }
 
+/**
+ * Initializes the orbit controls
+ * @param {*} camera the camera
+ * @param {*} labelsRenderer the renderer
+ * @returns orbitControls
+ */
 function initControls(camera, labelsRenderer) {
     return new OrbitControls(camera, labelsRenderer.domElement);
 }
 
+/**
+ * Initializes the scene
+ * @returns scene
+ */
 function initScene(conf) {
     const scene = new THREE.Scene();
     if (conf.isDarkGrafana) {
@@ -56,7 +74,9 @@ function initScene(conf) {
     return scene;
 }
 
-
+/**
+ * Initializes three.js objects and materials
+ */
 export function initThreeObjects(conf) {
     const scene = initScene(conf);
     const camera = initCamera(conf);
@@ -83,7 +103,13 @@ export function initThreeObjects(conf) {
     };
 }
 
-
+/**
+ * Adding event listener on sphere hover
+ * @param {*} meshs 
+ * @param {*} camera 
+ * @param {*} scene 
+ * @param {*} conf 
+ */
 export function sphereHoverInit(meshs, camera, scene, conf) {
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2();
