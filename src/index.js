@@ -36,6 +36,7 @@ export default (function (parentElement, conf) {
                 parentElement.appendChild(loading);
                 //fetching data
                 data = await conf.fetchFunction();
+                conf.data = data;
                 //removing loading text when data is ready
                 parentElement.removeChild(loading);
                 console.log("client response :", data);

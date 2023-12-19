@@ -196,7 +196,7 @@ export function defaultControls() {
         },
         metricsLabels3DRenderingMode: {
             name: "metricsLabels3DRenderingMode",
-            description: "To change the metrics labels format",
+            description: "Change the metrics labels rendering Mode",
             control: {
                 type: "select",
             },
@@ -208,7 +208,7 @@ export function defaultControls() {
         },
         metricsLabelsRenderingFormat: {
             name: "metricsLabelsRenderingFormat",
-            description: "To change the metrics labels format",
+            description: "Change the metrics labels format",
 
             control: {
                 type: "select",
@@ -234,7 +234,7 @@ export function defaultControls() {
             control: {
                 type: "select",
             },
-            options: ["Serif", "San,s-serif", "Arial",],
+            options: ["Serif", "Sans-serif", "Arial",],
             table: {
                 category: "Labels",
                 subcategory: "Metrics"
@@ -466,7 +466,7 @@ export function defaultControls() {
         layersLabelsBackground: {
             name: 'layersLabelsBackground',
             control: 'color',
-            description: 'Change the background color of layers label',
+            description: 'Change the background color of layers labels',
             table: {
                 category: 'Labels',
                 subcategory: 'Layers'

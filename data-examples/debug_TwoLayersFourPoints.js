@@ -44,7 +44,7 @@ export function debugTwoLayersFourPoints() {
                 }
             },
             "layer": {
-                "layer-0": {
+                "layer-0-layer": {
                     "label": "Layer 0",
                     "layerMetricsUnits": "something",
                 }
@@ -94,7 +94,7 @@ export function debugTwoLayersFourPoints() {
                 }
             },
             "layer": {
-                "layer-1": {
+                "layer-1-layer": {
                     "label": "Layer 1",
                     "layerMetricsUnits": "something",
                 }

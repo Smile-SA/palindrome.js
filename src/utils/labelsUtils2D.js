@@ -391,7 +391,7 @@ export var createLabels = function (data, globalParams) {
                 meshes["_group"+layer+"_metrics_labels"].renderOrder = meshes['meshRenderingOrder']();
             }
             scene.add(layerMetricsLabels);
-            const rotation = data[layer].layer[layer + "-layer"]["rotation"];
+            const rotation = data[layer].layer[layer + "-layer"]?.rotation;
             if (rotation) {
                 meshes["_group"+layer+"_metrics_labels"].rotation.y = data[layer].layer[layer + "-layer"]["rotation"];
             }
