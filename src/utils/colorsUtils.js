@@ -6,7 +6,7 @@
 export const getColorGradients = (conf) => {
     const lowValueGradient = gradient(conf.statusColorLow, conf.statusColorMed, conf.colorShadesDepth);
     const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorShadesDepth);
-    return {lowValueGradient, highValueGradient};
+    return { lowValueGradient, highValueGradient };
 };
 
 /**
@@ -16,7 +16,7 @@ export const getColorGradients = (conf) => {
  * @param {*} conf current palindrome configuration
  */
 export var layerColorDecidedByLayerStatus = function (value, conf) {
-    const {lowValueGradient, highValueGradient} = getColorGradients(conf);
+    const { lowValueGradient, highValueGradient } = getColorGradients(conf);
     let intValue = value.toFixed(0);
     
     const data = conf.data;
@@ -57,7 +57,7 @@ export var layerColorDecidedByLayerStatus = function (value, conf) {
             colorArray = lowValueGradient;
             step = lowStep;
             baseValue = conf.statusRangeLow;
-        } 
+        }
         else if (intValue >= conf.statusRangeMed) {
             colorArray = highValueGradient;
             step = highStep;
@@ -67,7 +67,7 @@ export var layerColorDecidedByLayerStatus = function (value, conf) {
         let index = Math.min(Math.floor((intValue - baseValue) / step), conf.colorsDynamicDepth);
         return colorArray[index];
 
-    } 
+    }
 }
 
 
@@ -78,7 +78,7 @@ export var layerColorDecidedByLayerStatus = function (value, conf) {
  * @param conf current palindrome configuration
  */
 export var metricColor = function (value, conf) {
-    const {lowValueGradient, highValueGradient} = getColorGradients(conf);
+    const { lowValueGradient, highValueGradient } = getColorGradients(conf);
     let color = conf.sphereColorLow;
     let percentageThreshold = ((value.current - value.min) * 100 / (value.max - value.min)).toFixed(0);
     if (conf.spheresBehavior === 'ranges') {
@@ -102,7 +102,7 @@ export var metricColor = function (value, conf) {
         let colorsDynamicDepth;
         let step;
         let baseValue;
-    
+
         if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
             colorsDynamicDepth = lowValueGradient;
             step = lowStep;
@@ -160,16 +160,16 @@ export function rgbToHex(r, g, b) {
  */
 export function gradient(startColor, endColor, steps) {
     var start = {
-        'Hex' : startColor,
-        'R' : parseInt(startColor.slice(1,3), 16),
-        'G' : parseInt(startColor.slice(3,5), 16),
-        'B' : parseInt(startColor.slice(5,7), 16)
+        'Hex': startColor,
+        'R': parseInt(startColor.slice(1, 3), 16),
+        'G': parseInt(startColor.slice(3, 5), 16),
+        'B': parseInt(startColor.slice(5, 7), 16)
     }
     var end = {
-        'Hex' : endColor,
-        'R' : parseInt(endColor.slice(1,3), 16),
-        'G' : parseInt(endColor.slice(3,5), 16),
-        'B' : parseInt(endColor.slice(5,7), 16)
+        'Hex': endColor,
+        'R': parseInt(endColor.slice(1, 3), 16),
+        'G': parseInt(endColor.slice(3, 5), 16),
+        'B': parseInt(endColor.slice(5, 7), 16)
     }
     let diffR = end['R'] - start['R'];
     let diffG = end['G'] - start['G'];
@@ -178,12 +178,12 @@ export function gradient(startColor, endColor, steps) {
     let stepsR = new Array();
     let stepsG = new Array();
     let stepsB = new Array();
-    for(var i = 0; i <= steps; i++) {
+    for (var i = 0; i <= steps; i++) {
         stepsR[i] = start['R'] + ((diffR / steps) * i);
         stepsG[i] = start['G'] + ((diffG / steps) * i);
         stepsB[i] = start['B'] + ((diffB / steps) * i);
         stepsHex[i] = '#' + Math.round(stepsR[i]).toString(16).padStart(2, '0') + '' +
-        Math.round(stepsG[i]).toString(16).padStart(2, '0') + '' + Math.round(stepsB[i]).toString(16).padStart(2, '0');
+            Math.round(stepsG[i]).toString(16).padStart(2, '0') + '' + Math.round(stepsB[i]).toString(16).padStart(2, '0');
     }
     return stepsHex;
 }

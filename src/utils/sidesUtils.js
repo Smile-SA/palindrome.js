@@ -1,6 +1,6 @@
-import {getColorOpacityBasedOnRanges, layerColorDecidedByLayerStatus} from "./colorsUtils";
-import {SimpleLine, Triangle} from "../threeJSUtils/ThreeJSGeometryObjects";
-import {createRenderOrderCounter} from "./cameraUtils";
+import { getColorOpacityBasedOnRanges, layerColorDecidedByLayerStatus } from "./colorsUtils";
+import { SimpleLine, Triangle } from "../threeJSUtils/ThreeJSGeometryObjects";
+import { createRenderOrderCounter } from "./cameraUtils";
 
 /**
  * drawing sides lines

@@ -3,7 +3,7 @@
  * @param {*} model 
  */
 export function* dataGenerator(model) {
-    const model_ = {...model };
+    const model_ = { ...model };
 
     while (1) {
         for (let layer of Object.values(model_)) {

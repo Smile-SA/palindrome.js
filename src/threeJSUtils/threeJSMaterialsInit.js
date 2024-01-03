@@ -48,12 +48,12 @@ export function initMaterials(conf) {
 
     let dashLineMaterial = new THREE.ShaderMaterial({
         uniforms: {
-            diffuse: {value: new THREE.Color(conf.frameLineColor)},
-            dashSize: {value: conf.frameDashLineSize},
-            gapSize: {value: 1},
-            dotSize: {value: 0.1},
-            opacity: {value: 1.0},
-            time: {value: 0},
+            diffuse: { value: new THREE.Color(conf.frameLineColor) },
+            dashSize: { value: conf.frameDashLineSize },
+            gapSize: { value: 1 },
+            dotSize: { value: 0.1 },
+            opacity: { value: 1.0 },
+            time: { value: 0 },
             // added uniform
         },
         side: THREE.DoubleSide,

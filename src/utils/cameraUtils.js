@@ -31,7 +31,7 @@ export var cameraViewOptions = function (meshes, camera, conf) {
                 tabZ.push(vector.z);
             }
     }
-    
+
     // calculate the center of objects
     let xMax = (Math.max.apply(Math, tabX)),
         xMin = (Math.min.apply(Math, tabX)),
@@ -75,9 +75,9 @@ export var cameraViewOptions = function (meshes, camera, conf) {
  */
 export const createRenderOrderCounter = () => {
     let staticVariable = 0;
-  
-    return function() {
-      staticVariable++;
-      return staticVariable;
+
+    return function () {
+        staticVariable++;
+        return staticVariable;
     };
 }

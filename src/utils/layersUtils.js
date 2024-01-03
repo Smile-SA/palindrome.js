@@ -1,6 +1,6 @@
-import {Triangle, SimpleLine, DasheLine} from '../threeJSUtils/ThreeJSGeometryObjects';
+import { Triangle, SimpleLine, DasheLine } from '../threeJSUtils/ThreeJSGeometryObjects';
 import * as THREE from 'three';
-import {createRenderOrderCounter} from './cameraUtils';
+import { createRenderOrderCounter } from './cameraUtils';
 import { layerPoints } from './metricsUtils2D';
 import { getColorOpacityBasedOnRanges } from './colorsUtils';
 
@@ -14,7 +14,7 @@ import { getColorOpacityBasedOnRanges } from './colorsUtils';
  * @param globalParams
  */
 export var drawLayer = function (layer, metricValue, metricsNumber, color, globalParams) {
-    let {conf, meshs, scene, rotation} = globalParams;
+    let { conf, meshs, scene, rotation } = globalParams;
     if (conf.displayLayers) {
         for (let i = 0; i < metricsNumber; i++) {
             //draws innner layer shapes
@@ -101,7 +101,7 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
  * @param globalParams
  */
 export var drawLayerOutline = function (layerName, planePoints, layerMetricIndex, planePointLength, material, layerMetricRangeIndex, globalParams) {
-    let {meshs, scene} = globalParams;
+    let { meshs, scene } = globalParams;
     if (meshs['_rangeOutline' + layerName + layerMetricIndex + layerMetricRangeIndex]) {
         // if init done
         meshs['_rangeOutline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength])
@@ -176,7 +176,7 @@ export function displayLayersLines(metricsNumber, metricsPositions, meshes, scen
     for (let i = 0; i < metricsNumber; i++) {
         for (let [index, metricsPosition] of metricsPositions.entries()) {
             //draws outside lines
-            let globalParams = {meshs: meshes, scene};
+            let globalParams = { meshs: meshes, scene };
             drawLayerOutline(layer + '_layerShapesEdges', metricsPosition, i, metricsNumber, lineMaterial, index, globalParams);
         }
     }
@@ -188,7 +188,7 @@ export function displayLayersLines(metricsNumber, metricsPositions, meshes, scen
  * @param {*} conf the palindrome config
  */
 export function applyLayerRotationToData(data, conf) {
-    if(conf.cameraOptions.indexOf("Flat") !== -1) {
+    if (conf.cameraOptions.indexOf("Flat") !== -1) {
         let angle = 0;
         if (conf.rotatedMetricsAngle !== 0) {
             Object.keys(data).forEach(layer => {
@@ -205,7 +205,7 @@ export function applyLayerRotationToData(data, conf) {
  * @param {*} conf 
  */
 export function applyLayerMetricsMergeToData(data, conf) {
-    if(conf.zPlaneMultilayer === 0){
+    if (conf.zPlaneMultilayer === 0) {
         let zAxis = conf.zPlaneInitial;
         let allMetrics = {};
         for (let layer in data) {
@@ -217,19 +217,19 @@ export function applyLayerMetricsMergeToData(data, conf) {
             metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.current), zAxis, conf);
             let counter = 0;
             zAxis -= conf.zPlaneMultilayer;
-            for (const metric in metrics){
+            for (const metric in metrics) {
                 metrics[metric]["position"] = metricValue.current[counter];
                 metrics[metric]["layerLabel"] = layer;
-                counter ++;
+                counter++;
             }
-            allMetrics = {...allMetrics, ...metrics};
+            allMetrics = { ...allMetrics, ...metrics };
         }
         const positionMap = {};
-    
+
         for (const metricName in allMetrics) {
             const metric = allMetrics[metricName];
             const positionKey = metric.position[0] + "-" + metric.position[1];
-        
+
             if (positionMap[positionKey]) {
                 const layerLabel = metric.layerLabel;
                 data[layerLabel].metrics[metricName].label = "merged";

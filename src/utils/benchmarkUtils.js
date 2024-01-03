@@ -137,7 +137,7 @@ Stats.Panel = function (name, fg, bg) {
  * @param {*} conf
  */
 export var collectStatsData = async function (stats, duringTime, statsVariables, conf) {
-    let {displayMessage, displayBenchmark, statsData, startDate, parentElement} = statsVariables;
+    let { displayMessage, displayBenchmark, statsData, startDate, parentElement } = statsVariables;
     let currentDate = new Date,
         endDate = new Date(startDate.getTime() + duringTime * 60000);
     if (startDate.getTime() <= currentDate.getTime() && endDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) {
@@ -148,17 +148,17 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
         }
         if (r.fps !== undefined && r.fps > 0) {
             statsData.fps.value.push(parseFloat(r.fps.toFixed(2)));
-            statsData.fps.rendering.push({value: parseFloat(r.fps.toFixed(2)), time: new Date().getSeconds()});
+            statsData.fps.rendering.push({ value: parseFloat(r.fps.toFixed(2)), time: new Date().getSeconds() });
             statsData.fps.length += 1;
         }
         if (r.ms !== undefined && r.ms > 0) {
             statsData.ms.value.push(parseFloat(r.ms.toFixed(2)));
-            statsData.ms.rendering.push({value: parseFloat(r.ms.toFixed(2)), time: new Date().getSeconds()});
+            statsData.ms.rendering.push({ value: parseFloat(r.ms.toFixed(2)), time: new Date().getSeconds() });
             statsData.ms.length += 1;
         }
         if (r.mem !== undefined && r.mem > 0) {
             statsData.mem.value.push(parseFloat(r.mem.toFixed(2)));
-            statsData.mem.rendering.push({value: parseFloat(r.mem.toFixed(2)), time: new Date().getSeconds()});
+            statsData.mem.rendering.push({ value: parseFloat(r.mem.toFixed(2)), time: new Date().getSeconds() });
             statsData.mem.length += 1;
         }
 
@@ -229,13 +229,13 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
         //if there is a previous history results, we append the current result to the history
         if (localStorage.getItem("benchmarkHistory")) {
             let history = JSON.parse(localStorage.getItem("benchmarkHistory"));
-            history[currentDate] = {results, statsData, version: versionString};
+            history[currentDate] = { results, statsData, version: versionString };
             localStorage.setItem("benchmarkHistory", JSON.stringify(history));
         }
         //if there are no previous results, we create a new history
         else {
             let history = {};
-            history[currentDate] = {results, statsData, version: versionString};
+            history[currentDate] = { results, statsData, version: versionString };
             localStorage.setItem("benchmarkHistory", JSON.stringify(history));
         }
         console.info(`Benchmark results after ${duringTime} minute(s) of execution.`);
@@ -296,12 +296,19 @@ function createModalElements(isHistory) {
         //if we click outside the modal, the modal will close
         window.onclick = function (event) {
             if (event.target === modalDiv) {
-                closeModal(modalDiv);
+                modalDiv.style.display = "none";
+                if (document.getElementById("benchmarkInteractionBlocker")) {
+                    document.getElementById("benchmarkInteractionBlocker").style.display = "none";
+                }
             }
         }
         //if we click on the closing button, the modal will close
-        span.onclick = () => closeModal(modalDiv);
-
+        span.onclick = function () {
+            modalDiv.style.display = "none";
+            if (document.getElementById("benchmarkInteractionBlocker")) {
+                document.getElementById("benchmarkInteractionBlocker").style.display = "none";
+            }
+        }
     }
     return [modalDiv, modalContent, span, style];
 }
@@ -340,8 +347,8 @@ export var createModal = async function (labels, content, previousContent, time,
         //if we test basic vs web workers then we're going to display just the most variable parameter which is milliseconds needed to render a frame
         const previousDataGroupedBySeconds = groupBySeconds(previousData, "ms");
         everySecondResult_previous = groupByEverySecond(previousDataGroupedBySeconds);
-        title = {text: 'Milliseconds needed to render a frame per second'};
-        yaxisTitle = {text: 'Milliseconds needed to render a frame'};
+        title = { text: 'Milliseconds needed to render a frame per second' };
+        yaxisTitle = { text: 'Milliseconds needed to render a frame' };
     }
     //group our stats data by each second, so for each second we have all the data collected
     const currentDataGroupedBySeconds = groupBySeconds(data, "ms");
@@ -366,8 +373,8 @@ export var createModal = async function (labels, content, previousContent, time,
     let table = createDOMTable(labels, content);
     table.setAttribute("id", `table-${version}`);
     modalContent.appendChild(table);
-    title = {text: 'Benchamark statistics'};
-    yaxisTitle = {text: 'Values'};
+    title = { text: 'Benchamark statistics' };
+    yaxisTitle = { text: 'Values' };
     let series;
     //if we test both versions, we are going to display the Milliseconds needed to render a frame, in both versions (comparative mode)
     if (isBothVersions) {
@@ -376,14 +383,14 @@ export var createModal = async function (labels, content, previousContent, time,
                 name: `Milliseconds needed to render a frame (${previousVersion} version)`,
                 data: everySecondResult_previous,
             },
-            {name: `Milliseconds needed to render a frame (${version} version)`, data: everySecondResult_current,},
+            { name: `Milliseconds needed to render a frame (${version} version)`, data: everySecondResult_current, },
         ];
         //otherwise we display the three parameters
     } else {
         series = [
-            {name: `Milliseconds needed to render a frame (${version} version)`, data: everySecondResult_current,},
-            {name: `Frames rendered (${version} version)`, data: everyFpsSecondResult_current,},
-            {name: `MBytes of allocated memory (${version} version)`, data: everyMemSecondResult_current,},
+            { name: `Milliseconds needed to render a frame (${version} version)`, data: everySecondResult_current, },
+            { name: `Frames rendered (${version} version)`, data: everyFpsSecondResult_current, },
+            { name: `MBytes of allocated memory (${version} version)`, data: everyMemSecondResult_current, },
         ];
     }
     let options = {
@@ -391,13 +398,13 @@ export var createModal = async function (labels, content, previousContent, time,
             type: 'area',
             width: '100%',
             height: '400px',
-            toolbar: {tools: {selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false}}
+            toolbar: { tools: { selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: false } }
         },
         title, series,
-        xaxis: {title: {text: 'Time in seconds'}, type: 'numeric',},
-        yaxis: {type: 'numeric', title: yaxisTitle,},
-        dataLabels: {enabled: false},
-        stroke: {curve: 'smooth',},
+        xaxis: { title: { text: 'Time in seconds' }, type: 'numeric', },
+        yaxis: { type: 'numeric', title: yaxisTitle, },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', },
     }
     if (isBothVersions) {
         p = document.createElement("p");
@@ -431,12 +438,12 @@ export var showBenchmarkHistory = function (parentElement, history) {
     let style = modalElements[3];
     parentElement.appendChild(style);
     let historyKeys = Object.keys(history);
-    let title = {text: 'Benchamark statistics'};
-    let yaxisTitle = {text: 'Values'};
+    let title = { text: 'Benchamark statistics' };
+    let yaxisTitle = { text: 'Values' };
     //creates history display
     for (let e of historyKeys) {
         let p = document.createElement("p");
-        p.innerHTML = `${new Date(e).toLocaleString('en-GB', {timeZone: 'UTC'})} : Benchmark results after ${history[e].results["Minute(s) of test"]} minute(s) of execution (${history[e].version} version).`;
+        p.innerHTML = `${new Date(e).toLocaleString('en-GB', { timeZone: 'UTC' })} : Benchmark results after ${history[e].results["Minute(s) of test"]} minute(s) of execution (${history[e].version} version).`;
         p.style.fontWeight = "bold";
         modalContent.appendChild(p);
         let table = createDOMTable(Object.keys(history[e].results), Object.values(history[e].results));
@@ -455,8 +462,8 @@ export var showBenchmarkHistory = function (parentElement, history) {
                 name: `Milliseconds needed to render a frame (${history[e].version} version)`,
                 data: everySecondResult_current,
             },
-            {name: `Frames rendered (${history[e].version} version)`, data: everyFpsSecondResult_current,},
-            {name: `MBytes of allocated memory (${history[e].version} version)`, data: everyMemSecondResult_current,},
+            { name: `Frames rendered (${history[e].version} version)`, data: everyFpsSecondResult_current, },
+            { name: `MBytes of allocated memory (${history[e].version} version)`, data: everyMemSecondResult_current, },
         ];
 
         let options = {
@@ -477,10 +484,10 @@ export var showBenchmarkHistory = function (parentElement, history) {
                 }
             },
             title, series,
-            xaxis: {title: {text: 'Time in seconds'}, type: 'numeric',},
-            yaxis: {type: 'numeric', title: yaxisTitle,},
-            dataLabels: {enabled: false},
-            stroke: {curve: 'smooth',},
+            xaxis: { title: { text: 'Time in seconds' }, type: 'numeric', },
+            yaxis: { type: 'numeric', title: yaxisTitle, },
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', },
         }
         let curveHolder = document.createElement("div");
         curveHolder.style.marginTop = "40px";
@@ -561,7 +568,7 @@ function createDOMTable(labels, content) {
  */
 function groupBySeconds(data, type) {
     return data[type].rendering.reduce((group, element) => {
-        const {time} = element;
+        const { time } = element;
         group[time] = group[time] ?? [];
         group[time].push(element);
         return group;

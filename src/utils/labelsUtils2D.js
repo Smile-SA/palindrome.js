@@ -1,8 +1,8 @@
-import {getMetricsLabelsStructureData} from './metricsUtils2D';
-import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
-import {create3DMetricsLabels, create3DLayersLabels} from './labelsUtils3D';
+import { getMetricsLabelsStructureData } from './metricsUtils2D';
+import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
+import { create3DMetricsLabels, create3DLayersLabels } from './labelsUtils3D';
 import * as THREE from 'three';
-import {createRenderOrderCounter} from './cameraUtils';
+import { createRenderOrderCounter } from './cameraUtils';
 
 /**
  * Return a text in html tag p
@@ -319,7 +319,7 @@ export var create2DLayersLabels = function (key, labelName, layerIndex, layerPar
  * @param globalParams
  */
 export var createLabels = function (data, globalParams) {
-    let {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes} = globalParams;
+    let { conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes } = globalParams;
     let metricIndex = 0,
         layerIndex = 0;
     if (data != null && Object.keys(data).length > 0) {
@@ -427,15 +427,15 @@ export var createLabels = function (data, globalParams) {
                         layersLabelsIds.push(key);
                         if (conf.layersLabelsRenderingMode === "2D") {
                             const layerLabel2d = create2DLayersLabels(key, value.label, layerIndex, layerParameters);
-                            if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                            if (conf.cameraOptions.indexOf("Flat") !== -1) {
                                 layerLabel2d.renderOrder = meshes['meshRenderingOrder']();
                             }
                             scene.add(layerLabel2d);
                         } else if (conf.layersLabelsRenderingMode === "3D") {
                             layersLabelsIds.push(key);
-                            let globalParams = {labelDiv, layerParameters}
+                            let globalParams = { labelDiv, layerParameters }
                             const layerLabel3d = create3DLayersLabels(key, value.label, layerIndex, globalParams);
-                            if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                            if (conf.cameraOptions.indexOf("Flat") !== -1) {
                                 layerLabel3d.renderOrder = Infinity;
                             }
                             scene.add(layerLabel3d);

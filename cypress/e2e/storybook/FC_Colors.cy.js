@@ -1,19 +1,15 @@
 //This file integrates defaultControls storybook into cypress testing environment
 /// <reference types="cypress" />
-const CustomConfigpalindrome = "#use-cases-palindrome-data-center-example--custom-configuration"
+const CustomConfigpalindrome = ".sto-1utb4xs"
 import { CustomConfiguration } from '/stories/dc.stories.js';
 
 var controls = Array.from(Object.keys(CustomConfiguration.args))
 
 describe ('Color', function () { 
-  
-  beforeEach(() => {
-    cy.visit(Cypress.env("storybook"));
-  });
-
   it ("Asserts all controls with input types:color", function () {
-  // Iterates over all elements of custom colour configurations    
-  cy.get(CustomConfigpalindrome).click({force: true});
+  // Iterates over all elements of custom colour configurations
+  cy.visit(Cypress.env("theurl"))
+  cy.get(CustomConfigpalindrome).eq(1).click()
 
   controls.forEach(element => {
     if(element!='data'){

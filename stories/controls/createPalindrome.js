@@ -1,7 +1,7 @@
 import palindrome from "../../src";
-import {previousPalindrome} from "../../src/utils/destructionUtils";
+import { previousPalindrome } from "../../src/utils/destructionUtils";
 
-export var createPalindrome = ({...args}) => {
+export var createPalindrome = ({ ...args }) => {
     console.log(args)
     //delete previous palindrome
     if (previousPalindrome) {
@@ -16,8 +16,8 @@ export var createPalindrome = ({...args}) => {
                         child.geometry.dispose();
                         child.material.dispose();
                     }
-                });                  
-            } 
+                });
+            }
             else {
                 meshes[key].geometry.dispose();
                 meshes[key].material.dispose();
@@ -53,7 +53,7 @@ export var createPalindrome = ({...args}) => {
     }
     //create new palindrome
     const container = document.createElement('div');
-    const stringArgs = JSON.parse(JSON.stringify({...args}));
+    const stringArgs = JSON.parse(JSON.stringify({ ...args }));
     stringArgs["fetchFunction"] = args?.fetchFunction;
     palindrome(container, stringArgs);
     return container;

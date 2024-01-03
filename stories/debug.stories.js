@@ -1,7 +1,7 @@
-import {debugTwoLayersThreePoints} from '../data-examples/debug_TwoLayersThreePoints';
-import {debugTwoLayersFourPoints} from '../data-examples/debug_TwoLayersFourPoints';
-import {defaultControls, defaultValues} from './controls/defaultControls';
-import {createPalindrome} from './controls/createPalindrome';
+import { debugTwoLayersThreePoints } from '../data-examples/debug_TwoLayersThreePoints';
+import { debugTwoLayersFourPoints } from '../data-examples/debug_TwoLayersFourPoints';
+import { defaultControls, defaultValues } from './controls/defaultControls';
+import { createPalindrome } from './controls/createPalindrome';
 
 export default {
     title: 'Debug/Palindrome/Examples',

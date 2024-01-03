@@ -1,9 +1,9 @@
-import {logicBoolean} from '../data-examples/logic_Boolean';
-import {logicTernary} from '../data-examples/logic_Ternary';
-import {logicFourValued} from '../data-examples/logic_FourValued';
-import {logicFiveThreeTwo} from '../data-examples/logic_FiveThreeTwo';
-import {defaultControls, defaultValues} from './controls/defaultControls';
-import {createPalindrome} from './controls/createPalindrome';
+import { logicBoolean } from '../data-examples/logic_Boolean';
+import { logicTernary } from '../data-examples/logic_Ternary';
+import { logicFourValued } from '../data-examples/logic_FourValued';
+import { logicFiveThreeTwo } from '../data-examples/logic_FiveThreeTwo';
+import { defaultControls, defaultValues } from './controls/defaultControls';
+import { createPalindrome } from './controls/createPalindrome';
 
 export default {
     title: 'Use Cases/Palindrome/Multi-values logic example',

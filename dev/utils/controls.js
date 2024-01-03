@@ -1,18 +1,18 @@
-import {dcCustomConfiguration} from "../../data-examples/dc_CustomConfiguration";
-import {debugTwoLayersThreePoints} from "../../data-examples/debug_TwoLayersThreePoints";
-import {dcBasicConfiguration} from "../../data-examples/dc_BasicConfiguration";
-import { dcBasicConfigurationThreeLayers } from "../../data-examples/dc_BasicConfigurationThreeLayers";
-import {dcEnergeticEfficiency} from "../../data-examples/dc_EnergeticEfficiency";
-import {dcFullMap} from "../../data-examples/dc_FullMap";
-import {benchLoadTestData} from "../../data-examples/oth_LoadTest";
-import {debugTwoLayersFourPoints} from "../../data-examples/debug_TwoLayersFourPoints";
-import {logicBoolean} from "../../data-examples/logic_Boolean";
-import {logicFiveThreeTwo} from "../../data-examples/logic_FiveThreeTwo";
-import {logicFourValued} from "../../data-examples/logic_FourValued";
-import {logicTernary} from "../../data-examples/logic_Ternary";
-import {pyramidOfMaslows} from "../../data-examples/oth_pyramid_of_maslows";
-import {getWeatherData} from "../../src/webCollectors/api.open-meteo.com";
-import {localLiveMonitoring} from "../../src/webCollectors/local_live_monitoring";
+import { dcCustomConfiguration } from "../../data-examples/dc_CustomConfiguration";
+import { debugTwoLayersThreePoints } from "../../data-examples/debug_TwoLayersThreePoints";
+import { dcBasicConfiguration } from "../../data-examples/dc_BasicConfiguration";
+import {  dcBasicConfigurationThreeLayers  } from "../../data-examples/dc_BasicConfigurationThreeLayers";
+import { dcEnergeticEfficiency } from "../../data-examples/dc_EnergeticEfficiency";
+import { dcFullMap } from "../../data-examples/dc_FullMap";
+import { benchLoadTestData } from "../../data-examples/oth_LoadTest";
+import { debugTwoLayersFourPoints } from "../../data-examples/debug_TwoLayersFourPoints";
+import { logicBoolean } from "../../data-examples/logic_Boolean";
+import { logicFiveThreeTwo } from "../../data-examples/logic_FiveThreeTwo";
+import { logicFourValued } from "../../data-examples/logic_FourValued";
+import { logicTernary } from "../../data-examples/logic_Ternary";
+import { pyramidOfMaslows } from "../../data-examples/oth_pyramid_of_maslows";
+import { getWeatherData } from "../../src/webCollectors/api.open-meteo.com";
+import { localLiveMonitoring } from "../../src/webCollectors/local_live_monitoring";
 import {dcBasicConfigurationThreeLayers} from "../../data-examples/dc_BasicConfigurationThreeLayers";
 
 // defining categories
@@ -33,7 +33,7 @@ Defining dynamic options (functions inside options)
  */
 export let palindromes = {
     dataCenterExamples: [
-        {name: "dcBasicConfiguration", data: dcBasicConfiguration},
+        { name: "dcBasicConfiguration", data: dcBasicConfiguration },
         {
             name: "dcCustomConfiguration", data: dcCustomConfiguration, customConfig: {
                 layerMidColor: '#FF2C00',
@@ -49,23 +49,23 @@ export let palindromes = {
 
             }
         },
-        {name: "Basic Configuration Three Layers", data: dcBasicConfigurationThreeLayers},
-        {name: "dcEnergeticEfficiency", data: dcEnergeticEfficiency},
-        {name: "dcFullMap", data: dcFullMap},
-        {name: "debugTwoLayersThreePoints", data: debugTwoLayersThreePoints},
-        {name: "debugTwoLayersFourPoints", data: debugTwoLayersFourPoints},
+        { name: "Basic Configuration Three Layers", data: dcBasicConfigurationThreeLayers },
+        { name: "dcEnergeticEfficiency", data: dcEnergeticEfficiency },
+        { name: "dcFullMap", data: dcFullMap },
+        { name: "debugTwoLayersThreePoints", data: debugTwoLayersThreePoints },
+        { name: "debugTwoLayersFourPoints", data: debugTwoLayersFourPoints },
     ],
     multiValuesLogicExamples: [
-        {name: "logicBoolean", data: logicBoolean},
-        {name: "logicFiveThreeTwo", data: logicFiveThreeTwo},
-        {name: "logicFourValued", data: logicFourValued},
-        {name: "logicTernary", data: logicTernary},
+        { name: "logicBoolean", data: logicBoolean },
+        { name: "logicFiveThreeTwo", data: logicFiveThreeTwo },
+        { name: "logicFourValued", data: logicFourValued },
+        { name: "logicTernary", data: logicTernary },
     ],
     otherExamples: [
-        {name: "benchLoadTest", data: benchLoadTestData},
-        {name: "pyramidOfMaslows", data: pyramidOfMaslows},
-        {name: "api.open-meteo.com", isRemoteDataSource: true, fetchFunction: getWeatherData, remoteDataFetchPace: 1000 * 60 * 60},
-        {name: "localLiveMonitoring", isRemoteDataSource: true,  fetchFunction: localLiveMonitoring},
+        { name: "benchLoadTest", data: benchLoadTestData },
+        { name: "pyramidOfMaslows", data: pyramidOfMaslows },
+        { name: "api.open-meteo.com", isRemoteDataSource: true, fetchFunction: getWeatherData, remoteDataFetchPace: 1000 * 60 * 60 },
+        { name: "localLiveMonitoring", isRemoteDataSource: true, fetchFunction: localLiveMonitoring },
     ],
 };
 
@@ -83,7 +83,7 @@ export let controls = {
         name: "Mockup data",
         control: "boolean",
         description: "Make the data dynamic",
-        if: {control: "liveData", value: true},
+        if: { control: "liveData", value: true },
         category: categories[0]
     },
     /*    displayArea: {
@@ -96,7 +96,7 @@ export let controls = {
         name: "Live data",
         control: "boolean",
         description: "Enable or disable live use case",
-        if: {control: "mockupData", value: true},
+        if: { control: "mockupData", value: true },
         category: categories[0],
     },
     webWorkersRendering: {

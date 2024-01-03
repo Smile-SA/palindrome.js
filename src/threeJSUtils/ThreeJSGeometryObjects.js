@@ -208,7 +208,7 @@ export class Sphere extends THREE.Mesh {
      */
     constructor(color, opacity) {
         const geometry = new THREE.SphereGeometry(0.8, 32, 16);
-        const material = new THREE.MeshBasicMaterial({color});
+        const material = new THREE.MeshBasicMaterial({ color });
         material.transparent = true;
         material.needsUpdate = true;
         if(opacity){

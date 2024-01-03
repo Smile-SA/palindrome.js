@@ -9,8 +9,7 @@ yarn.lock
 .parcel-cache
 .vagrant
 
-
-# IDE 
+# IDE
 *.swp
 .idea
 .vscode

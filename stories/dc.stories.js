@@ -1,10 +1,10 @@
-import {dcBasicConfiguration} from '../data-examples/dc_BasicConfiguration';
-import {dcCustomConfiguration} from '../data-examples/dc_CustomConfiguration';
-import {dcEnergeticEfficiency} from '../data-examples/dc_EnergeticEfficiency';
-import {dcFullMap} from '../data-examples/dc_FullMap';
-import {dcBasicConfigurationThreeLayers} from '../data-examples/dc_BasicConfigurationThreeLayers';
-import {defaultControls, defaultValues} from './controls/defaultControls';
-import {createPalindrome} from './controls/createPalindrome';
+import { dcBasicConfiguration } from '../data-examples/dc_BasicConfiguration';
+import { dcCustomConfiguration } from '../data-examples/dc_CustomConfiguration';
+import { dcEnergeticEfficiency } from '../data-examples/dc_EnergeticEfficiency';
+import { dcFullMap } from '../data-examples/dc_FullMap';
+import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
+import { defaultControls, defaultValues } from './controls/defaultControls';
+import { createPalindrome } from './controls/createPalindrome';
 import {dc_BasicConfigurationLayerColoured} from '../data-examples/dc_BasicConfigurationLayerColoured';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 

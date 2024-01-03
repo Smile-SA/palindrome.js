@@ -1,6 +1,6 @@
-import {metricColor, getColorOpacityBasedOnRanges} from "./colorsUtils";
-import {Sphere} from '../threeJSUtils/ThreeJSGeometryObjects';
-import {htmlToSvg} from "./labelsUtils2D";
+import { metricColor, getColorOpacityBasedOnRanges } from "./colorsUtils";
+import { Sphere } from '../threeJSUtils/ThreeJSGeometryObjects';
+import { htmlToSvg } from "./labelsUtils2D";
 import * as THREE from 'three';
 
 /**
@@ -12,7 +12,7 @@ import * as THREE from 'three';
  * @param globalParams
  */
 export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics, globalParams, lowValueGradient, highValueGradient) {
-    let {scene, meshs, conf, camera, labelDiv, layerParameters, rotation} = globalParams;
+    let { scene, meshs, conf, camera, labelDiv, layerParameters, rotation } = globalParams;
     let numberOfMetrics = metrics.length;
     for (var i = 0; i < sphereCoords.current.length; i++) {
         makeSphereContext(sphereCoords.current[i], layerName, i.toString(), metricColor(metrics[i], conf, lowValueGradient, highValueGradient, layerName), metrics[i], scene, meshs, conf, camera, labelDiv, layerParameters, numberOfMetrics, rotation);
@@ -58,16 +58,16 @@ function makeSphereContext(planePoints, layerName, metricIndex, metricColor, met
         }
         //x,z,y
         meshs['_sphere' + layerName + metricIndex].position.set(planePoints[0], planePoints[2], planePoints[1]);
-        
+
         if ((metricIndex == numberOfMetrics - 1) && conf.cameraOptions.indexOf("Flat") !== -1) {
             const layerSpheres = new THREE.Group();
             for (let i = 0; i < numberOfMetrics; i++) {
                 layerSpheres.add(meshs['_sphere' + layerName + i])
             }
-            meshs['_group' + '_spheres'  + layerName] = layerSpheres;
-            scene.add(meshs['_group'+ '_spheres' + layerName]);
-            if (rotation.angle){
-                meshs['_group'+ '_spheres' + rotation.layer].rotation.y = rotation.angle;
+            meshs['_group' + '_spheres' + layerName] = layerSpheres;
+            scene.add(meshs['_group' + '_spheres' + layerName]);
+            if (rotation.angle) {
+                meshs['_group' + '_spheres' + rotation.layer].rotation.y = rotation.angle;
             }
         }
 
@@ -120,8 +120,8 @@ function makeSphereFieldOfHover(layerName, metricIndex, planePoints, camera) {
  */
 function makeSphereText(planePoints, metricValues, conf, labelDiv, layerParameters) {
     const text = "Min = " + metricValues.min + ". Max= " + metricValues.max + ". Med= " + metricValues.med;
-    const obj = {0: ['Min', 'Max', 'Med'], 1: [metricValues.min, metricValues.max, metricValues.med]};
-    const json = {'Min': metricValues.min, 'Max': metricValues.max, 'Med': metricValues.med}
+    const obj = { 0: ['Min', 'Max', 'Med'], 1: [metricValues.min, metricValues.max, metricValues.med] };
+    const json = { 'Min': metricValues.min, 'Max': metricValues.max, 'Med': metricValues.med }
     let mesh;
     if (conf.metricsLabelsRenderingFormat === "Json") {
         mesh = makeText(text, planePoints[0], planePoints[2] + 3, planePoints[1], JSON.stringify(json), conf, labelDiv, layerParameters);
@@ -160,7 +160,7 @@ function makeText(labelName, x, y, z, data, conf, labelDiv, layerParameters) {
             texture.needsUpdate = true;
         }, 0);
         texture.minFilter = THREE.NearestFilter;
-        let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
+        let spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true }),
             layersLabels = new THREE.Sprite(spriteMaterial);
         spriteMaterial.needsUpdate = true;
         layersLabels.scale.set(2 * layerParameters["labelSize"], 1 * layerParameters["labelSize"], layerParameters["labelSize"]);

@@ -8,7 +8,7 @@ export class SimpleLine extends THREE.Line {
 		super(geometry, transparentLineMaterial);
 	}
 
-	update(a,b){
+	update(a, b) {
 		this.geometry.vertices[0].set(a[0], a[2], a[1]);
 		this.geometry.vertices[1].set(b[0], b[2], b[1]);
 		this.geometry.verticesNeedUpdate = true;
@@ -24,7 +24,7 @@ export class DasheLine extends THREE.Line {
 		this.computeLineDistances()
 	}
 
-	update(a,b){
+	update(a, b) {
 		this.geometry.vertices[0].set(a[0], a[2], a[1]);
 		this.geometry.vertices[1].set(b[0], b[2], b[1]);
 		this.geometry.verticesNeedUpdate = true;
@@ -32,11 +32,11 @@ export class DasheLine extends THREE.Line {
 }
 
 export class Triangle extends THREE.Mesh {
-	constructor(a, b, c, color,opacity) {
+	constructor(a, b, c, color, opacity) {
 		const i1 = new THREE.Vector3(a[0], a[2], a[1]);
 		const i2 = new THREE.Vector3(b[0], b[2], b[1]);
 		const i3 = new THREE.Vector3(c[0], c[2], c[1]);
-		if(!opacity){
+		if (!opacity) {
 			opacity = 0.5;
 		}
 		const geometry = new THREE.Geometry();

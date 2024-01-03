@@ -1,5 +1,5 @@
-import {drawLayerDashLine, drawLayerOutline} from './layersUtils';
-import {Triangle} from '../threeJSUtils/ThreeJSGeometryObjects';
+import { drawLayerDashLine, drawLayerOutline } from './layersUtils';
+import { Triangle } from '../threeJSUtils/ThreeJSGeometryObjects';
 
 let time = 0;
 /**
@@ -24,7 +24,7 @@ export var animateFrameDashedLine = function (meshs, clock) {
  * @param globalParams parameters used to draw frames
  */
 export var drawFrames = function (framePoints, frameName, globalParams) {
-    let {conf, scene, meshs, dashLineMaterial, lineMaterial} = globalParams;
+    let { conf, scene, meshs, dashLineMaterial, lineMaterial } = globalParams;
     // card around metrics
     for (let i = 0; i < framePoints[0].length; i++) {
         for (let [index, point] of framePoints.entries()) {
@@ -32,7 +32,7 @@ export var drawFrames = function (framePoints, frameName, globalParams) {
             if (conf.frameDashLineSize > 0) {
                 drawLayerDashLine(frameName, point, i, framePoints[0].length, dashLineMaterial, index, scene, meshs, conf)
             } else {
-                let globalParams = {meshs, scene};
+                let globalParams = { meshs, scene };
                 drawLayerOutline(frameName, point, i, framePoints[0].length, lineMaterial, index, globalParams);
             }
         }
@@ -48,7 +48,7 @@ export var drawFrames = function (framePoints, frameName, globalParams) {
  * @param globalParams parameters used to draw frames background
  */
 export var drawFramesBackground = function (framePoints, frameName, backgroundColor, opacity, globalParams) {
-    let {meshs, scene} = globalParams;
+    let { meshs, scene } = globalParams;
     let j = 0
     for (let i = 0; i < framePoints.length; i++) {
         if (framePoints[j + 1]) {
@@ -144,7 +144,7 @@ export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLa
             if (conf.sideLabelDisplay) {
                 layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - 5);
             }
-        } 
+        }
         if (conf.cameraOptions.indexOf("Flat") !== -1) {
             conf.displayLabelLine = false;
             layersLabels.position.set((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)), Math.max.apply(Math, zTab) + (resize), layerIndex * conf.framePadding);
@@ -168,17 +168,17 @@ export function displayFramesAndArrows(conf, positions, frameName, dashLineMater
     if (conf.displayFrames) {
         // display frame line
         if (conf.displayFramesLine) {
-            let globalParams = {conf, scene, meshs: meshes, dashLineMaterial, lineMaterial};
+            let globalParams = { conf, scene, meshs: meshes, dashLineMaterial, lineMaterial };
             drawFrames([positions], frameName, globalParams);
         }
         // display frame background
         if (conf.displayFramesBackground) {
-            let globalParams = {scene, meshs: meshes};
+            let globalParams = { scene, meshs: meshes };
             drawFramesBackground(positions, frameName, conf.frameBackgroundColor, conf.frameOpacity, globalParams);
         }
         // display arrow Line
         if (conf.displayLabelLine) {
-            let globalParams = {conf, scene, meshs: meshes, dashLineMaterial, lineMaterial};
+            let globalParams = { conf, scene, meshs: meshes, dashLineMaterial, lineMaterial };
             drawFrames([arrowPositions], layer + '_arrow', globalParams);
         }
     }

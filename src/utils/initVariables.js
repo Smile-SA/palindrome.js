@@ -1,7 +1,7 @@
-import {sphereHoverInit} from "../threeJSUtils/ThreeJSBasicObjects";
-import {displayGrid} from "../threeJSUtils/ThreeJSBasicObjects";
-import {showBenchmarkHistory} from "./benchmarkUtils";
-import {WorkerPool} from "./workersUtils";
+import { sphereHoverInit } from "../threeJSUtils/ThreeJSBasicObjects";
+import { displayGrid } from "../threeJSUtils/ThreeJSBasicObjects";
+import { showBenchmarkHistory } from "./benchmarkUtils";
+import { WorkerPool } from "./workersUtils";
 
 /**
  * Initializes global variables
@@ -10,8 +10,8 @@ import {WorkerPool} from "./workersUtils";
  * @returns web workers pools
  */
 export var initVariables = function (palindromeParameters, threeJSParameters) {
-    let {conf, metricParameters, layerParameters, parentElement} = palindromeParameters;
-    let {renderer, labelsRenderer, scene, camera, stats} = threeJSParameters;    
+    let { conf, metricParameters, layerParameters, parentElement } = palindromeParameters;
+    let { renderer, labelsRenderer, scene, camera, stats } = threeJSParameters;    
     //distance between planes is expressed in positive number
     conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
 

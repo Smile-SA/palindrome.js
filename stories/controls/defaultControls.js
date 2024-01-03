@@ -226,7 +226,7 @@ export function defaultControls() {
                 type: "check",
             },
             options: ["Name", "Type", "Value", "Unit"],
-            table: {category: "Labels", subcategory: "Metrics"}
+            table: { category: "Labels", subcategory: "Metrics" }
         },
         metricsLabelsCharacterFont: {
             name: "metricsLabelsCharacterFont",
@@ -747,7 +747,7 @@ export function defaultControls() {
         statusRangeLow: {
             name: "statusRangeLow",
 
-            control: {type: 'range', min: 0, max: 100, step: 1},
+            control: { type: 'range', min: 0, max: 100, step: 1 },
             description: "Resize the low status range",
             table: {
                 category: "Status",
@@ -757,7 +757,7 @@ export function defaultControls() {
         statusRangeMed: {
             name: "statusRangeMed",
 
-            control: {type: 'range', min: 0, max: 100, step: 1},
+            control: { type: 'range', min: 0, max: 100, step: 1 },
             description: "Resize the med status range",
             table: {
                 category: "Status",
@@ -767,7 +767,7 @@ export function defaultControls() {
         statusRangeHigh: {
             name: "statusRangeHigh",
 
-            control: {type: 'range', min: 0, max: 100, step: 1},
+            control: { type: 'range', min: 0, max: 100, step: 1 },
             description: "Resize the high status range",
             table: {
                 category: "Status",
@@ -788,7 +788,7 @@ export function defaultControls() {
             name: "mockupData",
 
             control: "boolean",
-            if: { arg: 'liveData', truthy: false },            
+            if: { arg: 'liveData', truthy: false },
             description: "Make dynamic the data ",
             table: {
                 category: "Data"
@@ -797,7 +797,7 @@ export function defaultControls() {
         liveData: {
             name: "liveData",
             control: "boolean",
-            if: { arg: 'mockupData', truthy: false },            
+            if: { arg: 'mockupData', truthy: false },
             description: "Enable or disable live use case",
             table: {
                 category: "Data"
@@ -806,7 +806,7 @@ export function defaultControls() {
         remoteDataFetchPace: {
             name: "remoteDataFetchPace (ms)",
             control: "number",
-            if: { arg: 'mockupData', truthy: false },            
+            if: { arg: 'mockupData', truthy: false },
             description: "Choose monitoring pace in ms",
             table: {
                 category: "Data"
@@ -877,7 +877,7 @@ export function defaultControls() {
 
         resourcesLevel: {
             name: "resourcesLevel (%)",
-            control: {type: 'range', min: 20, max: 80, step: 1},
+            control: { type: 'range', min: 20, max: 80, step: 1 },
             description: "enable or disable web workers",
             table: {
                 category: "web workers"

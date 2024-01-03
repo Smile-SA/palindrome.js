@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {getMetricsLabelsStructureData} from './metricsUtils2D';
+import { getMetricsLabelsStructureData } from './metricsUtils2D';
 import {
     createLabelCanvas,
     htmlToSvg,
@@ -8,7 +8,7 @@ import {
     addMultiLineText,
     updateSvgSrc
 } from './labelsUtils2D';
-import {createHtmlText} from './labelsUtils2D';
+import { createHtmlText } from './labelsUtils2D';
 
 /**
  * Return a 3d label with text sprite and webGL
@@ -26,10 +26,10 @@ let metrics = {}
 let check = []
 
 export var create3DMetricsLabels = function (key, labelName, labelType, labelValue, metricIndex, labelUnit, globalParams) {
-    let {conf, labelDiv, metricParameters, borderThickness} = globalParams;
+    let { conf, labelDiv, metricParameters, borderThickness } = globalParams;
     let texture = new THREE.Texture(),
-    textureImage,
-    data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, null, conf);
+        textureImage,
+        data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, null, conf);
 
     labelDiv[labelName] = document.createElement('div');
     labelDiv[labelName].className = 'label ' + labelName;
@@ -59,8 +59,8 @@ export var create3DMetricsLabels = function (key, labelName, labelType, labelVal
 
     texture.minFilter = THREE.NearestFilter;
 
-    let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
-    metricsLabels = new THREE.Sprite(spriteMaterial);
+    let spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true }),
+        metricsLabels = new THREE.Sprite(spriteMaterial);
     spriteMaterial.needsUpdate = true;
     metricsLabels.scale.set(2 * metricParameters["labelSize"], 1 * metricParameters["labelSize"], metricParameters["labelSize"]);
     metricsLabels.key = key;
@@ -72,19 +72,6 @@ export var create3DMetricsLabels = function (key, labelName, labelType, labelVal
         metricsLabels.visible = false;
     }
     //console.log("data",metricsLabels);
-
-    !metrics[metricIndex] ? metrics[metricIndex] = [metricsLabels.key] : metrics[metricIndex] = [...metrics[metricIndex], metricsLabels.key];
-
-    for(key in metrics){
-        if(metricIndex == 0 || key == metricIndex){
-            continue
-        }
-
-        if(metrics[key][metrics[metricIndex].length-1] == metricsLabels.key){
-            return
-        }
-        
-    }
 
     return metricsLabels;
 
@@ -112,7 +99,7 @@ export var create3DMetricsLabels = function (key, labelName, labelType, labelVal
  * @param globalParams
  */
 export var create3DLayersLabels = function (key, labelName, layerIndex, globalParams) {
-    let {labelDiv, layerParameters} = globalParams;
+    let { labelDiv, layerParameters } = globalParams;
     let texture = new THREE.Texture(),
         textureImage;
     labelDiv[labelName] = document.createElement('div');
@@ -126,7 +113,7 @@ export var create3DLayersLabels = function (key, labelName, layerIndex, globalPa
         texture.needsUpdate = true;
     }, 0);
     texture.minFilter = THREE.NearestFilter;
-    let spriteMaterial = new THREE.SpriteMaterial({map: texture, depthWrite: false, transparent: true}),
+    let spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true }),
         layersLabels = new THREE.Sprite(spriteMaterial);
     spriteMaterial.needsUpdate = true;
     layersLabels.scale.set(2 * layerParameters["labelSize"], 1 * layerParameters["labelSize"], layerParameters["labelSize"]);
@@ -172,7 +159,7 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
             if (isMetricPositiveShifted) {
                 labelValue = Object.values(metrics)[metricsLabelsIndex]["original" + metricsLabelsType.charAt(0).toUpperCase() + metricsLabelsType.slice(1)].toFixed(2);
             }
-            
+
             if (isMetricLayerBehaviored) {
                 labelValue = Object.values(metrics)[metricsLabelsIndex]["_" + metricsLabelsType].toFixed(2);
             }
@@ -225,7 +212,7 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
                     y = y + 1;
                 }
             }
-            
+
             if (conf.displayMetricSpheres) {
                 // Making metrics text little bit above the spheres
                 x = (x >= 0) ? x + 2 : x - 2;

@@ -34,37 +34,37 @@ export async function updateMeshes(params, renderingType) {
         sides_pool = params.sides_pool;
         frames_pool = params.frames_pool;
     }
-   
+
     httpRequests_pool = params.httpRequests_pool;
     if (conf.isRemoteDataSource && !conf.mockupData && conf.liveData) {
         const currentTime = new Date();
         const timeDifferenceInMilliseconds = currentTime - (refreshedData["scrapperUpdateInitTime"] ? refreshedData["scrapperUpdateInitTime"] : scrapperUpdateInitTime);
         const remoteDataFetchPace = conf.remoteDataFetchPace; // in ms
         if (timeDifferenceInMilliseconds >= remoteDataFetchPace) {
-                // Getting updates...
-                if (conf.webWorkersHTTP) { // Making http requests using web workers
-                    const worker = httpRequests_pool.getWorker();
-                    
-                    worker.onmessage = function (e) {
-                        newData = e.data.newData;
-                        refreshedData["newData"] = e.data.newData;
-                        refreshedData["scrapperUpdateInitTime"] = new Date();
-                    }
+            // Getting updates...
+            if (conf.webWorkersHTTP) { // Making http requests using web workers
+                const worker = httpRequests_pool.getWorker();
 
-                    httpRequests_pool.releaseWorker(worker);
-                    worker.postMessage({
-                        subject:"httpRequests",
-                        fn: conf.fetchFunction.toString()
-                    });
+                worker.onmessage = function (e) {
+                    newData = e.data.newData;
+                    refreshedData["newData"] = e.data.newData;
+                    refreshedData["scrapperUpdateInitTime"] = new Date();
                 }
-                else { // Making http requests using main thread
-                    newData = await conf.fetchFunction();
-                    scrapperUpdateInitTime = new Date();         
+
+                httpRequests_pool.releaseWorker(worker);
+                worker.postMessage({
+                    subject: "httpRequests",
+                    fn: conf.fetchFunction.toString()
+                });
+            }
+            else { // Making http requests using main thread
+                newData = await conf.fetchFunction();
+                scrapperUpdateInitTime = new Date();
             }
         }
     }
-    
-    if(refreshedData["newData"]) {
+
+    if (refreshedData["newData"]) {
         newData = refreshedData["newData"];
     }
 
@@ -81,11 +81,11 @@ export async function updateMeshes(params, renderingType) {
     }
     let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null, previousLayerColor = null,
         metricIndex = 0, layerIndex = 0, zAxisWorker = conf.zPlaneInitial;
-    if (conf.cameraOptions.indexOf("Flat") !== -1){
+    if (conf.cameraOptions.indexOf("Flat") !== -1) {
         conf.displaySides = false;
     }
     applyLayerRotationToData(newData, conf);
-    if(conf.mergedMetricsNames) {
+    if (conf.mergedMetricsNames) {
         applyLayerMetricsMergeToData(newData, conf);
     }
     if (renderingType === "workers") {
@@ -120,7 +120,7 @@ export async function updateMeshes(params, renderingType) {
                         let rotation = {};
                         rotation["layer"] = e.data.layer;
                         rotation["angle"] = newData[e.data.layer].layer[e.data.layer + "-layer"]?.rotation;
-                        let globalParams = {conf, meshs: meshes, scene, rotation};
+                        let globalParams = { conf, meshs: meshes, scene, rotation };
                          //this is the updated layer metrics
                         const metrics = newData[layer].metrics, layers = newData[layer].layer;
                         //this is the new total of current's
@@ -131,7 +131,7 @@ export async function updateMeshes(params, renderingType) {
                         const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
                         drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
                         if (conf.displayMetricSpheres) {
-                            let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
+                            let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
                             makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams);
                         }
                     }
@@ -316,12 +316,12 @@ export async function updateMeshes(params, renderingType) {
             let rotation = {};
             rotation["layer"] = layer;
             rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
-            let globalParams = {conf, meshs: meshes, scene, rotation};
+            let globalParams = { conf, meshs: meshes, scene, rotation };
             
             drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? layerStatus : layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
-                let globalParams = {scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation};
+                let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
                 makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams);
             }
             // displayMode

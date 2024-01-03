@@ -1,7 +1,7 @@
 export function logicFourValued() {
   return {
     "four-valued": {
-      "metrics":  {
+      "metrics": {
         "Maybe false": {
           "label": "Maybe false",
           "unit": "number",

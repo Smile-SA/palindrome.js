@@ -1,7 +1,7 @@
 import palindrome from "../../src/index";
 
-export var getPalindrome = ({...args}) => {
+export var getPalindrome = ({ ...args }) => {
     const container = document.getElementById('palindrome');
-    palindrome(container, {...args});
+    palindrome(container, { ...args });
     return container;
 };

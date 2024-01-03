@@ -1,6 +1,6 @@
 import { defaultControls } from '../stories/controls/defaultControls.js';
 import { debugTwoLayersThreePoints } from '../src/data_structures_examples/debug_TwoLayersThreePoints';
-import {getPalindrome} from "../stories/controls/getPalindrome";
+import { getPalindrome } from "../stories/controls/getPalindrome";
 
 //output the default Storybook controls to the console
 //console.log("Palindrome.js : default Storybook controls");
@@ -12,10 +12,10 @@ import {getPalindrome} from "../stories/controls/getPalindrome";
  * @param {object} object containing Storybok controls
  */
 
-function controlsToConf (controls) {
+function controlsToConf(controls) {
     let defaultConfig = {};
     for (var key in controls) {
-       defaultConfig[key] = controls[key].defaultValue;
+        defaultConfig[key] = controls[key].defaultValue;
     }
     //output the default configuration to the console
     console.log("Palindrome.js : default configuration");

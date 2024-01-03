@@ -1,4 +1,4 @@
-import {polarTo3DPoint} from './metricsUtils3D';
+import { polarTo3DPoint } from './metricsUtils3D';
 
 /**
  * return label data like classicData or jsonData, TableData
@@ -61,7 +61,7 @@ export var getMetricsLabelsStructureData = function (labelName, labelType, label
             tbody.push("Unit");
             tHead.push(labelUnit);
         }
-        data = {0: tbody, 1: tHead};
+        data = { 0: tbody, 1: tHead };
     }
     return data;
 }
@@ -92,14 +92,14 @@ export var layerPoints = function (metricValue, zPlaneValue, conf) {
 export var l2Normalize = function (vector) {
     // Calculate the L2 norm (Euclidean norm)
     const l2Norm = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0));
-    
+
     // Check if the norm is not zero (to avoid division by zero)
     if (l2Norm !== 0) {
-      // Divide each element by the L2 norm to normalize
-      return vector.map(value => value / l2Norm);
+        // Divide each element by the L2 norm to normalize
+        return vector.map(value => value / l2Norm);
     } else {
-      // If the L2 norm is zero (vector is all zeros), return the original vector
-      return vector;
+        // If the L2 norm is zero (vector is all zeros), return the original vector
+        return vector;
     }
 }
 
@@ -112,7 +112,7 @@ export const shiftMetricsToPositive = (data) => {
     let minOfMins = Number.POSITIVE_INFINITY;
 
     for (const layerData of Object.values(data)) {
-        for(const metric of Object.values(layerData.metrics)) {
+        for (const metric of Object.values(layerData.metrics)) {
             minOfMins = Math.min(minOfMins, metric.min);
         }
     }
@@ -121,21 +121,21 @@ export const shiftMetricsToPositive = (data) => {
         const offset = Math.abs(minOfMins);
         // Shift all metrics by the minimum of the minimum values
         for (const layerData of Object.values(data)) {
-            for(const metric of Object.values(layerData.metrics)) {
-                const {min, med, max, current} = metric;
+            for (const metric of Object.values(layerData.metrics)) {
+                const { min, med, max, current } = metric;
                 metric["originalMin"] = min;
                 metric["originalMax"] = max;
                 metric["originalMed"] = med;
                 metric["originalCurrent"] = current;
-                metric["isPositiveShifted"] = true; 
+                metric["isPositiveShifted"] = true;
                 metric.min += offset;
                 metric.med += offset;
                 metric.max += offset;
                 metric.current += offset;
             }
-        }    
+        }
     }
-    
+
     return data;
 }
 
@@ -147,7 +147,7 @@ export const changeLayerMetricsBehavior = (data, conf) => {
     for (const layer in data) {
         const layerInfo = data[layer].layer;
         const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
-        const behavior = ( layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
+        const behavior = (layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
         const metrics = data[layer].metrics;
         if (behavior === "percent") {
 
@@ -158,7 +158,7 @@ export const changeLayerMetricsBehavior = (data, conf) => {
                 totalMaxValues,
                 totalMedValues,
             } = behavioredMetricsTotalValues(metrics);
-      
+
             for (const [key, value] of Object.entries(metrics)) {
                 const { current, min, med, max } = value;
 
@@ -176,7 +176,7 @@ export const changeLayerMetricsBehavior = (data, conf) => {
                 data[layer].metrics[key]["isLayerBehaviored"] = true;
             }
         }
-        else if(behavior === "normalized") {
+        else if (behavior === "normalized") {
             let currents = [];
             let mins = [];
             let meds = [];
@@ -206,7 +206,7 @@ export const changeLayerMetricsBehavior = (data, conf) => {
         }
     }
 }
-  
+
 /**
  * Compute total metric values of a layer
  * @param {*} metrics the use case metrics

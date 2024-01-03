@@ -8,7 +8,7 @@ import {initVariables} from './utils/initVariables';
 import {cameraViewOptions} from './utils/cameraUtils';
 import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
 import {setPreviousPalindrome} from "./utils/destructionUtils";
-import {loadingText} from "./utils/fetchUtils";
+import {createInputUrlModal, loadingText} from "./utils/fetchUtils";
 import {updateMeshes} from "./utils/renderingUtils";
 import {applyLayerRotationToData} from './utils/layersUtils';
 import {changeLayerMetricsBehavior, shiftMetricsToPositive} from './utils/metricsUtils2D';
@@ -25,24 +25,58 @@ export default (function (parentElement, conf) {
      */
     async function run() {
         let data;
+        let loading;
+        let isDataReady = true;
         if (!conf?.isRemoteDataSource) {
             data = conf.data;
         } else {
             try {
                 // Getting time, so we can update later on the scrapper palindrome
                 scrapperUpdateInitTime = new Date();
-                
-                // Displaying loading text while fetching data
-                let loading = loadingText();
-                parentElement.appendChild(loading);
-                
+
+
                 // Fetching data
-                data = await conf.fetchFunction();
-                conf.data = data;
-                //removing loading text when data is ready
-                parentElement.removeChild(loading);
+                const url = localStorage.getItem("remote-data-source");
+                if (url) {
+                    data = await conf.fetchFunction(url);
+                    localStorage.removeItem("remote-data-source");
+                } else {
+                    // Displaying loading text while fetching data
+                    loading = loadingText();
+                    parentElement.appendChild(loading);
+                    data = await conf.fetchFunction();
+                    // Removing loading text when data is ready
+                    parentElement.removeChild(loading);
+                }
+
                 console.log("client response :", data);
             } catch (error) {
+                isDataReady = false;
+                createInputUrlModal(parentElement);
+                document.getElementById("submit-button").onclick = async () => {
+                    const input = document.getElementById("remoteDataSourceURL");
+                    const url = input.value;
+                    let isRequestSuccess;
+                    try {
+                        data = await conf.fetchFunction(url);
+                        localStorage.setItem("remote-data-source", url);
+                        isRequestSuccess = true;
+                    }
+                    catch {
+                        document.getElementById("url-error-message").style.visibility = "";
+                        input.style.borderBottom = "2px solid red";
+                        input.style.color = "red";
+                        isRequestSuccess = false;
+                    }
+
+                    if (isRequestSuccess) {
+                        parentElement.removeChild(document.getElementById("url-input"));
+                        if (loading) {
+                            parentElement.removeChild(loading);
+                        }
+                        run();
+                    }
+                };
                 // Output the error if we have a http error occurred
                 console.error("client response :", error);
             }
@@ -62,16 +96,18 @@ export default (function (parentElement, conf) {
 
         // init materials
         [dashLineMaterial, lineMaterialTransparent, lineMaterial] = initMaterials(conf);
-        let globalParams = {conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes};
+        let globalParams = { conf, labelDiv, metricParameters, scene, layerParameters, borderThickness, meshes };
         createLabels(data, globalParams);
-        
+
         // Rendering palindrome
-        await render();
-        
+        if (isDataReady) {
+            await render();
+        }
+
         // Saving previous palindrome
         setPreviousPalindrome(renderer, scene, meshes, parentElement, frameId);
         if (!(conf.webWorkersRendering || conf.liveData)) {
-            
+
             // Setting camera for default version
             cameraViewOptions(meshes, camera, conf);
         }
@@ -83,28 +119,28 @@ export default (function (parentElement, conf) {
     let init_camera = true;
     localStorage.setItem("isInitComplete", false);
     let frameId;
-    
+
     // Init benchmark stats parameters
     let stats = new Stats();
     let displayMessage = true;
     let displayBenchmark = true;
     let statsData = {
-        fps: {value: [], length: 0, rendering: []},
-        ms: {value: [], length: 0, rendering: []},
-        mem: {value: [], length: 0, rendering: []}
+        fps: { value: [], length: 0, rendering: [] },
+        ms: { value: [], length: 0, rendering: [] },
+        mem: { value: [], length: 0, rendering: [] }
     }
     const startDate = new Date;
-    let statsVariables = {displayMessage, displayBenchmark, statsData, startDate, parentElement};
-    
+    let statsVariables = { displayMessage, displayBenchmark, statsData, startDate, parentElement };
+
     // Init global parameters
     let debug = false;
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
     const meshes = {};
-    const {scene, labelsRenderer, controls, renderer, camera} = initThreeObjects(conf);
+    const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(conf);
     let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
-    let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables(conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshes, camera, stats, statsVariables);
+    let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables( conf, metricParameters, layerParameters, parentElement ,  renderer, labelsRenderer, scene, meshes, camera, stats , statsVariables);
     const clock = new THREE.Clock();
-    
+
     // Calling main function
     run();
 
@@ -115,7 +151,7 @@ export default (function (parentElement, conf) {
         if (conf.benchmark === 'Active') {
             stats.begin();
         }
-        
+
         // Parameters needed to render items
         let updateMeshesParams = {
             conf, meshes,
@@ -137,21 +173,21 @@ export default (function (parentElement, conf) {
         try {
             renderer.render(scene, camera);
             if ((conf.webWorkersRendering) && init_camera && (localStorage.getItem("isInitComplete") === "true")) {
-                
+
                 // Setting camera for web workers
                 cameraViewOptions(meshes, camera, conf);
                 init_camera = false;
             }
-            
+
             // Animation (optional)
             if (conf.animateFrameDashedLine) {
                 animateFrameDashedLine(meshes, clock);
             }
             controls.update();
-            
+
             // Rendering labels
             labelsRenderer.render(scene, camera);
-            
+
             // Benchmark related
             if (conf.benchmark === 'Active') {
                 collectStatsData(stats, conf.testDuration, statsVariables, conf);

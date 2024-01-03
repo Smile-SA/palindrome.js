@@ -1,7 +1,7 @@
 export function logicFiveThreeTwo() {
   return {
     "five-valued": {
-      "metrics":  {
+      "metrics": {
         "False": {
           "label": "False",
           "unit": "number",
@@ -26,7 +26,7 @@ export function logicFiveThreeTwo() {
           "max": 100,
           "current": 10
         },
-        "Maybe false" : {
+        "Maybe false": {
           "label": "Maybe False",
           "unit": "number",
           "min": 20,
@@ -34,7 +34,7 @@ export function logicFiveThreeTwo() {
           "max": 100,
           "current": 80
         },
-        "Maybe True" : {
+        "Maybe True": {
           "label": "Maybe True",
           "unit": "number",
           "min": 10,
@@ -62,7 +62,7 @@ export function logicFiveThreeTwo() {
           "max": 100,
           "current": 70
         },
-        "Maybe":  {
+        "Maybe": {
           "label": "Maybe",
           "unit": "number",
           "min": 0,

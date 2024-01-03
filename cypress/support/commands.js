@@ -35,7 +35,7 @@ Cypress.Commands.add('eval_snapshot', ($el, env) => {
     cy.get('[title="Go full screen [F]"]').click()
   }
   cy.wait(3000)
-  cy.matchScreenshot($el,{
+  cy.matchScreenshot($el, {
     threshold: 0.0001,
     thresholdType: "pixel"
   })
@@ -87,7 +87,7 @@ Cypress.Commands.add('eval_color_red', ($el) => {
   cy.get($el).type('#e52a10')
 
   cy.eval_snapshot($el)
-}) 
+})
 
 Cypress.Commands.add('eval_color_green', ($el) => {
   // Clears the element contents, updates the color to blue and calls the eval_snapshot command
