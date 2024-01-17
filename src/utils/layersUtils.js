@@ -127,20 +127,39 @@ export var drawLayerOutline = function (layerName, planePoints, layerMetricIndex
  */
 export var drawLayerDashLine = function (layerName, planePoints, layerMetricIndex, planePointLength, material, layerMetricRangeIndex, scene, meshs, conf) {
 
+    let from, to;
+    if(layerName.includes('arrow')) {
+        from = planePoints[layerMetricIndex];
+        to = planePoints[(layerMetricIndex + 1) % planePointLength];
+        if (conf.equalizeFrameLinks) {
+            to = [from[0] + conf.labelToFrameLinkLength, from[1], from[2]];
+        }
+    }
     if (meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]) {
         // if init done
-
-        meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength])
+        if(layerName.includes('arrow')) {            
+            meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(from, to)
+        }
+        else {
+            meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength])
+        }
     } else {
         //init objects
         if (!meshs['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
             meshs['meshRenderingOrder'] = createRenderOrderCounter();
         }
-        meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex] = new DasheLine(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength], material);
-        if (conf.cameraOptions.indexOf("Flat") !== -1) {
-            meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].renderOrder = meshs['meshRenderingOrder']();
+        if (layerName.includes('arrow') && !Object.keys(meshs).some(key => key.includes(layerName)) || !layerName.includes('arrow')) {
+            if(layerName.includes('arrow')) {
+                meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex] = new DasheLine(from, to, material);
+            }
+            else {
+                meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex] = new DasheLine(planePoints[layerMetricIndex], planePoints[(layerMetricIndex + 1) % planePointLength], material);
+            }
+            if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].renderOrder = meshs['meshRenderingOrder']();
+            }
+            scene.add(meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]);
         }
-        scene.add(meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]);
     }
 }
 

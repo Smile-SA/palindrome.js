@@ -117,15 +117,27 @@ export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLa
         if (conf.sideLabelDisplay) {
             conf.displayLabelLine = false;
         }
+        let xPosition = ((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding);
+        if (conf.labelToFrameLinkType === 'dynamic' && xPosition >= conf.gridSize / 2){
+            xPosition = conf.gridSize / 2 - parseInt(localStorage.getItem("htmlLayerLabelPadding")) - conf.framePadding;
+        }
+        else if (conf.labelToFrameLinkType === 'static') {
+            xPosition = conf.labelToFrameLinkLength;
+        }
+        
+        let labelXposition = xPosition;
+        if (conf.equalizeFrameLinks) {
+            labelXposition = conf.labelToFrameLinkLength + Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding);
+        }
         if (conf.layersLabelsOrientation === "Sticky") {
-            arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab)]);
-            layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (resize), Math.min.apply(Math, yTab) - 5);
+            arrowPositions.push([xPosition, 0, Math.max.apply(Math, zTab)]);
+            layersLabels.position.set(labelXposition, Math.max.apply(Math, zTab) + (resize), 0);
             if (conf.sideLabelDisplay) {
                 layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (resize), Math.min.apply(Math, yTab) - 5);
             }
         } else if (conf.layersLabelsOrientation === "Free") {
-            arrowPositions.push([(Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding, 0, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding)]);
-            layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - 5);
+            arrowPositions.push([xPosition, 0, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding)]);
+            layersLabels.position.set(labelXposition, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), 0);
             if (conf.sideLabelDisplay) {
                 layersLabels.position.set((Math.max.apply(Math, xTab) + conf.framePadding) + 5, Math.max.apply(Math, zTab) + (conf.framePadding * conf.framePadding), Math.min.apply(Math, yTab) - 5);
             }

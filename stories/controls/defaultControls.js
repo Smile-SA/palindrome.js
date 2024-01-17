@@ -513,6 +513,37 @@ export function defaultControls() {
                 category: 'Frames',
             },
         },
+        labelToFrameLinkLength: {
+            name: "labelToFrameLinkLength",
+            description: 'Change the label to frame link length',
+            control: {
+                type: 'number',
+            },
+            table: {
+                category: 'Frames',
+            },
+        },
+        labelToFrameLinkType: {
+            name: "labelToFrameLinkType",
+            description: 'Change the label to frame link type',
+            control: {
+                type: 'select',
+            },
+            options: ['dynamic', 'static'],
+            table: {
+                category: 'Frames',
+            },
+        },
+        equalizeFrameLinks: {
+            name: "equalizeFrameLinks",
+            description: 'Equalize or not the frame links',
+            control: {
+                type: 'boolean',
+            },
+            table: {
+                category: 'Frames',
+            },
+        },
         animateFrameDashedLine: {
             name: 'animateFrameDashedLine',
             description: 'static or dynamic frame line',
@@ -971,5 +1002,8 @@ export function defaultValues() {
         mergedMetricsNames: false,
         remoteDataFetchPace: 1000,
         layerMetricsUnits: "absolute",
+        equalizeFrameLinks: false,
+        labelToFrameLinkLength: 40,
+        labelToFrameLinkType: 'dynamic',
     }
 }

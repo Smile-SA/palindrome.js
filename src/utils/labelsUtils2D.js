@@ -14,12 +14,15 @@ import {createRenderOrderCounter} from './cameraUtils';
 export var createHtmlText = function (labelText, cardColor, cardBackground, parameters) {
     let p = document.createElement('p');
     p.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+    p.setAttribute("id", "htmlLayerLabel");
     p.style.color = parameters['labelColor'];
     p.style.fontSize = parameters['labelSize'] + 'px';
     p.style.fontFamily = parameters['characterFont'];
     p.style.fontWeight = parameters["labelBold"];
     p.style.fontStyle = parameters["labelItalic"];
-    p.style.padding = '5px';
+    const padding = 5;
+    p.style.padding = padding + 'px';
+    localStorage.setItem("htmlLayerLabelPadding", padding);
     if (cardColor) {
         p.style.border = ' 2px ' + parameters['labelColor'] + ' dashed';
     }
