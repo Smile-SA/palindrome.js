@@ -12,7 +12,21 @@ export default () => {
         return planepoints;
     }
 
-    onmessage = function (e) {
+    const getLayerStatus = (metrics) => {
+        let status = [];
+        for (const metric of Object.values(metrics)) {
+            const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
+            const max = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._max : metric.max;
+    
+            const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
+            status.push(value);
+        }
+    
+        const sum = status.reduce((acc, cur) => acc + cur);
+        return 100 * sum/status.length;
+    }
+
+    onmessage = async function (e) {
         if (e.data.subject === 'httpRequests') {
             const fun = eval("const f = function(){ return "+e.data.fn+";}; f();") ;
             fun().then(newData => postMessage({subject:'httpRequests', newData}));            
@@ -20,9 +34,8 @@ export default () => {
         else {    
             const metrics = e.data.newData[e.data.layer].metrics,
                 metricsNumber = Object.values(metrics).length;
-            const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
-            const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
-            const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
+            
+            let layerStatus = getLayerStatus(metrics);
             let max = Object.values(metrics).map(item => (e.data.psize / item.max) * item.max);
             let med = Object.values(metrics).map(item => (e.data.psize / item.max) * item.med);
             let min = Object.values(metrics).map(item => (e.data.psize / item.max) * item.min);
@@ -34,20 +47,19 @@ export default () => {
         metricValue.min = layerPoints(min, e.data.zAxisWorker, e.data.metricMagnifier);
         metricValue.current = layerPoints(current, e.data.zAxisWorker, e.data.metricMagnifier);
 
-        if (e.data.subject === "computations") {
-            postMessage({
-                subject: e.data.subject,
-                metricCurrentTotal, metricMaxTotal,
-                layerStatus,
-                metricValue,
-                metricsNumber,
-                layer: e.data.layer,
-                metrics,
-                id: e.data.id,
-                zAxisWorker: e.data.zAxisWorker,
-                layerIndex: e.data.layerIndex,
-                metricIndex: e.data.metricIndex,
-            });
+            if (e.data.subject === "computations") {
+                postMessage({
+                    subject: e.data.subject,
+                    layerStatus,
+                    metricValue,
+                    metricsNumber,
+                    layer: e.data.layer,
+                    metrics,
+                    id: e.data.id,
+                    zAxisWorker: e.data.zAxisWorker,
+                    layerIndex: e.data.layerIndex,
+                    metricIndex: e.data.metricIndex,
+                });
 
         } else if (e.data.subject === 'sides') {
             let metricsDivider;
@@ -67,28 +79,26 @@ export default () => {
                 previousValueMax = layerPoints(Object.values(e.data.previousMetric).map(item => (e.data.psize / item.max) * item[metricsDivider]), e.data.zAxisWorker + e.data.zPlaneMultilayer, e.data.metricMagnifier);
                 previousPlaneLength = Object.values(e.data.previousMetric).length;
 
-                sideDividerOdd = (metricsNumber >= previousPlaneLength) ? previousPlaneLength : metricsNumber;
-                sideDividerEven = (metricsNumber >= previousPlaneLength) ? metricsNumber : previousPlaneLength;
-                sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
-                sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
-            }
-            postMessage({
-                subject: e.data.subject,
-                metricCurrentTotal,
-                metricMaxTotal,
-                layerStatus,
-                metricValue,
-                metricsNumber,
-                layer: e.data.layer,
-                metrics,
-                zAxis: e.data.zAxis,
-                metricsDivider,
-                metricsPositions,
-                sideDividerOdd,
-                sideDividerEven,
-                sideSizeOdd,
-                sideSizeEven
-            });
+                    sideDividerOdd = (metricsNumber >= previousPlaneLength) ? previousPlaneLength : metricsNumber;
+                    sideDividerEven = (metricsNumber >= previousPlaneLength) ? metricsNumber : previousPlaneLength;
+                    sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
+                    sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
+                }
+                postMessage({
+                    subject: e.data.subject,
+                    layerStatus,
+                    metricValue,
+                    metricsNumber,
+                    layer: e.data.layer,
+                    metrics,
+                    zAxis: e.data.zAxis,
+                    metricsDivider,
+                    metricsPositions,
+                    sideDividerOdd,
+                    sideDividerEven,
+                    sideSizeOdd,
+                    sideSizeEven
+                });
 
         } else if (e.data.subject === 'metrics') {
             let metricsDivider;
@@ -100,7 +110,6 @@ export default () => {
 
                 postMessage({
                     subject: e.data.subject,
-                    metricCurrentTotal, metricMaxTotal,
                     layerStatus,
                     metricValue,
                     metricsNumber,

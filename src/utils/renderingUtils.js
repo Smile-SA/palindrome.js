@@ -1,4 +1,4 @@
-import { applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer } from "./layersUtils";
+import { applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer, getLayerStatus } from "./layersUtils";
 import { makeSphereContextsStatus } from "./spheresUtils";
 import { layerPoints } from "./metricsUtils2D";
 import { drawSideStraightLine } from "./sidesUtils";
@@ -41,6 +41,7 @@ export async function updateMeshes(params, renderingType) {
         const timeDifferenceInMilliseconds = currentTime - (refreshedData["scrapperUpdateInitTime"] ? refreshedData["scrapperUpdateInitTime"] : scrapperUpdateInitTime);
         const remoteDataFetchPace = conf.remoteDataFetchPace; // in ms
         if (timeDifferenceInMilliseconds >= remoteDataFetchPace) {
+            const url = localStorage.getItem("remote-data-source");
             // Getting updates...
             if (conf.webWorkersHTTP) { // Making http requests using web workers
                 const worker = httpRequests_pool.getWorker();
@@ -58,7 +59,13 @@ export async function updateMeshes(params, renderingType) {
                 });
             }
             else { // Making http requests using main thread
-                newData = await conf.fetchFunction();
+                if (url) {
+                    data = await conf.fetchFunction(url);
+                    localStorage.removeItem("remote-data-source");
+                }
+                else {
+                    newData = await conf.fetchFunction();
+                }
                 scrapperUpdateInitTime = new Date();
             }
         }
@@ -120,7 +127,7 @@ export async function updateMeshes(params, renderingType) {
                         let rotation = {};
                         rotation["layer"] = e.data.layer;
                         rotation["angle"] = newData[e.data.layer].layer[e.data.layer + "-layer"]?.rotation;
-                        let globalParams = { conf, meshs: meshes, scene, rotation };
+                        let globalParams = {conf, meshs: meshes, scene, rotation};
                          //this is the updated layer metrics
                         const metrics = newData[layer].metrics, layers = newData[layer].layer;
                         //this is the new total of current's
@@ -129,10 +136,10 @@ export async function updateMeshes(params, renderingType) {
                         const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
                         //todo : status colors shall map with default colors
                         const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
-                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
+                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData), globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
-                            makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams);
+                            makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, newData);
                         }
                     }
                     let metricsNumber = e.data.metricsNumber;
@@ -160,7 +167,7 @@ export async function updateMeshes(params, renderingType) {
             if (sidesWorker) {
                 sidesWorker.onmessage = function (e) {
                     const layerStatus = e.data.layerStatus;
-                    const layerColor =  layerColorDecidedByLayerStatus(e.data.layerStatus, conf, lowValueGradient, highValueGradient, e.data.layer);
+                    const layerColor =  layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData);
 
                     if (conf.displaySides === true && conf.cameraOptions.indexOf("Flat") == -1) {
                         let sideDividerOdd = e.data.sideDividerOdd,
@@ -172,9 +179,8 @@ export async function updateMeshes(params, renderingType) {
                             const sideDividers = {sideDividerEven, sideDividerOdd};
                             const sideSizes = {sideSizeOdd, sideSizeEven};
                             const layerStatuses = {layerStatus, previousLayerStatus: previousLayerStatus_sides};
-                            const gradients = {lowValueGradient, highValueGradient, bicolorGradient};
                             const layersColors = {layerColor, previousLayerColor: previousLayerColor_sides};
-                            drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, gradients, layersColors);
+                            drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, layersColors, newData);
                         }
                     }
                     previousLayerStatus_sides = layerStatus;
@@ -298,14 +304,8 @@ export async function updateMeshes(params, renderingType) {
             //this is the updated layer metrics
             const metrics = newData[layer].metrics, layers = newData[layer].layer,
                 metricsNumber = Object.values(metrics).length;
-            //this is the new total of currents
-            const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
-            //this is the new total of maxs
-            const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
-            //this is the new total of mins
-            const metricMinTotal = Object.values(metrics).map(item => item.min).reduce((a, b) => a + b, 0);
-            //todo : status colors shall map with default colors
-            const layerStatus = (metricCurrentTotal - metricMinTotal) * 100 / (metricMaxTotal - metricMinTotal);
+
+            let layerStatus = getLayerStatus(metrics);
             let metricsDivider, metricValue = {};
             metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.max), zAxis, conf);
             metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.med), zAxis, conf);
@@ -316,13 +316,14 @@ export async function updateMeshes(params, renderingType) {
             let rotation = {};
             rotation["layer"] = layer;
             rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
-            let globalParams = { conf, meshs: meshes, scene, rotation };
+            let globalParams = {conf, meshs: meshes, scene, rotation};
             
-            drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? layerStatus : layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient), globalParams);
+            const layerColor =  layerColorDecidedByLayerStatus(layerStatus, conf, layer, newData);
+            drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? layerStatus : layerColor, globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
                 let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
-                makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams);
+                makeSphereContextsStatus(metricValue, layer, Object.values(metrics), globalParams, newData);
             }
             // displayMode
             if (conf.displayMode === "dynamic") {
@@ -380,9 +381,8 @@ export async function updateMeshes(params, renderingType) {
                     const sideDividers = {sideDividerEven, sideDividerOdd};
                     const sideSizes = {sideSizeOdd, sideSizeEven};
                     const layerStatuses = {layerStatus, previousLayerStatus};
-                    const gradients = {lowValueGradient, highValueGradient, bicolorGradient};
                     const layersColors = {layerColor, previousLayerColor};
-                    drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, gradients, layersColors);
+                    drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, layersColors, newData);
                 }
             }
             zAxis -= conf.zPlaneMultilayer;

@@ -3,9 +3,14 @@
  * @param {*} conf palindrome configuration
  * @returns low and high color gradients
  */
-export const getColorGradients = (conf) => {
-    const lowValueGradient = gradient(conf.statusColorLow, conf.statusColorMed, conf.colorShadesDepth);
-    const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorShadesDepth);
+export const getColorGradients = (conf, layer, data) => {
+    const {layerColorHigh, layerColorLow, layerColorMed} = data[layer].layer[`${layer}-layer`];
+    const lowColor = layerColorLow ? layerColorLow : conf.statusColorLow;
+    const medColor = layerColorMed ? layerColorMed : conf.statusColorMed;
+    const highColor = layerColorHigh ? layerColorHigh : conf.statusColorHigh;
+
+    const lowValueGradient = gradient(lowColor, medColor, conf.colorsDynamicDepth);
+    const highValueGradient = gradient(medColor, highColor, conf.colorsDynamicDepth);
     return { lowValueGradient, highValueGradient };
 };
 
@@ -15,16 +20,25 @@ export const getColorGradients = (conf) => {
  * @param {number} value
  * @param {*} conf current palindrome configuration
  */
-export var layerColorDecidedByLayerStatus = function (value, conf) {
-    const { lowValueGradient, highValueGradient } = getColorGradients(conf);
+export var layerColorDecidedByLayerStatus = function (value, conf, layer, newData) {
+    const { lowValueGradient, highValueGradient } = getColorGradients(conf, layer, newData);
     let intValue = value.toFixed(0);
     
-    const data = conf.data;
+    const data = newData;
     const {layerColorHigh, layerColorLow, layerColorMed, mainColorStatic} = data[layer].layer[`${layer}-layer`];
     const lowColor = layerColorLow ? layerColorLow : conf.statusColorLow;
     const medColor = layerColorMed ? layerColorMed : conf.statusColorMed;
     const highColor = layerColorHigh ? layerColorHigh : conf.statusColorHigh;
     const staticColor = mainColorStatic ? mainColorStatic : conf.mainStaticColor;
+    if (conf.transparentDisplay) {
+        if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
+            return lowColor;
+        } else if (intValue >= conf.statusRangeMed && intValue < conf.statusRangeHigh) {
+            return medColor;
+        } else if (intValue >= conf.statusRangeHigh) {
+            return highColor;
+        }
+    }
 
     
     if(conf.bicolorDisplay){
@@ -77,10 +91,29 @@ export var layerColorDecidedByLayerStatus = function (value, conf) {
  * @param {number} value sphere current value
  * @param conf current palindrome configuration
  */
-export var metricColor = function (value, conf) {
-    const { lowValueGradient, highValueGradient } = getColorGradients(conf);
-    let color = conf.sphereColorLow;
-    let percentageThreshold = ((value.current - value.min) * 100 / (value.max - value.min)).toFixed(0);
+export var metricColor = function (value, conf, layer, newData) {
+    const { lowValueGradient, highValueGradient } = getColorGradients(conf, layer, newData);
+    
+    const data = newData;
+    const {sphereColorHigh, sphereColorLow, sphereColorMed, mainColorStatic, layerColorLow, layerColorHigh} = data[layer].layer[`${layer}-layer`];
+    const lowColor = sphereColorLow ? sphereColorMed : conf.sphereColorLow;
+    const medColor = sphereColorMed ? sphereColorMed : conf.sphereColorMed;
+    const highColor = sphereColorHigh ? sphereColorHigh : conf.sphereColorHigh;
+    const staticColor = mainColorStatic ? mainColorStatic : conf.mainStaticColor;
+
+    const biColorLow = layerColorLow ? layerColorLow : conf.sphereColorLow;
+    const biColorHigh = layerColorHigh ? layerColorHigh : conf.sphereColorHigh;
+ 
+    let percentageThreshold;
+    if (value.maxWithoutScale) {
+        percentageThreshold = value.isLayerBehaviored && value.isLayerResized ? value._current : ((value.current - value.min) * 100 / (value.maxWithoutScale - value.isLayerBehaviored && value.isLayerResized ? value._max : value.min)).toFixed(0);
+    }
+    else {
+        percentageThreshold = ((value.current - value.min) * 100 / (value.max - value.min)).toFixed(0);
+    if (value.metricDirection === "ascending") {
+        percentageThreshold = 100 - percentageThreshold
+    }
+    }
     if (conf.spheresBehavior === 'ranges') {
         if(conf.bicolorDisplay){
             return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;

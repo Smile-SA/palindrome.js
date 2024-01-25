@@ -1,5 +1,4 @@
 /// <reference types="cypress" />
-const fullscreen = '.sto-1k5e3f'
 
 describe ('Z plane and rendering modes', function () { 
 

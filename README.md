@@ -73,8 +73,7 @@ docker-compose up
 
 ## Documentation
 
-Click [here](https://git.rnd.smile.fr/overboard/palindrome.js/-/wikis/home) to visit our wiki page containing the
-documentation with all the implementation details.
+Click [here](../../wikis/home) to visit our wiki page containing the documentation with all the implementation details.
 
 ## Contribute
 

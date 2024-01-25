@@ -2,7 +2,7 @@
  * Gets local system metrics data
  * @returns system data
  */
-export const localLiveMonitoring = async (url = 'http://localhost:3000/dataSys') => {
+export const localLiveMonitoring = async (url = 'http://localhost:9091/dataSys') => {
   try {
     const response = await fetch(url);
     return await response.json();

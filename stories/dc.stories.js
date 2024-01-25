@@ -5,7 +5,7 @@ import { dcFullMap } from '../data-examples/dc_FullMap';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 import { defaultControls, defaultValues } from './controls/defaultControls';
 import { createPalindrome } from './controls/createPalindrome';
-import {dc_BasicConfigurationLayerColoured} from '../data-examples/dc_BasicConfigurationLayerColoured';
+import { dcNegativeValuesConfiguration } from '../data-examples/dc_NegativeValuesConfiguration';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 
 export default {
@@ -19,6 +19,13 @@ BasicConfiguration.args = {
     mainStaticColor: '#FFCC00',
     data: dcBasicConfiguration(),
 };
+
+export const NegativeValuesConfiguration = createPalindrome.bind({});
+NegativeValuesConfiguration.args = {
+    mainStaticColor: '#FFCC00',
+    data: dcNegativeValuesConfiguration(),
+};
+
 
 export const CustomConfiguration = createPalindrome.bind({});
 CustomConfiguration.args = {

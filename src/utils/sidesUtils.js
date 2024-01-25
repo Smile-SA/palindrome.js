@@ -16,19 +16,18 @@ import { createRenderOrderCounter } from "./cameraUtils";
  * @param lineMaterial
  * @param scene
  */
-export function drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, gradients, layersColors) {
+export function drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, layersColors, newData) {
     let {sideDividerEven, sideDividerOdd} = sideDividers;
     let {sideSizeEven, sideSizeOdd} = sideSizes;
     let {previousLayerStatus, layerStatus} = layerStatuses; 
-    let {lowValueGradient, highValueGradient, bicolorGradient} = gradients;
     let {layerColor, previousLayerColor} = layersColors;
     for (let i = 0; i < sideDividerEven; i++) {
         let a = sideSizeEven[(i + 1) % sideDividerOdd];
         let b = sideSizeOdd[(i + 1) % sideDividerEven];
         let c = sideSizeEven[(i) % sideDividerOdd];
         let d = sideSizeOdd[(i) % sideDividerEven];
-        let colorA = layerColorDecidedByLayerStatus(previousLayerStatus_sides, conf, lowValueGradient, highValueGradient, bicolorGradient);
-        let colorB = layerColorDecidedByLayerStatus(layerStatus, conf, lowValueGradient, highValueGradient, bicolorGradient);
+        let colorA = previousLayerColor ? previousLayerColor : layerColorDecidedByLayerStatus(previousLayerStatus, conf, layer, newData);
+        let colorB = layerColor ? layerColor : layerColorDecidedByLayerStatus(layerStatus, conf, layer, newData);
         let opacityA, opacityB;
         if (conf.transparentDisplay) {
             opacityA = getColorOpacityBasedOnRanges(colorA, {highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow}, conf);

@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
 import { layerPoints } from './metricsUtils2D';
 import { getColorOpacityBasedOnRanges } from './colorsUtils';
+import {behavioredMetricsTotalValues } from './labelsUtils2D';
+import {l2Normalize} from './metricsUtils2D';
 
 /**
  * drawTrianglesInALayer() caller
@@ -51,7 +53,7 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
     if (meshs['19' + layer + i] || (meshs['_group'+ '19-20' + layer + i] && conf.cameraOptions.indexOf("Flat") !== -1 )) { // if init done
         meshs['19' + layer + i].update(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength])
         meshs['20' + layer + i].update(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength])
-        if(conf.transparentDisplay && conf.transparentDisplay){
+        if(conf.transparentDisplay){
             meshs['19' + layer + i].material.opacity = opacity * 0.5;
             meshs['20' + layer + i].material.opacity = opacity * 0.5;
         } else {
@@ -238,4 +240,130 @@ export function applyLayerMetricsMergeToData(data, conf) {
             }
         }
     }
+}
+
+export const applyLayerMetricsUnits = (data, conf) => {
+    for (const layer in data) {
+        const layerInfo = data[layer].layer;
+        const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
+        const behavior = ( layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
+        const metrics = data[layer].metrics;
+        if (behavior === "percent") {
+
+            // Getting total values for current, min, med, and max
+            const {
+                totalCurrentValues,
+                totalMinValues,
+                totalMaxValues,
+                totalMedValues,
+            } = behavioredMetricsTotalValues(metrics);
+      
+            for (const [key, value] of Object.entries(metrics)) {
+                const { current, min, med, max } = value;
+
+                // Computing new layerBehaviored metrics
+                const layerBehavioredMin = totalMinValues > 0 ? (min / totalMinValues) * 100 : 0;
+                const layerBehavioredMax = totalMaxValues > 0 ? (max / totalMaxValues) * 100 : 0;
+                const layerBehavioredMed = totalMedValues > 0 ? (med / totalMedValues) * 100 : 0;
+                const layerBehavioredCurrent = totalCurrentValues > 0 ? (current / totalCurrentValues) * 100 : 0;
+
+                data[layer].metrics[key]["_min"] = layerBehavioredMin;
+                data[layer].metrics[key]["_max"] = layerBehavioredMax;
+                data[layer].metrics[key]["_med"] = layerBehavioredMed;
+                data[layer].metrics[key]["_current"] = layerBehavioredCurrent;
+                data[layer].metrics[key]["_unit"] = "%";
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+            }
+        }
+        else if(behavior === "normalized") {
+            let currents = [];
+            let mins = [];
+            let meds = [];
+            let maxs = [];
+            for (const [_, value] of Object.entries(metrics)) {
+                const { current, min, med, max } = value;
+                // Computing new layerBehaviored metrics
+                currents.push(current);
+                mins.push(min);
+                meds.push(med);
+                maxs.push(max);
+            }
+            const normilizedCurrents = l2Normalize(currents);
+            const normalizeArraydMeds = l2Normalize(meds);
+            const normalizeArraydMaxs = l2Normalize(maxs);
+            const normalizeArraydMins = l2Normalize(mins);
+            let i = 0;
+            for (const [key, _] of Object.entries(metrics)) {
+                data[layer].metrics[key]["_min"] = normalizeArraydMins[i];
+                data[layer].metrics[key]["_max"] = normalizeArraydMaxs[i];
+                data[layer].metrics[key]["_med"] = normalizeArraydMeds[i];
+                data[layer].metrics[key]["_current"] = normilizedCurrents[i];
+                data[layer].metrics[key]["_unit"] = "";
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+                i++;
+            }
+        }
+    } 
+}
+
+/**
+ * Keeps the same layer shape without considering current values
+ * @param {*} data the use case data structure
+ */
+export const applyLayersSize = (data) => {
+    // let zoomRatioMax = 1;
+    for (const layer in data) {
+        const layerInfo = data[layer].layer;
+        const layerSize = layerInfo[`${layer}-layer`]?.layerSize;
+        if (layerSize) {
+            const metrics = data[layer].metrics;
+            for (const [key, _] of Object.entries(metrics)) {
+                data[layer].metrics[key]["_min"] = data[layer].metrics[key].min;
+                data[layer].metrics[key]["_max"] = data[layer].metrics[key].max;
+                data[layer].metrics[key]["_med"] = data[layer].metrics[key].med;
+                data[layer].metrics[key]["_current"] = data[layer].metrics[key].current;
+                if (data[layer].metrics[key].unit !== '%') {
+                    data[layer].metrics[key]["min"] = data[layer].metrics[key].min * 100 / data[layer].metrics[key].max;
+                    data[layer].metrics[key]["med"] = data[layer].metrics[key].med * 100 / data[layer].metrics[key].max;
+                    data[layer].metrics[key]["current"] = data[layer].metrics[key].current * 100 / data[layer].metrics[key].max;
+                    data[layer].metrics[key]["max"] = data[layer].metrics[key].max * 100 / data[layer].metrics[key].max;
+                }
+                // dynamic zoop
+                // const zoomRatio = Math.floor(data[layer].metrics[key]["current"] / layerSize);
+                // if (zoomRatio > zoomRatioMax) {
+                //     zoomRatioMax = zoomRatio;                    
+                // }
+                data[layer].metrics[key]["current"] = layerSize;
+                data[layer].metrics[key]["_unit"] = data[layer].metrics[key].unit;
+                data[layer].metrics[key]["isLayerResized"] = true;
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+            }        
+        }
+    }
+
+    // dynamic zoom
+    // for (const layer in data) {
+    //     const layerInfo = data[layer].layer;
+    //     const layerSize = layerInfo[`${layer}-layer`]?.layerSize;
+    //     if (layerSize) {
+    //         const metrics = data[layer].metrics;
+    //         for (const [key, _] of Object.entries(metrics)) {
+    //             data[layer].metrics[key]["current"] = 2 * layerSize;
+    //         }        
+    //     }
+    // }
+}
+
+export const getLayerStatus = (metrics) => {
+    let status = [];
+    for (const metric of Object.values(metrics)) {
+        const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
+        const max = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._max : metric.max;
+
+        const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
+        status.push(value);
+    }
+
+    const sum = status.reduce((acc, cur) => acc + cur);
+    return 100 * sum/status.length;
 }

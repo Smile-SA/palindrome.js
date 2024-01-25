@@ -108,12 +108,13 @@ export var l2Normalize = function (vector) {
  * @param {data} data the use case data
  * @returns the shifted data
  */
-export const shiftMetricsToPositive = (data) => {
+export const shiftMetricsToPositive = (data, conf) => {
     let minOfMins = Number.POSITIVE_INFINITY;
-
     for (const layerData of Object.values(data)) {
         for (const metric of Object.values(layerData.metrics)) {
-            minOfMins = Math.min(minOfMins, metric.min);
+            if (metric.min < 0) {
+                minOfMins = Math.min(minOfMins, metric.min);
+            }
         }
     }
 
@@ -128,14 +129,19 @@ export const shiftMetricsToPositive = (data) => {
                 metric["originalMed"] = med;
                 metric["originalCurrent"] = current;
                 metric["isPositiveShifted"] = true;
-                metric.min += offset;
-                metric.med += offset;
-                metric.max += offset;
-                metric.current += offset;
+                metric.max += offset
+                metric.med += offset
+                metric.min += offset
+                metric.current += offset
+
+                if (metric.originalCurrent < 0 || metric.originalMin < 0 || metric.originalMed < 0 || metric.originalMax < 0) {
+                    metric['maxWithoutScale'] = metric.max;
+                    if(conf.negativeValuesMagnifier !== 0)
+                        metric.max = metric.max * conf.negativeValuesMagnifier;
+                }
             }
         }
     }
-
     return data;
 }
 

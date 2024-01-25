@@ -902,6 +902,15 @@ export function defaultControls() {
                 category: 'Labels',
                 subcategory: 'Metrics'
             }
+        },
+        negativeValuesMagnifier: {
+            name: "negativeValuesMagnifier",
+            control: "number",
+            description: "Magnify distance between negative and positive values",
+            table: {
+                category: 'Palindrome',
+                subcategory: 'Metrics'
+            }
         }
     }
 }
@@ -1005,5 +1014,6 @@ export function defaultValues() {
         equalizeFrameLinks: false,
         labelToFrameLinkLength: 40,
         labelToFrameLinkType: 'dynamic',
+        negativeValuesMagnifier: 2
     }
 }

@@ -38,7 +38,7 @@ export const createInputUrlModal = (parentElement) => {
     modalContent.style.padding = "20px";
     modalContent.style.border = "1px solid #888";
     modalContent.style.width = "80%";
-    modalContent.style.height = "30%";
+    modalContent.style.height = "50%";
     modalContent.style.overflow = "auto";
     modalContent.style.borderRadius = "25px";
 

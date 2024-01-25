@@ -10,9 +10,8 @@ import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
 import {setPreviousPalindrome} from "./utils/destructionUtils";
 import {createInputUrlModal, loadingText} from "./utils/fetchUtils";
 import {updateMeshes} from "./utils/renderingUtils";
-import {applyLayerRotationToData} from './utils/layersUtils';
-import {changeLayerMetricsBehavior, shiftMetricsToPositive} from './utils/metricsUtils2D';
-import { renderDev } from '../dev/dev-index';
+import { gradient } from './utils/colorsUtils';
+import {applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize} from './utils/layersUtils';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
@@ -83,14 +82,16 @@ export default (function (parentElement, conf) {
         }
 
         // Handling negative values
-        shiftMetricsToPositive(data);
+        shiftMetricsToPositive(data, conf);
 
         // Applying layer rotation in case of Flat camera
         applyLayerRotationToData(data, conf);
         newData = data;
 
-        // Changing layer behavior (percent, normalized, absolute)
-        changeLayerMetricsBehavior(data, conf);
+        // Layer constraints behavior for percent
+        applyLayerMetricsUnits(data, conf);
+        // Made specially for pyramid of Maslow's
+        applyLayersSize(data);
 
         dataIterator = dataGenerator(data);
 
@@ -136,7 +137,7 @@ export default (function (parentElement, conf) {
     let debug = false;
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
     const meshes = {};
-    const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(conf);
+    const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(confconf);
     let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
     let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables( conf, metricParameters, layerParameters, parentElement ,  renderer, labelsRenderer, scene, meshes, camera, stats , statsVariables);
     const clock = new THREE.Clock();
