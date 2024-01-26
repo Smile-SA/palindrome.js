@@ -225,6 +225,14 @@ export let controls = {
         control: 'boolean',
         category: categories[1],
     },
+    benchmark: {
+        name: 'benchmark',
+        description: 'Activate or deactivate benchmark',
+        control: 'radio',
+        options: ['Active', 'Inactive'],
+        hidden: false,
+        category: categories[0],
+    },
 }
 
 /**
@@ -243,3 +251,4 @@ let extractFieldsByType = (type) => {
 }
 export let toggleFields = extractFieldsByType("boolean");
 export let selectFields = extractFieldsByType("select");
+export let radioFields = extractFieldsByType("radio");

@@ -57,9 +57,9 @@ export var drawFramesBackground = function (framePoints, frameName, backgroundCo
                     meshs['side-top-left-pane' + frameName + i].update(a, b, c);
                     meshs['side-bottom-right-pane' + frameName + i + 1].update(a, b, c);
                 } else {
-                    meshs['side-top-left-pane' + frameName + i] = new Triangle(a, b, c, backgroundColor, null, conf.opacity);
+                    meshs['side-top-left-pane' + frameName + i] = new Triangle(a, b, c, backgroundColor, null, opacity);
                     scene.add(meshs['side-top-left-pane' + frameName + i]);
-                    meshs['side-bottom-right-pane' + frameName + i + 1] = new Triangle(a, b, c, backgroundColor, null, conf.opacity);
+                    meshs['side-bottom-right-pane' + frameName + i + 1] = new Triangle(a, b, c, backgroundColor, null, opacity);
                     scene.add(meshs['side-bottom-right-pane' + frameName + i + 1]);
                 }
                 j = i + 1;

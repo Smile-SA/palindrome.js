@@ -3,6 +3,7 @@
  */
 export function loadingText() {
     let loading = document.createElement("span");
+    loading.setAttribute("id", "remote-data-source-loader");
     loading.textContent = "Fetching data...";
     loading.style.position = "absolute";
     loading.style.top = window.innerHeight / 2 + "px";

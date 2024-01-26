@@ -1,0 +1,22 @@
+{
+        "extends": "@istanbuljs/nyc-config-babel",
+        "extension": [
+                ".js"
+        ],
+        "all": true,
+        "exclude": [
+                "cypress.config.js",
+                "**/dist/**",
+                "**/*.stories.js",
+                "**/vscode/**",
+                "**/cypress/**",
+                "**/data-examples/**",
+                "**/dev/assets/tailwind/**",
+                "**/src/data_structures_examples/**",
+                "**/static/**",
+                "**/coverage/lcov-report/**",
+                "**/src/ThreeGeometryObjects.js",
+                "**/src/ThreeJSBasicObjects.js",
+                "**/*.worker.js"
+        ]
+}

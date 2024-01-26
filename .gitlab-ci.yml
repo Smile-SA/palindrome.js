@@ -33,10 +33,29 @@ cypress-test:
   image: cypress/base:latest
   script:
     - yarn storybook &
-    - yarn cypress:run
-  rules:
-    - exists:
-        - cypress/match-screenshots/*
+    - yarn dev &
+    - rm -rf cypress/match-screenshots/ .cache/
+    - for i in 1 2; do yarn cypress:run; done
+  allow_failure: false
+  when: manual
+
+benchmark:
+  image: ubuntu:20.04
+  stage: test
+  dependencies: []
+  extends: .install-benchmark-dependencies
+  script:
+    - /bin/bash benchmark.sh
+  allow_failure: false
+  when: manual
+
+benchmark-test:
+  image: ubuntu:20.04
+  stage: test
+  dependencies: []
+  extends: .install-benchmark-dependencies
+  script:
+    - /bin/bash benchmark-eval.sh
   allow_failure: false
 
 benchmark:

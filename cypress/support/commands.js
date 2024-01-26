@@ -25,35 +25,48 @@ import './commands'
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-const fullscreen = '.sto-1k5e3f'
-Cypress.Commands.add('eval_snapshot', ($el) => {
-  // Goes fullscreen takes a snapshot with element's name
 
-  cy.get('[title="Go full screen [F]"]').click()
+Cypress.Commands.add('eval_snapshot', ($el, env) => {
+  // Goes fullscreen takes a snapshot with element's name
+  if (env === 'dev') {
+    cy.get('#collapse').click({force: true})
+  }
+  else {
+    cy.get('[title="Go full screen [F]"]').click()
+  }
   cy.wait(3000)
   cy.matchScreenshot($el,{
     threshold: 0.0001,
     thresholdType: "pixel"
   })
-  cy.get('[title="Exit full screen [F]"]').click()
+  if (env === 'dev') {
+    cy.get('#burgerMenu').click();
+  } 
+  else {
+    cy.wait(1000)
+    cy.get('[title="Exit full screen [F]"]').click()
+  }
 
 })
 
-
-Cypress.Commands.add('eval_click', ($el) => {
+Cypress.Commands.add('eval_select', (select, option, env, sleep=1000) => {
   // Clicks first option wrapped around element and calls the eval_snapshot command
-    cy.wait(1000)
+    cy.wait(sleep)
+    cy.eval_snapshot(select + ' > ' + option, env);
+})
+
+Cypress.Commands.add('eval_click', ($el, env, sleep=1000) => {
+  // Clicks first option wrapped around element and calls the eval_snapshot command
+    cy.wait(sleep)
     cy.get($el).first().click({force: true})
+    cy.eval_snapshot($el, env);
+})
   
-    cy.eval_snapshot($el)
-  
-  })
-  
-Cypress.Commands.add('eval_type', ($el) => {
+Cypress.Commands.add('eval_type', ($el, value = 7) => {
   // Clears the element contents, types in 7 and calls the eval_snapshot command
   cy.wait(1000)
   cy.get($el).clear({force: true})
-  cy.get($el).type(7) 
+  cy.get($el).type(value) 
   
   cy.eval_snapshot($el)
 })
@@ -84,12 +97,6 @@ Cypress.Commands.add('eval_color_green', ($el) => {
 
   cy.eval_snapshot($el)
 })
-
-export function defaultValues() {
-  return {
-
-  }
-}
 
 const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
 

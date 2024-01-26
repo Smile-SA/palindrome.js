@@ -1,6 +1,6 @@
 import {defaultValues} from '../stories/controls/defaultControls.js';
 import {getPalindrome} from "../stories/controls/getPalindrome";
-import {palindromes, toggleFields, selectFields} from "./utils/controls";
+import {palindromes, toggleFields, selectFields, radioFields} from "./utils/controls";
 import {categories} from "./utils/controls";
 import {controls} from "./utils/controls";
 
@@ -33,6 +33,21 @@ function toggle(e) {
  * @param {event} e
  */
 function onSelect(e) {
+    console.log(e.target.value);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(e.target.id, e.target.value);
+    location.search = urlParams;
+}
+
+function onRadioChange(e) {
+    console.log(e.target.value);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(e.target.id, e.target.value);
+    location.search = urlParams;
+}
+
+function onRadioChange(e) {
+    console.log(e.target.value);
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set(e.target.id, e.target.value);
     location.search = urlParams;
@@ -122,6 +137,21 @@ function applyDefaultOptions(devConfig) {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    for (let radioId of radioFields) {
+        const elements = document.getElementsByName(radioId);
+        for(const element of elements) {
+            element.addEventListener("click", onRadioChange, false);
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        let radioParam = urlParams.get(radioId) ?? defaultValues()[radioId];        
+        devConfig[radioId] = radioParam;
+        for(const element of elements) {
+            if (element.value === radioParam) {
+                element.checked = true;
             }
         }
     }
@@ -248,7 +278,7 @@ function createSideBar() {
 function createSideBarContent() {
     let sideBarContent = document.createElement("div");
     sideBarContent.setAttribute("id", "sidebar");
-    sideBarContent.setAttribute("class", "h-screen overflow-y-auto py-4 px-4 bg-indigo-50 rounded dark:bg-gray-800");
+    sideBarContent.setAttribute("class", "h-screen overflow-y-auto py-4 px-4 bg-indigo-50 rounded dark:bg-gray-600");
     sideBarContent.style.zIndex = "1";
     sideBarContent.style.width = "30rem";
     sideBarContent.style.marginLeft = "0";
@@ -259,7 +289,7 @@ function createSideBarContent() {
     let close = document.createElement("div");
     close.innerText = "×";
     close.setAttribute("id", "collapse");
-    close.style.cssText = "text-align: right; cursor: pointer; font-size: 16pt; font-weight: bold; display:inline; position: absolute; right:20px";
+    close.style.cssText = "text-align: right; cursor: pointer; font-size: 16pt; font-weight: bold; display:flex; position: absolute; right:20px; z-index:1";
 
     let image = document.createElement("img");
     image.setAttribute("src", palindromeLogo);
@@ -286,7 +316,7 @@ function createCategories() {
         let button = document.createElement("button");
         button.setAttribute("aria-expanded", "true");
         button.setAttribute("type", "button");
-        button.setAttribute("class", "mt-2 transition-all flex items-center bg-slate-200 p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-300 dark:text-white dark:hover:bg-gray-700");
+        button.setAttribute("class", "mt-2 transition-all flex items-center bg-slate-200 p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-300 dark:hover:bg-gray-700");
         button.setAttribute("aria-controls", category);
         button.setAttribute("data-collapse-toggle", category);
 
@@ -300,8 +330,7 @@ function createCategories() {
 
         let span = document.createElement("span");
         span.setAttribute("sidebar-toggle-item", "");
-        span.setAttribute("class", "flex-1 text-left whitespace-nowrap");
-        span.style.fontWeight = "bold";
+        span.setAttribute("class", "font-semibold flex-1 text-left whitespace-nowrap group-hover:text-gray-200");
         span.innerText = category;
         button.appendChild(span);
 
@@ -336,6 +365,9 @@ function createCategories() {
  */
 function appendControlsToCategories() {
     for (let nameId of Object.keys(controls)) {
+        if (controls[nameId].hidden) {
+            continue;
+        }
         let ul = document.createElement("ul");
         ul.setAttribute("class", "space-y-2");
         ul.style.zIndex = 1;
@@ -345,11 +377,15 @@ function appendControlsToCategories() {
         li.style.zIndex = 1;
 
         let label = document.createElement("label");
-        label.setAttribute("for", nameId);
+        label.setAttribute("for", nameId);400
         label.style.zIndex = 1;
+
+        let labelContainer = document.createElement("div");
+        labelContainer.setAttribute("style", "width: 600px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;");
 
         if (controls[nameId].control === "boolean") {
             label.setAttribute("class", "inline-flex relative items-center cursor-pointer");
+            labelContainer.appendChild(label);
             let span = document.createElement("span");
             span.setAttribute("class", "text-sm font-bold text-gray-900 dark:text-gray-300");
             span.innerText = controls[nameId].name;
@@ -361,13 +397,13 @@ function appendControlsToCategories() {
             input.setAttribute("class", "sr-only peer");
 
             let div = document.createElement("div");
-            div.setAttribute("class", "absolute ml-56 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[22px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600");
+            div.setAttribute("class", "absolute ml-60 w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[22px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600");
 
             label.appendChild(span);
             label.appendChild(input);
             label.appendChild(div);
 
-            li.appendChild(label);
+            li.appendChild(labelContainer);
 
             ul.appendChild(li);
             document.getElementById(controls[nameId].category).append(ul);
@@ -375,31 +411,29 @@ function appendControlsToCategories() {
         } else if (controls[nameId].control === "text") {
             label.setAttribute("class", "mr-9 text-sm font-bold text-gray-900 dark:text-gray-300");
             label.innerText = nameId;
+            labelContainer.appendChild(label);
             let input = document.createElement("input");
             input.setAttribute("id", nameId);
-            input.setAttribute("value", devConfig[nameId] ?? "");
-            input.setAttribute("class", "absolute ml-56 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
-            input.style.width = "38%";
-
-            li.appendChild(label);
+            input.setAttribute("value", defaultValues()[nameId] ?? "");
+            input.setAttribute("class", "ml-2 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
+            li.appendChild(labelContainer);
             li.appendChild(input);
             ul.appendChild(li);
             document.getElementById(controls[nameId].category).append(ul);
         } else if (controls[nameId].control === "select") {
             label.setAttribute("class", "mr-9 text-sm font-bold text-gray-900 dark:text-gray-300");
             label.innerText = controls[nameId].name;
+            labelContainer.appendChild(label);
             let select = document.createElement("select");
             select.setAttribute("id", nameId);
-            select.style.width = "50%";
-            select.setAttribute("class", "ml-24 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
-            if (controls[nameId].name === "spheresColorsBehavior" || controls[nameId].name === "sidesDisplayMode" || controls[nameId].name === "layerDisplayMode") select.setAttribute("class", "ml-20 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
+            select.setAttribute("class", "ml-2 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
             if (controls[nameId].type === "static") {
                 for (let option of controls[nameId].options) {
                     select.appendChild(new Option(option, option));
                 }
             }
 
-            li.appendChild(label);
+            li.appendChild(labelContainer);
             li.appendChild(select);
             ul.appendChild(li);
             document.getElementById(controls[nameId].category).append(ul);
@@ -407,29 +441,42 @@ function appendControlsToCategories() {
             if (controls[nameId].type === "dynamic") {
                 appendPalindromeOptions(controls[nameId].options);
             }
-        }
+        } else if (controls[nameId].control === "radio") {
+            label.setAttribute("class", "mr-9 text-sm font-bold text-gray-900 dark:text-gray-300");
+            label.innerText = controls[nameId].name;
+            labelContainer.appendChild(label);
+            
+            const radioContainer = document.createElement("div");
+            radioContainer.setAttribute("class", "flex");
+            for (const option of controls[nameId].options) {
+                const optionContainer = document.createElement("div");
+                optionContainer.setAttribute("class", "flex items-center ml-2 relative");
+                
+                const radio = document.createElement("input");
+                radio.setAttribute("id", nameId);
+                radio.setAttribute("type", "radio");
+                radio.setAttribute("name", nameId);
+                radio.setAttribute("value", option);
+                radio.setAttribute("class","ml-2 relative text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600");
 
+                const radioLabel = document.createElement("label");
+                radioLabel.setAttribute("for", option);
+                radioLabel.setAttribute("class", "ml-2 relative text-sm font-medium text-gray-900 dark:text-gray-300");
+                radioLabel.innerHTML = option;
 
-    }
-}
-
-/**
- * Apply custom user args to Palindrome
- * @param {*} config devConfig
- */
-function applyParamsToConfig(config) {
-    if (palindromeType === 'basic') {
-        const userConfig = document.getElementById("palindromeScript")?.dataset?.structure;
-        if (userConfig) {
-            const dataStructure = JSON.parse(userConfig);
-            if (dataStructure) {
-                config["data"] = dataStructure;
+                optionContainer.appendChild(radio);
+                optionContainer.appendChild(radioLabel);
+                radioContainer.appendChild(optionContainer);
             }
+            
+            li.appendChild(labelContainer);
+            li.appendChild(radioContainer);
+            ul.appendChild(li);
+            document.getElementById(controls[nameId].category).append(ul);
+            
         }
-    }
-    const props = JSON.parse(document.getElementById("palindromeScript")?.dataset?.configuration || "{}");
-    for(const prop in props) {
-        config[prop] = props[prop];
+
+
     }
 }
 
@@ -443,12 +490,9 @@ export function render() {
     appendControlsToCategories();
     init();
     const devConfig = defaultValues();
-    applyParamsToConfig(devConfig);
     applyDefaultOptions(devConfig);
     getPalindrome(devConfig);
     return devConfig;
 }
 
-
-/* Main */
 render();

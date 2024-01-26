@@ -249,7 +249,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
  */
 function createModalElements(isHistory) {
     let modalDiv = document.createElement("div");
-    modalDiv.setAttribute("id", "myModal");
+    modalDiv.setAttribute("id", "benchmarkModal");
     modalDiv.style.fontFamily = "sans-serif";
     modalDiv.style.display = "block";
     modalDiv.style.position = "fixed";
@@ -363,6 +363,7 @@ export var createModal = async function (labels, content, previousContent, time,
     modalContent.appendChild(span);
     modalContent.appendChild(p);
     let table = createDOMTable(labels, content);
+    table.setAttribute("id", `table-${version}`);
     modalContent.appendChild(table);
     title = {text: 'Benchamark statistics'};
     yaxisTitle = {text: 'Values'};
@@ -403,6 +404,7 @@ export var createModal = async function (labels, content, previousContent, time,
         p.style.fontWeight = "bold";
         modalContent.appendChild(p);
         table = createDOMTable(labels, previousContent);
+        table.setAttribute("id", `table-${previousVersion}`);
         modalContent.appendChild(table);
     }
     let curveHolder = document.createElement("div");
@@ -437,6 +439,7 @@ export var showBenchmarkHistory = function (parentElement, history) {
         p.style.fontWeight = "bold";
         modalContent.appendChild(p);
         let table = createDOMTable(Object.keys(history[e].results), Object.values(history[e].results));
+        table.setAttribute("class", `table-history`);
         modalContent.appendChild(table);
         const currentDataGroupedBySeconds = groupBySeconds(history[e].statsData, "ms");
         let everySecondResult_current = groupByEverySecond(currentDataGroupedBySeconds);
