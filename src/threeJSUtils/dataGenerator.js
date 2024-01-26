@@ -19,8 +19,6 @@ export function* dataGenerator(model) {
                 } else {
                     metric[currentKey] = Math.max(Math.min(current + update, max), min);
                 }
-
-
             }
         }
         yield model;

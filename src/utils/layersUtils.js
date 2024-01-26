@@ -322,12 +322,12 @@ export const applyLayersSize = (data) => {
                 data[layer].metrics[key]["_max"] = data[layer].metrics[key].max;
                 data[layer].metrics[key]["_med"] = data[layer].metrics[key].med;
                 data[layer].metrics[key]["_current"] = data[layer].metrics[key].current;
-                if (data[layer].metrics[key].unit !== '%') {
+                //if (data[layer].metrics[key].unit !== '%') {
                     data[layer].metrics[key]["min"] = data[layer].metrics[key].min * 100 / data[layer].metrics[key].max;
                     data[layer].metrics[key]["med"] = data[layer].metrics[key].med * 100 / data[layer].metrics[key].max;
                     data[layer].metrics[key]["current"] = data[layer].metrics[key].current * 100 / data[layer].metrics[key].max;
                     data[layer].metrics[key]["max"] = data[layer].metrics[key].max * 100 / data[layer].metrics[key].max;
-                }
+                //}
                 // dynamic zoop
                 // const zoomRatio = Math.floor(data[layer].metrics[key]["current"] / layerSize);
                 // if (zoomRatio > zoomRatioMax) {
