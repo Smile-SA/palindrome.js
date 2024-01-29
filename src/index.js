@@ -12,6 +12,7 @@ import {loadingText} from "./utils/fetchUtils";
 import {updateMeshes} from "./utils/renderingUtils";
 import {behavioredMetricsTotalValues } from './utils/labelsUtils2D';
 import {l2Normalize} from './utils/metricsUtils2D';
+import { renderDev } from '../dev/dev-index';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
@@ -221,3 +222,7 @@ export default (function (parentElement, conf) {
 
     }
 });
+
+export const devPalindrome = () => {
+    return renderDev();
+}

@@ -13,15 +13,20 @@ export default () => {
     }
 
     onmessage = function (e) {
-        const metrics = e.data.newData[e.data.layer].metrics,
-            metricsNumber = Object.values(metrics).length;
-        const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
-        const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
-        const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
-        let max = Object.values(metrics).map(item => (e.data.psize / item.max) * item.max);
-        let med = Object.values(metrics).map(item => (e.data.psize / item.max) * item.med);
-        let min = Object.values(metrics).map(item => (e.data.psize / item.max) * item.min);
-        let current = Object.values(metrics).map(item => (e.data.psize / item.max) * item.current);
+        if (e.data.subject === 'httpRequests') {
+            const fun = eval("const f = function(){ return "+e.data.fn+";}; f();") ;
+            fun().then(newData => postMessage({subject:'httpRequests', newData}));            
+        }
+        else {    
+            const metrics = e.data.newData[e.data.layer].metrics,
+                metricsNumber = Object.values(metrics).length;
+            const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
+            const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
+            const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
+            let max = Object.values(metrics).map(item => (e.data.psize / item.max) * item.max);
+            let med = Object.values(metrics).map(item => (e.data.psize / item.max) * item.med);
+            let min = Object.values(metrics).map(item => (e.data.psize / item.max) * item.min);
+            let current = Object.values(metrics).map(item => (e.data.psize / item.max) * item.current);
 
         let metricValue = {};
         metricValue.max = layerPoints(max, e.data.zAxisWorker, e.data.metricMagnifier);
@@ -93,17 +98,18 @@ export default () => {
                 metricsDivider = "max";
             }
 
-            postMessage({
-                subject: e.data.subject,
-                metricCurrentTotal, metricMaxTotal,
-                layerStatus,
-                metricValue,
-                metricsNumber,
-                layer: e.data.layer,
-                metrics,
-                zAxisWorker: e.data.zAxisWorker,
-                metricsDivider,
-            });
+                postMessage({
+                    subject: e.data.subject,
+                    metricCurrentTotal, metricMaxTotal,
+                    layerStatus,
+                    metricValue,
+                    metricsNumber,
+                    layer: e.data.layer,
+                    metrics,
+                    zAxisWorker: e.data.zAxisWorker,
+                    metricsDivider,
+                });
+            }
         }
     }
 }
