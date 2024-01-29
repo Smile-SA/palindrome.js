@@ -39,24 +39,6 @@ cypress-test:
   allow_failure: false
   when: manual
 
-benchmark:
-  image: ubuntu:20.04
-  stage: test
-  dependencies: []
-  extends: .install-benchmark-dependencies
-  script:
-    - /bin/bash benchmark.sh
-  allow_failure: false
-  when: manual
-
-benchmark-test:
-  image: ubuntu:20.04
-  stage: test
-  dependencies: []
-  extends: .install-benchmark-dependencies
-  script:
-    - /bin/bash benchmark-eval.sh
-  allow_failure: false
 
 benchmark:
   image: ubuntu:20.04

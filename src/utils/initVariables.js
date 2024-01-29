@@ -4,7 +4,7 @@ import {showBenchmarkHistory} from "./benchmarkUtils";
 import {WorkerPool} from "./workersUtils";
 import * as THREE from 'three';
 
-export var initVariables = function (conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshs, camera, stats, statsVariables) {
+export var initVariables = function (conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshs, camera, stats, statsVariables) {    
     //distance between planes is expressed in positive number
     conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
 

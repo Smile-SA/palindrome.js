@@ -5,13 +5,18 @@ import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 /**
  * Creates and intializes the camera
  */
-function initCamera() {
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
-    camera.position.set(40, 40, 70);
+function initCamera(conf) {
+    let camera;
+    if (conf.innerWidth > 0 && conf.innerHeight > 0) {
+        camera = new THREE.PerspectiveCamera(45, conf.innerWidth / conf.innerHeight, 1, 5000);
+    } else {
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
+    }
+    camera.position.set(50, 40, 70);
     return camera;
 }
 
-function initRenderer() {
+function initRenderer(conf) {
     const renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
@@ -19,7 +24,12 @@ function initRenderer() {
         powerPreference: "high-performance",
     });
     renderer.setPixelRatio(window.devicePixelRatio);
+    if (conf.innerWidth > 0 && conf.innerHeight > 0) {
+        renderer.setSize(conf.innerWidth, conf.innerHeight);
+        return renderer;
+    }
     renderer.setSize(window.innerWidth, window.innerHeight);
+
     return renderer;
 }
 
@@ -35,17 +45,22 @@ function initControls(camera, labelsRenderer) {
     return new OrbitControls(camera, labelsRenderer.domElement);
 }
 
-function initScene() {
+function initScene(conf) {
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
+    if (conf.isDarkGrafana) {
+        scene.background = new THREE.Color(conf.grafanaColor);
+    }
+    else {
+        scene.background = new THREE.Color(0xffffff);
+    }
     return scene;
 }
 
 
-export function initThreeObjects() {
-    const scene = initScene();
-    const camera = initCamera();
-    const renderer = initRenderer();
+export function initThreeObjects(conf) {
+    const scene = initScene(conf);
+    const camera = initCamera(conf);
+    const renderer = initRenderer(conf);
     const labelsRenderer = initLabelsRenderer();
     const controls = initControls(camera, labelsRenderer);
 

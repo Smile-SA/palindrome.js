@@ -51,7 +51,8 @@ export var cameraViewOptions = function (meshes, camera, conf) {
     if (dis < 36) {
         dis = 36
     }
-    let scale = dis / sin;
+    const grafanaZoom = conf?.grafanaZoom??1;
+    let scale = dis / (grafanaZoom * sin);
     // calculate the center of objects
     if (conf.cameraOptions.indexOf("Fit") !== -1) {
         camera.getWorldDirection(cameraDir);

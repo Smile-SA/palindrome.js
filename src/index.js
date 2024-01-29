@@ -152,7 +152,7 @@ export default (function (parentElement, conf) {
     const highValueGradient = gradient(conf.statusColorMed, conf.statusColorHigh, conf.colorsDynamicDepth);
     const bicolorGradient = gradient(conf.statusColorLow, conf.statusColorHigh, conf.colorsDynamicDepth);
     const meshes = {};
-    const {scene, labelsRenderer, controls, renderer, camera} = initThreeObjects();
+    const {scene, labelsRenderer, controls, renderer, camera} = initThreeObjects(conf);
     let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
     let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables(conf, metricParameters, layerParameters, parentElement, renderer, labelsRenderer, scene, meshes, camera, stats, statsVariables);
     const clock = new THREE.Clock();
