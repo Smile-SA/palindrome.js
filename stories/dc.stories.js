@@ -6,6 +6,7 @@ import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfig
 import { defaultControls, defaultValues } from './controls/defaultControls';
 import { createPalindrome } from './controls/createPalindrome';
 import { dcNegativeValuesConfiguration } from '../data-examples/dc_NegativeValuesConfiguration';
+import { dcMetricDirectionConfiguration } from '../data-examples/dc_MetricDirectionConfiguration';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 
 export default {
@@ -71,3 +72,9 @@ export const BasicConfigurationLayerColoured = createPalindrome.bind({});
 BasicConfigurationLayerColoured.args = {
     data: dc_BasicConfigurationLayerColoured(),
 };
+
+export const MetricDirectionConfiguration = createPalindrome.bind({});
+MetricDirectionConfiguration.args = {
+    data: dcMetricDirectionConfiguration(),
+};
+
