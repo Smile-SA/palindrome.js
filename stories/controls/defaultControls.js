@@ -225,7 +225,7 @@ export function defaultControls() {
             control: {
                 type: "check",
             },
-            options: ["Name", "Type", "Value", "Unit"],
+            options: ["Name", "Type", "Value", "Unit", "State"],
             table: { category: "Labels", subcategory: "Metrics" }
         },
         metricsLabelsCharacterFont: {
@@ -955,7 +955,7 @@ export function defaultValues() {
         metricsLabelsRenderingMode: '3D',
         metricsLabels3DRenderingMode: 'Canvas',
         metricsLabelsRenderingFormat: 'Text',
-        metricsLabelsStructure: ['Name', 'Type', 'Value', 'Unit'],
+        metricsLabelsStructure: ['Name', 'Type', 'Value', 'Unit', 'State'],
         metricsLabelsCharacterFont: 'Arial',
         metricsLabelsSize: 15,
         metricsLabelsColor: '#000000',

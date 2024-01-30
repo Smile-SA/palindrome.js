@@ -1,4 +1,4 @@
-import { getMetricsLabelsStructureData } from './metricsUtils2D';
+import {getMetricMax, getMetricMed, getMetricMin, getMetricState,  getMetricsLabelsStructureData } from './metricsUtils2D';
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { create3DMetricsLabels, create3DLayersLabels } from './labelsUtils3D';
 import * as THREE from 'three';
@@ -270,9 +270,9 @@ export var updateSvgSrc = function (svg, htmlElement, map) {
  * @param {number} metricIndex to keep track layers and metric inside
  * @param {string} labelUnit the unit of label3D
  */
-export var create2DMetricsLabels = function (key, labelName, labelType, labelValue, metricIndex, labelUnit, conf, metricParameters) {
+export var create2DMetricsLabels = function (key, labelName, labelType, labelValue, metricIndex, labelUnit, conf, metricParameters, metricData, isLayerBehaviored, isLayerResized) {
     //console.log(labelValue);
-    let data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, null, conf),
+    let data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored, isLayerResized),
         div = document.createElement('div');
     div.className = 'label ' + labelName;
     div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
@@ -340,7 +340,6 @@ export var createLabels = function (data, globalParams) {
                     console.warn("This layer contains two times the same metric key", [layer]);
                     break;
                 } else {
-                    metricLabelsIds.push(key)
                     if (value.unit === '%') {
                         current = ((value.current / value.max) * 100).toFixed(3);
                         min = ((value.min / value.max) * 100).toFixed(3);
@@ -348,15 +347,19 @@ export var createLabels = function (data, globalParams) {
                         max = ((value.max / value.max) * 100).toFixed(3);
 
                     }
-                    let { current, min, med, max, unit, _current, _max, _med, _min, _unit, isLayerBehaviored } = value;
+                    let { current, min, med, max, unit, _current, _max, _med, _min, _unit, isLayerBehaviored, isLayerResized } = value;
+                    min = min ?? getMetricMin(value);
+                    max = max ?? getMetricMax(value);
+                    med = med ?? getMetricMed(value);
+
                     if (conf.metricsLabelsRenderingMode === "2D") {
-                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', currentLabelValue, metricIndex, unitLabel, conf, metricParameters);
+                        const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', currentLabelValue, metricIndex, unitLabel, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
                         layerMetricsLabels.add(currentLabel2d);
                         //scene.add(currentLabel2d);
                         if (conf.displayAllMetricsLabels) {
-                            const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters);
-                            const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters);
-                            const maxLabel2d = create2DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, conf, metricParameters);
+                            const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
+                            const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
+                            const maxLabel2d = create2DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
                             if (conf.cameraOptions.indexOf("Flat") !== -1) {
                                 layerMetricsLabels.add(minLabel2d);
                                 layerMetricsLabels.add(medLabel2d);
@@ -375,7 +378,7 @@ export var createLabels = function (data, globalParams) {
                             metricParameters,
                             borderThickness
                         }
-                        const currentLabel3d = create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams);
+                        const currentLabel3d = create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams, value, isLayerBehaviored, isLayerResized);
                         if(conf.cameraOptions.indexOf("Flat") !== -1) {
                             layerMetricsLabels.add(currentLabel3d);
                         } else {
@@ -383,9 +386,9 @@ export var createLabels = function (data, globalParams) {
                         }
 
                         if (conf.displayAllMetricsLabels) {
-                            const minLabel3d = create3DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, globalParams);
-                            const medLabel3d = create3DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, globalParams);
-                            const maxLabel3d = create3DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, globalParams);
+                            const minLabel3d = create3DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, globalParams, value, isLayerBehaviored, isLayerResized);
+                            const medLabel3d = create3DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, globalParams, value, isLayerBehaviored, isLayerResized);
+                            const maxLabel3d = create3DMetricsLabels(key, value.label, 'max', max, metricIndex, value.unit, globalParams, value, isLayerBehaviored, isLayerResized);
                             if (conf.cameraOptions.indexOf("Flat") !== -1) {
                                 layerMetricsLabels.add(minLabel3d);
                                 layerMetricsLabels.add(medLabel3d);

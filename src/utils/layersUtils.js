@@ -1,7 +1,7 @@
 import { Triangle, SimpleLine, DasheLine } from '../threeJSUtils/ThreeJSGeometryObjects';
 import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
-import { layerPoints } from './metricsUtils2D';
+import { getMetricMax, getRepresentationKeys, layerPoints } from './metricsUtils2D';
 import { getColorOpacityBasedOnRanges } from './colorsUtils';
 import {behavioredMetricsTotalValues } from './labelsUtils2D';
 import {l2Normalize} from './metricsUtils2D';
@@ -318,21 +318,16 @@ export const applyLayersSize = (data) => {
         if (layerSize) {
             const metrics = data[layer].metrics;
             for (const [key, _] of Object.entries(metrics)) {
-                data[layer].metrics[key]["_min"] = data[layer].metrics[key].min;
-                data[layer].metrics[key]["_max"] = data[layer].metrics[key].max;
-                data[layer].metrics[key]["_med"] = data[layer].metrics[key].med;
-                data[layer].metrics[key]["_current"] = data[layer].metrics[key].current;
-                //if (data[layer].metrics[key].unit !== '%') {
-                    data[layer].metrics[key]["min"] = data[layer].metrics[key].min * 100 / data[layer].metrics[key].max;
-                    data[layer].metrics[key]["med"] = data[layer].metrics[key].med * 100 / data[layer].metrics[key].max;
-                    data[layer].metrics[key]["current"] = data[layer].metrics[key].current * 100 / data[layer].metrics[key].max;
-                    data[layer].metrics[key]["max"] = data[layer].metrics[key].max * 100 / data[layer].metrics[key].max;
-                //}
+                const representationKeys = getRepresentationKeys([data[layer].metrics[key]], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized']);
+                for (const representationKey of representationKeys) {
+                    data[layer].metrics[key]["_"+representationKey] = data[layer].metrics[key][representationKey];
+                    data[layer].metrics[key][representationKey] = data[layer].metrics[key][representationKey] * 100 / getMetricMax(data[layer].metrics[key]);
+                }
                 // dynamic zoop
                 // const zoomRatio = Math.floor(data[layer].metrics[key]["current"] / layerSize);
                 // if (zoomRatio > zoomRatioMax) {
-                //     zoomRatioMax = zoomRatio;                    
-                // }
+                    //     zoomRatioMax = zoomRatio;                    
+                    // }
                 data[layer].metrics[key]["current"] = layerSize;
                 data[layer].metrics[key]["_unit"] = data[layer].metrics[key].unit;
                 data[layer].metrics[key]["isLayerResized"] = true;
@@ -360,6 +355,25 @@ export const getLayerStatus = (metrics) => {
         const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
         const max = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._max : metric.max;
 
+        const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
+        status.push(value);
+    }
+
+    const sum = status.reduce((acc, cur) => acc + cur);
+    return 100 * sum/status.length;
+}
+
+
+export const getLayerStatus = (metrics) => {
+    let status = [];
+    for (const metric of Object.values(metrics)) {
+        const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
+        let max = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMax(metric, true) : getMetricMax(metric);
+
+        if (!max) {
+            max = getMetricMax(metric);
+        }
+        
         const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
         status.push(value);
     }

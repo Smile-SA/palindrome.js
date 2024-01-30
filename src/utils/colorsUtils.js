@@ -20,6 +20,8 @@ export const getColorGradients = (conf, layer, data) => {
  * @param {number} value
  * @param {*} conf current palindrome configuration
  */
+import { getMetricMax } from "./metricsUtils2D";
+
 export var layerColorDecidedByLayerStatus = function (value, conf, layer, newData) {
     const { lowValueGradient, highValueGradient } = getColorGradients(conf, layer, newData);
     let intValue = value.toFixed(0);
@@ -103,18 +105,15 @@ export var metricColor = function (value, conf, layer, newData) {
 
     const biColorLow = layerColorLow ? layerColorLow : conf.sphereColorLow;
     const biColorHigh = layerColorHigh ? layerColorHigh : conf.sphereColorHigh;
- 
-    let percentageThreshold;
-    if (value.maxWithoutScale) {
-        percentageThreshold = value.isLayerBehaviored && value.isLayerResized ? value._current : ((value.current - value.min) * 100 / (value.maxWithoutScale - value.isLayerBehaviored && value.isLayerResized ? value._max : value.min)).toFixed(0);
-    }
-    else {
-        percentageThreshold = ((value.current - value.min) * 100 / (value.max - value.min)).toFixed(0);
+
+    let cur = value.isLayerBehaviored && value.isLayerResized ? value._current : value.current;
+    let max = value.isLayerBehaviored && value.isLayerResized ? value._max ?? getMetricMax(value, true) : value?.max ?? getMetricMax(value);
+    
+    let percentageThreshold = ((cur / max) * 100).toFixed(0);
     if (value.metricDirection === "ascending") {
         percentageThreshold = 100 - percentageThreshold
     }
-    }
-    if (conf.spheresBehavior === 'ranges') {
+    if (conf.spheresColorsBehavior === 'ranges') {
         if(conf.bicolorDisplay){
             return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;
         }

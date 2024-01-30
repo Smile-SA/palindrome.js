@@ -8,7 +8,21 @@ import { polarTo3DPoint } from './metricsUtils3D';
  * @param {string} labelValue label value
  * @param {string} labelUnit the unit of label
  */
-export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored) {
+export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored, isLayerResized, isLayerBehaviored) {
+    const state = getMetricState(metricData, isLayerBehaviored && isLayerResized);
+    state[0] = state[0].replace('_', '');
+    let extension = (conf.metricsLabelsStructure.indexOf("State") !== -1) ? (state[1] ? ' - '+ state[0]: ' - close to ' + state[0]) : '';
+    if (conf.displayAllMetricsLabels) {
+        extension = '';
+        labelType = getMetricStateName(metricData, labelValue);
+        if (!labelType) {
+            labelName ='';
+            labelType = '';
+            labelUnit = '';
+            labelValue ='';
+        }
+    }
+    labelUnit += extension;
     if (!isLayerBehaviored && metricData && labelUnit === '%') {
         //percentage handle
         labelValue = ((labelValue / metricData.max) * 100).toFixed(3);
@@ -102,130 +116,89 @@ export var l2Normalize = function (vector) {
         return vector;
     }
 }
+ 
 
-/**
- * Allows a representation of negative values
- * @param {data} data the use case data
- * @returns the shifted data
- */
-export const shiftMetricsToPositive = (data, conf) => {
-    let minOfMins = Number.POSITIVE_INFINITY;
-    for (const layerData of Object.values(data)) {
-        for (const metric of Object.values(layerData.metrics)) {
-            if (metric.min < 0) {
-                minOfMins = Math.min(minOfMins, metric.min);
+export const getRepresentationKeys = (metrics, excludedKeys) => {
+    const descriptionKeys = new Set(excludedKeys);;
+    const representationKeys_ = new Set();
+
+    for (const item of Object.values(metrics)) {
+        for (const key of Object.keys(item)) {
+            if (!descriptionKeys.has(key)) {
+                representationKeys_.add(key);
             }
         }
     }
 
-    if (minOfMins < 0) {
-        const offset = Math.abs(minOfMins);
-        // Shift all metrics by the minimum of the minimum values
-        for (const layerData of Object.values(data)) {
-            for (const metric of Object.values(layerData.metrics)) {
-                const { min, med, max, current } = metric;
-                metric["originalMin"] = min;
-                metric["originalMax"] = max;
-                metric["originalMed"] = med;
-                metric["originalCurrent"] = current;
-                metric["isPositiveShifted"] = true;
-                metric.max += offset
-                metric.med += offset
-                metric.min += offset
-                metric.current += offset
-
-                if (metric.originalCurrent < 0 || metric.originalMin < 0 || metric.originalMed < 0 || metric.originalMax < 0) {
-                    metric['maxWithoutScale'] = metric.max;
-                    if(conf.negativeValuesMagnifier !== 0)
-                        metric.max = metric.max * conf.negativeValuesMagnifier;
-                }
-            }
-        }
-    }
-    return data;
+    const representationKeys = Array.from(representationKeys_);
+    return representationKeys;
 }
 
-/**
- * Change the metrics of the layer to percent, absolute or normalized
- * @param {*} data the use case data
- */
-export const changeLayerMetricsBehavior = (data, conf) => {
-    for (const layer in data) {
-        const layerInfo = data[layer].layer;
-        const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
-        const behavior = (layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
-        const metrics = data[layer].metrics;
-        if (behavior === "percent") {
+export const computeMetricValue = (metrics, conf, zAxis) => {
+    const metricValue = {};
+    metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * getMetricMax(item)), zAxis, conf);
+    metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * getMetricMed(item)), zAxis, conf);
+    metricValue.min = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * getMetricMin(item)), zAxis, conf);
+    metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * item.current), zAxis, conf);
 
-            // Getting total values for current, min, med, and max
-            const {
-                totalCurrentValues,
-                totalMinValues,
-                totalMaxValues,
-                totalMedValues,
-            } = behavioredMetricsTotalValues(metrics);
+    
+    return metricValue;
+}
 
-            for (const [key, value] of Object.entries(metrics)) {
-                const { current, min, med, max } = value;
-
-                // Computing new layerBehaviored metrics
-                const layerBehavioredMin = totalMinValues > 0 ? (min / totalMinValues) * 100 : 0;
-                const layerBehavioredMax = totalMaxValues > 0 ? (max / totalMaxValues) * 100 : 0;
-                const layerBehavioredMed = totalMedValues > 0 ? (med / totalMedValues) * 100 : 0;
-                const layerBehavioredCurrent = totalCurrentValues > 0 ? (current / totalCurrentValues) * 100 : 0;
-
-                data[layer].metrics[key]["_min"] = layerBehavioredMin;
-                data[layer].metrics[key]["_max"] = layerBehavioredMax;
-                data[layer].metrics[key]["_med"] = layerBehavioredMed;
-                data[layer].metrics[key]["_current"] = layerBehavioredCurrent;
-                data[layer].metrics[key]["_unit"] = "%";
-                data[layer].metrics[key]["isLayerBehaviored"] = true;
+export const getMetricState = (value, isMetricChanged=false) => {
+    const representationKeys = getRepresentationKeys([value], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized']);
+    const currentValue = value.isLayerBehaviored && value.isLayerResized ? value._current : value.current;
+    
+    let distance = Number.POSITIVE_INFINITY;
+    let closeTo = '';
+    let isEqual = false;
+    for (const [key, val] of Object.entries(value)) {
+        if (key === 'current') continue;
+        if (!isMetricChanged && key.startsWith('_')) continue;
+        if (isMetricChanged && !key.startsWith('_')) continue;
+        if (representationKeys.includes(key)){
+            if (currentValue === val) {
+                isEqual = true;
+                closeTo = key;
+                break;
             }
-        }
-        else if (behavior === "normalized") {
-            let currents = [];
-            let mins = [];
-            let meds = [];
-            let maxs = [];
-            for (const [_, value] of Object.entries(metrics)) {
-                const { current, min, med, max } = value;
-                // Computing new layerBehaviored metrics
-                currents.push(current);
-                mins.push(min);
-                meds.push(med);
-                maxs.push(max);
-            }
-            const normilizedCurrents = l2Normalize(currents);
-            const normalizeArraydMeds = l2Normalize(meds);
-            const normalizeArraydMaxs = l2Normalize(maxs);
-            const normalizeArraydMins = l2Normalize(mins);
-            let i = 0;
-            for (const [key, _] of Object.entries(metrics)) {
-                data[layer].metrics[key]["_min"] = normalizeArraydMins[i];
-                data[layer].metrics[key]["_max"] = normalizeArraydMaxs[i];
-                data[layer].metrics[key]["_med"] = normalizeArraydMeds[i];
-                data[layer].metrics[key]["_current"] = normilizedCurrents[i];
-                data[layer].metrics[key]["_unit"] = "";
-                data[layer].metrics[key]["isLayerBehaviored"] = true;
-                i++;
+            let newDistance = Math.abs(currentValue - val);
+            if (newDistance < distance) {
+                distance = Math.abs(currentValue - val);
+                closeTo = key;
             }
         }
     }
+    return [closeTo, isEqual];
 }
 
-/**
- * Compute total metric values of a layer
- * @param {*} metrics the use case metrics
- * @returns the current, med, max, min totals
- */
-export var behavioredMetricsTotalValues = function (metrics) {
-    const metricsValues = Object.values(metrics);
-    return metricsValues.reduce(
-        (acc, { current, min, max, med }) => ({
-            totalCurrentValues: acc.totalCurrentValues + current,
-            totalMinValues: acc.totalMinValues + min,
-            totalMaxValues: acc.totalMaxValues + max,
-            totalMedValues: acc.totalMedValues + med,
-        }), { totalCurrentValues: 0, totalMinValues: 0, totalMaxValues: 0, totalMedValues: 0 }
-    );
+export const cleanMetric = (metric, isMetricChanged) => {
+    metric = JSON.parse(JSON.stringify(metric));
+    for (const key in metric) {
+        if (isMetricChanged) {
+            if (!key.startsWith('_')){
+                delete metric[key];
+            }
+        } else {
+            if (key.startsWith('_')){
+                delete metric[key];
+            }
+        }
+    }
+    return metric;
+}
+
+export const getMetricMax = (metric, isMetricChanged = false) => Math.max(...(Object.values(metric, isMetricChanged).filter(it => !isNaN(it))));
+export const getMetricMin = (metric, isMetricChanged = false) => Math.min(...(Object.values(metric, isMetricChanged).filter(it => !isNaN(it))));
+export const getMetricMed = (metric, isMetricChanged = false) => {
+    if (metric.med) {
+        return metric.med;
+    }
+    const sum = Object.values(metric, isMetricChanged).filter(it => !isNaN(it)).reduce((acc, cur) => acc + cur);
+    const average = sum/Object.values(metric, isMetricChanged).length;
+    return average;
+}
+
+export const getMetricStateName = (metric, value) => {
+    return Object.keys(metric, isMetricChanged).find(key => metric[key] === parseInt(value));
 }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { getMetricsLabelsStructureData } from './metricsUtils2D';
+import { getMetricMax, getMetricMed, getMetricMin, getMetricsLabelsStructureData } from './metricsUtils2D';
 import {
     createLabelCanvas,
     htmlToSvg,
@@ -25,12 +25,11 @@ import { createHtmlText } from './labelsUtils2D';
 let metrics = {}
 let check = []
 
-export var create3DMetricsLabels = function (key, labelName, labelType, labelValue, metricIndex, labelUnit, globalParams) {
+export var create3DMetricsLabels = function (key, labelName, labelType, labelValue, metricIndex, labelUnit, globalParams, metricData, isLayerBehaviored, isLayerResized) {
     let { conf, labelDiv, metricParameters, borderThickness } = globalParams;
     let texture = new THREE.Texture(),
         textureImage,
-        data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, null, conf);
-
+        data = getMetricsLabelsStructureData(labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored, isLayerResized);
     labelDiv[labelName] = document.createElement('div');
     labelDiv[labelName].className = 'label ' + labelName;
     labelDiv[labelName].setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
@@ -153,8 +152,9 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
             }
             // update label data
             // Layer behaviored metrics display
-            const isMetricLayerBehaviored = metrics[metricsLabels.key].isLayerBehaviored;
-            const isMetricPositiveShifted = metrics[metricsLabels.key].isPositiveShifted;
+            const isMetricLayerBehaviored = metrics[metricsLabels.key]?.isLayerBehaviored;
+            const isMetricLayerResized = metrics[metricsLabels.key]?.isLayerResized;
+            let isMetricPositiveShifted = metrics[metricsLabels.key].isPositiveShifted;
             let labelValue = metricsLabelsValue;
             if (isMetricPositiveShifted) {
                 labelValue = Object.values(metrics)[metricsLabelsIndex]["original" + metricsLabelsType.charAt(0).toUpperCase() + metricsLabelsType.slice(1)].toFixed(2);
@@ -164,7 +164,18 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, la
                 labelValue = Object.values(metrics)[metricsLabelsIndex]["_" + metricsLabelsType].toFixed(2);
             }
             const metricsLabelBehavioredUnit = isMetricLayerBehaviored ? metrics[metricsLabels.key]["_unit"] : metricsLabelsUnit;
-            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, labelValue, metricsLabelBehavioredUnit, metricData, conf, isMetricLayerBehaviored);
+            if (!metricsLabelBehavioredValue) {
+                if (metricsLabelsType === 'min') {
+                    metricsLabelBehavioredValue = getMetricMin(Object.values(metrics)[metricsLabelsIndex])
+                }
+                else if (metricsLabelsType === 'max') {
+                    metricsLabelBehavioredValue = getMetricMax(Object.values(metrics)[metricsLabelsIndex])
+                }
+                else if (metricsLabelsType === 'med') {
+                    metricsLabelBehavioredValue = getMetricMed(Object.values(metrics)[metricsLabelsIndex])
+                }
+            }
+            metricsLabels.data = getMetricsLabelsStructureData(metricsLabelsName, metricsLabelsType, labelValue, metricsLabelBehavioredUnit, metricData, conf, isMetricLayerBehaviored, isMetricLayerResized);
             let x = labelPositions[0],
                 y = labelPositions[2],
                 z = labelPositions[1];

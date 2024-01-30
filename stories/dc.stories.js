@@ -7,6 +7,7 @@ import { defaultControls, defaultValues } from './controls/defaultControls';
 import { createPalindrome } from './controls/createPalindrome';
 import { dcNegativeValuesConfiguration } from '../data-examples/dc_NegativeValuesConfiguration';
 import { dcMetricDirectionConfiguration } from '../data-examples/dc_MetricDirectionConfiguration';
+import { dcMetricStates } from '../data-examples/dc_MetricStates';
 import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 
 export default {

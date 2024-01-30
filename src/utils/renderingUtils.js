@@ -1,10 +1,10 @@
-import { applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer, getLayerStatus } from "./layersUtils";
-import { makeSphereContextsStatus } from "./spheresUtils";
-import { layerPoints } from "./metricsUtils2D";
-import { drawSideStraightLine } from "./sidesUtils";
-import { displayFramesAndArrows, setArrowPostion, setRectangleFramePositions } from "./framesUtils";
-import { setLabelsPositions, settingLabelFormat } from "./labelsUtils3D";
-import { layerColorDecidedByLayerStatus } from "./colorsUtils";
+import {applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer, getLayerStatus} from "./layersUtils";
+import {makeSphereContextsStatus} from "./spheresUtils";
+import {computeMetricValue, getMetricMax, layerPoints} from "./metricsUtils2D";
+import {drawSideStraightLine} from "./sidesUtils";
+import {displayFramesAndArrows, setArrowPostion, setRectangleFramePositions} from "./framesUtils";
+import {setLabelsPositions, settingLabelFormat} from "./labelsUtils3D";
+import {layerColorDecidedByLayerStatus} from "./colorsUtils";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -304,13 +304,10 @@ export async function updateMeshes(params, renderingType) {
             //this is the updated layer metrics
             const metrics = newData[layer].metrics, layers = newData[layer].layer,
                 metricsNumber = Object.values(metrics).length;
-
+            //todo : status colors shall map with default colors
             let layerStatus = getLayerStatus(metrics);
             let metricsDivider, metricValue = {};
-            metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.max), zAxis, conf);
-            metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.med), zAxis, conf);
-            metricValue.min = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.min), zAxis, conf);
-            metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.current), zAxis, conf);
+            metricValue = computeMetricValue(metrics, conf, zAxis);
             const metricsPositions = [metricValue.max, metricValue.med, metricValue.min];
             //draws and update layers
             let rotation = {};
@@ -369,7 +366,7 @@ export async function updateMeshes(params, renderingType) {
             displayFramesAndArrows(conf, positions, frameName, dashLineMaterial, lineMaterial, meshes, scene, arrowPositions, layer);
             if (conf.displaySides === true && conf.cameraOptions.indexOf("Flat") == -1) {
                 if (previousMetric !== null) {
-                    const previousValueMax = layerPoints(Object.values(previousMetric).map(item => (conf.palindromeSize / item.max) * item[metricsDivider]), zAxis + conf.zPlaneMultilayer, conf);
+                    const previousValueMax = layerPoints(Object.values(previousMetric).map(item => (conf.palindromeSize / getMetricMax(item)) * item[metricsDivider]), zAxis + conf.zPlaneMultilayer, conf);
                     const previousPlaneLength = Object.values(previousMetric).length;
                     //check if actual layer points is higher than previous ones to determine if the sides should be drawn from few to many OR from many to few
                     //for the number of sides
