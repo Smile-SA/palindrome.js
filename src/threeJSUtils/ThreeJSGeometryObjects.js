@@ -177,7 +177,7 @@ export class Triangle extends THREE.Mesh {
             if (opacityColor1 !== undefined && opacityColor2 !== undefined) {
                 this.material.uniforms["opacity2"] = { value: opacityColor2 };
                 this.material.uniforms["opacity1"] = { value: opacityColor1 };
-                this.material.fragmentShader =`
+                this.material.fragmentShader = `
                     uniform vec3 color1;
                     uniform vec3 color2;
                     uniform float opacity1;
@@ -211,7 +211,7 @@ export class Sphere extends THREE.Mesh {
         const material = new THREE.MeshBasicMaterial({ color });
         material.transparent = true;
         material.needsUpdate = true;
-        if(opacity){
+        if (opacity) {
             material.opacity = opacity;
         } else {
             material.opacity = 1;
@@ -229,7 +229,7 @@ export class Sphere extends THREE.Mesh {
     update(color, opacity, x, y, z) {
         this.position.set(x, y, z);
         this.material.color.set(color);
-        if(opacity){
+        if (opacity) {
             this.material.opacity = opacity;
         }
     };

@@ -2,15 +2,15 @@
 
 import { defaultValues } from "../../../stories/controls/defaultControls";
 
-describe('[DEV] Benchmark', () => { 
-    
+describe('[DEV] Benchmark', () => {
+
     beforeEach(() => {
-        cy.visit(Cypress.env("dev")+"?data=dcBasicConfiguration&benchmark=Active");
+        cy.visit(Cypress.env("dev") + "?data=dcBasicConfiguration&benchmark=Active");
     });
 
     it("should block user interaction with the Palindrome while benchmarking", () => {
         const benchmarkInteractionBlocker = 'benchmarkInteractionBlocker';
-        cy.get('#'+benchmarkInteractionBlocker).should('exist');
+        cy.get('#' + benchmarkInteractionBlocker).should('exist');
     });
 
     it("should display results modal on the end of benchmark", () => {
@@ -23,7 +23,7 @@ describe('[DEV] Benchmark', () => {
         const webWorkersVersion = 'table-Web workers';
         cy.get(`[id='${webWorkersVersion}']`).should('exist');
     });
-    
+
     it("should expect actual fps and ms values not to be undefined nor NaN", () => {
 
         const benchmarkDurationTime = defaultValues().testDuration;
@@ -34,7 +34,7 @@ describe('[DEV] Benchmark', () => {
             const cellValue = parseFloat(cell.text());
             expect(cellValue).to.not.be.undefined;
             expect(cellValue).to.not.be.NaN;
-            });
+        });
         cy.get(`#${basicVersion} tr:nth-child(2) td:nth-child(2)`).then((cell) => {
             cy.log(cell.text());
             const cellValue = parseFloat(cell.text());
@@ -56,5 +56,4 @@ describe('[DEV] Benchmark', () => {
             expect(cellValue).to.not.be.NaN;
         });
     });
-  })
-  
+})

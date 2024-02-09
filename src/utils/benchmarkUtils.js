@@ -10,7 +10,7 @@ export var Stats = function () {
     let fps = 0, ms = 0, mem = 0;
     var container = document.createElement('div');
     container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
-    container.setAttribute("id","performanceMetering");
+    container.setAttribute("id", "performanceMetering");
     container.addEventListener('click', function (event) {
         event.preventDefault();
         showPanel(++mode % container.children.length);
@@ -215,7 +215,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
                 const fileName = process.env.OUTPUT_FILENAME ? process.env.OUTPUT_FILENAME : "benchmarkResults";
                 exportBenchMarkResultsToFile(fileContent, fileName, "text/plain");
             }
-            await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);            
+            await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);
             // mutate benchmark control to Inactive
             conf.benchmark = 'Inactive';
             localStorage.removeItem('benchmarkResults');
@@ -320,7 +320,7 @@ function createModalElements(isHistory) {
 const closeModal = (modalDiv) => {
     modalDiv.parentNode.removeChild(modalDiv);
     const benchmarkInteractionBlocker = document.getElementById("benchmarkInteractionBlocker");
-    if(benchmarkInteractionBlocker){
+    if (benchmarkInteractionBlocker) {
         benchmarkInteractionBlocker.parentNode.removeChild(benchmarkInteractionBlocker);
     }
     const monitoringDisplay = document.getElementById("performanceMetering");
@@ -618,7 +618,7 @@ export const benchmarkCleanUp = () => {
     const reloadTimeString = localStorage.getItem('reloadTime', new Date().toISOString());
     if (reloadTimeString) {
         const reloadTime = new Date(reloadTimeString);
-        if( Math.floor((new Date() - reloadTime) / (1000 * 60)) >= 1 ) {
+        if (Math.floor((new Date() - reloadTime) / (1000 * 60)) >= 1) {
             localStorage.removeItem('benchmarkResults');
             localStorage.removeItem('testBothVersions');
             localStorage.removeItem('webWorkers');

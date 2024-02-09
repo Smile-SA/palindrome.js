@@ -12,8 +12,31 @@ export default () => {
         return planepoints;
     }
 
+    const cleanMetric = (metric, isMetricChanged) => {
+        metric = JSON.parse(JSON.stringify(metric));
+        for (const key in metric) {
+            if (metric.isPositiveShifted) {
+                if (key.startsWith('original')) {
+                    delete metric[key];
+                }
+                if (key === 'maxWithoutScale') {
+                    delete metric.max;
+                }
+            }
+            if (isMetricChanged) {
+                if (!key.startsWith('_')) {
+                    delete metric[key];
+                }
+            } else {
+                if (key.startsWith('_')) {
+                    delete metric[key];
+                }
+            }
+        }
+        return metric;
+    }
 
-    const getMetricMax = metric => {
+    const getMetricMax = (metric, isMetricChanged = false) => {
         let max = Number.NEGATIVE_INFINITY;
         const filteredObjects = Object.values(cleanMetric(metric, isMetricChanged)).filter(it => !isNaN(it));
         for (var i = 0; i < filteredObjects.length; i++) {
@@ -33,39 +56,55 @@ export default () => {
         if (metric.med) {
             return metric.med;
         }
-        const sum = Object.values(cleanMetric(metric, isMetricChanged)).filter(it => !isNaN(it)).reduce((acc, cur) => acc + cur);
-        const average = sum/Object.values(cleanMetric(metric, isMetricChanged)).length;
+        const sum = Object.values(cleanMetric(metric, isMetricChanged)).filter(it => typeof it === 'number').reduce((acc, cur) => acc + cur);
+        const average = sum / Object.values(cleanMetric(metric, isMetricChanged)).length;
         return average;
     }
 
     const getLayerStatus = (metrics) => {
         let status = [];
         for (const metric of Object.values(metrics)) {
-            const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
-            let max = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMax(metric, true) : getMetricMax(metric);
-    
+            let current, min, max;
+
+            if (metric.isPositiveShifted) {
+                max = metric.maxWithoutScale ?? metric.originalMax;
+                current = metric.originalCurrent;
+                min = metric.originalMin;
+            }
+            else if (metric?.isLayerBehaviored && !metric?.isLayerResized) {
+                max = getMetricMax(metric);
+                current = metric.current
+                min = getMetricMin(metric);
+            }
+            else {
+                max = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMax(metric, true) : getMetricMax(metric);
+                current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
+                min = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMin(metric, true) : getMetricMin(metric);
+            }
+
             if (!max) {
                 max = getMetricMax(metric);
             }
 
-            const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
+            let value = (current - min) / (max - min);
+            value = metric.metricDirection === 'ascending' ? 1 - value : value;
             status.push(value);
         }
-    
+
         const sum = status.reduce((acc, cur) => acc + cur);
-        return 100 * sum/status.length;
+        return 100 * sum / status.length;
     }
 
     onmessage = async function (e) {
         if (e.data.subject === 'httpRequests') {
-            const fun = eval("const f = function(){ return "+e.data.fn+";}; f();") ;
+            const fun = eval("const f = function(){ return " + e.data.fn + ";}; f();");
             const newData = await fun();
-            postMessage({subject:'httpRequests', newData});
+            postMessage({ subject: 'httpRequests', newData });
         }
-        else {    
+        else {
             const metrics = e.data.newData[e.data.layer].metrics,
                 metricsNumber = Object.values(metrics).length;
-            
+
             let layerStatus = getLayerStatus(metrics);
             let max = Object.values(metrics).map(item => (e.data.psize / getMetricMax(item)) * getMetricMax(item));
             let med = Object.values(metrics).map(item => (e.data.psize / getMetricMax(item)) * getMetricMed(item));

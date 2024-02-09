@@ -1,4 +1,8 @@
 {
-    "plugins": ["istanbul"],
-    "ignore": ["**/webCollectors/**"]
+    "plugins": [
+        "istanbul"
+    ],
+    "ignore": [
+        "**/webCollectors/**"
+    ]
 }

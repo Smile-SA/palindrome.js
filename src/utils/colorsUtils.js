@@ -4,7 +4,7 @@
  * @returns low and high color gradients
  */
 export const getColorGradients = (conf, layer, data) => {
-    const {layerColorHigh, layerColorLow, layerColorMed} = data[layer].layer[`${layer}-layer`];
+    const { layerColorHigh, layerColorLow, layerColorMed } = data[layer].layer[`${layer}-layer`];
     const lowColor = layerColorLow ? layerColorLow : conf.statusColorLow;
     const medColor = layerColorMed ? layerColorMed : conf.statusColorMed;
     const highColor = layerColorHigh ? layerColorHigh : conf.statusColorHigh;
@@ -27,7 +27,7 @@ export var layerColorDecidedByLayerStatus = function (value, conf, layer, newDat
     let intValue = value.toFixed(0);
     
     const data = newData;
-    const {layerColorHigh, layerColorLow, layerColorMed, mainColorStatic} = data[layer].layer[`${layer}-layer`];
+    const { layerColorHigh, layerColorLow, layerColorMed, mainColorStatic } = data[layer].layer[`${layer}-layer`];
     const lowColor = layerColorLow ? layerColorLow : conf.statusColorLow;
     const medColor = layerColorMed ? layerColorMed : conf.statusColorMed;
     const highColor = layerColorHigh ? layerColorHigh : conf.statusColorHigh;
@@ -43,7 +43,7 @@ export var layerColorDecidedByLayerStatus = function (value, conf, layer, newDat
     }
 
     
-    if(conf.bicolorDisplay){
+    if (conf.bicolorDisplay) {
         return intValue < conf.statusRangeMed ? lowColor : highColor;
     }
     let layerStatusColor = conf.statusColorLow;
@@ -55,10 +55,10 @@ export var layerColorDecidedByLayerStatus = function (value, conf, layer, newDat
         } else if (intValue >= conf.statusRangeHigh) {
             return highColor;
         }
-    } 
+    }
     else if (conf.colorsBehavior === 'static') {
-        return conf.mainStaticColor;
-    } 
+        return staticColor;
+    }
     else if (conf.colorsBehavior === 'dynamic') {
         //take the difference between the statuses and devide it by 1 if the statusColorBehavior is static, 100 if dynamic
         const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorsDynamicDepth;
@@ -95,9 +95,9 @@ export var layerColorDecidedByLayerStatus = function (value, conf, layer, newDat
  */
 export var metricColor = function (value, conf, layer, newData) {
     const { lowValueGradient, highValueGradient } = getColorGradients(conf, layer, newData);
-    
+
     const data = newData;
-    const {sphereColorHigh, sphereColorLow, sphereColorMed, mainColorStatic, layerColorLow, layerColorHigh} = data[layer].layer[`${layer}-layer`];
+    const { sphereColorHigh, sphereColorLow, sphereColorMed, mainColorStatic, layerColorLow, layerColorHigh } = data[layer].layer[`${layer}-layer`];
     const lowColor = sphereColorLow ? sphereColorMed : conf.sphereColorLow;
     const medColor = sphereColorMed ? sphereColorMed : conf.sphereColorMed;
     const highColor = sphereColorHigh ? sphereColorHigh : conf.sphereColorHigh;
@@ -106,15 +106,26 @@ export var metricColor = function (value, conf, layer, newData) {
     const biColorLow = layerColorLow ? layerColorLow : conf.sphereColorLow;
     const biColorHigh = layerColorHigh ? layerColorHigh : conf.sphereColorHigh;
 
-    let cur = value.isLayerBehaviored && value.isLayerResized ? value._current : value.current;
-    let max = value.isLayerBehaviored && value.isLayerResized ? value._max ?? getMetricMax(value, true) : value?.max ?? getMetricMax(value);
-    
-    let percentageThreshold = ((cur / max) * 100).toFixed(0);
+    let cur, max, min;
+    if (value.isPositiveShifted) {
+        cur = value.originalCurrent;
+        max = value.maxWithoutScale ?? value.originalMax;
+        min = value.originalMin;
+    }
+    else {
+        cur = value.isLayerBehaviored && value.isLayerResized ? value._current : value.current;
+        max = value.isLayerBehaviored && value.isLayerResized ? value._max ?? getMetricMax(value, true) : value?.max ?? getMetricMax(value);
+        min = value.isLayerBehaviored && value.isLayerResized ? value._min ?? getMetricMin(value, true) : value?.min ?? getMetricMin(value);
+    }
+
+    let percentageThreshold;
+    percentageThreshold = ((cur - min) * 100 / (max - min)).toFixed(0);
+
     if (value.metricDirection === "ascending") {
         percentageThreshold = 100 - percentageThreshold
     }
     if (conf.spheresColorsBehavior === 'ranges') {
-        if(conf.bicolorDisplay){
+        if (conf.bicolorDisplay) {
             return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;
         }
         if (percentageThreshold >= conf.statusRangeLow && percentageThreshold < conf.statusRangeMed) {
@@ -130,7 +141,7 @@ export var metricColor = function (value, conf, layer, newData) {
 
         const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorsDynamicDepth;
         const highStep = (conf.statusRangeHigh - conf.statusRangeMed) / conf.colorsDynamicDepth;
-    
+
         let colorsDynamicDepth;
         let step;
         let baseValue;
@@ -144,7 +155,7 @@ export var metricColor = function (value, conf, layer, newData) {
             step = highStep;
             baseValue = conf.statusRangeMed;
         }
-    
+
         let index = Math.min(Math.floor((percentageThreshold - baseValue) / step), conf.colorsDynamicDepth);
         return colorsDynamicDepth[index];
     }
@@ -228,7 +239,7 @@ export function gradient(startColor, endColor, steps) {
  * @returns opacity value
  */
 export function getColorOpacityBasedOnRanges(color, colorRanges, conf) {
-    const {highColor, medColor, lowColor} = colorRanges;
+    const { highColor, medColor, lowColor } = colorRanges;
     if (color === highColor) {
         return conf.transparencyHigh;
     } else if (color === medColor) {

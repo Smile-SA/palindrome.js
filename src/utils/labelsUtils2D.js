@@ -1,6 +1,6 @@
-import {getMetricMax, getMetricMed, getMetricMin, getMetricState,  getMetricsLabelsStructureData } from './metricsUtils2D';
-import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
-import { create3DMetricsLabels, create3DLayersLabels } from './labelsUtils3D';
+import { getMetricMax, getMetricMed, getMetricMin, getMetricState,  getMetricsLabelsStructureData  } from './metricsUtils2D';
+import {  CSS2DObject  } from "three/examples/jsm/renderers/CSS2DRenderer";
+import {  create3DMetricsLabels, create3DLayersLabels  } from './labelsUtils3D';
 import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
 
@@ -354,8 +354,12 @@ export var createLabels = function (data, globalParams) {
 
                     if (conf.metricsLabelsRenderingMode === "2D") {
                         const currentLabel2d = create2DMetricsLabels(key, value.label, 'current', currentLabelValue, metricIndex, unitLabel, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
-                        layerMetricsLabels.add(currentLabel2d);
-                        //scene.add(currentLabel2d);
+                        if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                            layerMetricsLabels.add(currentLabel2d);
+                        }
+                        else {
+                            scene.add(currentLabel2d);
+                        }
                         if (conf.displayAllMetricsLabels) {
                             const minLabel2d = create2DMetricsLabels(key, value.label, 'min', min, metricIndex, value.unit, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
                             const medLabel2d = create2DMetricsLabels(key, value.label, 'med', med, metricIndex, value.unit, conf, metricParameters, value, isLayerBehaviored, isLayerResized);
@@ -379,7 +383,7 @@ export var createLabels = function (data, globalParams) {
                             borderThickness
                         }
                         const currentLabel3d = create3DMetricsLabels(key, value.label, 'current', current, metricIndex, value.unit, globalParams, value, isLayerBehaviored, isLayerResized);
-                        if(conf.cameraOptions.indexOf("Flat") !== -1) {
+                        if (conf.cameraOptions.indexOf("Flat") !== -1) {
                             layerMetricsLabels.add(currentLabel3d);
                         } else {
                             scene.add(currentLabel3d);
@@ -405,22 +409,22 @@ export var createLabels = function (data, globalParams) {
             }
 
             if (conf.cameraOptions.indexOf("Flat") !== -1) {
-                meshes["_group"+layer+"_metrics_labels"] = layerMetricsLabels;
-    
+                meshes["_group" + layer + "_metrics_labels"] = layerMetricsLabels;
+
                 if (!meshes['meshRenderingOrder'] && conf.cameraOptions.indexOf("Flat") !== -1) {
                     meshes['meshRenderingOrder'] = createRenderOrderCounter();
                 }
-    
-                if(conf.cameraOptions.indexOf("Flat") !== -1) {
-                    meshes["_group"+layer+"_metrics_labels"].renderOrder = meshes['meshRenderingOrder']();
+
+                if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                    meshes["_group" + layer + "_metrics_labels"].renderOrder = meshes['meshRenderingOrder']();
                 }
                 scene.add(layerMetricsLabels);
                 const rotation = data[layer].layer[layer + "-layer"]?.rotation;
                 if (rotation) {
-                    meshes["_group"+layer+"_metrics_labels"].rotation.y = data[layer].layer[layer + "-layer"]["rotation"];
+                    meshes["_group" + layer + "_metrics_labels"].rotation.y = data[layer].layer[layer + "-layer"]["rotation"];
                 }
             }
-            
+
             if (conf.displayLayersLabels) {
                 for (const [key, value] of Object.entries(layers)) {
                     if (layersLabelsIds.includes(key) === true) {

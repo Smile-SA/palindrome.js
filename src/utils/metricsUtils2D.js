@@ -10,16 +10,22 @@ import { polarTo3DPoint } from './metricsUtils3D';
  */
 export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored, isLayerResized, isLayerBehaviored) {
     const state = getMetricState(metricData, isLayerBehaviored && isLayerResized);
-    state[0] = state[0].replace('_', '');
-    let extension = (conf.metricsLabelsStructure.indexOf("State") !== -1) ? (state[1] ? ' - '+ state[0]: ' - close to ' + state[0]) : '';
+    state[0] = state[0]
+        .replace('_', '')
+        .replace('originalMax', 'max')
+        .replace('originalMed', 'med')
+        .replace('originalCurrent', 'current')
+        .replace('originalMin', 'min');
+
+    let extension = (conf.metricsLabelsStructure.indexOf("State") !== -1) ? (state[1] ? ' - ' + state[0] : ' - close to ' + state[0]) : '';
     if (conf.displayAllMetricsLabels) {
         extension = '';
         labelType = getMetricStateName(metricData, labelValue);
         if (!labelType) {
-            labelName ='';
+            labelName = '';
             labelType = '';
             labelUnit = '';
-            labelValue ='';
+            labelValue = '';
         }
     }
     labelUnit += extension;
@@ -116,7 +122,155 @@ export var l2Normalize = function (vector) {
         return vector;
     }
 }
- 
+
+/**
+ * Allows a representation of negative values
+ * @param {data} data the use case data
+ * @returns the shifted data
+ */
+export const shiftMetricsToPositive = (data, conf) => {
+    let minOfMins = Number.POSITIVE_INFINITY;
+    for (const layerData of Object.values(data)) {
+        for (const metric of Object.values(layerData.metrics)) {
+            if (metric.min < 0) {
+                minOfMins = Math.min(minOfMins, metric.min);
+            }
+        }
+    }
+
+    if (minOfMins < 0) {
+        const offset = Math.abs(minOfMins);
+        // Shift all metrics by the minimum of the minimum values
+        for (const layerData of Object.values(data)) {
+            for (const metric of Object.values(layerData.metrics)) {
+                const { min, med, max, current } = metric;
+                metric["originalMin"] = min;
+                metric["originalMax"] = max;
+                metric["originalMed"] = med;
+                metric["originalCurrent"] = current;
+                metric["isPositiveShifted"] = true;
+                metric.max += offset
+                metric.med += offset
+                metric.min += offset
+                metric.current += offset
+
+                if (metric.originalCurrent < 0 || metric.originalMin < 0 || metric.originalMed < 0 || metric.originalMax < 0) {
+                    metric['maxWithoutScale'] = metric.max;
+                    if (conf.negativeValuesMagnifier !== 0)
+                        metric.max = metric.max * conf.negativeValuesMagnifier;
+                }
+            }
+        }
+    }
+    return data;
+}
+
+/**
+ * Change the metrics of the layer to percent, absolute or normalized
+ * @param {*} data the use case data
+ */
+export const changeLayerMetricsBehavior = (data, conf) => {
+    for (const layer in data) {
+        const layerInfo = data[layer].layer;
+        const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
+        const behavior = (layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
+        const metrics = data[layer].metrics;
+        if (behavior === "percent") {
+
+            // Getting total values for current, min, med, and max
+            const {
+                totalCurrentValues,
+                totalMinValues,
+                totalMaxValues,
+                totalMedValues,
+            } = behavioredMetricsTotalValues(metrics);
+
+            for (const [key, value] of Object.entries(metrics)) {
+                let min, med, max, current;
+                min = value.min ?? getMetricMin(value);
+                max = value.max ?? getMetricMax(value);
+                med = value.med ?? getMetricMed(value);
+                current = value.current;
+                // Computing new layerBehaviored metrics
+                const layerBehavioredMin = totalMinValues > 0 ? (min / totalMinValues) * 100 : 0;
+                const layerBehavioredMax = totalMaxValues > 0 ? (max / totalMaxValues) * 100 : 0;
+                const layerBehavioredMed = totalMedValues > 0 ? (med / totalMedValues) * 100 : 0;
+                const layerBehavioredCurrent = totalCurrentValues > 0 ? (current / totalCurrentValues) * 100 : 0;
+                data[layer].metrics[key]["_" + getMetricStateName(value, min)] = layerBehavioredMin;
+                data[layer].metrics[key]["_" + getMetricStateName(value, max)] = layerBehavioredMax;
+                data[layer].metrics[key]["_" + getMetricStateName(value, med)] = layerBehavioredMed;
+                data[layer].metrics[key]["_current"] = layerBehavioredCurrent;
+                data[layer].metrics[key]["_unit"] = "%";
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+            }
+        }
+        else if (behavior === "normalized") {
+            let currents = [];
+            let mins = [];
+            let meds = [];
+            let maxs = [];
+            let minLabels = [];
+            let medLabels = [];
+            let maxLabels = [];
+            for (const [_, value] of Object.entries(metrics)) {
+                let min, med, max, current;
+                min = value.min ?? getMetricMin(value);
+                max = value.max ?? getMetricMax(value);
+                med = value.med ?? getMetricMed(value);
+
+                current = value.current;
+                // Computing new layerBehaviored metrics
+                currents.push(current);
+                mins.push(min);
+                meds.push(med);
+                maxs.push(max);
+
+                minLabels.push("_" + getMetricStateName(value, min));
+                medLabels.push("_" + getMetricStateName(value, med));
+                maxLabels.push("_" + getMetricStateName(value, max));
+            }
+            const normilizedCurrents = l2Normalize(currents);
+            const normalizeArraydMeds = l2Normalize(meds);
+            const normalizeArraydMaxs = l2Normalize(maxs);
+            const normalizeArraydMins = l2Normalize(mins);
+            let i = 0;
+            for (const [key, _] of Object.entries(metrics)) {
+                data[layer].metrics[key]["_" + minLabels[i]] = normalizeArraydMins[i];
+                data[layer].metrics[key]["_" + maxLabels[i]] = normalizeArraydMaxs[i];
+                data[layer].metrics[key]["_" + medLabels[i]] = normalizeArraydMeds[i];
+                data[layer].metrics[key]["_current"] = normilizedCurrents[i];
+                data[layer].metrics[key]["_unit"] = "";
+                data[layer].metrics[key]["isLayerBehaviored"] = true;
+                i++;
+            }
+        }
+    }
+}
+
+/**
+ * Compute total metric values of a layer
+ * @param {*} metrics the use case metrics
+ * @returns the current, med, max, min totals
+ */
+export var behavioredMetricsTotalValues = function (metrics) {
+    const metricsValues = Object.values(metrics);
+    return metricsValues.reduce(
+        (acc, metric) => {
+            let min, med, max, current;
+            min = metric.min ?? getMetricMin(metric);
+            med = metric.med ?? getMetricMed(metric);
+            max = metric.max ?? getMetricMax(metric);
+            current = metric.current;
+            return (
+                {
+                    totalCurrentValues: acc.totalCurrentValues + current,
+                    totalMinValues: acc.totalMinValues + min,
+                    totalMaxValues: acc.totalMaxValues + max,
+                    totalMedValues: acc.totalMedValues + med,
+                })
+        }, { totalCurrentValues: 0, totalMinValues: 0, totalMaxValues: 0, totalMedValues: 0 }
+    );
+}
 
 export const getRepresentationKeys = (metrics, excludedKeys) => {
     const descriptionKeys = new Set(excludedKeys);;
@@ -145,10 +299,19 @@ export const computeMetricValue = (metrics, conf, zAxis) => {
     return metricValue;
 }
 
-export const getMetricState = (value, isMetricChanged=false) => {
-    const representationKeys = getRepresentationKeys([value], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized']);
-    const currentValue = value.isLayerBehaviored && value.isLayerResized ? value._current : value.current;
-    
+export const getMetricState = (value, isMetricChanged = false) => {
+    let currentValue = value.isLayerBehaviored && value.isLayerResized ? value._current : value.current;
+
+    let excludedKeys = ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized', 'isPositiveShifted'];
+    if (value.isPositiveShifted) {
+        excludedKeys.push('max');
+        excludedKeys.push('min');
+        excludedKeys.push('current');
+        excludedKeys.push('med');
+        currentValue = value.originalCurrent;
+    }
+    const representationKeys = getRepresentationKeys([value], excludedKeys);
+
     let distance = Number.POSITIVE_INFINITY;
     let closeTo = '';
     let isEqual = false;
@@ -156,7 +319,7 @@ export const getMetricState = (value, isMetricChanged=false) => {
         if (key === 'current') continue;
         if (!isMetricChanged && key.startsWith('_')) continue;
         if (isMetricChanged && !key.startsWith('_')) continue;
-        if (representationKeys.includes(key)){
+        if (representationKeys.includes(key)) {
             if (currentValue === val) {
                 isEqual = true;
                 closeTo = key;
@@ -175,12 +338,20 @@ export const getMetricState = (value, isMetricChanged=false) => {
 export const cleanMetric = (metric, isMetricChanged) => {
     metric = JSON.parse(JSON.stringify(metric));
     for (const key in metric) {
+        if (metric.isPositiveShifted) {
+            if (key.startsWith('original')) {
+                delete metric[key];
+            }
+            if (key === 'maxWithoutScale' && !metric.isPositiveShifted) {
+                delete metric.max;
+            }
+        }
         if (isMetricChanged) {
-            if (!key.startsWith('_')){
+            if (!key.startsWith('_')) {
                 delete metric[key];
             }
         } else {
-            if (key.startsWith('_')){
+            if (key.startsWith('_')) {
                 delete metric[key];
             }
         }
@@ -194,8 +365,8 @@ export const getMetricMed = (metric, isMetricChanged = false) => {
     if (metric.med) {
         return metric.med;
     }
-    const sum = Object.values(metric, isMetricChanged).filter(it => !isNaN(it)).reduce((acc, cur) => acc + cur);
-    const average = sum/Object.values(metric, isMetricChanged).length;
+    const sum = Object.values(cleanMetric(metric, isMetricChanged)).filter(it => typeof it === 'number').reduce((acc, cur) => acc + cur);
+    const average = sum / Object.values(cleanMetric(metric, isMetricChanged)).length;
     return average;
 }
 

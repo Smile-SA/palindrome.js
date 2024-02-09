@@ -11,7 +11,7 @@ import {setPreviousPalindrome} from "./utils/destructionUtils";
 import {createInputUrlModal, loadingText} from "./utils/fetchUtils";
 import {updateMeshes} from "./utils/renderingUtils";
 import { gradient } from './utils/colorsUtils';
-import {applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize} from './utils/layersUtils';
+import { applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element

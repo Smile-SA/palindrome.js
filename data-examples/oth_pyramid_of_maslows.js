@@ -169,7 +169,7 @@ export function pyramidOfMaslows() {
         "esteemNeeds": {
             "metrics": {
                 "construction": {
-                    "label": "construction",
+                    "label": "Construction",
                     "unit": "%",
                     "unsatisfied": 0,
                     "partially satisfied": 50,
@@ -178,7 +178,7 @@ export function pyramidOfMaslows() {
                     "metricDirection": "ascending"
                 },
                 "creation": {
-                    "label": "creation",
+                    "label": "Creation",
                     "unit": "%",
                     "unsatisfied": 0,
                     "partially satisfied": 50,
@@ -186,8 +186,8 @@ export function pyramidOfMaslows() {
                     "current": 18.5,
                     "metricDirection": "ascending"
                 },
-                "earning": {
-                    "label": "earning",
+                "earnings": {
+                    "label": "Earnings",
                     "unit": "K€ / hour",
                     "unsatisfied": 10,
                     "partially satisfied": 740,
@@ -196,7 +196,7 @@ export function pyramidOfMaslows() {
                     "metricDirection": "ascending"
                 },
                 "giving": {
-                    "label": "giving",
+                    "label": "Giving",
                     "unit": "%",
                     "unsatisfied": 0,
                     "partially satisfied": 50,
@@ -205,7 +205,7 @@ export function pyramidOfMaslows() {
                     "metricDirection": "ascending"
                 },
                 "health": {
-                    "label": "health",
+                    "label": "Health",
                     "unit": "%",
                     "unsatisfied": 0,
                     "partially satisfied": 50,

@@ -121,13 +121,13 @@ export function setRectangleFramePositions(positions, xTab, yTab, zTab, layersLa
             conf.displayLabelLine = false;
         }
         let xPosition = ((Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding)) * conf.framePadding);
-        if (conf.labelToFrameLinkType === 'dynamic' && xPosition >= conf.gridSize / 2){
+        if (conf.labelToFrameLinkType === 'dynamic' && xPosition >= conf.gridSize / 2) {
             xPosition = conf.gridSize / 2 - parseInt(localStorage.getItem("htmlLayerLabelPadding")) - conf.framePadding;
         }
         else if (conf.labelToFrameLinkType === 'static') {
             xPosition = conf.labelToFrameLinkLength;
         }
-        
+
         let labelXposition = xPosition;
         if (conf.equalizeFrameLinks) {
             labelXposition = conf.labelToFrameLinkLength + Math.max.apply(Math, xTab) + (conf.framePadding * conf.framePadding);

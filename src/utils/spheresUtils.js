@@ -35,9 +35,9 @@ export var makeSphereContextsStatus = function (sphereCoords, layerName, metrics
  * @param layerParameters
  */
 function makeSphereContext(planePoints, layerName, metricIndex, metricColor, metricValues, scene, meshs, conf, camera, labelDiv, layerParameters, numberOfMetrics, rotation) {
-    let opacity = getColorOpacityBasedOnRanges(metricColor, {highColor: conf.sphereColorHigh, medColor: conf.sphereColorMed, lowColor: conf.sphereColorLow}, conf);
+    let opacity = getColorOpacityBasedOnRanges(metricColor, { highColor: conf.sphereColorHigh, medColor: conf.sphereColorMed, lowColor: conf.sphereColorLow }, conf);
     if (meshs['_sphere' + layerName + metricIndex]) {
-        if(conf.transparentDisplay){
+        if (conf.transparentDisplay) {
             meshs['_sphere' + layerName + metricIndex].update(conf.sphereColorHigh, opacity, planePoints[0], planePoints[2], planePoints[1]);
         }
         else {
@@ -50,7 +50,7 @@ function makeSphereContext(planePoints, layerName, metricIndex, metricColor, met
             meshs['_text' + layerName + metricIndex].position.set(planePoints[0], planePoints[2] + 3, planePoints[1]);
         }
     } else {
-        if(conf.transparentDisplay){
+        if (conf.transparentDisplay) {
             meshs['_sphere' + layerName + metricIndex] = new Sphere(conf.sphereColorHigh, opacity);
         }
         else {

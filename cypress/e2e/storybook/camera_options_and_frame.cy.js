@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe ('Camera Options and Frame', function () { 
+describe('Camera Options and Frame', function () {
 
   beforeEach(() => {
     cy.visit(Cypress.env("storybook"));
@@ -18,7 +18,7 @@ describe ('Camera Options and Frame', function () {
     const cameraOptions = ['control-cameraOptions-1', 'control-cameraOptions-2']; // fit, top, flat
     for (const cameraOption of cameraOptions) {
       const selector = '#' + cameraOption;
-      cy.get(selector).click({force: true});
+      cy.get(selector).click({ force: true });
     }
 
     const rotationAngleInputSelector = '#control-rotatedMetricsAngle';
@@ -29,30 +29,30 @@ describe ('Camera Options and Frame', function () {
     const cameraOptions = ['control-cameraOptions-1', 'control-cameraOptions-2']; // fit, top, flat
     for (const cameraOption of cameraOptions) {
       const selector = '#' + cameraOption;
-      cy.get(selector).click({force: true});
+      cy.get(selector).click({ force: true });
     }
 
     const mergeMetricsToggleSelector = '#control-mergedMetricsNames';
     cy.eval_click(mergeMetricsToggleSelector);
   });
 
-  it ("displayFrames | displayFramesLine | displayFramesBackground | displayLabelLine | DocsPage", function () {
+  it("displayFrames | displayFramesLine | displayFramesBackground | displayLabelLine | DocsPage", function () {
     // Iterates over all elements of camera options
-    const elements = ["displayFrames", "displayFramesLine", "displayFramesBackground", "displayLabelLine"]    
+    const elements = ["displayFrames", "displayFramesLine", "displayFramesBackground", "displayLabelLine"]
     elements.forEach(element => {
       var ele = "#control-" + element
       cy.get(ele).eval_click(ele)
-  
+
     })
   })
-  
-  it ('frameLineWidth | frameDashLineSize', function () { 
-    const elements = ['frameLineWidth','frameDashLineSize']
+
+  it('frameLineWidth | frameDashLineSize', function () {
+    const elements = ['frameLineWidth', 'frameDashLineSize']
     elements.forEach(element => {
       var ele = "#control-" + element
       cy.get(ele).eval_type(ele)
     })
-  
+
   })
 })
 

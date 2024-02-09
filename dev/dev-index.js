@@ -12,11 +12,11 @@ const testDuration = process.env.BENCHMARK_DURATION;
 const ressourcesLevel = process.env.WORKERS_RESOURCES_LEVEL;
 const useCaseName = process.env.USE_CASE_NAME;
 const fileName = process.env.OUTPUT_FILENAME;
-console.log("env:",{palindromeType, isBenchmark, testDuration, ressourcesLevel, useCaseName, fileName});
+console.log("env:", { palindromeType, isBenchmark, testDuration, ressourcesLevel, useCaseName, fileName });
 /**
  * Main
  */
-if (process.env.PALINDROME_TYPE==="basic" || process.env.PALINDROME_TYPE==="dev") {
+if (process.env.PALINDROME_TYPE === "basic" || process.env.PALINDROME_TYPE === "dev") {
     renderDev();
 }
 
@@ -98,14 +98,14 @@ function applyDefaultOptions(devConfig) {
         let selectParam = urlParams.get(selectId);
         if (selectParam == null) selectParam = devConfig[selectId];
         let isUserDefinedConfig = false;
-        if (selectId === "data" && typeof(devConfig.data) === 'object') {
+        if (selectId === "data" && typeof (devConfig.data) === 'object') {
             isUserDefinedConfig = true;
         }
         if (!isUserDefinedConfig) {
             devConfig[selectId] = selectParam;
             document.getElementById(selectId).value = selectParam;
         }
-        
+
         if (selectId === "data" && !isUserDefinedConfig) {
             let palindromeName = urlParams.get('data');
             if (palindromeName) {
@@ -501,7 +501,6 @@ function applyConditionsToControls() {
             return;
         }
         const toggleDesign = document.getElementById(id + '-toggle-design');
-
         if (otherElement.checked === value) {
             element.disabled = true;
             console.log(toggleDesign)
@@ -520,6 +519,9 @@ export function renderDev() {
     appendControlsToCategories();
     init();
     const devConfig = defaultValues();
+    if (process.env.PALINDROME_TYPE === "dev") {
+        applyConditionsToControls();
+    }
     applyDefaultOptions(devConfig);
     if (process.env.PALINDROME_TYPE==="basic" || process.env.PALINDROME_TYPE==="dev") {
         getPalindrome(devConfig);

@@ -46,9 +46,6 @@ export function dcBasicConfigurationThreeLayers() {
             "layer": {
                 "systemMetrics-layer": {
                     "label": "System metrics",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color",
                 },
             },
         },

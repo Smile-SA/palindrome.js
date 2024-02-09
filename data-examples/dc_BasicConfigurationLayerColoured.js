@@ -108,15 +108,10 @@ export function dc_BasicConfigurationLayerColoured() {
             "layer": {
                 "qosMetrics-layer": {
                     "label": "Qos metrics",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color",
                     "mainColorStatic": "#319b31",
-                    
                     "layerColorLow": "#ffffff",
                     "layerColorMed": "#f3c60a",
                     "layerColorHigh": "#000000",
-                    
                     "sphereColorLow": "#ffffff",
                     "sphereColorMed": "#f3c60a",
                     "sphereColorHigh": "#000000",
@@ -169,16 +164,11 @@ export function dc_BasicConfigurationLayerColoured() {
             "layer": {
                 "serverMetrics-layer": {
                     "label": "serverMetrics",
-                    "_layerBehavior": "something",
-                    "_defaultColor": "green",
-                    "_publicColorOption": "random calls function to pick a color",
-                    
+
                     "mainColorStatic": "#319b31",
-                    
                     "layerColorLow": "#ffffff",
                     "layerColorMed": "#f3c60a",
                     "layerColorHigh": "#000000",
-                    
                     "sphereColorLow": "#ffffff",
                     "sphereColorMed": "#f3c60a",
                     "sphereColorHigh": "#000000",

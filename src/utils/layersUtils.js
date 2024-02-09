@@ -3,8 +3,8 @@ import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
 import { getMetricMax, getRepresentationKeys, layerPoints } from './metricsUtils2D';
 import { getColorOpacityBasedOnRanges } from './colorsUtils';
-import {behavioredMetricsTotalValues } from './labelsUtils2D';
-import {l2Normalize} from './metricsUtils2D';
+import { behavioredMetricsTotalValues } from './labelsUtils2D';
+import { l2Normalize } from './metricsUtils2D';
 
 /**
  * drawTrianglesInALayer() caller
@@ -46,14 +46,14 @@ export var drawLayer = function (layer, metricValue, metricsNumber, color, globa
  * @param scene
  */
 function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePointLength, color, meshs, scene, rotation, conf, opacity) {
-    let opacity = getColorOpacityBasedOnRanges(color, {highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow}, conf);
-    if(conf.colorsBehavior==='dynamic' && conf.transparentDisplay) {
+    let opacity = getColorOpacityBasedOnRanges(color, { highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow }, conf);
+    if (conf.colorsBehavior === 'dynamic' && conf.transparentDisplay) {
         opacity = color / 100;
     }
-    if (meshs['19' + layer + i] || (meshs['_group'+ '19-20' + layer + i] && conf.cameraOptions.indexOf("Flat") !== -1 )) { // if init done
+    if (meshs['19' + layer + i] || (meshs['_group' + '19-20' + layer + i] && conf.cameraOptions.indexOf("Flat") !== -1)) { // if init done
         meshs['19' + layer + i].update(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength])
         meshs['20' + layer + i].update(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength])
-        if(conf.transparentDisplay){
+        if (conf.transparentDisplay) {
             meshs['19' + layer + i].material.opacity = opacity * 0.5;
             meshs['20' + layer + i].material.opacity = opacity * 0.5;
         } else {
@@ -70,23 +70,23 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
         meshs['19' + layer + i] = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : opacity);
         //scene.add(meshs['19' + layer + i]);
         meshs['20' + layer + i] = new Triangle(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : opacity);
-        
-        if(conf.cameraOptions.indexOf("Flat") !== -1) {
+
+        if (conf.cameraOptions.indexOf("Flat") !== -1) {
             meshs['19' + layer + i].renderOrder = meshs['meshRenderingOrder']();
             meshs['20' + layer + i].renderOrder = meshs['meshRenderingOrder']();
             const fullLayer = new THREE.Group();
             fullLayer.add(meshs['19' + layer + i]);
             fullLayer.add(meshs['20' + layer + i]);
-            meshs['_group'+ '19-20' + layer + i] = fullLayer;
+            meshs['_group' + '19-20' + layer + i] = fullLayer;
             scene.add(fullLayer);
-            if (rotation.angle){
-                meshs['_group'+ '19-20' + layer + i].rotation.y = rotation.angle;
+            if (rotation.angle) {
+                meshs['_group' + '19-20' + layer + i].rotation.y = rotation.angle;
             }
         } else {
             scene.add(meshs['19' + layer + i]);
             scene.add(meshs['20' + layer + i]);
         }
-        
+
     }
 }
 
@@ -130,7 +130,7 @@ export var drawLayerOutline = function (layerName, planePoints, layerMetricIndex
 export var drawLayerDashLine = function (layerName, planePoints, layerMetricIndex, planePointLength, material, layerMetricRangeIndex, scene, meshs, conf) {
 
     let from, to;
-    if(layerName.includes('arrow')) {
+    if (layerName.includes('arrow')) {
         from = planePoints[layerMetricIndex];
         to = planePoints[(layerMetricIndex + 1) % planePointLength];
         if (conf.equalizeFrameLinks) {
@@ -139,7 +139,7 @@ export var drawLayerDashLine = function (layerName, planePoints, layerMetricInde
     }
     if (meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex]) {
         // if init done
-        if(layerName.includes('arrow')) {            
+        if (layerName.includes('arrow')) {
             meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex].update(from, to)
         }
         else {
@@ -151,7 +151,7 @@ export var drawLayerDashLine = function (layerName, planePoints, layerMetricInde
             meshs['meshRenderingOrder'] = createRenderOrderCounter();
         }
         if (layerName.includes('arrow') && !Object.keys(meshs).some(key => key.includes(layerName)) || !layerName.includes('arrow')) {
-            if(layerName.includes('arrow')) {
+            if (layerName.includes('arrow')) {
                 meshs['_rangeDasheline' + layerName + layerMetricIndex + layerMetricRangeIndex] = new DasheLine(from, to, material);
             }
             else {
@@ -320,7 +320,7 @@ export const applyLayersSize = (data) => {
             for (const [key, _] of Object.entries(metrics)) {
                 const representationKeys = getRepresentationKeys([data[layer].metrics[key]], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized']);
                 for (const representationKey of representationKeys) {
-                    data[layer].metrics[key]["_"+representationKey] = data[layer].metrics[key][representationKey];
+                    data[layer].metrics[key]["_" + representationKey] = data[layer].metrics[key][representationKey];
                     data[layer].metrics[key][representationKey] = data[layer].metrics[key][representationKey] * 100 / getMetricMax(data[layer].metrics[key]);
                 }
                 // dynamic zoop
@@ -332,7 +332,7 @@ export const applyLayersSize = (data) => {
                 data[layer].metrics[key]["_unit"] = data[layer].metrics[key].unit;
                 data[layer].metrics[key]["isLayerResized"] = true;
                 data[layer].metrics[key]["isLayerBehaviored"] = true;
-            }        
+            }
         }
     }
 
@@ -352,32 +352,34 @@ export const applyLayersSize = (data) => {
 export const getLayerStatus = (metrics) => {
     let status = [];
     for (const metric of Object.values(metrics)) {
-        const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
-        const max = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._max : metric.max;
+        let current, min, max;
 
-        const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
-        status.push(value);
-    }
+        if (metric.isPositiveShifted) {
+            max = metric.maxWithoutScale ?? metric.originalMax;
+            current = metric.originalCurrent;
+            min = metric.originalMin;
+        }
+        else if (metric?.isLayerBehaviored && !metric?.isLayerResized) {
+            max = getMetricMax(metric);
+            current = metric.current
+            min = getMetricMin(metric);
+        }
+        else {
+            max = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMax(metric, true) : getMetricMax(metric);
+            current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
+            min = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMin(metric, true) : getMetricMin(metric);
 
-    const sum = status.reduce((acc, cur) => acc + cur);
-    return 100 * sum/status.length;
-}
-
-
-export const getLayerStatus = (metrics) => {
-    let status = [];
-    for (const metric of Object.values(metrics)) {
-        const current = metric?.isLayerBehaviored && metric?.isLayerResized ? metric._current : metric.current;
-        let max = metric?.isLayerBehaviored && metric?.isLayerResized ? getMetricMax(metric, true) : getMetricMax(metric);
+        }
 
         if (!max) {
             max = getMetricMax(metric);
         }
-        
-        const value = metric.metricDirection === 'ascending' ? 1 - current / max : current / max;
+
+        let value = (current - min) / (max - min);
+        value = metric.metricDirection === 'ascending' ? 1 - value : value;
         status.push(value);
     }
 
     const sum = status.reduce((acc, cur) => acc + cur);
-    return 100 * sum/status.length;
+    return 100 * sum / status.length;
 }

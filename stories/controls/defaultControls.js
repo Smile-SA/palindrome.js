@@ -717,7 +717,7 @@ export function defaultControls() {
         transparencyLow: {
             name: "transparencyLow",
 
-            control: {type: 'range', min: 0, max: 1, step: 0.1},
+            control: { type: 'range', min: 0, max: 1, step: 0.1 },
             description: "Resize the low status range",
             table: {
                 category: 'Palindrome',
@@ -727,7 +727,7 @@ export function defaultControls() {
         transparencyMed: {
             name: "transparencyMed",
 
-            control: {type: 'range', min: 0, max: 1, step: 0.1},
+            control: { type: 'range', min: 0, max: 1, step: 0.1 },
             description: "Resize the med status range",
             table: {
                 category: 'Palindrome',
@@ -737,7 +737,7 @@ export function defaultControls() {
         transparencyHigh: {
             name: "transparencyHigh",
 
-            control: {type: 'range', min: 0, max: 1, step: 0.1},
+            control: { type: 'range', min: 0, max: 1, step: 0.1 },
             description: "Resize the high status range",
             table: {
                 category: 'Palindrome',

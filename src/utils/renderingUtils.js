@@ -1,10 +1,10 @@
-import {applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer, getLayerStatus} from "./layersUtils";
-import {makeSphereContextsStatus} from "./spheresUtils";
-import {computeMetricValue, getMetricMax, layerPoints} from "./metricsUtils2D";
-import {drawSideStraightLine} from "./sidesUtils";
-import {displayFramesAndArrows, setArrowPostion, setRectangleFramePositions} from "./framesUtils";
-import {setLabelsPositions, settingLabelFormat} from "./labelsUtils3D";
-import {layerColorDecidedByLayerStatus} from "./colorsUtils";
+import { applyLayerMetricsMergeToData, applyLayerRotationToData, displayLayersLines, drawLayer, getLayerStatus } from "./layersUtils";
+import { makeSphereContextsStatus } from "./spheresUtils";
+import { computeMetricValue, getMetricMax, layerPoints } from "./metricsUtils2D";
+import { drawSideStraightLine } from "./sidesUtils";
+import { displayFramesAndArrows, setArrowPostion, setRectangleFramePositions } from "./framesUtils";
+import { setLabelsPositions, settingLabelFormat } from "./labelsUtils3D";
+import { layerColorDecidedByLayerStatus } from "./colorsUtils";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -127,7 +127,7 @@ export async function updateMeshes(params, renderingType) {
                         let rotation = {};
                         rotation["layer"] = e.data.layer;
                         rotation["angle"] = newData[e.data.layer].layer[e.data.layer + "-layer"]?.rotation;
-                        let globalParams = {conf, meshs: meshes, scene, rotation};
+                        let globalParams = { conf, meshs: meshes, scene, rotation };
                          //this is the updated layer metrics
                         const metrics = newData[layer].metrics, layers = newData[layer].layer;
                         //this is the new total of current's
@@ -136,7 +136,7 @@ export async function updateMeshes(params, renderingType) {
                         const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
                         //todo : status colors shall map with default colors
                         const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
-                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData), globalParams);
+                        drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior === 'dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData), globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
                             makeSphereContextsStatus(e.data.metricValue, e.data.layer, Object.values(e.data.metrics), globalParams, newData);
@@ -167,7 +167,7 @@ export async function updateMeshes(params, renderingType) {
             if (sidesWorker) {
                 sidesWorker.onmessage = function (e) {
                     const layerStatus = e.data.layerStatus;
-                    const layerColor =  layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData);
+                    const layerColor = layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData);
 
                     if (conf.displaySides === true && conf.cameraOptions.indexOf("Flat") == -1) {
                         let sideDividerOdd = e.data.sideDividerOdd,
@@ -176,10 +176,10 @@ export async function updateMeshes(params, renderingType) {
                             sideSizeEven = e.data.sideSizeEven,
                             layer = e.data.layer;
                         if (sideDividerOdd && sideDividerEven && sideSizeOdd && sideSizeEven && previousLayerStatus_sides) {
-                            const sideDividers = {sideDividerEven, sideDividerOdd};
-                            const sideSizes = {sideSizeOdd, sideSizeEven};
-                            const layerStatuses = {layerStatus, previousLayerStatus: previousLayerStatus_sides};
-                            const layersColors = {layerColor, previousLayerColor: previousLayerColor_sides};
+                            const sideDividers = { sideDividerEven, sideDividerOdd };
+                            const sideSizes = { sideSizeOdd, sideSizeEven };
+                            const layerStatuses = { layerStatus, previousLayerStatus: previousLayerStatus_sides };
+                            const layersColors = { layerColor, previousLayerColor: previousLayerColor_sides };
                             drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, layersColors, newData);
                         }
                     }
@@ -239,8 +239,8 @@ export async function updateMeshes(params, renderingType) {
                     const metrics = e.data.metrics;
                     //update metrics label, layers label and their positions
                     let sortedLayersLabels, sortedMetricsLabels;
-                    if(conf.cameraOptions.indexOf("Flat") !== -1) {
-                        sortedMetricsLabels = meshes["_group"+e.data.layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex_frames) || [];
+                    if (conf.cameraOptions.indexOf("Flat") !== -1) {
+                        sortedMetricsLabels = meshes["_group" + e.data.layer + "_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex_frames) || [];
                         sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
                     } else {
                         sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex_frames);
@@ -313,10 +313,10 @@ export async function updateMeshes(params, renderingType) {
             let rotation = {};
             rotation["layer"] = layer;
             rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
-            let globalParams = {conf, meshs: meshes, scene, rotation};
+            let globalParams = { conf, meshs: meshes, scene, rotation };
             
-            const layerColor =  layerColorDecidedByLayerStatus(layerStatus, conf, layer, newData);
-            drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior==='dynamic' && conf.transparentDisplay) ? layerStatus : layerColor, globalParams);
+            const layerColor = layerColorDecidedByLayerStatus(layerStatus, conf, layer, newData);
+            drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior === 'dynamic' && conf.transparentDisplay) ? layerStatus : layerColor, globalParams);
             //console.log(Object.keys(newData).length)
             if (conf.displayMetricSpheres) {
                 let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
@@ -338,7 +338,7 @@ export async function updateMeshes(params, renderingType) {
             //update metrics label, layers label and their positions
             let sortedLayersLabels, sortedMetricsLabels;
             if (conf.cameraOptions.indexOf("Flat") !== -1) {
-                sortedMetricsLabels = meshes["_group"+layer+"_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex) || [];
+                sortedMetricsLabels = meshes["_group" + layer + "_metrics_labels"]?.children.filter((item) => item.metricIndex === metricIndex) || [];
                 sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
             } else {
                 sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex);
@@ -375,10 +375,10 @@ export async function updateMeshes(params, renderingType) {
                     //for the lengths of sides
                     const sideSizeOdd = (metricsNumber >= previousPlaneLength) ? metricValue[metricsDivider] : previousValueMax;
                     const sideSizeEven = (metricsNumber >= previousPlaneLength) ? previousValueMax : metricValue[metricsDivider];
-                    const sideDividers = {sideDividerEven, sideDividerOdd};
-                    const sideSizes = {sideSizeOdd, sideSizeEven};
-                    const layerStatuses = {layerStatus, previousLayerStatus};
-                    const layersColors = {layerColor, previousLayerColor};
+                    const sideDividers = { sideDividerEven, sideDividerOdd };
+                    const sideSizes = { sideSizeOdd, sideSizeEven };
+                    const layerStatuses = { layerStatus, previousLayerStatus };
+                    const layersColors = { layerColor, previousLayerColor };
                     drawSideStraightLine(sideDividers, sideSizes, layerStatuses, conf, meshes, layer, lineMaterial, scene, layersColors, newData);
                 }
             }

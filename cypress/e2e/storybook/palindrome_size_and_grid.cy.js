@@ -11,7 +11,7 @@ describe('Palindrome size and Grid', function () {
   });
 
   it('Palindrome Size | Metric Magnifier | lineWidth | gridSize | gridDivisions', function () {
-    const elements = ["palindromeSize", "metricMagnifier", "lineWidth", "gridSize", "gridDivisions"]     
+    const elements = ["palindromeSize", "metricMagnifier", "lineWidth", "gridSize", "gridDivisions"]
 
     elements.forEach(element => {
       var ele = "#control-" + element
@@ -22,17 +22,16 @@ describe('Palindrome size and Grid', function () {
 
         cy.get('[title="Go full screen [F]"]').click()
         cy.wait(2500)
-        cy.matchScreenshot(ele,{
-            threshold: 0.0001,
-            thresholdType: 'pixel'
+        cy.matchScreenshot(ele, {
+          threshold: 0.0001,
+          thresholdType: 'pixel'
         })
         cy.wait(1000)
         cy.get('[title="Exit full screen [F]"]').click()
       }
-      else{
+      else {
         cy.get(ele).eval_type(ele)
-      }      
+      }
     }) // lineWidth FAILS - make cypress focus on center part of screen
   })
 })
-  

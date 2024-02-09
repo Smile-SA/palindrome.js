@@ -29,7 +29,7 @@ import './commands'
 Cypress.Commands.add('eval_snapshot', ($el, env) => {
   // Goes fullscreen takes a snapshot with element's name
   if (env === 'dev') {
-    cy.get('#collapse').click({force: true})
+    cy.get('#collapse').click({ force: true })
   }
   else {
     cy.get('[title="Go full screen [F]"]').click()
@@ -41,7 +41,7 @@ Cypress.Commands.add('eval_snapshot', ($el, env) => {
   })
   if (env === 'dev') {
     cy.get('#burgerMenu').click();
-  } 
+  }
   else {
     cy.wait(1000)
     cy.get('[title="Exit full screen [F]"]').click()
@@ -49,25 +49,25 @@ Cypress.Commands.add('eval_snapshot', ($el, env) => {
 
 })
 
-Cypress.Commands.add('eval_select', (select, option, env, sleep=1000) => {
+Cypress.Commands.add('eval_select', (select, option, env, sleep = 1000) => {
   // Clicks first option wrapped around element and calls the eval_snapshot command
-    cy.wait(sleep)
-    cy.eval_snapshot(select + ' > ' + option, env);
+  cy.wait(sleep)
+  cy.eval_snapshot(select + ' > ' + option, env);
 })
 
-Cypress.Commands.add('eval_click', ($el, env, sleep=1000) => {
+Cypress.Commands.add('eval_click', ($el, env, sleep = 1000) => {
   // Clicks first option wrapped around element and calls the eval_snapshot command
-    cy.wait(sleep)
-    cy.get($el).first().click({force: true})
-    cy.eval_snapshot($el, env);
+  cy.wait(sleep)
+  cy.get($el).first().click({ force: true })
+  cy.eval_snapshot($el, env);
 })
-  
+
 Cypress.Commands.add('eval_type', ($el, value = 7) => {
   // Clears the element contents, types in 7 and calls the eval_snapshot command
   cy.wait(1000)
-  cy.get($el).clear({force: true})
-  cy.get($el).type(value) 
-  
+  cy.get($el).clear({ force: true })
+  cy.get($el).type(value)
+
   cy.eval_snapshot($el)
 })
 
