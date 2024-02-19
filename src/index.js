@@ -206,6 +206,6 @@ export default (function (parentElement, conf) {
     }
 });
 
-export const devPalindrome = () => {
-    return renderDev();
+export const devPalindrome = (isGrafana) => {
+    return renderDev(isGrafana);
 }

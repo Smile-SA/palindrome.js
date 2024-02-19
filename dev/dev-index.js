@@ -111,8 +111,10 @@ function applyDefaultOptions(devConfig) {
             if (palindromeName) {
                 document.getElementById("data").value = palindromeName;
             } else {
-                urlParams.set('data', document.getElementById("data").options[0].value);
-                location.search = urlParams;
+                if (!devConfig.isGrafana) {
+                    urlParams.set('data', document.getElementById("data").options[0].value);
+                    location.search = urlParams;
+                }
                 palindromeName = document.getElementById("data").options[0].value;
             }
             let category = findCategoryByPalindromeName(palindromeName);
@@ -512,13 +514,14 @@ function applyConditionsToControls() {
 /**
  * Renders Palindrome with config
  */
-export function renderDev() {
+export function renderDev(isGrafana) {
     createSideBar();
     createSideBarContent();
     createCategories();
     appendControlsToCategories();
     init();
     const devConfig = defaultValues();
+    devConfig.isGrafana = isGrafana;
     if (process.env.PALINDROME_TYPE === "dev") {
         applyConditionsToControls();
     }
