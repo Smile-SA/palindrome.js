@@ -53,7 +53,7 @@ export const createInputUrlModal = (parentElement) => {
     modalContent.appendChild(span);
 
     const title = document.createElement('p');
-    title.innerHTML = 'Oops... It looks like there is something wrong. Please fill out your remote data source URL:';
+    title.innerHTML = '... Something wrong with the server call. Please fill out your remote data source URL:';
     title.style = 'margin-left: 20px;';
     modalContent.appendChild(title);
 
