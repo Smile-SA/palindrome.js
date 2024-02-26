@@ -56,25 +56,6 @@ benchmark-test:
     - /bin/bash benchmark-eval.sh
   allow_failure: false
 
-push-to-dev:
-  stage: deploy
-  image:
-    entrypoint: ['']
-    name: alpine/git:latest
-
-  before_script:
-    - git clone -b "${CI_COMMIT_REF_NAME}" "https://${GITLAB_USER_NAME}:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "${CI_COMMIT_SHA}"
-    - git config --global user.email "${GIT_USER_EMAIL:-$GITLAB_USER_EMAIL}"
-    - git config --global user.name "${GIT_USER_NAME:-$GITLAB_USER_NAME}"
-
-  script:
-    - cd "${CI_COMMIT_SHA}"
-    - git checkout dev-CI/CD-issue-168
-    - git merge "${CI_COMMIT_REF_NAME}"
-    - git push origin dev-CI/CD-issue-168
-  allow_failure: false
-  when: manual
-
 pages:
   stage: deploy
   image: busybox

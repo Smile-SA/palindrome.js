@@ -20,8 +20,6 @@ const blob = new Blob(['(' + code + ')()']);
  * Gets a worker
  * @returns a free worker
  */
-const code = palindromeWebWorker.toString();
-const blob = new Blob(['('+code+')()']);
 WorkerPool.prototype.getWorker = function () {
     let w;
     if (this.pool.length > 0) {

@@ -1,3 +1,5 @@
+import { getMetricMax, getMetricMin } from "./metricsUtils2D";
+
 /**
  * Gets color gradients
  * @param {*} conf palindrome configuration
@@ -20,12 +22,10 @@ export const getColorGradients = (conf, layer, data) => {
  * @param {number} value
  * @param {*} conf current palindrome configuration
  */
-import { getMetricMax } from "./metricsUtils2D";
 
 export var layerColorDecidedByLayerStatus = function (value, conf, layer, newData) {
     const { lowValueGradient, highValueGradient } = getColorGradients(conf, layer, newData);
     let intValue = value.toFixed(0);
-    
     const data = newData;
     const { layerColorHigh, layerColorLow, layerColorMed, mainColorStatic } = data[layer].layer[`${layer}-layer`];
     const lowColor = layerColorLow ? layerColorLow : conf.statusColorLow;
@@ -42,11 +42,9 @@ export var layerColorDecidedByLayerStatus = function (value, conf, layer, newDat
         }
     }
 
-    
     if (conf.bicolorDisplay) {
         return intValue < conf.statusRangeMed ? lowColor : highColor;
     }
-    let layerStatusColor = conf.statusColorLow;
     if (conf.colorsBehavior === 'ranges') {
         if (intValue >= conf.statusRangeLow && intValue < conf.statusRangeMed) {
             return lowColor;
@@ -124,6 +122,7 @@ export var metricColor = function (value, conf, layer, newData) {
     if (value.metricDirection === "ascending") {
         percentageThreshold = 100 - percentageThreshold
     }
+
     if (conf.spheresColorsBehavior === 'ranges') {
         if (conf.bicolorDisplay) {
             return percentageThreshold < conf.statusRangeMed ? biColorLow : biColorHigh;
@@ -136,7 +135,7 @@ export var metricColor = function (value, conf, layer, newData) {
             return highColor;
         }
     } else if (conf.spheresColorsBehavior === 'static') {
-        return conf.mainStaticColor;
+        return staticColor;
     } else if (conf.spheresColorsBehavior === 'dynamic') {
 
         const lowStep = (conf.statusRangeMed - conf.statusRangeLow) / conf.colorsDynamicDepth;

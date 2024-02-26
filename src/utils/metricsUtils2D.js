@@ -8,7 +8,7 @@ import { polarTo3DPoint } from './metricsUtils3D';
  * @param {string} labelValue label value
  * @param {string} labelUnit the unit of label
  */
-export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored, isLayerResized, isLayerBehaviored) {
+export var getMetricsLabelsStructureData = function (labelName, labelType, labelValue, labelUnit, metricData, conf, isLayerBehaviored, isLayerResized) {
     const state = getMetricState(metricData, isLayerBehaviored && isLayerResized);
     state[0] = state[0]
         .replace('_', '')
@@ -29,10 +29,7 @@ export var getMetricsLabelsStructureData = function (labelName, labelType, label
         }
     }
     labelUnit += extension;
-    if (!isLayerBehaviored && metricData && labelUnit === '%') {
-        //percentage handle
-        labelValue = ((labelValue / metricData.max) * 100).toFixed(3);
-    }
+    if (labelName === "merged") return "";
     let data = '';
     if (conf.metricsLabelsRenderingFormat === "Text") {
         if (conf.metricsLabelsStructure.indexOf("Name") != -1) {
@@ -294,8 +291,6 @@ export const computeMetricValue = (metrics, conf, zAxis) => {
     metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * getMetricMed(item)), zAxis, conf);
     metricValue.min = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * getMetricMin(item)), zAxis, conf);
     metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / getMetricMax(item)) * item.current), zAxis, conf);
-
-    
     return metricValue;
 }
 
@@ -316,7 +311,7 @@ export const getMetricState = (value, isMetricChanged = false) => {
     let closeTo = '';
     let isEqual = false;
     for (const [key, val] of Object.entries(value)) {
-        if (key === 'current') continue;
+        if (key === 'current' || key === 'originalCurrent') continue;
         if (!isMetricChanged && key.startsWith('_')) continue;
         if (isMetricChanged && !key.startsWith('_')) continue;
         if (representationKeys.includes(key)) {
@@ -359,8 +354,8 @@ export const cleanMetric = (metric, isMetricChanged) => {
     return metric;
 }
 
-export const getMetricMax = (metric, isMetricChanged = false) => Math.max(...(Object.values(metric, isMetricChanged).filter(it => !isNaN(it))));
-export const getMetricMin = (metric, isMetricChanged = false) => Math.min(...(Object.values(metric, isMetricChanged).filter(it => !isNaN(it))));
+export const getMetricMax = (metric, isMetricChanged = false) => Math.max(...(Object.values(cleanMetric(metric, isMetricChanged)).filter(it => typeof it === 'number')));
+export const getMetricMin = (metric, isMetricChanged = false) => Math.min(...(Object.values(cleanMetric(metric, isMetricChanged)).filter(it => typeof it === 'number')));
 export const getMetricMed = (metric, isMetricChanged = false) => {
     if (metric.med) {
         return metric.med;
@@ -370,6 +365,6 @@ export const getMetricMed = (metric, isMetricChanged = false) => {
     return average;
 }
 
-export const getMetricStateName = (metric, value) => {
-    return Object.keys(metric, isMetricChanged).find(key => metric[key] === parseInt(value));
+export const getMetricStateName = (metric, value, isMetricChanged = false) => {
+    return Object.keys(cleanMetric(metric, isMetricChanged)).find(key => metric[key] === parseInt(value));
 }

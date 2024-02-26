@@ -153,6 +153,16 @@ function applyDefaultOptions(devConfig) {
         }
     }
 
+    if (isBenchmark) {
+        const aside = document.getElementsByTagName('aside')[0];
+        aside.parentNode.removeChild(aside);
+        devConfig.benchmark = 'Active';
+        let category = findCategoryByPalindromeName(useCaseName);
+        devConfig.data = findPalindromeByCategoryAndName(category, useCaseName)["data"]();
+        //devConfig.mockupData = true;
+        devConfig.testDuration = testDuration;
+        devConfig.resourcesLevel = ressourcesLevel;
+    }
     //output the configuration in use to the console
     console.log("Palindrome.js : configuration in use");
     console.dir(devConfig);
@@ -222,6 +232,7 @@ function openSidebar() {
  */
 function createSideBar() {
     let aside = document.createElement("aside");
+    aside.setAttribute("id", "palindrome-sidebar");
     aside.setAttribute("aria-label", "Sidebar");
     aside.setAttribute("class", "h-screen overflow-y-auto");
     aside.style.position = "absolute";
@@ -381,7 +392,7 @@ function appendControlsToCategories() {
         li.style.zIndex = 1;
 
         let label = document.createElement("label");
-        label.setAttribute("for", nameId); 400
+        label.setAttribute("for", nameId);
         label.style.zIndex = 1;
 
         let labelContainer = document.createElement("div");
@@ -512,6 +523,27 @@ function applyConditionsToControls() {
 }
 
 /**
+ * Apply custom user args to Palindrome
+ * @param {*} config devConfig
+ */
+function applyParamsToConfig(config) {
+    const userConfig = document.getElementById("palindromeScript")?.dataset?.structure;
+    if (userConfig) {
+        const dataStructure = JSON.parse(userConfig);
+        if (dataStructure) {
+            config["data"] = dataStructure;
+        }
+    }
+    const props = JSON.parse(document.getElementById("palindromeScript")?.dataset?.configuration || "{}");
+    for(const prop in props) {
+        if (prop === 'sidebar' && props[prop]===false) {
+            document.getElementById('palindrome-sidebar').style.display = "none";
+        }
+        config[prop] = props[prop];
+    }
+}
+
+/**
  * Renders Palindrome with config
  */
 export function renderDev(isGrafana) {
@@ -521,12 +553,13 @@ export function renderDev(isGrafana) {
     appendControlsToCategories();
     init();
     const devConfig = defaultValues();
+    applyParamsToConfig(devConfig);
     devConfig.isGrafana = isGrafana;
     if (process.env.PALINDROME_TYPE === "dev") {
         applyConditionsToControls();
     }
     applyDefaultOptions(devConfig);
-    if (process.env.PALINDROME_TYPE==="basic" || process.env.PALINDROME_TYPE==="dev") {
+    if (process.env.PALINDROME_TYPE === "basic" || process.env.PALINDROME_TYPE === "dev") {
         getPalindrome(devConfig);
     }
     return devConfig;

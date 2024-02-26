@@ -66,7 +66,7 @@ export function dcNegativeValuesConfiguration() {
                     "max": -160,
                     "med": -640,
                     "min": -1280,
-                    "current": -480
+                    "current": -700
                 },
                 "inboundLatency": {
                     "label": "inboundLatency",

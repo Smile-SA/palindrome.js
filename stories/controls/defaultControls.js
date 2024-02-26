@@ -108,7 +108,7 @@ export function defaultControls() {
         displayMode: {
             name: "displayMode",
             control: "select",
-            options: ['static', 'dynamic', 'debug'],
+            options: ['static', 'dynamic'],
             description: "Configure the sides mode",
             table: {
                 category: "Palindrome",
@@ -359,19 +359,7 @@ export function defaultControls() {
             control: {
                 type: "radio",
             },
-            options: ["static", "dynamicShades", 'ranges'],
-            table: {
-                category: "Palindrome",
-                subcategory: "Layer"
-            },
-        },
-        layerMetricsUnits: {
-            name: "layerMetricsUnits",
-            description: "Change the representation of the layers",
-            control: {
-                type: "radio",
-            },
-            options: ["absolute", "percent", "normalized",],
+            options: ["static", "dynamic", 'ranges',],
             table: {
                 category: "Palindrome",
                 subcategory: "Colors"
@@ -393,6 +381,18 @@ export function defaultControls() {
             table: {
                 category: 'Palindrome',
                 subcategory: 'Colors'
+            },
+        },
+        layerMetricsUnits: {
+            name: "layerMetricsUnits",
+            description: "Change the representation of the layers",
+            control: {
+                type: "radio",
+            },
+            options: ["absolute", "percent", "normalized",],
+            table: {
+                category: "Palindrome",
+                subcategory: "Layer"
             },
         },
         layersLabelsRenderingMode: {
@@ -937,7 +937,6 @@ export function defaultValues() {
         displayArea: 'palindrome',
         palindromeSize: 3,
         cameraOptions: ['Fit'],
-        opacity: 0.5,
         metricMagnifier: 10,
         layerDisplayMode: 'dynamic',
         displayLayers: true,
@@ -988,7 +987,7 @@ export function defaultValues() {
         displayFramesLine: true,
         displayFramesBackground: false,
         displayMetricsLabelsUnit: true,
-        displayLabelLine: false,
+        displayLabelLine: true,
 
         statusRangeLow: 0,
         statusRangeMed: 33,
@@ -1004,8 +1003,6 @@ export function defaultValues() {
         showResultsHistory: false,
         webWorkersHTTP: false,
         resourcesLevel: 50,
-        layerMetricsUnits: "absolute",
-        remoteDataFetchPace: 1000,
         sideLabelDisplay: false,
         rotatedMetricsAngle: 0,
         mergedMetricsNames: false,

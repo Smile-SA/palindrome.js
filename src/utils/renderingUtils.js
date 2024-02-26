@@ -22,7 +22,6 @@ export async function updateMeshes(params, renderingType) {
         layerParameters,
         dashLineMaterial,
         lineMaterial,
-        debug,
         scrapperUpdateInitTime,
         newData,
         dataIterator,
@@ -128,14 +127,6 @@ export async function updateMeshes(params, renderingType) {
                         rotation["layer"] = e.data.layer;
                         rotation["angle"] = newData[e.data.layer].layer[e.data.layer + "-layer"]?.rotation;
                         let globalParams = { conf, meshs: meshes, scene, rotation };
-                         //this is the updated layer metrics
-                        const metrics = newData[layer].metrics, layers = newData[layer].layer;
-                        //this is the new total of current's
-                        const metricCurrentTotal = Object.values(metrics).map(item => item.current).reduce((a, b) => a + b, 0);
-                        //this is the new total of max's
-                        const metricMaxTotal = Object.values(metrics).map(item => item.max).reduce((a, b) => a + b, 0);
-                        //todo : status colors shall map with default colors
-                        const layerStatus = ((metricCurrentTotal / metricMaxTotal) * 100);
                         drawLayer(e.data.layer, e.data.metricValue, e.data.metricsNumber, (conf.colorsBehavior === 'dynamic' && conf.transparentDisplay) ? e.data.layerStatus : layerColorDecidedByLayerStatus(e.data.layerStatus, conf, e.data.layer, newData), globalParams);
                         if (conf.displayMetricSpheres) {
                             let globalParams = { scene, meshs: meshes, conf, camera, labelDiv, layerParameters, rotation };
@@ -246,7 +237,7 @@ export async function updateMeshes(params, renderingType) {
                         sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex_frames);
                         sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex_frames);
                     }
-                    settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, labelDiv, xTab, yTab, zTab, e.data.metricValue);
+                    settingLabelFormat(sortedMetricsLabels, metrics, conf, labelDiv, xTab, yTab, zTab, e.data.metricValue);
                     // display layer
                     let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1], resize = 0.5;
                     setLabelsPositions(conf, resize, xTab, yTab, zTab, layersLabels);
@@ -304,8 +295,8 @@ export async function updateMeshes(params, renderingType) {
             //this is the updated layer metrics
             const metrics = newData[layer].metrics, layers = newData[layer].layer,
                 metricsNumber = Object.values(metrics).length;
-            //todo : status colors shall map with default colors
-            let layerStatus = getLayerStatus(metrics);
+
+            let layerStatus = getLayerStatus(metrics, layer);
             let metricsDivider, metricValue = {};
             metricValue = computeMetricValue(metrics, conf, zAxis);
             const metricsPositions = [metricValue.max, metricValue.med, metricValue.min];
@@ -314,7 +305,6 @@ export async function updateMeshes(params, renderingType) {
             rotation["layer"] = layer;
             rotation["angle"] = newData[layer].layer[layer + "-layer"]?.rotation;
             let globalParams = { conf, meshs: meshes, scene, rotation };
-            
             const layerColor = layerColorDecidedByLayerStatus(layerStatus, conf, layer, newData);
             drawLayer(layer, metricValue, metricsNumber, (conf.colorsBehavior === 'dynamic' && conf.transparentDisplay) ? layerStatus : layerColor, globalParams);
             //console.log(Object.keys(newData).length)
@@ -327,7 +317,6 @@ export async function updateMeshes(params, renderingType) {
                 metricsDivider = "current";
             } else if (conf.displayMode === "static") {
                 metricsDivider = "max";
-            } else if (conf.displayMode === "debug") {
             } else {
                 break;
             }
@@ -344,7 +333,7 @@ export async function updateMeshes(params, renderingType) {
                 sortedMetricsLabels = scene.children.filter((item) => item.metricIndex === metricIndex);
                 sortedLayersLabels = scene.children.filter((item) => item.layerIndex === layerIndex);
             }
-            settingLabelFormat(sortedMetricsLabels, metrics, debug, conf, labelDiv, xTab, yTab, zTab, metricValue);
+            settingLabelFormat(sortedMetricsLabels, metrics, conf, labelDiv, xTab, yTab, zTab, metricValue);
             // display layer
             let layersLabels = sortedLayersLabels[sortedLayersLabels.length - 1], resize = 0.5;
             setLabelsPositions(conf, resize, xTab, yTab, zTab, layersLabels);

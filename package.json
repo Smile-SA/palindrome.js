@@ -31,7 +31,7 @@
     "build:basic": "cross-env PALINDROME_TYPE=basic-build yarn parcel build src/index.js --public-url ./ --out-file=dist/palindrome.js --no-source-maps --no-cache",
     "storybook": "export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006",
     "build-storybook": "export NODE_OPTIONS=--openssl-legacy-provider && build-storybook",
-    "cy:run": "cypress run",
+    "cypress:run": "cypress run",
     "cypress:open": "cypress open",
     "storybook-deploy": "gh-pages -d storybook-static",
     "dev-deploy": "gh-pages -d dist",

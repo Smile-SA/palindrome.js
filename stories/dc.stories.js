@@ -9,7 +9,6 @@ import { dc_BasicConfigurationLayerColoured } from '../data-examples/dc_BasicCon
 import { dcNegativeValuesConfiguration } from '../data-examples/dc_NegativeValuesConfiguration';
 import { dcMetricDirectionConfiguration } from '../data-examples/dc_MetricDirectionConfiguration';
 import { dcMetricStates } from '../data-examples/dc_MetricStates';
-import { dcBasicConfigurationThreeLayers } from '../data-examples/dc_BasicConfigurationThreeLayers';
 
 export default {
     title: 'Use Cases/Palindrome/Data Center example',
@@ -51,13 +50,6 @@ BasicConfigurationThreeLayers.args = {
     data: dcBasicConfigurationThreeLayers(),
 };
 
-export const BasicConfigurationThreeLayers = createPalindrome.bind({});
-BasicConfigurationThreeLayers.args = {
-    mainStaticColor: '#FFCC00',
-    data: dcBasicConfigurationThreeLayers(),
-};
-
-
 export const FullMap = createPalindrome.bind({});
 FullMap.args = {
     mainStaticColor: '#FFCC00',
@@ -80,3 +72,8 @@ MetricDirectionConfiguration.args = {
     data: dcMetricDirectionConfiguration(),
 };
 
+export const MetricStatesConfig = createPalindrome.bind({});
+MetricStatesConfig.args = {
+    mainStaticColor: '#FFCC00',
+    data: dcMetricStates(),
+};

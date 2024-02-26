@@ -1,6 +1,6 @@
 //This file integrates defaultControls storybook into cypress testing environment
 /// <reference types="cypress" />
-const CustomConfigpalindrome = ".sto-1utb4xs"
+const CustomConfigpalindrome = "#use-cases-palindrome-data-center-example--custom-configuration"
 import { CustomConfiguration } from '/stories/dc.stories.js';
 
 var controls = Array.from(Object.keys(CustomConfiguration.args))

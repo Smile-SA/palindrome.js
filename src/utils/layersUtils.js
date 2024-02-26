@@ -1,7 +1,7 @@
 import { Triangle, SimpleLine, DasheLine } from '../threeJSUtils/ThreeJSGeometryObjects';
 import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
-import { getMetricMax, getRepresentationKeys, layerPoints } from './metricsUtils2D';
+import { computeMetricValue, getMetricMax, getMetricMin, getRepresentationKeys, layerPoints } from './metricsUtils2D';
 import { getColorOpacityBasedOnRanges } from './colorsUtils';
 import { behavioredMetricsTotalValues } from './labelsUtils2D';
 import { l2Normalize } from './metricsUtils2D';
@@ -21,13 +21,13 @@ export var drawLayer = function (layer, metricValue, metricsNumber, color, globa
         for (let i = 0; i < metricsNumber; i++) {
             //draws innner layer shapes
             if (conf.layerDisplayMode === "static") {
-                drawTrianglesInALayer(layer + '_mintoMedLayerShape', metricValue.min, metricValue.med, i, metricsNumber, conf.statusColorLow, meshs, scene, rotation, conf, conf.opacity);
-                drawTrianglesInALayer(layer + '_medtoMaxLayerShape', metricValue.med, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, rotation, conf, conf.opacity);
+                drawTrianglesInALayer(layer + '_mintoMedLayerShape', metricValue.min, metricValue.med, i, metricsNumber, conf.statusColorLow, meshs, scene, rotation, conf);
+                drawTrianglesInALayer(layer + '_medtoMaxLayerShape', metricValue.med, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, rotation, conf);
             } else if (conf.layerDisplayMode === "mixed") {
-                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, conf.statusColorLow, meshs, scene, rotation, conf, conf.opacity);
-                drawTrianglesInALayer(layer + '_curtoMaxLayerShape', metricValue.current, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, rotation, conf, conf.opacity);
+                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, conf.statusColorLow, meshs, scene, rotation, conf);
+                drawTrianglesInALayer(layer + '_curtoMaxLayerShape', metricValue.current, metricValue.max, i, metricsNumber, conf.statusColorHigh, meshs, scene, rotation, conf);
             } else if (conf.layerDisplayMode === "dynamic") {
-                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, color, meshs, scene, conf.opacity, rotation, conf)
+                drawTrianglesInALayer(layer + '_mintoCurLayerShape', metricValue.min, metricValue.current, i, metricsNumber, color, meshs, scene, rotation, conf)
             }
         }
     }
@@ -45,7 +45,7 @@ export var drawLayer = function (layer, metricValue, metricsNumber, color, globa
  * @param meshs
  * @param scene
  */
-function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePointLength, color, meshs, scene, rotation, conf, opacity) {
+function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePointLength, color, meshs, scene, rotation, conf) {
     let opacity = getColorOpacityBasedOnRanges(color, { highColor: conf.statusColorHigh, medColor: conf.statusColorMed, lowColor: conf.statusColorLow }, conf);
     if (conf.colorsBehavior === 'dynamic' && conf.transparentDisplay) {
         opacity = color / 100;
@@ -67,9 +67,9 @@ function drawTrianglesInALayer(layer, planePointOne, planePointTwo, i, planePoin
             meshs['meshRenderingOrder'] = createRenderOrderCounter();
         }
 
-        meshs['19' + layer + i] = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : opacity);
+        meshs['19' + layer + i] = new Triangle(planePointOne[i], planePointTwo[i], planePointTwo[(i + 1) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : null);
         //scene.add(meshs['19' + layer + i]);
-        meshs['20' + layer + i] = new Triangle(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : opacity);
+        meshs['20' + layer + i] = new Triangle(planePointTwo[(i + 1) % planePointLength], planePointOne[(i + 1) % planePointLength], planePointOne[(i) % planePointLength], conf.transparentDisplay ? conf.statusColorHigh : color, null, conf.transparentDisplay ? opacity : null);
 
         if (conf.cameraOptions.indexOf("Flat") !== -1) {
             meshs['19' + layer + i].renderOrder = meshs['meshRenderingOrder']();
@@ -212,11 +212,7 @@ export function applyLayerMetricsMergeToData(data, conf) {
         let allMetrics = {};
         for (let layer in data) {
             const metrics = data[layer].metrics;
-            let metricValue = {};
-            metricValue.max = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.max), zAxis, conf);
-            metricValue.med = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.med), zAxis, conf);
-            metricValue.min = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.min), zAxis, conf);
-            metricValue.current = layerPoints(Object.values(metrics).map(item => (conf.palindromeSize / item.max) * item.current), zAxis, conf);
+            let metricValue = computeMetricValue(metrics, conf);
             let counter = 0;
             zAxis -= conf.zPlaneMultilayer;
             for (const metric in metrics) {
@@ -231,7 +227,6 @@ export function applyLayerMetricsMergeToData(data, conf) {
         for (const metricName in allMetrics) {
             const metric = allMetrics[metricName];
             const positionKey = metric.position[0] + "-" + metric.position[1];
-
             if (positionMap[positionKey]) {
                 const layerLabel = metric.layerLabel;
                 data[layerLabel].metrics[metricName].label = "merged";
@@ -242,92 +237,22 @@ export function applyLayerMetricsMergeToData(data, conf) {
     }
 }
 
-export const applyLayerMetricsUnits = (data, conf) => {
-    for (const layer in data) {
-        const layerInfo = data[layer].layer;
-        const layerBehavior = layerInfo[`${layer}-layer`]?.layerMetricsUnits;
-        const behavior = ( layerBehavior === undefined || !['percent', 'absolute', 'normalized'].includes(layerBehavior)) ? conf.layerMetricsUnits : layerBehavior;
-        const metrics = data[layer].metrics;
-        if (behavior === "percent") {
-
-            // Getting total values for current, min, med, and max
-            const {
-                totalCurrentValues,
-                totalMinValues,
-                totalMaxValues,
-                totalMedValues,
-            } = behavioredMetricsTotalValues(metrics);
-      
-            for (const [key, value] of Object.entries(metrics)) {
-                const { current, min, med, max } = value;
-
-                // Computing new layerBehaviored metrics
-                const layerBehavioredMin = totalMinValues > 0 ? (min / totalMinValues) * 100 : 0;
-                const layerBehavioredMax = totalMaxValues > 0 ? (max / totalMaxValues) * 100 : 0;
-                const layerBehavioredMed = totalMedValues > 0 ? (med / totalMedValues) * 100 : 0;
-                const layerBehavioredCurrent = totalCurrentValues > 0 ? (current / totalCurrentValues) * 100 : 0;
-
-                data[layer].metrics[key]["_min"] = layerBehavioredMin;
-                data[layer].metrics[key]["_max"] = layerBehavioredMax;
-                data[layer].metrics[key]["_med"] = layerBehavioredMed;
-                data[layer].metrics[key]["_current"] = layerBehavioredCurrent;
-                data[layer].metrics[key]["_unit"] = "%";
-                data[layer].metrics[key]["isLayerBehaviored"] = true;
-            }
-        }
-        else if(behavior === "normalized") {
-            let currents = [];
-            let mins = [];
-            let meds = [];
-            let maxs = [];
-            for (const [_, value] of Object.entries(metrics)) {
-                const { current, min, med, max } = value;
-                // Computing new layerBehaviored metrics
-                currents.push(current);
-                mins.push(min);
-                meds.push(med);
-                maxs.push(max);
-            }
-            const normilizedCurrents = l2Normalize(currents);
-            const normalizeArraydMeds = l2Normalize(meds);
-            const normalizeArraydMaxs = l2Normalize(maxs);
-            const normalizeArraydMins = l2Normalize(mins);
-            let i = 0;
-            for (const [key, _] of Object.entries(metrics)) {
-                data[layer].metrics[key]["_min"] = normalizeArraydMins[i];
-                data[layer].metrics[key]["_max"] = normalizeArraydMaxs[i];
-                data[layer].metrics[key]["_med"] = normalizeArraydMeds[i];
-                data[layer].metrics[key]["_current"] = normilizedCurrents[i];
-                data[layer].metrics[key]["_unit"] = "";
-                data[layer].metrics[key]["isLayerBehaviored"] = true;
-                i++;
-            }
-        }
-    } 
-}
-
 /**
  * Keeps the same layer shape without considering current values
  * @param {*} data the use case data structure
  */
 export const applyLayersSize = (data) => {
-    // let zoomRatioMax = 1;
     for (const layer in data) {
         const layerInfo = data[layer].layer;
         const layerSize = layerInfo[`${layer}-layer`]?.layerSize;
         if (layerSize) {
             const metrics = data[layer].metrics;
             for (const [key, _] of Object.entries(metrics)) {
-                const representationKeys = getRepresentationKeys([data[layer].metrics[key]], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized']);
+                const representationKeys = getRepresentationKeys([data[layer].metrics[key]], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized', 'isPositiveShifted']);
                 for (const representationKey of representationKeys) {
                     data[layer].metrics[key]["_" + representationKey] = data[layer].metrics[key][representationKey];
                     data[layer].metrics[key][representationKey] = data[layer].metrics[key][representationKey] * 100 / getMetricMax(data[layer].metrics[key]);
                 }
-                // dynamic zoop
-                // const zoomRatio = Math.floor(data[layer].metrics[key]["current"] / layerSize);
-                // if (zoomRatio > zoomRatioMax) {
-                    //     zoomRatioMax = zoomRatio;                    
-                    // }
                 data[layer].metrics[key]["current"] = layerSize;
                 data[layer].metrics[key]["_unit"] = data[layer].metrics[key].unit;
                 data[layer].metrics[key]["isLayerResized"] = true;
@@ -335,21 +260,10 @@ export const applyLayersSize = (data) => {
             }
         }
     }
-
-    // dynamic zoom
-    // for (const layer in data) {
-    //     const layerInfo = data[layer].layer;
-    //     const layerSize = layerInfo[`${layer}-layer`]?.layerSize;
-    //     if (layerSize) {
-    //         const metrics = data[layer].metrics;
-    //         for (const [key, _] of Object.entries(metrics)) {
-    //             data[layer].metrics[key]["current"] = 2 * layerSize;
-    //         }        
-    //     }
-    // }
 }
 
-export const getLayerStatus = (metrics) => {
+
+export const getLayerStatus = (metrics, layer) => {
     let status = [];
     for (const metric of Object.values(metrics)) {
         let current, min, max;

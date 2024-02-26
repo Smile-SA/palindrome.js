@@ -1,17 +1,18 @@
 import * as THREE from 'three';
-import {initThreeObjects} from './threeJSUtils/ThreeJSBasicObjects';
-import {dataGenerator} from './threeJSUtils/dataGenerator';
-import {Stats, benchmarkCleanUp, collectStatsData} from './utils/benchmarkUtils';
-import {createLabels} from './utils/labelsUtils2D';
-import {animateFrameDashedLine} from './utils/framesUtils';
-import {initVariables} from './utils/initVariables';
-import {cameraViewOptions} from './utils/cameraUtils';
-import {initMaterials} from './threeJSUtils/threeJSMaterialsInit';
-import {setPreviousPalindrome} from "./utils/destructionUtils";
-import {createInputUrlModal, loadingText} from "./utils/fetchUtils";
-import {updateMeshes} from "./utils/renderingUtils";
-import { gradient } from './utils/colorsUtils';
+import { initThreeObjects } from './threeJSUtils/ThreeJSBasicObjects';
+import { dataGenerator } from './threeJSUtils/dataGenerator';
+import { Stats, benchmarkCleanUp, collectStatsData } from './utils/benchmarkUtils';
+import { createLabels } from './utils/labelsUtils2D';
+import { animateFrameDashedLine } from './utils/framesUtils';
+import { initVariables } from './utils/initVariables';
+import { cameraViewOptions } from './utils/cameraUtils';
+import { initMaterials } from './threeJSUtils/threeJSMaterialsInit';
+import { setPreviousPalindrome } from "./utils/destructionUtils";
+import { createInputUrlModal, loadingText } from "./utils/fetchUtils";
+import { updateMeshes } from "./utils/renderingUtils";
 import { applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
+import { changeLayerMetricsBehavior, shiftMetricsToPositive } from './utils/metricsUtils2D';
+import { renderDev } from '../dev/dev-index';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
@@ -89,7 +90,7 @@ export default (function (parentElement, conf) {
         newData = data;
 
         // Layer constraints behavior for percent
-        applyLayerMetricsUnits(data, conf);
+        changeLayerMetricsBehavior(data, conf);
         // Made specially for pyramid of Maslow's
         applyLayersSize(data);
 
@@ -134,12 +135,14 @@ export default (function (parentElement, conf) {
     let statsVariables = { displayMessage, displayBenchmark, statsData, startDate, parentElement };
 
     // Init global parameters
-    let debug = false;
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
     const meshes = {};
-    const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(confconf);
-    let metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
-    let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables( conf, metricParameters, layerParameters, parentElement ,  renderer, labelsRenderer, scene, meshes, camera, stats , statsVariables);
+    const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(conf);
+    const metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
+
+    const palindromeParameters = { conf, metricParameters, layerParameters, parentElement };
+    const threeJSParameters = { renderer, labelsRenderer, scene, camera, stats };
+    let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables(palindromeParameters, threeJSParameters);
     const clock = new THREE.Clock();
 
     // Calling main function
@@ -159,7 +162,6 @@ export default (function (parentElement, conf) {
             scene, camera,
             labelDiv, layerParameters,
             dashLineMaterial, lineMaterial,
-            debug,
             scrapperUpdateInitTime,
             newData, dataIterator,
             layers_pool, sides_pool, frames_pool, httpRequests_pool, refreshedData

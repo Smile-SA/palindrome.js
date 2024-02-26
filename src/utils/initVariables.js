@@ -11,7 +11,7 @@ import { WorkerPool } from "./workersUtils";
  */
 export var initVariables = function (palindromeParameters, threeJSParameters) {
     let { conf, metricParameters, layerParameters, parentElement } = palindromeParameters;
-    let { renderer, labelsRenderer, scene, camera, stats } = threeJSParameters;    
+    let { renderer, labelsRenderer, scene, camera, stats } = threeJSParameters;
     //distance between planes is expressed in positive number
     conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
 
@@ -127,7 +127,7 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
     layers_pool = new WorkerPool(conf.resourcesLevel);
     sides_pool = new WorkerPool(conf.resourcesLevel);
     frames_pool = new WorkerPool(conf.resourcesLevel);
-    httpRequests_pool = new WorkerPool("worker.js", conf.resourcesLevel);
+    httpRequests_pool = new WorkerPool(conf.resourcesLevel);
 
 
     return [layers_pool, sides_pool, frames_pool, httpRequests_pool];

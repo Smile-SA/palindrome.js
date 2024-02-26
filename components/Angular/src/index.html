@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PalindromeJsAngular</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  
+</head>
+  
+<body>
+    <app-root></app-root>
+    <div style="position:absolute;" id="palindrome" name="palindrome" class="palindrome" width="972" height="691"></div>
+    <script id="palindromeScript"
+    data-configuration='{"mockupData": true, "displayLayers": false, "sidebar": false}'
+    data-structure='
+        {
+            "systemMetrics": {
+                "metrics": {
+                    "cpu" : {
+                        "label": "CPU",
+                        "unit": "cycle / seconds",
+                        "min": 100,
+                        "med": 500,
+                        "max": 1000,
+                        "current": 1000
+                    },
+                    "ram": {
+                        "label": "RAM",
+                        "unit": "GB",
+                        "min": 160,
+                        "med": 640,
+                        "max": 1280,
+                        "current": 1280
+                    },
+                    "gpu": {
+                        "label": "GPU",
+                        "unit": "GB",
+                        "min": 160,
+                        "med": 640,
+                        "max": 1280,
+                        "current": 1280
+                    },
+                    "storage": {
+                        "label": "Storage",
+                        "unit": "GB",
+                        "min": 102,
+                        "med": 512,
+                        "max": 1024,
+                        "current": 1024
+                    },
+                    "bandwidth": {
+                        "label": "Bandwidth",
+                        "unit": "MB / seconds",
+                        "min": 102,
+                        "med": 512,
+                        "max": 1024,
+                        "current": 1024
+                    }
+                },
+                "layer": {
+                    "systemMetrics-layer": {
+                        "label": "System metrics",
+                        "_layerBehavior": "something",
+                        "_defaultColor": "green",
+                        "_publicColorOption": "random calls function to pick a color"
+                    }
+                }
+            },
+            "qosMetrics": {
+                "metrics": {
+                    "throughput": {
+                        "label": "throughput",
+                        "unit": "cycle / seconds",
+                        "min": 100,
+                        "med": 500,
+                        "max": 1000,
+                        "current": 1000
+                    },
+                    "availability": {
+                        "label": "availability",
+                        "unit": "GB",
+                        "min": 160,
+                        "med": 640,
+                        "max": 1280,
+                        "current": 1280
+                    },
+                    "inboundLatency": {
+                        "label": "inboundLatency",
+                        "unit": "GB",
+                        "min": 120,
+                        "med": 640,
+                        "max": 1280,
+                        "current": 1280
+                    },
+                    "outboundLatency": {
+                        "label": "outboundLatency",
+                        "unit": "GB",
+                        "min": 102,
+                        "med": 512,
+                        "max": 1024,
+                        "current": 1024
+                    },
+                    "ioSpeed": {
+                        "label": "ioSpeed",
+                        "unit": "MB / seconds",
+                        "min": 102,
+                        "med": 512,
+                        "max": 1024,
+                        "current": 1024
+                    }
+                },
+                "layer": {
+                    "qosMetrics-layer": {
+                        "label": "Qos metrics",
+                        "_layerBehavior": "something",
+                        "_defaultColor": "green",
+                        "_publicColorOption": "random calls function to pick a color"
+                    }
+                }
+            }
+        }
+    '
+     type="application/javascript"  src="./assets/palindrome.js">
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>

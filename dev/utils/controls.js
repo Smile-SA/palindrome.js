@@ -1,7 +1,7 @@
 import { dcCustomConfiguration } from "../../data-examples/dc_CustomConfiguration";
 import { debugTwoLayersThreePoints } from "../../data-examples/debug_TwoLayersThreePoints";
 import { dcBasicConfiguration } from "../../data-examples/dc_BasicConfiguration";
-import {  dcBasicConfigurationThreeLayers  } from "../../data-examples/dc_BasicConfigurationThreeLayers";
+import { dcBasicConfigurationThreeLayers } from "../../data-examples/dc_BasicConfigurationThreeLayers";
 import { dcEnergeticEfficiency } from "../../data-examples/dc_EnergeticEfficiency";
 import { dcFullMap } from "../../data-examples/dc_FullMap";
 import { benchLoadTestData } from "../../data-examples/oth_LoadTest";
@@ -13,7 +13,6 @@ import { logicTernary } from "../../data-examples/logic_Ternary";
 import { pyramidOfMaslows } from "../../data-examples/oth_pyramid_of_maslows";
 import { getWeatherData } from "../../src/webCollectors/api.open-meteo.com";
 import { localLiveMonitoring } from "../../src/webCollectors/local_live_monitoring";
-import {dcBasicConfigurationThreeLayers} from "../../data-examples/dc_BasicConfigurationThreeLayers";
 
 // defining categories
 export let categories = [

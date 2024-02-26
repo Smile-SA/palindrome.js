@@ -2,7 +2,6 @@ import palindrome from "../../src";
 import { previousPalindrome } from "../../src/utils/destructionUtils";
 
 export var createPalindrome = ({ ...args }) => {
-    console.log(args)
     //delete previous palindrome
     if (previousPalindrome) {
         let [renderer, scene, meshes, parentElement, frameId] = previousPalindrome;
