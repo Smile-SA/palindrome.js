@@ -788,21 +788,21 @@ export function defaultControls() {
             name: "mockupData",
 
             control: "boolean",
-            if: { arg: 'liveData', truthy: false },
+            // if: { arg: 'liveData', truthy: false },
             description: "Make dynamic the data ",
             table: {
                 category: "Data"
             },
         },
-        liveData: {
-            name: "liveData",
-            control: "boolean",
-            if: { arg: 'mockupData', truthy: false },
-            description: "Enable or disable live use case",
-            table: {
-                category: "Data"
-            },
-        },
+        // liveData: {
+        //     name: "liveData",
+        //     control: "boolean",
+        //     if: { arg: 'mockupData', truthy: false },
+        //     description: "Enable or disable live use case",
+        //     table: {
+        //         category: "Data"
+        //     },
+        // },
         remoteDataFetchPace: {
             name: "remoteDataFetchPace (ms)",
             control: "number",
@@ -813,50 +813,50 @@ export function defaultControls() {
             },
         },
         //benchamark
-        benchmark: {
-            name: "benchmark",
-            control: 'inline-radio',
-            description: "Turn on or off benchmark mode",
-            options: ['Active', 'Inactive'],
-            table: {
-                category: "Benchmark"
-            },
-        },
+        // benchmark: {
+        //     name: "benchmark",
+        //     control: 'inline-radio',
+        //     description: "Turn on or off benchmark mode",
+        //     options: ['Active', 'Inactive'],
+        //     table: {
+        //         category: "Benchmark"
+        //     },
+        // },
 
-        testBothVersions: {
-            name: "basicAndWorkers",
-            control: 'boolean',
-            description: "test with and without web workers",
-            table: {
-                category: "Benchmark"
-            },
-        },
+        // testBothVersions: {
+        //     name: "basicAndWorkers",
+        //     control: 'boolean',
+        //     description: "test with and without web workers",
+        //     table: {
+        //         category: "Benchmark"
+        //     },
+        // },
 
-        testDuration: {
-            name: "testDuration (minutes)",
-            control: "number",
-            description: "benchmark execution duration in minutes",
-            table: {
-                category: "Benchmark"
-            }
-        },
-        clearHistory: {
-            name: "clearHistory",
-            control: "boolean",
-            description: "allow or not clearing history after benchmark execution",
-            table: {
-                category: "Benchmark"
-            }
-        },
+        // testDuration: {
+        //     name: "testDuration (minutes)",
+        //     control: "number",
+        //     description: "benchmark execution duration in minutes",
+        //     table: {
+        //         category: "Benchmark"
+        //     }
+        // },
+        // clearHistory: {
+        //     name: "clearHistory",
+        //     control: "boolean",
+        //     description: "allow or not clearing history after benchmark execution",
+        //     table: {
+        //         category: "Benchmark"
+        //     }
+        // },
 
-        showResultsHistory: {
-            name: "showResultsHistory",
-            control: "boolean",
-            description: "show benchmark history",
-            table: {
-                category: "Benchmark"
-            }
-        },
+        // showResultsHistory: {
+        //     name: "showResultsHistory",
+        //     control: "boolean",
+        //     description: "show benchmark history",
+        //     table: {
+        //         category: "Benchmark"
+        //     }
+        // },
 
         webWorkersRendering: {
             name: "webWorkersRendering",
@@ -994,13 +994,13 @@ export function defaultValues() {
         statusRangeHigh: 66,
         data: 'palindrome',
         mockupData: false,
-        liveData: false,
-        benchmark: 'Inactive',
-        testBothVersions: true,
-        testDuration: 1,
-        clearHistory: false,
+        // liveData: false,
+        // benchmark: 'Inactive',
+        // testBothVersions: true,
+        // testDuration: 1,
+        // clearHistory: false,
         webWorkersRendering: false,
-        showResultsHistory: false,
+        // showResultsHistory: false,
         webWorkersHTTP: false,
         resourcesLevel: 50,
         sideLabelDisplay: false,

@@ -12,7 +12,6 @@ import { logicFourValued } from "../../data-examples/logic_FourValued";
 import { logicTernary } from "../../data-examples/logic_Ternary";
 import { pyramidOfMaslows } from "../../data-examples/oth_pyramid_of_maslows";
 import { getWeatherData } from "../../src/webCollectors/api.open-meteo.com";
-import { localLiveMonitoring } from "../../src/webCollectors/local_live_monitoring";
 
 // defining categories
 export let categories = [
@@ -64,7 +63,6 @@ export let palindromes = {
         { name: "benchLoadTest", data: benchLoadTestData },
         { name: "pyramidOfMaslows", data: pyramidOfMaslows },
         { name: "api.open-meteo.com", isRemoteDataSource: true, fetchFunction: getWeatherData, remoteDataFetchPace: 1000 * 60 * 60 },
-        { name: "localLiveMonitoring", isRemoteDataSource: true, fetchFunction: localLiveMonitoring },
     ],
 };
 
@@ -82,7 +80,7 @@ export let controls = {
         name: "Mockup data",
         control: "boolean",
         description: "Make the data dynamic",
-        if: { control: "liveData", value: true },
+        if: { control: "liveData", value: false },
         category: categories[0]
     },
     /*    displayArea: {
@@ -95,7 +93,7 @@ export let controls = {
         name: "Live data",
         control: "boolean",
         description: "Enable or disable live use case",
-        if: { control: "mockupData", value: true },
+        if: { control: "mockupData", value: false },
         category: categories[0],
     },
     webWorkersRendering: {
@@ -231,7 +229,7 @@ export let controls = {
         description: 'Activate or deactivate benchmark',
         control: 'radio',
         options: ['Active', 'Inactive'],
-        hidden: false,
+        hidden: true,
         category: categories[0],
     },
 }

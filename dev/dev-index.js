@@ -422,6 +422,15 @@ function appendControlsToCategories() {
             li.appendChild(labelContainer);
 
             ul.appendChild(li);
+            const urlParams = new URLSearchParams(window.location.search);
+            const palindromeName = urlParams.get('data');
+            if (palindromeName) {
+                let category = findCategoryByPalindromeName(palindromeName);
+                let palindrome = findPalindromeByCategoryAndName(category, palindromeName);
+                if (!palindrome.isLive && nameId==='liveData') {
+                    ul.style.display = "none";
+                }
+            }
             document.getElementById(controls[nameId].category).append(ul);
 
         } else if (controls[nameId].control === "text") {
@@ -514,9 +523,8 @@ function applyConditionsToControls() {
             return;
         }
         const toggleDesign = document.getElementById(id + '-toggle-design');
-        if (otherElement.checked === value) {
+        if (otherElement.checked !== value) {
             element.disabled = true;
-            console.log(toggleDesign)
             toggleDesign.setAttribute("class", toggleDesign.getAttribute("class") + " opacity-30");
         }
     }
@@ -535,8 +543,8 @@ function applyParamsToConfig(config) {
         }
     }
     const props = JSON.parse(document.getElementById("palindromeScript")?.dataset?.configuration || "{}");
-    for(const prop in props) {
-        if (prop === 'sidebar' && props[prop]===false) {
+    for (const prop in props) {
+        if (prop === 'sidebar' && props[prop] === false) {
             document.getElementById('palindrome-sidebar').style.display = "none";
         }
         config[prop] = props[prop];
@@ -555,12 +563,12 @@ export function renderDev(isGrafana) {
     const devConfig = defaultValues();
     applyParamsToConfig(devConfig);
     devConfig.isGrafana = isGrafana;
-    if (process.env.PALINDROME_TYPE === "dev") {
-        applyConditionsToControls();
-    }
     applyDefaultOptions(devConfig);
     if (process.env.PALINDROME_TYPE === "basic" || process.env.PALINDROME_TYPE === "dev") {
         getPalindrome(devConfig);
+    }
+    if (process.env.PALINDROME_TYPE === "dev") {
+        applyConditionsToControls();
     }
     return devConfig;
 }

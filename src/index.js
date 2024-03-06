@@ -19,6 +19,8 @@ import { renderDev } from '../dev/dev-index';
  * @param {*} conf model's configuration
  */
 export default (function (parentElement, conf) {
+    conf.testBothVersions= true;
+    conf.testDuration= 1;
     /**
      * Main function
      *
