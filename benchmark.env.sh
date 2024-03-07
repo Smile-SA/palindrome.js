@@ -5,6 +5,7 @@ export BENCHMARK_DURATION=1 # in minutes
 export USE_CASE_NAME=dcBasicConfiguration
 export WORKERS_RESOURCES_LEVEL=100
 export OUTPUT_FILENAME=palindrome_benchmark
+export BROWSER_DOWNLOADS_DIRECTORY=Downloads
 export USE_GPU=true
 export HEADLESS_MODE=true
 export USE_WEBSERVER=false

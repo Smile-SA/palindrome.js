@@ -19,8 +19,8 @@ cleanup() {
 }
 
 # Set the base path and construct the output file path
-mkdir -p "${HOME}/Downloads"
-outputFile="${HOME}/Downloads/${OUTPUT_FILENAME}"
+mkdir -p "${HOME}/${BROWSER_DOWNLOADS_DIRECTORY}"
+outputFile="${HOME}/${BROWSER_DOWNLOADS_DIRECTORY}/${OUTPUT_FILENAME}"
 
 # Remove cache and existing output file
 rm -rf .cache
