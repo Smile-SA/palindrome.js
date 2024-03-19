@@ -32,6 +32,10 @@ Project is created with:
 * Three.js
 * love <3
 
+## Requirements
+
+- Node.js version 20 or later
+
 ## Setup
 
 This project uses ```three.js``` as its 3D renderer, ```yarn``` as the dependency manager, ```storybook``` for
