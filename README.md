@@ -36,6 +36,15 @@ Project is created with:
 
 - Node.js version 20 or later
 
+Node.js version can be updated by executing the following commands:
+
+```bash
+sudo apt remove nodejs
+sudo apt remove nodejs-doc
+curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install nodejs
+```
+**Note:** An already built version of Palindrome.js is ready to be integrated without any Node.js setup, two files can be found inside the `/artifacts` folder: `palindrome.dev.js`, which includes a sidebar, and `palindrome.js`, which represents the basic version of Palindrome.js without a sidebar. The [documentation](../../wikis/Single-file-distribution) should be followed for more integration details.
 ## Setup
 
 This project uses ```three.js``` as its 3D renderer, ```yarn``` as the dependency manager, ```storybook``` for
