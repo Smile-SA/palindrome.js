@@ -24,12 +24,13 @@
     "storybook-addon-turbo-build": "^1.1.0"
   },
   "scripts": {
-    "dev": "cross-env PALINDROME_TYPE=dev parcel dev/index.html --no-cache",
+    "postinstall": "/bin/bash ./install-live-monitoring-server.sh",
+    "dev": "./run-live-monitoring-server.sh & cross-env PALINDROME_TYPE=dev parcel dev/index.html --no-cache",
     "basic": "cross-env PALINDROME_TYPE=basic parcel dev/index.html --no-cache",
-    "build": "cross-env PALINDROME_TYPE=dev parcel build dev/index.html --public-url ./ --no-cache",
+    "build": "cross-env PALINDROME_TYPE=dev PLATFORM=GH_PAGES parcel build dev/index.html --public-url ./ --no-cache",
     "build:dev": "cross-env PALINDROME_TYPE=dev-build yarn parcel build src/index.js --public-url ./ --out-file=dist/palindrome.dev.js --no-source-maps --no-cache",
     "build:basic": "cross-env PALINDROME_TYPE=basic-build yarn parcel build src/index.js --public-url ./ --out-file=dist/palindrome.js --no-source-maps --no-cache",
-    "storybook": "export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006",
+    "storybook": "./run-live-monitoring-server.sh & export NODE_OPTIONS=--openssl-legacy-provider && start-storybook -p 6006",
     "build-storybook": "export NODE_OPTIONS=--openssl-legacy-provider && build-storybook",
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",

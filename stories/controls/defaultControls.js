@@ -786,23 +786,22 @@ export function defaultControls() {
         },
         mockupData: {
             name: "mockupData",
-
             control: "boolean",
-            // if: { arg: 'liveData', truthy: false },
+            if: { arg: 'liveData', truthy: false },
             description: "Make dynamic the data ",
             table: {
                 category: "Data"
             },
         },
-        // liveData: {
-        //     name: "liveData",
-        //     control: "boolean",
-        //     if: { arg: 'mockupData', truthy: false },
-        //     description: "Enable or disable live use case",
-        //     table: {
-        //         category: "Data"
-        //     },
-        // },
+        liveData: {
+            name: "liveData",
+            control: "boolean",
+            if: { arg: 'mockupData', truthy: false },
+            description: "Enable or disable live use case",
+            table: {
+                category: "Data"
+            },
+        },
         remoteDataFetchPace: {
             name: "remoteDataFetchPace (ms)",
             control: "number",
@@ -994,7 +993,7 @@ export function defaultValues() {
         statusRangeHigh: 66,
         data: 'palindrome',
         mockupData: false,
-        // liveData: false,
+        liveData: false,
         // benchmark: 'Inactive',
         // testBothVersions: true,
         // testDuration: 1,
