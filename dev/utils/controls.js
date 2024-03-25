@@ -12,6 +12,7 @@ import { logicFourValued } from "../../data-examples/logic_FourValued";
 import { logicTernary } from "../../data-examples/logic_Ternary";
 import { pyramidOfMaslows } from "../../data-examples/oth_pyramid_of_maslows";
 import { getWeatherData } from "../../src/webCollectors/api.open-meteo.com";
+import { localLiveMonitoring } from "../../src/webCollectors/local_live_monitoring";
 
 // defining categories
 export let categories = [
@@ -65,6 +66,10 @@ export let palindromes = {
         { name: "api.open-meteo.com", isRemoteDataSource: true, fetchFunction: getWeatherData, remoteDataFetchPace: 1000 * 60 * 60 },
     ],
 };
+
+if (process.env.PLATFORM !== "GH_PAGES") {
+    palindromes.otherExamples.push({ name: "localLiveMonitoring", isRemoteDataSource: true, fetchFunction: localLiveMonitoring, isLive: true })
+}
 
 //Defining sidebar controls
 export let controls = {

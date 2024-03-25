@@ -12,10 +12,10 @@ export const loadingText = () => {
 }
 
 /**
- * Creates input modal for remote data source url
+ * Creates popup for remote data source url
  * @param {*} parentElement the Palindrome.js container
  */
-export const createInputUrlModal = (parentElement) => {
+export const createBadUrlPopup = (parentElement) => {
     let modalDiv = document.createElement("div");
     modalDiv.setAttribute("id", "url-input");
     modalDiv.style.fontFamily = "sans-serif";
@@ -37,9 +37,8 @@ export const createInputUrlModal = (parentElement) => {
     modalContent.style.margin = "auto";
     modalContent.style.padding = "20px";
     modalContent.style.border = "1px solid #888";
-    modalContent.style.width = "80%";
-    modalContent.style.height = "50%";
-    modalContent.style.overflow = "auto";
+    modalContent.style.width = "30%";
+    modalContent.style.height = "20%";
     modalContent.style.borderRadius = "25px";
 
     const span = document.createElement("span");
@@ -53,28 +52,9 @@ export const createInputUrlModal = (parentElement) => {
     modalContent.appendChild(span);
 
     const title = document.createElement('p');
-    title.innerHTML = '... Something went wrong with the server call. Please fill out your remote data source URL:';
-    title.style = 'margin-left: 20px;';
+    title.innerHTML = "❌ Sorry, we couldn't find any external data from <a src='http://localhost:3000'>http://localhost:3000</a>.";
+    title.style = 'margin-left: 10%; margin-right: 10%; margin-top: 4.5%; font-size: 16px; align-text: center';
     modalContent.appendChild(title);
-
-    const urlInput = document.createElement('input');
-    urlInput.setAttribute('placeholder', 'http://example.com');
-    urlInput.setAttribute('id', 'remoteDataSourceURL');
-    modalContent.appendChild(urlInput);
-
-    const errorMessage = document.createElement('p');
-    errorMessage.innerHTML = 'Invalid URL or the returned response does not adhere to the specifications outlined in Palindrome.js documentation.<br/>Please refer to the documentation for detailed information.';
-    errorMessage.style.color = "red";
-    errorMessage.style.fontSize = '11px';
-    errorMessage.style.marginLeft = '20px';
-    errorMessage.setAttribute('id', 'url-error-message');
-    errorMessage.style.visibility = 'hidden';
-    modalContent.appendChild(errorMessage);
-
-    const submit = document.createElement('button');
-    submit.innerHTML = 'Submit';
-    submit.setAttribute('id', 'submit-button');
-    modalContent.appendChild(submit);
 
 
     let style = document.createElement('style');
@@ -83,40 +63,6 @@ export const createInputUrlModal = (parentElement) => {
             color: black;
             text-decoration: none;
             cursor: pointer;
-        }
-        #remoteDataSourceURL {
-            width: 80%;
-            transition: 0.4s ease-in-out;
-            margin-left: 20px;
-            margin-top: 20px;
-            height: 20%; outline: none; border: none; border-bottom: 2px solid grey;
-        }
-        #remoteDataSourceURL:focus {
-            width: 90%;
-            transform: scale(1.05);
-            border-bottom: 2px solid #7625a8;
-            transition: 0.4s ease-in-out;
-            margin-left: 30px;
-        }
-        #submit-button{
-            display: block;
-            margin-top: 20px;
-            margin-left: 85%;
-            outline: none;
-            border: none;
-            height: 30px;
-            width: 100px;
-            border-radius: 5px;
-            transition: 0.3s ease-in-out;
-            background-color: #ebebeb;
-        }
-        #submit-button:hover{
-            background-color: #7625a8;
-            color: white;
-            cursor: pointer;
-            transform: scale(1.1);
-            transition: 0.3s ease-in-out;
-
         }
     `;
 

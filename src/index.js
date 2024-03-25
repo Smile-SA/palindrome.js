@@ -8,7 +8,7 @@ import { initVariables } from './utils/initVariables';
 import { cameraViewOptions } from './utils/cameraUtils';
 import { initMaterials } from './threeJSUtils/threeJSMaterialsInit';
 import { setPreviousPalindrome } from "./utils/destructionUtils";
-import { createInputUrlModal, loadingText } from "./utils/fetchUtils";
+import { createBadUrlPopup, loadingText } from "./utils/fetchUtils";
 import { updateMeshes } from "./utils/renderingUtils";
 import { applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
 import { changeLayerMetricsBehavior, shiftMetricsToPositive } from './utils/metricsUtils2D';
@@ -54,31 +54,7 @@ export default (function (parentElement, conf) {
                 console.log("client response :", data);
             } catch (error) {
                 isDataReady = false;
-                createInputUrlModal(parentElement);
-                document.getElementById("submit-button").onclick = async () => {
-                    const input = document.getElementById("remoteDataSourceURL");
-                    const url = input.value;
-                    let isRequestSuccess;
-                    try {
-                        data = await conf.fetchFunction(url);
-                        localStorage.setItem("remote-data-source", url);
-                        isRequestSuccess = true;
-                    }
-                    catch {
-                        document.getElementById("url-error-message").style.visibility = "";
-                        input.style.borderBottom = "2px solid red";
-                        input.style.color = "red";
-                        isRequestSuccess = false;
-                    }
-
-                    if (isRequestSuccess) {
-                        parentElement.removeChild(document.getElementById("url-input"));
-                        if (loading) {
-                            parentElement.removeChild(loading);
-                        }
-                        run();
-                    }
-                };
+                createBadUrlPopup(parentElement);
                 // Output the error if we have a http error occurred
                 console.error("client response :", error);
             }
