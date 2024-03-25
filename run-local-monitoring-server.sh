@@ -1,4 +1,4 @@
-cd localLiveMonitoringServer
+cd localMonitoringServer
 yarn run start &
 # cold start
 SERVER_URL="http://localhost:3000/dataSys"
