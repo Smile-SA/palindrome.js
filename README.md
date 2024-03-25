@@ -14,7 +14,7 @@ _**```Palindrome.js``` is still considered as an experimental / beta prototype, 
 Feedbacks are more than welcome !**_
 
 <p float="left">
-<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV1.png" width="93%" >
+<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV1.jpg" width="93%" >
 </p>
 
 ## Motivation
@@ -82,8 +82,9 @@ Simply open a pull request over the repository to describe your changes.
 ## Credits
 
 - Rnd Team @ SMILE
-- Koku Ulrich GBLOKPO @koku-ulrich.gblokpo
 - Mohamed Ali YACOUBI @yacoubii
+- Clément Spileers @Irjean
+- Koku Ulrich GBLOKPO @koku-ulrich.gblokpo
 - Farooque Mustafa @farooquemustafa
 - Damien Gilles @gillesdami
 - JonRiv (author) @JonRiv
