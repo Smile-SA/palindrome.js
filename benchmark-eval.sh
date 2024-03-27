@@ -43,10 +43,10 @@ launch_benchmark_and_get_results() {
     local file_content
     declare -a values
 
-    rm -f "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}"*
+    rm -f "${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}/${PALINDROME_BENCH_OUTPUT}"*
     pkill firefox
     bash ./benchmark.sh > /dev/null
-    file_content=$(cat "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results")
+    file_content=$(cat "${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}/${PALINDROME_BENCH_OUTPUT}.results")
 
     values+=("$(echo "${file_content}" | jq -r '.Basic_version_results."Average FPS rendered"')")
     values+=("$(echo "${file_content}" | jq -r '."Web workers_version_results"."Average FPS rendered"')")
@@ -186,3 +186,5 @@ eval_benchmark_wrapper(){
     eval_benchmark_get_median
     eval_benchmark_run_and_display_results
 }
+
+eval_benchmark_wrapper

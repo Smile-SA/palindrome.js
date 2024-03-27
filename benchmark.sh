@@ -2,7 +2,7 @@
 # Set up benchmark parameters
 source ./benchmark.env.sh
 # Trap SIGINT to clean up before exiting
-trap cleanup INT
+trap simple_benchmark_exit_cleanup INT
 
 # inherit: output_file
 simple_benchmark_exit_cleanup() {
@@ -23,6 +23,7 @@ simple_benchmark_exit_cleanup() {
     if [[ -f "${output_file}.txt" ]]; then
         rm "${output_file}.txt"
     fi
+    rm -rf ~/.mozilla/firefox/*.default-release/sessionstore-backups/*
     exit 0
 }
 
@@ -204,4 +205,6 @@ simple_benchmark_wrapper(){
     # Clean up and exit
     simple_benchmark_exit_cleanup
 }
+
+simple_benchmark_wrapper
 

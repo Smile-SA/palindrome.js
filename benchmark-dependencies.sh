@@ -7,7 +7,7 @@ apt update -y
 apt install wget -y
 
 # Install google-chrome
-if [[ "${PALINDROME_BENCH_GPU}" == false ]], then
+if [[ "${PALINDROME_BENCH_GPU}" == false ]]; then
     if [ -z "$(command -v google-chrome)" ]; then
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         export TZ=Europe/Paris 
