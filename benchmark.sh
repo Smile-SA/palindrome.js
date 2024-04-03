@@ -4,6 +4,22 @@ source ./benchmark.env.sh
 # Trap SIGINT to clean up before exiting
 trap simple_benchmark_exit_cleanup INT
 
+simple_benchmark_validate_env_variables() {
+    if [[ "${PALINDROME_BENCH_BROWSER}" == 'chromium' ]]; then
+        if [[ "${PALINDROME_BENCH_GPU}" == true ]]; then
+            echo "ERROR: chromium should not be used with GPU based benchmark. Use firefox instead."
+            exit 1
+        fi
+    fi
+
+    if [[ "${PALINDROME_BENCH_BROWSER}" == 'firefox' ]]; then
+        if [[ "${PALINDROME_BENCH_GPU}" == false ]]; then
+            echo "ERROR: firefox should not be used with CPU based benchmark. Use chromium instead."
+            exit 1
+        fi
+    fi
+}
+
 # inherit: output_file
 simple_benchmark_exit_cleanup() {
     local firefox_profile
@@ -186,6 +202,8 @@ simple_benchmark_wrapper(){
     # Set the base path and construct the output file path
     mkdir -p "${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}"
     output_file="${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}/${PALINDROME_BENCH_OUTPUT}"
+
+    simple_benchmark_validate_env_variables
 
     simple_benchmark_entry_cleanup
 

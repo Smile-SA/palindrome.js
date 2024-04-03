@@ -14,3 +14,4 @@ export PALINDROME_BENCH_EXPECTED_VALUES_SOURCE=remote
 export PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL="https://palindrome-production.onrender.com/api/requirements"
 export PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT_FILE=expected-values.eval
 export PALINDROME_BENCH_RECALCULATE_MEDIAN=false
+export PALINDROME_BENCH_BROWSER=firefox #or chromium
