@@ -18,6 +18,13 @@ simple_benchmark_validate_env_variables() {
             exit 1
         fi
     fi
+
+    if [[ -z "${GITLAB_CI}" ]]; then
+        if [[ "${PALINDROME_BENCH_BROWSER}" == 'chromium' ]]; then
+            echo "ERROR: chromium can be used in headless just within Gitlab CI/CD pipeline. Use headless firefox instead."
+            exit 1
+        fi
+    fi
 }
 
 # inherit: output_file
