@@ -1,18 +1,28 @@
 #!/bin/bash
 
+# Set up benchmark parameters
+source ./benchmark.env.sh
+
 # Update the package manager
-apt update -y
+#apt update -y
 
 # Install wget
 apt install wget -y
 
 # Install google-chrome
-if [[ "${PALINDROME_BENCH_GPU}" == false ]]; then
-    if [ -z "$(command -v google-chrome)" ]; then
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        export TZ=Europe/Paris 
-        ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        apt install ./google-chrome-stable_current_amd64.deb -y
+if [[ "${PALINDROME_BENCH_BROWSER}" == 'chromium' ]]; then
+    if [ -z "$(command -v chromium)" ]; then
+        if [[ -n "${GITLAB_CI}" ]]; then
+            export TZ=Europe/Paris 
+            ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+            apt install chromium-browser -y
+            snap install chromium
+        else
+            export TZ=Europe/Paris 
+            ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+            sudo apt install chromium-browser -y
+            sudo snap install chromium
+        fi
     fi
 fi
 

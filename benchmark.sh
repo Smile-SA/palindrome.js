@@ -21,8 +21,10 @@ simple_benchmark_validate_env_variables() {
 
     if [[ -z "${GITLAB_CI}" ]]; then
         if [[ "${PALINDROME_BENCH_BROWSER}" == 'chromium' ]]; then
-            echo "ERROR: chromium can be used in headless just within Gitlab CI/CD pipeline. Use headless firefox instead."
-            exit 1
+            if [[ "${PALINDROME_BENCH_HEADLESS}" == true ]]; then
+                echo "ERROR: chromium can be used in headless just within Gitlab CI/CD pipeline. Use headless firefox instead."
+                exit 1
+            fi
         fi
     fi
 }
@@ -32,7 +34,10 @@ simple_benchmark_exit_cleanup() {
     local firefox_profile
 
     echo -e "\033[1m[INFO] Cleaning up and exiting...\n\033[0m"
-    pkill -f firefox
+    if [[ "${PALINDROME_BENCH_HEADLESS}" == true ]]; then
+        pkill -f firefox
+        pkill -f chromium
+    fi
     pkill -f parcel
     firefox_profile=~/.mozilla/firefox/profiles.ini
     if [[ -n "${GITLAB_CI}" ]]; then
@@ -94,20 +99,20 @@ simple_benchmark_execute_browsers(){
             firefox -url $url &
         else
             # review: ${url}& or ${url} &
-            google-chrome --disable-gpu --no-sandbox ${url}&
+            chromium --disable-gpu --no-sandbox ${url}&
         fi
     else
         if [[ "${PALINDROME_BENCH_GPU}" == true ]]; then
             firefox --headless -url ${url} &
         else
             if [[ -n "${GITLAB_CI}" ]]; then
-                google-chrome --no-sandbox &
+                chromium --no-sandbox &
                 chrome_pid=$!
                 sleep 10
                 kill -9 "${chrome_pid}"
                 sleep 30
                 # review: ${url}& or ${url} &
-                google-chrome --disable-gpu --no-sandbox ${url}&
+                chromium --disable-gpu --no-sandbox ${url}&
             else
                 firefox --headless -url ${url} &
             fi;
@@ -160,7 +165,7 @@ simple_benchmark_display_results(){
     if [[ "${PALINDROME_BENCH_GPU}" == true ]]; then
         file_content=$(cat "${output_file}")
     else
-        if [[ -n "$GITLAB_CI" ]]; then
+        if [[ "${PALINDROME_BENCH_BROWSER}" == 'chromium' ]]; then
             file_content=$(cat "${output_file}.txt")
         else
             file_content=$(cat "${output_file}")
