@@ -24,8 +24,8 @@ default:
 
 build-dev:
   stage: build
-  extends: .install-dependencies
   script:
+    - yarn install
     - yarn build
   artifacts:
     paths:
