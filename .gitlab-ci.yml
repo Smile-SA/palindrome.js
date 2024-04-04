@@ -24,6 +24,10 @@ default:
 
 build-dev:
   stage: build
+  before_script:
+    - apk update
+    - apk add bash
+    - apk add git
   script:
     - yarn install
     - yarn build
