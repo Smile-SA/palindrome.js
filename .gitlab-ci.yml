@@ -5,10 +5,16 @@ stages:
 
 .install-dependencies:
   before_script:
+    - apt update -y
+    - apt install git -y
+    - git --version
     - yarn install
 
 .install-benchmark-dependencies:
   before_script:
+    - apt update -y
+    - apt install git -y
+    - git --version
     - /bin/bash benchmark-dependencies.sh
     - yarn install
 
