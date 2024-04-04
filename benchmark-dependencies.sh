@@ -4,7 +4,7 @@
 source ./benchmark.env.sh
 
 # Update the package manager
-#apt update -y
+apt update -y
 
 # Install wget
 apt install wget -y
