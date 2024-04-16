@@ -7,10 +7,17 @@ stages:
   before_script:
     - yarn install
 
-# .install-benchmark-dependencies:
-#   before_script:
-#     - /bin/bash benchmark-dependencies.sh
-#     - yarn install
+.install-node-yarn-dependencies:
+  before_script:
+    - sudo apt install -y sudo curl
+    - curl --version
+    - curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    - sudo apt install -y nodejs
+    - node -v
+    - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    - sudo apt update && sudo apt install -y yarn
+    - yarn install
 
 default:
   image: node:18.18-alpine
@@ -42,7 +49,7 @@ benchmark:
   image: ubuntu:20.04
   stage: test
   dependencies: []
-  extends: .install-dependencies
+  extends: .install-node-yarn
   script:
     - /bin/bash benchmark.sh "classic"
   allow_failure: false
@@ -51,7 +58,7 @@ benchmark-test:
   image: ubuntu:20.04
   stage: test
   dependencies: []
-  extends: .install-dependencies
+  extends: .install-node-yarn
   script:
     - /bin/bash benchmark.sh "evaluation"
   allow_failure: false
