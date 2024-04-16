@@ -9,7 +9,7 @@ stages:
 
 .install-node-yarn-dependencies:
   before_script:
-    - sudo apt install -y sudo curl
+    - apt install -y sudo curl
     - curl --version
     - curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
     - sudo apt install -y nodejs
