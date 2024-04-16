@@ -49,7 +49,7 @@ benchmark:
   image: ubuntu:20.04
   stage: test
   dependencies: []
-  extends: .install-node-yarn
+  extends: .install-node-yarn-dependencies
   script:
     - /bin/bash benchmark.sh "classic"
   allow_failure: false
@@ -58,7 +58,7 @@ benchmark-test:
   image: ubuntu:20.04
   stage: test
   dependencies: []
-  extends: .install-node-yarn
+  extends: .install-node-yarn-dependencies
   script:
     - /bin/bash benchmark.sh "evaluation"
   allow_failure: false
