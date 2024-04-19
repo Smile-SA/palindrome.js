@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Set up benchmark parameters
 source ./benchmark.env.sh
 # Trap SIGINT to clean up before exiting
@@ -19,15 +18,15 @@ cleanup() {
 }
 
 # Set the base path and construct the output file path
-mkdir -p "${HOME}/${BROWSER_DOWNLOADS_DIRECTORY}"
-outputFile="${HOME}/${BROWSER_DOWNLOADS_DIRECTORY}/${OUTPUT_FILENAME}"
+mkdir -p "${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}"
+outputFile="${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}/${PALINDROME_BENCH_OUTPUT_FILENAME}"
 
 # Remove cache and existing output file
 rm -rf .cache
 [ -e "$outputFile" ] && rm "$outputFile"
 [ -e "$outputFile.txt" ] && rm "$outputFile.txt"
 
-if [[ "$USE_WEBSERVER" = true ]]; then
+if [[ "$PALINDROME_BENCH_WEBSERVER" = true ]]; then
     # Kill processes on port 1234 and start Parcel
     fuser -k 1234/tcp
     yarn parcel dev/index.html &
@@ -45,14 +44,14 @@ fi
 Xvfb :1 -screen 0 1024x768x16 &
 export DISPLAY=:1
 
-if [[ "$HEADLESS_MODE" = false ]]; then
-    if [[ "$USE_GPU" = true ]]; then
+if [[ "$PALINDROME_BENCH_HEADLESS" = false ]]; then
+    if [[ "$PALINDROME_BENCH_GPU" = true ]]; then
         firefox -url $url &
     else
         google-chrome --disable-gpu --no-sandbox $url&
     fi
 else
-    if [[ "$USE_GPU" = true ]]; then
+    if [[ "$PALINDROME_BENCH_GPU" = true ]]; then
         firefox --headless -url $url &
     else
         if [ -n "$GITLAB_CI" ]; then
@@ -69,8 +68,8 @@ else
 fi
 
 # Calculate sleep duration based on BENCHMARK_DURATION or default to 60 seconds
-if declare -p | grep -q "BENCHMARK_DURATION"; then
-    sleepDuration=$((BENCHMARK_DURATION * 60 * 2))
+if declare -p | grep -q "PALINDROME_BENCH_DURATION"; then
+    sleepDuration=$((PALINDROME_BENCH_DURATION * 60 * 2))
 else
     sleepDuration=$((60))
 fi
@@ -93,7 +92,7 @@ ramCapacity=$(free -h | awk '/^Mem:/ {print $2}')
 ramCapacityFormatted="RAM: $ramCapacity"
 
 # Append benchmark context and Palindrome.js config to the output file
-if [[ "$USE_GPU" = true ]]; then
+if [[ "$PALINDROME_BENCH_GPU" = true ]]; then
     fileContent=$(cat "$outputFile")
 else
     if [ -n "$GITLAB_CI" ]; then

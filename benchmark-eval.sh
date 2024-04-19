@@ -29,10 +29,10 @@ calculate_median() {
 
 # Function to launch benchmark and retrieve json results
 launch_benchmark_and_get_results() {
-    rm -f "${HOME}/Downloads/${OUTPUT_FILENAME}"*
+    rm -f "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}"*
     pkill firefox
     bash ./benchmark.sh > /dev/null
-    fileContent=$(cat "${HOME}/Downloads/${OUTPUT_FILENAME}.results")
+    fileContent=$(cat "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results")
 
     values=()
     values+=("$(echo "$fileContent" | jq -r '.Basic_version_results."Average FPS rendered"')")
@@ -42,23 +42,23 @@ launch_benchmark_and_get_results() {
     echo "${values[@]}"
 }
 
-outputFile="${HOME}/Downloads/${OUTPUT_FILENAME}.results"
+outputFile="${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results"
 fpsWorkers=()
 msWorkers=()
 fpsBasic=()
 msBasic=()
 
 # Getting expected values from remote data source or computing local median
-if [[ "$EXPECTED_VALUES_SOURCE" = "remote" ]]; then
-    remoteValues=$(curl $EXPECTED_VALUES_REMOTE_SOURCE_URL -H "Accept: application/json")
+if [[ "$PALINDROME_BENCH_EXPECTED_VALUES_SOURCE" = "remote" ]]; then
+    remoteValues=$(curl $PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL -H "Accept: application/json")
     dynamicFpsWorkers=$(echo "$remoteValues" | jq -r '.workersFps')
     dynamicFpsBasic=$(echo "$remoteValues" | jq -r '.basicFps')
     dynamicMsWorkers=$(echo "$remoteValues" | jq -r '.workersMs')
     dynamicMsBasic=$(echo "$remoteValues" | jq -r '.basicMs')
-elif [[ "$EXPECTED_VALUES_SOURCE" = "local" ]]; then
-    if [[ "$RECALCULATE_MEDIAN" = false ]]; then
-        if [ -e "$MEDIAN_VALUES_OUTPUT_FILE" ]; then
-            medianValues=$(cat "$MEDIAN_VALUES_OUTPUT_FILE")
+elif [[ "$PALINDROME_BENCH_EXPECTED_VALUES_SOURCE" = "local" ]]; then
+    if [[ "$PALINDROME_BENCH_RECALCULATE_MEDIAN" = false ]]; then
+        if [ -e "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT" ]; then
+            medianValues=$(cat "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT")
             dynamicFpsWorkers=$(echo "$medianValues" | jq -r '.workersFps')
             dynamicFpsBasic=$(echo "$medianValues" | jq -r '.basicFps')
             dynamicMsWorkers=$(echo "$medianValues" | jq -r '.workersMs')
@@ -69,8 +69,8 @@ elif [[ "$EXPECTED_VALUES_SOURCE" = "local" ]]; then
         fi
     fi
 
-    if [ "$RECALCULATE_MEDIAN" = true ] || [ ! -e "$MEDIAN_VALUES_OUTPUT_FILE" ]; then
-        for i in $(seq 1 $MEDIAN_ITERATIONS); do
+    if [ "$PALINDROME_BENCH_RECALCULATE_MEDIAN" = true ] || [ ! -e "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT" ]; then
+        for i in $(seq 1 $PALINDROME_BENCH_MEDIAN_ITERATIONS); do
             result_array=($(launch_benchmark_and_get_results))
             fpsWorkers+=("${result_array[0]}")
             msWorkers+=("${result_array[1]}")
@@ -84,7 +84,7 @@ elif [[ "$EXPECTED_VALUES_SOURCE" = "local" ]]; then
         dynamicMsWorkers=$(calculate_median "${msWorkers[@]}")
         dynamicMsBasic=$(calculate_median "${msBasic[@]}")
         expectedValuesArtifact="{\"basicFps\":$dynamicFpsBasic,\"basicMs\":$dynamicMsBasic,\"workersFps\":$dynamicFpsWorkers,\"workersMs\":$dynamicMsWorkers}"
-        echo "${expectedValuesArtifact}" > "$MEDIAN_VALUES_OUTPUT_FILE"
+        echo "${expectedValuesArtifact}" > "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT"
     fi
 fi
 
