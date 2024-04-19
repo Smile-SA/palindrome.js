@@ -12,12 +12,14 @@ compare_float() {
 calculate_median() {
     local array=("$@")
     local array_length=${#array[@]}
+    local array_odd_or_even
+    array_odd_or_even=$(( array_length % 2 ))
     sorted_array=($(for i in "${array[@]}"; do echo $i; done | sort))
-    if ((array_length % 2 == 0)); then
+    if [[ "${array_odd_or_even}" -eq 0 ]]; then
         # For an even-sized array, calculate the average of the middle two elements
-        local middle1=$((array_length / 2 - 1))
-        local middle2=$((middle1 + 1))
-        median=$(( (sorted_array[middle1] + sorted_array[middle2]) / 2 ))
+        local middle_first=$((array_length / 2 - 1))
+        local middle_second=$((middle_first + 1))
+        median=$(( (sorted_array[middle_first] + sorted_array[middle_second]) / 2 ))
     else
         # For an odd-sized array, the median is the middle element
         local middle=$((array_length / 2))
@@ -32,112 +34,112 @@ launch_benchmark_and_get_results() {
     rm -f "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}"*
     pkill firefox
     bash ./benchmark.sh > /dev/null
-    fileContent=$(cat "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results")
+    file_content=$(cat "${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results")
 
     values=()
-    values+=("$(echo "$fileContent" | jq -r '.Basic_version_results."Average FPS rendered"')")
-    values+=("$(echo "$fileContent" | jq -r '."Web workers_version_results"."Average FPS rendered"')")
-    values+=("$(echo "$fileContent" | jq -r '.Basic_version_results."Average Milliseconds needed to render a frame"')")
-    values+=("$(echo "$fileContent" | jq -r '."Web workers_version_results"."Average Milliseconds needed to render a frame"')")
+    values+=("$(echo "$file_content" | jq -r '.Basic_version_results."Average FPS rendered"')")
+    values+=("$(echo "$file_content" | jq -r '."Web workers_version_results"."Average FPS rendered"')")
+    values+=("$(echo "$file_content" | jq -r '.Basic_version_results."Average Milliseconds needed to render a frame"')")
+    values+=("$(echo "$file_content" | jq -r '."Web workers_version_results"."Average Milliseconds needed to render a frame"')")
     echo "${values[@]}"
 }
 
-outputFile="${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results"
-fpsWorkers=()
-msWorkers=()
-fpsBasic=()
-msBasic=()
+# outputFile="${HOME}/Downloads/${PALINDROME_BENCH_OUTPUT}.results"
+fps_workers=()
+ms_workers=()
+fps_basic=()
+ms_basic=()
 
 # Getting expected values from remote data source or computing local median
-if [[ "$PALINDROME_BENCH_EXPECTED_VALUES_SOURCE" = "remote" ]]; then
-    remoteValues=$(curl $PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL -H "Accept: application/json")
-    dynamicFpsWorkers=$(echo "$remoteValues" | jq -r '.workersFps')
-    dynamicFpsBasic=$(echo "$remoteValues" | jq -r '.basicFps')
-    dynamicMsWorkers=$(echo "$remoteValues" | jq -r '.workersMs')
-    dynamicMsBasic=$(echo "$remoteValues" | jq -r '.basicMs')
-elif [[ "$PALINDROME_BENCH_EXPECTED_VALUES_SOURCE" = "local" ]]; then
-    if [[ "$PALINDROME_BENCH_RECALCULATE_MEDIAN" = false ]]; then
-        if [ -e "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT" ]; then
-            medianValues=$(cat "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT")
-            dynamicFpsWorkers=$(echo "$medianValues" | jq -r '.workersFps')
-            dynamicFpsBasic=$(echo "$medianValues" | jq -r '.basicFps')
-            dynamicMsWorkers=$(echo "$medianValues" | jq -r '.workersMs')
-            dynamicMsBasic=$(echo "$medianValues" | jq -r '.basicMs')
+if [[ "$PALINDROME_BENCH_EXPECTED_VALUES_SOURCE" == "remote" ]]; then
+    remote_values=$(curl $PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL -H "Accept: application/json")
+    dynamic_fps_workers=$(echo "$remote_values" | jq -r '.workersFps')
+    dynamic_fps_basic=$(echo "$remote_values" | jq -r '.basicFps')
+    dynamic_ms_workers=$(echo "$remote_values" | jq -r '.workersMs')
+    dynamic_ms_basic=$(echo "$remote_values" | jq -r '.basicMs')
+elif [[ "$PALINDROME_BENCH_EXPECTED_VALUES_SOURCE" == "local" ]]; then
+    if [[ "$PALINDROME_BENCH_RECALCULATE_MEDIAN" == false ]]; then
+        if [[ -f "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT" ]]; then
+            median_values=$(cat "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT")
+            dynamic_fps_workers=$(echo "$median_values" | jq -r '.workersFps')
+            dynamic_fps_basic=$(echo "$median_values" | jq -r '.basicFps')
+            dynamic_ms_workers=$(echo "$median_values" | jq -r '.workersMs')
+            dynamic_ms_basic=$(echo "$median_values" | jq -r '.basicMs')
             rm -f median.out
         else
             echo "[ERROR] Median file is not found, recomputing median again."
         fi
     fi
 
-    if [ "$PALINDROME_BENCH_RECALCULATE_MEDIAN" = true ] || [ ! -e "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT" ]; then
+    if [[ "$PALINDROME_BENCH_RECALCULATE_MEDIAN" == true ]] || [[ ! -f "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT" ]]; then
         for i in $(seq 1 $PALINDROME_BENCH_MEDIAN_ITERATIONS); do
             result_array=($(launch_benchmark_and_get_results))
-            fpsWorkers+=("${result_array[0]}")
-            msWorkers+=("${result_array[1]}")
-            fpsBasic+=("${result_array[2]}")
-            msBasic+=("${result_array[3]}")
+            fps_workers+=("${result_array[0]}")
+            ms_workers+=("${result_array[1]}")
+            fps_basic+=("${result_array[2]}")
+            ms_basic+=("${result_array[3]}")
             echo "${result_array[@]}" >> median.out
         done
 
-        dynamicFpsWorkers=$(calculate_median "${fpsWorkers[@]}")
-        dynamicFpsBasic=$(calculate_median "${fpsBasic[@]}")
-        dynamicMsWorkers=$(calculate_median "${msWorkers[@]}")
-        dynamicMsBasic=$(calculate_median "${msBasic[@]}")
-        expectedValuesArtifact="{\"basicFps\":$dynamicFpsBasic,\"basicMs\":$dynamicMsBasic,\"workersFps\":$dynamicFpsWorkers,\"workersMs\":$dynamicMsWorkers}"
-        echo "${expectedValuesArtifact}" > "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT"
+        dynamic_fps_workers=$(calculate_median "${fps_workers[@]}")
+        dynamic_fps_basic=$(calculate_median "${fps_basic[@]}")
+        dynamic_ms_workers=$(calculate_median "${ms_workers[@]}")
+        dynamic_ms_basic=$(calculate_median "${ms_basic[@]}")
+        expected_values_artifact="{\"basicFps\":$dynamic_fps_basic,\"basicMs\":$dynamic_ms_basic,\"workersFps\":$dynamic_fps_workers,\"workersMs\":$dynamic_ms_workers}"
+        echo "${expected_values_artifact}" > "$PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT"
     fi
 fi
 
 # Run benchmark
 result_array=($(launch_benchmark_and_get_results))
-fpsBasicVersion=${result_array[0]}
-fpsWorkersVersion=${result_array[1]}
-msBasicVersion=${result_array[2]}
-msWorkersVersion=${result_array[3]}
+fps_basic_version=${result_array[0]}
+fps_workers_version=${result_array[1]}
+ms_basic_version=${result_array[2]}
+ms_workers_version=${result_array[3]}
 
 # Tests and assertions
-testFailed=false
-test1="[Basic version] should respect minimum FPS values."
-if compare_float "$fpsBasicVersion" "$dynamicFpsBasic"; then
-    echo -e "\n✕ $test1"
+test_failed=false
+test_message="[Basic version] should respect minimum FPS values."
+if compare_float "$fps_basic_version" "$dynamic_fps_basic"; then
+    echo -e "\n✕ $test_message"
     echo -e "[ERROR] Basic version FPS is too low"
-    echo "Found: $fpsBasicVersion. Expected: greater than $dynamicFpsBasic"
-    testFailed=true
+    echo "Found: $fps_basic_version. Expected: greater than $dynamic_fps_basic"
+    test_failed=true
 else
-    echo -e "\n✓ $test1"
+    echo -e "\n✓ $test_message"
 fi
 
-test2="[Workers version] should respect minimum FPS values."
-if compare_float "$fpsWorkersVersion" "$dynamicFpsWorkers"; then
-    echo -e "\n✕ $test2"
+test_message="[Workers version] should respect minimum FPS values."
+if compare_float "$fps_workers_version" "$dynamic_fps_workers"; then
+    echo -e "\n✕ $test_message"
     echo -e "[ERROR] Web workers version FPS is too low"
-    echo "Found: $fpsWorkersVersion. Expected: greater than $dynamicFpsWorkers"
-    testFailed=true
+    echo "Found: $fps_workers_version. Expected: greater than $dynamic_fps_workers"
+    test_failed=true
 else
-    echo -e "\n✓ $test2"
+    echo -e "\n✓ $test_message"
 fi
 
-test3="[Basic version] should respect maximum MS values."
-if ! compare_float "$msBasicVersion" "$dynamicMsBasic"; then
-    echo -e "\n✕ $test3"
+test_message="[Basic version] should respect maximum MS values."
+if ! compare_float "$ms_basic_version" "$dynamic_ms_basic"; then
+    echo -e "\n✕ $test_message"
     echo -e "[ERROR] Basic version ms needed to render a frame is too high"
-    echo "Found: $msBasicVersion. Expected: less than $dynamicMsBasic"
-    testFailed=true
+    echo "Found: $ms_basic_version. Expected: less than $dynamic_ms_basic"
+    test_failed=true
 else
-    echo -e "\n✓ $test3"
+    echo -e "\n✓ $test_message"
 fi
 
-test4="[Workers version] should respect maximum MS values."
-if ! compare_float "$msWorkersVersion" "$dynamicMsWorkers"; then
-    echo -e "\n✕ $test4"
+test_message="[Workers version] should respect maximum MS values."
+if ! compare_float "$ms_workers_version" "$dynamic_ms_workers"; then
+    echo -e "\n✕ $test_message"
     echo -e "[ERROR] Web workers ms needed to render a frame is too high"
-    echo "Found: $msWorkersVersion. Expected: less than $dynamicMsWorkers" 
-    testFailed=true
+    echo "Found: $ms_workers_version. Expected: less than $dynamic_ms_workers" 
+    test_failed=true
 else
-    echo -e "\n✓ $test4"
+    echo -e "\n✓ $test_message"
 fi
 
-if [[ "$testFailed" = true ]]; then
+if [[ "$test_failed" == true ]]; then
     exit 1
 fi
 echo -e "\n✓ All tests passed."
