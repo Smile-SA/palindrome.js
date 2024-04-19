@@ -7,7 +7,7 @@ source ./benchmark/benchmark-dependencies.sh
 source ./benchmark/benchmark.env.sh
 
 function main(){
-    local option=${1-}
+    local option=${1:-classic}
     if [[ "${option}" == "classic" ]]; then
         source ./benchmark/classic-benchmark.sh
     elif [[ "${option}" == "evaluation" ]]; then
