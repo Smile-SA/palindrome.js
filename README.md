@@ -81,12 +81,11 @@ Simply open a pull request over the repository to describe your changes.
 
 ## Credits
 
-- Rnd Team @ SMILE
-- Koku Ulrich GBLOKPO @koku-ulrich.gblokpo
-- Mohamed Ali YACOUBI @yacoubii
-- Farooque Mustafa @farooquemustafa
+- Mohamed Ali Yacoubi @yacoubii
+- Koku Ulrich Gblokpo @koku-ulrich.gblokpo
 - Damien Gilles @gillesdami
 - JonRiv (author) @JonRiv
+- Rnd Team @ SMILE
 
 ## License
 
