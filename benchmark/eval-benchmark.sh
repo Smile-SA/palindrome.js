@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Compare floating-point numbers
-compare_float() {
+compare_float(){
     awk -v n1="$1" -v n2="$2" 'BEGIN {if (n1 < n2) exit 0; exit 1}'
 }
 
 # Calculate the median of an array
-calculate_median() {
+calculate_median(){
     declare -a array
     declare -a sorted_array
     local array_length
@@ -36,7 +36,7 @@ calculate_median() {
 }
 
 # Function to launch benchmark and retrieve json results
-launch_benchmark_and_get_results() {
+launch_benchmark_and_get_results(){
     local file_content
     declare -a values
 
