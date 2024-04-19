@@ -36,9 +36,7 @@
     "cypress:open": "cypress open",
     "storybook-deploy": "gh-pages -d storybook-static",
     "dev-deploy": "gh-pages -d dist",
-    "benchmark:install": "sudo /bin/bash ./benchmark-dependencies.sh",
-    "benchmark:run": "/bin/bash ./benchmark.sh",
-    "benchmark:eval": "/bin/bash ./benchmark-eval.sh"
+    "benchmark": "/bin/bash ./benchmark.sh"
   },
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",
