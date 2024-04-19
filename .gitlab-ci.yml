@@ -7,10 +7,10 @@ stages:
   before_script:
     - yarn install
 
-.install-benchmark-dependencies:
-  before_script:
-    - /bin/bash benchmark-dependencies.sh
-    - yarn install
+# .install-benchmark-dependencies:
+#   before_script:
+#     - /bin/bash benchmark-dependencies.sh
+#     - yarn install
 
 default:
   image: node:18.18-alpine
@@ -42,18 +42,18 @@ benchmark:
   image: ubuntu:20.04
   stage: test
   dependencies: []
-  extends: .install-benchmark-dependencies
+  extends: .install-dependencies
   script:
-    - /bin/bash benchmark.sh
+    - /bin/bash benchmark.sh "classic"
   allow_failure: false
 
 benchmark-test:
   image: ubuntu:20.04
   stage: test
   dependencies: []
-  extends: .install-benchmark-dependencies
+  extends: .install-dependencies
   script:
-    - /bin/bash benchmark-eval.sh
+    - /bin/bash benchmark.sh "evaluation"
   allow_failure: false
 
 pages:

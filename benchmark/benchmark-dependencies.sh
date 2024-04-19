@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Set up benchmark parameters
-source ./benchmark.env.sh
-
 # Set sudo prefix depending on situation
 declare -g cmd_prefix
 if [[ -n "${GITLAB_CI}" ]]; then
