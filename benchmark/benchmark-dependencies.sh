@@ -45,5 +45,7 @@ fi
 
 # Install Firefox if not already installed
 if [[ -z "$(command -v firefox)" ]]; then
+    export TZ=Europe/Paris 
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
     ${cmd_prefix} apt install -y firefox
 fi
