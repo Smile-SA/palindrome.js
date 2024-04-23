@@ -20,8 +20,7 @@ stages:
     - curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
     - sudo apt install -y nodejs
     - node -v
-    - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key
-    - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add
+    - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
     - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     - sudo apt update && sudo apt install -y yarn
     - yarn install
@@ -62,7 +61,7 @@ benchmark:
   dependencies: []
   extends: .install-node-yarn-dependencies
   script:
-    - /bin/bash benchmark.sh "classic"
+    - /bin/bash ./scripts/benchmark.sh "classic"
   allow_failure: false
 
 benchmark-test:
@@ -71,7 +70,7 @@ benchmark-test:
   dependencies: []
   extends: .install-node-yarn-dependencies
   script:
-    - /bin/bash benchmark.sh "evaluation"
+    - /bin/bash ./scripts/benchmark.sh "evaluation"
   allow_failure: false
 
 pages:
