@@ -96,11 +96,10 @@ Simply open a pull request over the repository to describe your changes.
 
 - Rnd Team @ SMILE
 - Mohamed Ali YACOUBI @yacoubii
-- Clément Spileers @Irjean
 - Koku Ulrich GBLOKPO @koku-ulrich.gblokpo
-- Farooque Mustafa @farooquemustafa
 - Damien Gilles @gillesdami
 - JonRiv (author) @JonRiv
+- Rnd Team @ SMILE
 
 ## License
 

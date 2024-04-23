@@ -1,0 +1,17 @@
+#!/bin/bash
+export PALINDROME_BENCH_PALINDROME_TYPE=basic
+export PALINDROME_BENCH_IS_BENCHMARK=true
+export PALINDROME_BENCH_DURATION=1 # in minutes
+# export PALINDROME_BENCH_USE_CASE_NAME=dcBasicConfiguration
+# export PALINDROME_BENCH_WORKERS_RESOURCES_LEVEL=100
+export PALINDROME_BENCH_OUTPUT=palindrome_benchmark
+export PALINDROME_BENCH_DL_DIRECTORY=Downloads
+export PALINDROME_BENCH_GPU=true # false will install chromium for CPU support
+export PALINDROME_BENCH_HEADLESS=true
+export PALINDROME_BENCH_WEBSERVER=false
+export PALINDROME_BENCH_MEDIAN_ITERATIONS=5
+export PALINDROME_BENCH_EXPECTED_VALUES_SOURCE=remote
+export PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL="https://palindrome-production.onrender.com/api/requirements"
+export PALINDROME_BENCH_MEDIAN_VALUES_OUTPUT_FILE=expected-values.eval
+export PALINDROME_BENCH_RECALCULATE_MEDIAN=false
+export PALINDROME_BENCH_BROWSER=firefox #or chromium

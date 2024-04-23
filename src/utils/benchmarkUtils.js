@@ -206,13 +206,13 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
                 'Average MBytes of allocated memory': previousResults[2],
                 'Minute(s) of test': previousResults[3],
             }
-            if (process.env.IS_BENCHMARK) {
+            if (process.env.PALINDROME_BENCH_IS_BENCHMARK) {
                 const fileResults = {};
                 fileResults[`${previousVersion}_version_results`] = previousResultsFormatted;
                 fileResults[`${versionString}_version_results`] = results;
                 fileResults['palindrome_config'] = conf;
                 const fileContent = JSON.stringify(fileResults, null, 2);
-                const fileName = process.env.OUTPUT_FILENAME ? process.env.OUTPUT_FILENAME : "benchmarkResults";
+                const fileName = process.env.PALINDROME_BENCH_OUTPUT ? process.env.PALINDROME_BENCH_OUTPUT : "benchmarkResults";
                 exportBenchMarkResultsToFile(fileContent, fileName, "text/plain");
             }
             await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);
