@@ -14,12 +14,14 @@ stages:
 .install-node-yarn-dependencies:
   before_script:
     - apt update -y
+    - apt install git -y
     - apt install -y sudo curl
     - curl --version
     - curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
     - sudo apt install -y nodejs
     - node -v
     - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key
+    - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add
     - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
     - sudo apt update && sudo apt install -y yarn
     - yarn install
@@ -29,6 +31,10 @@ default:
 
 build-dev:
   stage: build
+  before_script:
+    - apk update
+    - apk add bash
+    - apk add git
   script:
     - yarn install
     - yarn build
