@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Check or install dependencies
-source ./benchmark/benchmark-dependencies.sh
+source ./scripts/benchmark/benchmark-dependencies.sh
 
 # Set up benchmark parameters
-source ./benchmark/benchmark.env.sh
+source ./scripts/benchmark/benchmark.env.sh
 
 function main(){
     declare -g BENCHMARK_TYPE
@@ -22,9 +22,9 @@ function main(){
 
     # execute the benchmark depending on selected type
     if [[ "${BENCHMARK_TYPE}" == "classic" ]]; then
-        source ./benchmark/classic-benchmark.sh
+        source ./scripts/benchmark/classic-benchmark.sh
     elif [[ "${BENCHMARK_TYPE}" == "evaluation" ]]; then
-        source ./benchmark/eval-benchmark.sh
+        source ./scripts/benchmark/eval-benchmark.sh
     fi
 }
 

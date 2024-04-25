@@ -42,7 +42,13 @@ launch_benchmark_and_get_results(){
 
     rm -f "${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}/${PALINDROME_BENCH_OUTPUT}"*
     pkill firefox
-    bash ./benchmark.sh > /dev/null
+    
+    if [[ "${PALINDROME_BENCH_HEADLESS}" == false ]]; then
+        bash ./scripts/benchmark.sh "classic" "visual" > /dev/null
+    else
+        bash ./scripts/benchmark.sh > /dev/null
+    fi
+
     file_content=$(cat "${HOME}/${PALINDROME_BENCH_DL_DIRECTORY}/${PALINDROME_BENCH_OUTPUT}.results")
 
     values+=("$(echo "${file_content}" | jq -r '.Basic_version_results."Average FPS rendered"')")
