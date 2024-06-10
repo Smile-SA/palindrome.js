@@ -19,12 +19,13 @@
 
 
 const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
+const { Logger } = require('../../src/utils/logger');
 
 module.exports = (on, config) => {
   getCompareSnapshotsPlugin(on, config);
   on('task', {
     log(message) {
-      console.log(message);
+      Logger.log(message);
       return null;
     },
   });

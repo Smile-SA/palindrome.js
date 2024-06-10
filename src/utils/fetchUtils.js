@@ -66,16 +66,14 @@ export const createBadUrlPopup = (parentElement) => {
         }
     `;
 
-    window.onclick = function (event) {
-        if (event.target === modalDiv) {
+    const closeFetchModal = (event) => {
+        if (event.target === modalDiv || event.target === span) {
             modalDiv.style.display = "none";
         }
     }
-
-    span.onclick = function () {
-        modalDiv.style.display = "none";
-    }
-
+    window.addEventListener('click', closeFetchModal);
+    span.addEventListener('click', closeFetchModal);
+    
     modalDiv.appendChild(modalContent);
     parentElement.appendChild(style);
     parentElement.appendChild(modalDiv);

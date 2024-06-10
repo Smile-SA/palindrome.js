@@ -33,7 +33,6 @@ function initRenderer(conf) {
         return renderer;
     }
     renderer.setSize(window.innerWidth, window.innerHeight);
-
     return renderer;
 }
 
@@ -41,9 +40,14 @@ function initRenderer(conf) {
  * Creates and initializes the label renderer
  * @returns labelRenderer
  */
-function initLabelsRenderer() {
+function initLabelsRenderer(conf) {
     const labelsRenderer = new CSS2DRenderer();
-    labelsRenderer.setSize(window.innerWidth, window.innerHeight);
+    if (conf.innerWidth > 0 && conf.innerHeight > 0) {
+        labelsRenderer.setSize(conf.innerWidth, conf.innerHeight);
+    }
+    else {
+        labelsRenderer.setSize(window.innerWidth, window.innerHeight);
+    }
     labelsRenderer.domElement.style.position = 'absolute';
     labelsRenderer.domElement.style.top = 0;
     return labelsRenderer;
@@ -81,8 +85,20 @@ export function initThreeObjects(conf) {
     const scene = initScene(conf);
     const camera = initCamera(conf);
     const renderer = initRenderer(conf);
-    const labelsRenderer = initLabelsRenderer();
+    const labelsRenderer = initLabelsRenderer(conf);
     const controls = initControls(camera, labelsRenderer);
+    
+    if (conf.disableZoom) {
+        controls.enableZoom = false;
+        document.addEventListener('keydown', function(event) {
+            controls.enableZoom = event.ctrlKey;
+        });
+        document.addEventListener('keyup', function(event) {
+            controls.enableZoom = false;
+        });
+    }
+
+    
 
 
     window.addEventListener('resize', function () {

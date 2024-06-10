@@ -3,6 +3,7 @@ import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { create3DMetricsLabels, create3DLayersLabels } from './labelsUtils3D';
 import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
+import { Logger } from './logger';
 
 /**
  * Return a text in html tag p
@@ -23,7 +24,7 @@ export var createHtmlText = function (labelText, cardColor, cardBackground, para
     p.style.fontStyle = parameters["labelItalic"];
     const padding = 5;
     p.style.padding = padding + 'px';
-    localStorage.setItem("htmlLayerLabelPadding", padding);
+    localStorage.setItem("palindrome:htmlLayerLabelPadding", padding);
     if (cardColor) {
         p.style.border = ' 2px ' + parameters['labelColor'] + ' dashed';
     }
@@ -337,7 +338,7 @@ export var createLabels = function (data, globalParams) {
             metricsEntries = Object.entries(metrics);
             for (const [key, value] of metricsEntries) {
                 if (metricLabelsIds.includes(key) === true) {
-                    console.warn("This layer contains two times the same metric key", [layer]);
+                    Logger.warn("This layer contains two times the same metric key", [layer]);
                     break;
                 } else {
                     metricLabelsIds.push(key)
@@ -445,7 +446,7 @@ export var createLabels = function (data, globalParams) {
             if (conf.displayLayersLabels) {
                 for (const [key, value] of Object.entries(layers)) {
                     if (layersLabelsIds.includes(key) === true) {
-                        console.warn("This layer contains two times the same metric key", [layer]);
+                        Logger.warn("This layer contains two times the same metric key", [layer]);
                         break;
                     } else {
                         layersLabelsIds.push(key);

@@ -1,6 +1,6 @@
 {
-  "name": "palindrome",
-  "version": "1.0.1",
+  "name": "@smile/palindrome.js",
+  "version": "1.0.7",
   "homepage": "https://Smile-SA.github.io/palindrome.js",
   "description": "3D monitoring for metrics and KPIs",
   "default": "index.html",
@@ -51,7 +51,7 @@
     "axios": "^0.27.2",
     "babel-plugin-istanbul": "^6.1.1",
     "cypress-visual-regression": "^1.6.3",
-    "gh-pages": "^4.0.0",
+    "gh-pages": "^6.1.1",
     "istanbul-lib-coverage": "^3.2.2",
     "node": "^17.7.2",
     "node-gyp": "^9.0.0",

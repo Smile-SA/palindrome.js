@@ -67,6 +67,15 @@ export var cameraViewOptions = function (meshes, camera, conf) {
         conf.zPlaneMultilayer = 0;
     }
 
+    if (conf.keepControls) {
+        let position = localStorage.getItem('palindrome:controls-' + conf.panelId);
+        if (position) {
+            position = JSON.parse(position);
+            camera.position.set(position[0], position[1], position[2]);
+        }
+    } else {
+        localStorage.removeItem('palindrome:controls-' + conf.panelId);
+    }
 }
 
 /**

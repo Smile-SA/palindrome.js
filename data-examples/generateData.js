@@ -1,3 +1,5 @@
+import { Logger } from "../src/utils/logger";
+
 let obj = {
     "requests": {
         "metrics": {
@@ -197,4 +199,4 @@ export function makeCase(nLayers) {
     return result;
 }
 
-console.log(JSON.stringify(makeCase(3, obj)));
+Logger.log(JSON.stringify(makeCase(3, obj)));

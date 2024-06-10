@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import palindromeLib, { devPalindrome } from './palindrome/palindrome.dev.js';
+import palindromeLib, { devPalindrome } from './palindrome/palindrome.js';
 
 const Palindrome = (props) => {
   const canvasRef = useRef(null);

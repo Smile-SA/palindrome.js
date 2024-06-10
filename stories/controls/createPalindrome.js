@@ -1,11 +1,12 @@
 import palindrome from "../../src";
 import { previousPalindrome } from "../../src/utils/destructionUtils";
+import { Logger } from "../../src/utils/logger";
 
 export var createPalindrome = ({ ...args }) => {
     //delete previous palindrome
     if (previousPalindrome) {
         let [renderer, scene, meshes, parentElement, frameId] = previousPalindrome;
-        console.log("Destroying previous palindrome...");
+        Logger.log("Destroying previous palindrome...");
         cancelAnimationFrame(frameId);
         for (let key in meshes) {
             if (key === "meshRenderingOrder") continue;

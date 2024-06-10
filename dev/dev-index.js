@@ -1,3 +1,4 @@
+import { Logger } from '../src/utils/logger.js';
 import { defaultValues } from '../stories/controls/defaultControls.js';
 import { getPalindrome } from "../stories/controls/getPalindrome";
 import { palindromes, toggleFields, selectFields, radioFields } from "./utils/controls";
@@ -12,7 +13,7 @@ const testDuration = process.env.PALINDROME_BENCH_DURATION;
 const ressourcesLevel = process.env.PALINDROME_BENCH_WORKERS_RESOURCES_LEVEL || 100;
 const useCaseName = process.env.PALINDROME_BENCH_USE_CASE_NAME || 'dcBasicConfiguration';
 const fileName = process.env.PALINDROME_BENCH_OUTPUT;
-console.log("env:", { palindromeType, isBenchmark, testDuration, ressourcesLevel, useCaseName, fileName });
+Logger.log("env:", { palindromeType, isBenchmark, testDuration, ressourcesLevel, useCaseName, fileName });
 /**
  * Main
  */
@@ -40,14 +41,14 @@ function toggle(e) {
  * @param {event} e
  */
 function onSelect(e) {
-    console.log(e.target.value);
+    Logger.log(e.target.value);
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set(e.target.id, e.target.value);
     location.search = urlParams;
 }
 
 function onRadioChange(e) {
-    console.log(e.target.value);
+    Logger.log(e.target.value);
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set(e.target.id, e.target.value);
     location.search = urlParams;
@@ -164,8 +165,8 @@ function applyDefaultOptions(devConfig) {
         devConfig.resourcesLevel = ressourcesLevel;
     }
     //output the configuration in use to the console
-    console.log("Palindrome.js : configuration in use");
-    console.dir(devConfig);
+    Logger.log("Palindrome.js : configuration in use");
+    Logger.dir(devConfig);
 
 }
 
@@ -264,7 +265,8 @@ function createSideBar() {
 
     burgerMenu.appendChild(logo);
     aside.appendChild(burgerMenu);
-    if (palindromeType === 'basic' || palindromeType === 'basic-build') {
+    if (palindromeType === 'basic' 
+        || palindromeType === 'basic-build') {
         aside.style.display = "none";
     }
     let body = document.getElementsByTagName("body")[0];
@@ -519,7 +521,7 @@ function applyConditionsToControls() {
         const element = document.getElementById(id);
         const otherElement = document.getElementById(otherId);
         if (controls[id].control !== 'boolean' || controls[otherId].control !== 'boolean') {
-            console.warn('Condition not supported yet for this type of control!');
+            Logger.warn('Condition not supported yet for this type of control!');
             return;
         }
         const toggleDesign = document.getElementById(id + '-toggle-design');
@@ -555,6 +557,11 @@ function applyParamsToConfig(config) {
  * Renders Palindrome with config
  */
 export function renderDev(isGrafana) {
+    if (isGrafana) {
+        const devConfig = defaultValues();
+        devConfig.isGrafana = isGrafana;
+        return devConfig;
+    }
     createSideBar();
     createSideBarContent();
     createCategories();

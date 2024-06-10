@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Logger } from '../utils/logger';
 
 /**
  * Gets weather data from api.open-meteo.com/
@@ -74,7 +75,7 @@ export const getWeatherData = async function (baseUrl = 'https://api.open-meteo.
                     current = response.data.hourly.temperature_2m[new Date().getHours()];
                     metricLabel = city;
                 } catch (error) {
-                    console.log(error);
+                    Logger.log(error);
                 }
             } else {
                 layerLabel = country[city].label;

@@ -5,6 +5,7 @@ import { drawSideStraightLine } from "./sidesUtils";
 import { displayFramesAndArrows, setArrowPostion, setRectangleFramePositions } from "./framesUtils";
 import { setLabelsPositions, settingLabelFormat } from "./labelsUtils3D";
 import { layerColorDecidedByLayerStatus } from "./colorsUtils";
+import { Logger } from "./logger";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -40,7 +41,7 @@ export async function updateMeshes(params, renderingType) {
         const timeDifferenceInMilliseconds = currentTime - (refreshedData["scrapperUpdateInitTime"] ? refreshedData["scrapperUpdateInitTime"] : scrapperUpdateInitTime);
         const remoteDataFetchPace = conf.remoteDataFetchPace; // in ms
         if (timeDifferenceInMilliseconds >= remoteDataFetchPace) {
-            const url = localStorage.getItem("remote-data-source");
+            const url = localStorage.getItem("palindrome:remote-data-source");
             // Getting updates...
             if (conf.webWorkersHTTP) { // Making http requests using web workers
                 const worker = httpRequests_pool.getWorker();
@@ -60,7 +61,7 @@ export async function updateMeshes(params, renderingType) {
             else { // Making http requests using main thread
                 if (url) {
                     data = await conf.fetchFunction(url);
-                    localStorage.removeItem("remote-data-source");
+                    localStorage.removeItem("palindrome:remote-data-source");
                 }
                 else {
                     newData = await conf.fetchFunction();
@@ -80,7 +81,7 @@ export async function updateMeshes(params, renderingType) {
     if (conf.hasScrapper) {
         let currentHours = new Date().getHours();
         if (currentHours > scrapperUpdateInitTime) {
-            console.info("Getting updates ...")
+            Logger.info("Getting updates ...")
             scrapperUpdateInitTime = currentHours;
             newData = await scrappers[conf.scrapper]();
         }
@@ -268,8 +269,8 @@ export async function updateMeshes(params, renderingType) {
                     if (layerIndex_frames > newDataKeysLength) {
                         layerIndex_frames = 0;
                     }
-                    if (localStorage.getItem("isInitComplete") === "false")
-                        localStorage.setItem("isInitComplete", true);
+                    if (localStorage.getItem("palindrome:isInitComplete") === "false")
+                        localStorage.setItem("palindrome:isInitComplete", true);
 
                     //releaseWorker when it finishes its job
                     frames_pool.releaseWorker(metricsWorker);

@@ -13,6 +13,7 @@ import { updateMeshes } from "./utils/renderingUtils";
 import { applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
 import { changeLayerMetricsBehavior, shiftMetricsToPositive } from './utils/metricsUtils2D';
 import { renderDev } from '../dev/dev-index';
+import { Logger } from './utils/logger';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
@@ -38,10 +39,10 @@ export default (function (parentElement, conf) {
 
 
                 // Fetching data
-                const url = localStorage.getItem("remote-data-source");
+                const url = localStorage.getItem("palindrome:remote-data-source");
                 if (url) {
                     data = await conf.fetchFunction(url);
-                    localStorage.removeItem("remote-data-source");
+                    localStorage.removeItem("palindrome:remote-data-source");
                 } else {
                     // Displaying loading text while fetching data
                     loading = loadingText();
@@ -51,12 +52,12 @@ export default (function (parentElement, conf) {
                     parentElement.removeChild(loading);
                 }
 
-                console.log("client response :", data);
+                Logger.log("client response :", data);
             } catch (error) {
                 isDataReady = false;
                 createBadUrlPopup(parentElement);
                 // Output the error if we have a http error occurred
-                console.error("client response :", error);
+                Logger.error("client response :", error);
             }
         }
 
@@ -97,7 +98,7 @@ export default (function (parentElement, conf) {
     //init palindrome parameters
     benchmarkCleanUp();
     let init_camera = true;
-    localStorage.setItem("isInitComplete", false);
+    localStorage.setItem("palindrome:isInitComplete", false);
     let frameId;
 
     // Init benchmark stats parameters
@@ -116,6 +117,16 @@ export default (function (parentElement, conf) {
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
     const meshes = {};
     const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(conf);
+    controls.addEventListener( "change", event => {
+        if (conf.keepControls){
+            const position = [controls.object.position.x, controls.object.position.y, controls.object.position.z];
+            localStorage.setItem( "palindrome:controls-" + conf.panelId , JSON.stringify(position));
+        }
+        else {
+            localStorage.removeItem( "palindrome:controls" + conf.panelId);
+        }
+    });
+
     const metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
 
     const palindromeParameters = { conf, metricParameters, layerParameters, parentElement };
@@ -125,6 +136,20 @@ export default (function (parentElement, conf) {
 
     // Calling main function
     run();
+
+    /**
+     * Update Palindrome data without re-creating a new instance
+     * @param {Object} confUpdate conf object coming from Grafana
+     */
+    async function updateGrafanaData(confUpdate) {
+        conf = confUpdate;
+        newData = confUpdate.data;
+        conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
+        renderer.setSize(conf.innerWidth, conf.innerHeight);
+        labelsRenderer.setSize(conf.innerWidth, conf.innerHeight);
+        camera.aspect = conf.innerWidth / conf.innerHeight;
+        camera.updateProjectionMatrix();
+    }
 
     /**
      * Rendering loop
@@ -153,7 +178,7 @@ export default (function (parentElement, conf) {
         httpRequests_pool = liveDataInfo.httpRequests_pool;
         try {
             renderer.render(scene, camera);
-            if ((conf.webWorkersRendering) && init_camera && (localStorage.getItem("isInitComplete") === "true")) {
+            if ((conf.webWorkersRendering) && init_camera && (localStorage.getItem("palindrome:isInitComplete") === "true")) {
 
                 // Setting camera for web workers
                 cameraViewOptions(meshes, camera, conf);
@@ -183,6 +208,10 @@ export default (function (parentElement, conf) {
             // Can't render, palindrome is destroyed
         }
 
+    }
+
+    return {
+        updateGrafanaData: updateGrafanaData
     }
 });
 

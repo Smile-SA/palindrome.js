@@ -1,4 +1,5 @@
 import ApexCharts from 'apexcharts';
+import { Logger } from './logger';
 
 /**
  * stats.js main function
@@ -143,7 +144,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
     if (startDate.getTime() <= currentDate.getTime() && endDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) {
         let r = await stats.getValues();
         if (displayMessage) {
-            console.info("A " + duringTime + " minute(s) benchmark has been started ...");
+            Logger.info("A " + duringTime + " minute(s) benchmark has been started ...");
             displayMessage = false;
         }
         if (r.fps !== undefined && r.fps > 0) {
@@ -176,30 +177,30 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
 
         if (conf.testBothVersions) {
             //Getting first version results
-            console.log(versionString + ' version test finished.');
-            localStorage.setItem('benchmarkResults', JSON.stringify(results));
-            localStorage.setItem('testBothVersions', false);
-            localStorage.setItem('webWorkersRendering', !conf.webWorkersRendering);
-            localStorage.setItem('version', versionString);
-            localStorage.setItem('previousData', JSON.stringify(statsData));
+            Logger.log(versionString + ' version test finished.');
+            localStorage.setItem('palindrome:benchmarkResults', JSON.stringify(results));
+            localStorage.setItem('palindrome:testBothVersions', false);
+            localStorage.setItem('palindrome:webWorkersRendering', !conf.webWorkersRendering);
+            localStorage.setItem('palindrome:version', versionString);
+            localStorage.setItem('palindrome:previousData', JSON.stringify(statsData));
             conf.testBothVersions = false;
             //Reload to execute the other version of Palindrome.js
-            localStorage.setItem('reloadTime', new Date().toISOString());
+            localStorage.setItem('palindrome:reloadTime', new Date().toISOString());
             document.location.reload();
         } else {
             //Getting second version results in case of two versions test OR getting results of the only version to test in the case of a single test
-            console.log(versionString + ' version test finished.');
+            Logger.log(versionString + ' version test finished.');
             conf.benchmark === 'Inactive';
-            previousResults = JSON.parse(localStorage.getItem('benchmarkResults'));
+            previousResults = JSON.parse(localStorage.getItem('palindrome:benchmarkResults'));
             previousResults = previousResults ? Object.values(previousResults) : null;
-            previousVersion = localStorage.getItem('version');
-            previousData = JSON.parse(localStorage.getItem('previousData'));
+            previousVersion = localStorage.getItem('palindrome:version');
+            previousData = JSON.parse(localStorage.getItem('palindrome:previousData'));
             //parentElement.removeChild(stats.dom);
-            localStorage.removeItem('benchmarkResults');
-            localStorage.removeItem('testBothVersions');
-            localStorage.removeItem('webWorkersRendering');
-            localStorage.removeItem('version');
-            localStorage.removeItem('previousData');
+            localStorage.removeItem('palindrome:benchmarkResults');
+            localStorage.removeItem('palindrome:testBothVersions');
+            localStorage.removeItem('palindrome:webWorkersRendering');
+            localStorage.removeItem('palindrome:version');
+            localStorage.removeItem('palindrome:previousData');
             const previousResultsFormatted = {
                 'Average FPS rendered': previousResults[0],
                 'Average Milliseconds needed to render a frame': previousResults[1],
@@ -218,28 +219,28 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
             await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);
             // mutate benchmark control to Inactive
             conf.benchmark = 'Inactive';
-            localStorage.removeItem('benchmarkResults');
-            localStorage.removeItem('testBothVersions');
-            localStorage.removeItem('webWorkers');
-            localStorage.removeItem('version');
-            localStorage.removeItem('previousData');
+            localStorage.removeItem('palindrome:benchmarkResults');
+            localStorage.removeItem('palindrome:testBothVersions');
+            localStorage.removeItem('palindrome:webWorkers');
+            localStorage.removeItem('palindrome:version');
+            localStorage.removeItem('palindrome:previousData');
         }
         //Saving benchmark results into history (localStorage)
         let currentDate = new Date().toISOString();
         //if there is a previous history results, we append the current result to the history
-        if (localStorage.getItem("benchmarkHistory")) {
-            let history = JSON.parse(localStorage.getItem("benchmarkHistory"));
+        if (localStorage.getItem("palindrome:benchmarkHistory")) {
+            let history = JSON.parse(localStorage.getItem("palindrome:benchmarkHistory"));
             history[currentDate] = { results, statsData, version: versionString };
-            localStorage.setItem("benchmarkHistory", JSON.stringify(history));
+            localStorage.setItem("palindrome:benchmarkHistory", JSON.stringify(history));
         }
         //if there are no previous results, we create a new history
         else {
             let history = {};
             history[currentDate] = { results, statsData, version: versionString };
-            localStorage.setItem("benchmarkHistory", JSON.stringify(history));
+            localStorage.setItem("palindrome:benchmarkHistory", JSON.stringify(history));
         }
-        console.info(`Benchmark results after ${duringTime} minute(s) of execution.`);
-        console.info(results);
+        Logger.info(`Benchmark results after ${duringTime} minute(s) of execution.`);
+        Logger.info(results);
     }
 }
 
@@ -293,38 +294,27 @@ function createModalElements(isHistory) {
         span.style.float = "right";
         span.style.fontSize = "28px";
         span.style.fontWeight = "bold";
-        //if we click outside the modal, the modal will close
-        window.onclick = function (event) {
-            if (event.target === modalDiv) {
+        
+        /**
+         * Close benchmark results modal and deletes interaction blocker
+         * @param {*} modalDiv the modal div that displays benchmark results
+         */
+        const  closeBenchmarkModal = (event) => {
+            if (event.target === modalDiv || event.target === span) {
                 modalDiv.style.display = "none";
                 if (document.getElementById("benchmarkInteractionBlocker")) {
                     document.getElementById("benchmarkInteractionBlocker").style.display = "none";
                 }
             }
-        }
-        //if we click on the closing button, the modal will close
-        span.onclick = function () {
-            modalDiv.style.display = "none";
-            if (document.getElementById("benchmarkInteractionBlocker")) {
-                document.getElementById("benchmarkInteractionBlocker").style.display = "none";
+            const monitoringDisplay = document.getElementById("performanceMetering");
+            if(monitoringDisplay) {
+                monitoringDisplay.parentNode.removeChild(monitoringDisplay);
             }
-        }
+        };
+        window.addEventListener('click', closeBenchmarkModal);
+        span.addEventListener('click', closeBenchmarkModal);
     }
     return [modalDiv, modalContent, span, style];
-}
-
-/**
- * Close benchmark results modal and deletes interaction blocker
- * @param {*} modalDiv the modal div that displays benchmark results
- */
-const closeModal = (modalDiv) => {
-    modalDiv.parentNode.removeChild(modalDiv);
-    const benchmarkInteractionBlocker = document.getElementById("benchmarkInteractionBlocker");
-    if (benchmarkInteractionBlocker) {
-        benchmarkInteractionBlocker.parentNode.removeChild(benchmarkInteractionBlocker);
-    }
-    const monitoringDisplay = document.getElementById("performanceMetering");
-    monitoringDisplay.parentNode.removeChild(monitoringDisplay);
 }
 
 /**
@@ -615,15 +605,15 @@ export const exportBenchMarkResultsToFile = function (content, fileName, content
  * Cleans up benchmark variables when browser restores after crash
  */
 export const benchmarkCleanUp = () => {
-    const reloadTimeString = localStorage.getItem('reloadTime', new Date().toISOString());
+    const reloadTimeString = localStorage.getItem('palindrome:reloadTime', new Date().toISOString());
     if (reloadTimeString) {
         const reloadTime = new Date(reloadTimeString);
         if (Math.floor((new Date() - reloadTime) / (1000 * 60)) >= 1) {
-            localStorage.removeItem('benchmarkResults');
-            localStorage.removeItem('testBothVersions');
-            localStorage.removeItem('webWorkers');
-            localStorage.removeItem('version');
-            localStorage.removeItem('previousData');
+            localStorage.removeItem('palindrome:benchmarkResults');
+            localStorage.removeItem('palindrome:testBothVersions');
+            localStorage.removeItem('palindrome:webWorkers');
+            localStorage.removeItem('palindrome:version');
+            localStorage.removeItem('palindrome:previousData');
         }
     }
 }

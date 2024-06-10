@@ -1,6 +1,7 @@
 import { sphereHoverInit } from "../threeJSUtils/ThreeJSBasicObjects";
 import { displayGrid } from "../threeJSUtils/ThreeJSBasicObjects";
 import { showBenchmarkHistory } from "./benchmarkUtils";
+import { Logger } from "./logger";
 import { WorkerPool } from "./workersUtils";
 
 /**
@@ -15,9 +16,9 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
     //distance between planes is expressed in positive number
     conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
 
-    if (localStorage.getItem('benchmarkResults')) {
-        conf.testBothVersions = (localStorage.getItem('testBothVersions') === 'true');
-        conf.webWorkersRendering = (localStorage.getItem('webWorkersRendering') === 'true');
+    if (localStorage.getItem('palindrome:benchmarkResults')) {
+        conf.testBothVersions = (localStorage.getItem('palindrome:testBothVersions') === 'true');
+        conf.webWorkersRendering = (localStorage.getItem('palindrome:webWorkersRendering') === 'true');
     }
     // rendering
     if (conf.displayGrid) {
@@ -63,6 +64,10 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
     if (conf.layersLabelsRenderingMode === "3D") {
         layerParameters['labelSize'] = layerParameters['labelSize'] * 1.8;
     }
+    if (parentElement.children.length !== 0) {
+        // If the parent element is not empty, clear it and then append the new elements
+        parentElement.innerHTML = ''; // Clears all existing child elements
+    }
     parentElement.appendChild(renderer.domElement);
     parentElement.appendChild(labelsRenderer.domElement);
     if (conf.benchmark === 'Active') {
@@ -106,11 +111,11 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
 
     }
 
-    let benchmarkHistory = JSON.parse(localStorage.getItem("benchmarkHistory"));
+    let benchmarkHistory = JSON.parse(localStorage.getItem("palindrome:benchmarkHistory"));
 
     if (conf.clearHistory) {
         if (benchmarkHistory) {
-            localStorage.removeItem("benchmarkHistory");
+            localStorage.removeItem("palindrome:benchmarkHistory");
         }
 
     }
@@ -118,7 +123,7 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
         if (benchmarkHistory) {
             showBenchmarkHistory(parentElement, benchmarkHistory);
         } else {
-            console.error("There is no history data to display!");
+            Logger.error("There is no history data to display!");
         }
     }
 

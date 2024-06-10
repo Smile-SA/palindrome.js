@@ -1,3 +1,5 @@
+import { Logger } from "../utils/logger";
+
 /**
  * Gets local system metrics data
  * @returns system data
@@ -7,7 +9,7 @@ export const localLiveMonitoring = async (url = 'http://localhost:3000/dataSys')
     const response = await fetch(url);
     return await response.json();
   } catch (error) {
-    console.error('Error fetching data:', error);
+    Logger.error('Error fetching data:', error);
     throw error;
   }
 }
