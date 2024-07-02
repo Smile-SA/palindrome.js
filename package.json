@@ -1,6 +1,6 @@
 {
   "name": "@smile/palindrome.js",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "homepage": "https://Smile-SA.github.io/palindrome.js",
   "description": "3D monitoring for metrics and KPIs",
   "default": "index.html",

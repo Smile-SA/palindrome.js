@@ -137,7 +137,8 @@ export class Triangle extends THREE.Mesh {
 				`,
                 wireframe: false,
                 side: THREE.DoubleSide,
-                transparent: true
+                transparent: true,
+                depthWrite: false
             });
             if (opacityColor1 !== undefined && opacityColor2 !== undefined) {
                 material_front.uniforms["opacity1"] = { value: opacityColor1 };
