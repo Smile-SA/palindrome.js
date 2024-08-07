@@ -1,5 +1,5 @@
-import { defaultValues } from "../../../stories/controls/defaultControls";
 import { controls } from "../../../dev/utils/controls";
+import { getDefaultValues } from "../../../dev/dev-index";
 
 
 describe('[DEV] Sidebar values', function () {
@@ -7,7 +7,7 @@ describe('[DEV] Sidebar values', function () {
         cy.visit(Cypress.env("dev"));
     });
     it("should respect all default values", () => {
-        const defaultValuesObject = defaultValues();
+        const defaultValuesObject = getDefaultValues();
         for (const control of Object.keys(controls)) {
             let selector = "#" + control;
             if (controls[control].control === "boolean") {

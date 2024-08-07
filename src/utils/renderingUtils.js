@@ -167,7 +167,7 @@ export async function updateMeshes(params, renderingType) {
                             sideSizeOdd = e.data.sideSizeOdd,
                             sideSizeEven = e.data.sideSizeEven,
                             layer = e.data.layer;
-                        if (sideDividerOdd && sideDividerEven && sideSizeOdd && sideSizeEven && previousLayerStatus_sides) {
+                        if (sideDividerOdd && sideDividerEven && sideSizeOdd && sideSizeEven && previousLayerStatus_sides !== null && typeof previousLayerStatus !== 'undefined') {
                             const sideDividers = { sideDividerEven, sideDividerOdd };
                             const sideSizes = { sideSizeOdd, sideSizeEven };
                             const layerStatuses = { layerStatus, previousLayerStatus: previousLayerStatus_sides };

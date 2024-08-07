@@ -5,12 +5,12 @@ import { Stats, benchmarkCleanUp, collectStatsData } from './utils/benchmarkUtil
 import { createLabels } from './utils/labelsUtils2D';
 import { animateFrameDashedLine } from './utils/framesUtils';
 import { initVariables } from './utils/initVariables';
-import { cameraViewOptions } from './utils/cameraUtils';
+import { cameraViewOptions, hasGeometry } from './utils/cameraUtils';
 import { initMaterials } from './threeJSUtils/threeJSMaterialsInit';
 import { setPreviousPalindrome } from "./utils/destructionUtils";
 import { createBadUrlPopup, loadingText } from "./utils/fetchUtils";
 import { updateMeshes } from "./utils/renderingUtils";
-import { applyLayerMetricsUnits, applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
+import { applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
 import { changeLayerMetricsBehavior, shiftMetricsToPositive } from './utils/metricsUtils2D';
 import { renderDev } from '../dev/dev-index';
 import { Logger } from './utils/logger';
@@ -97,7 +97,7 @@ export default (function (parentElement, conf) {
     let refreshedData = {};
     //init palindrome parameters
     benchmarkCleanUp();
-    let init_camera = true;
+    let initCamera = true;
     localStorage.setItem("palindrome:isInitComplete", false);
     let frameId;
 
@@ -178,11 +178,13 @@ export default (function (parentElement, conf) {
         httpRequests_pool = liveDataInfo.httpRequests_pool;
         try {
             renderer.render(scene, camera);
-            if ((conf.webWorkersRendering) && init_camera && (localStorage.getItem("palindrome:isInitComplete") === "true")) {
-
-                // Setting camera for web workers
-                cameraViewOptions(meshes, camera, conf);
-                init_camera = false;
+            const isPalindromeInitComplete = localStorage.getItem("palindrome:isInitComplete") === "true";
+            if (conf.webWorkersRendering) {
+                if (initCamera && isPalindromeInitComplete && hasGeometry(meshes) ) {
+                    // Setting camera for web workers
+                    cameraViewOptions(meshes, camera, conf);
+                    initCamera = false;
+                }
             }
 
             // Animation (optional)

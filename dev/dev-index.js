@@ -37,6 +37,17 @@ function toggle(e) {
 }
 
 /**
+ * Gets and overrides default values
+ * @returns {Object} the default values
+ */
+export function getDefaultValues() {
+    const defaults = defaultValues();
+    // Override default values
+    defaults.webWorkersRendering = true;
+    return defaults;
+}
+
+/**
  * update url parameter with the selected value and reload
  * @param {event} e
  */
@@ -145,7 +156,7 @@ function applyDefaultOptions(devConfig) {
             element.addEventListener("click", onRadioChange, false);
         }
         const urlParams = new URLSearchParams(window.location.search);
-        let radioParam = urlParams.get(radioId) ?? defaultValues()[radioId];
+        let radioParam = urlParams.get(radioId) ?? getDefaultValues()[radioId];
         devConfig[radioId] = radioParam;
         for (const element of elements) {
             if (element.value === radioParam) {
@@ -441,7 +452,7 @@ function appendControlsToCategories() {
             labelContainer.appendChild(label);
             let input = document.createElement("input");
             input.setAttribute("id", nameId);
-            input.setAttribute("value", defaultValues()[nameId] ?? "");
+            input.setAttribute("value", getDefaultValues()[nameId] ?? "");
             input.setAttribute("class", "ml-2 relative  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
             li.appendChild(labelContainer);
             li.appendChild(input);
@@ -558,7 +569,7 @@ function applyParamsToConfig(config) {
  */
 export function renderDev(isGrafana) {
     if (isGrafana) {
-        const devConfig = defaultValues();
+        const devConfig = getDefaultValues();
         devConfig.isGrafana = isGrafana;
         return devConfig;
     }
@@ -567,7 +578,7 @@ export function renderDev(isGrafana) {
     createCategories();
     appendControlsToCategories();
     init();
-    const devConfig = defaultValues();
+    const devConfig = getDefaultValues();
     applyParamsToConfig(devConfig);
     devConfig.isGrafana = isGrafana;
     applyDefaultOptions(devConfig);

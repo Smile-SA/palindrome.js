@@ -90,3 +90,12 @@ export const createRenderOrderCounter = () => {
         return staticVariable;
     };
 }
+
+/**
+ * Check if at least one mesh has a geometry so bounding sphere can be computed and camera can be set
+ * @param {Object} meshes all meshes
+ * @returns {Boolean}
+ */
+export const hasGeometry = (meshes) => {
+    return Object.values(meshes).some(mesh => mesh.visible && mesh.geometry);
+}
