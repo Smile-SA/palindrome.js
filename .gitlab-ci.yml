@@ -43,6 +43,25 @@ build-dev:
   allow_failure: false
   when: manual
 
+build-storybook:
+  stage: build
+  before_script:
+    - apk update
+    - apk add bash
+    - apk add git
+  script:
+    - yarn install
+    - 'file_path="stories/oth.stories.js"'
+    - 'start_pattern="export const localLiveMonitoring"'
+    - 'end_pattern="fetchFunction: localMonitoring.*};"'
+    - 'sed -i "/$start_pattern/,/$end_pattern/d" "$file_path"' 
+    - yarn build-storybook
+  artifacts:
+    paths:
+      - "storybook-static/"
+  allow_failure: false
+  when: manual
+
 cypress-test:
   stage: test
   extends: .install-dependencies
@@ -84,6 +103,24 @@ pages:
     paths:
       - "public/"
   allow_failure: false
+
+gh-pages:
+  stage: deploy
+  dependencies:
+    - build-dev
+    - build-storybook
+  before_script:
+    - apk update
+    - apk add bash
+    - apk add git
+  script:
+    - mv storybook-static/ dist/storybook/
+    - yarn dev-deploy
+  artifacts:
+    paths:
+      - "dist/"
+  allow_failure: false
+  when: manual
 
 mirror-wiki:
   stage: deploy

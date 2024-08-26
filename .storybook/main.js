@@ -6,7 +6,6 @@ module.exports = {
       optimizationLevel: 1
     }
   }],
-  staticDirs: ['../static'],
   features: {
     postcss: false
   },
