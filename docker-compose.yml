@@ -7,6 +7,11 @@ services:
       NODE_ENV: production
     ports:
       - 1234:1234
-    volumes:
-      - .:/app/palindromeJS
-      - ./app/palindromeJS/node_modules
+  local_live_monitoring:
+    build: ./localMonitoringServer
+    container_name: local_live_monitoring_c
+    environment:
+      NODE_ENV: production
+    ports:
+      - 9000:9000
+  
