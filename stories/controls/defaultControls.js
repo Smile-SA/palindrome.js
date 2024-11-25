@@ -1005,7 +1005,7 @@ export function defaultValues() {
         sideLabelDisplay: false,
         rotatedMetricsAngle: 0,
         mergedMetricsNames: false,
-        remoteDataFetchPace: 1000,
+        remoteDataFetchPace: 5000,
         layerMetricsUnits: "absolute",
         equalizeFrameLinks: false,
         labelToFrameLinkLength: 40,

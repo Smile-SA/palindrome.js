@@ -1,0 +1,15 @@
+{
+    "ignore": [
+        "/host/*",
+        "/sys/*",
+        "/proc/*",
+        "/dev/*",
+        "node_modules/*",
+        ".git",
+        "*.test.js"
+    ],
+    "watch": [
+        "*.js",
+        "src/"
+    ]
+}

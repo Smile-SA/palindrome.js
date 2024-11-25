@@ -1,27 +1,28 @@
 import * as THREE from 'three';
 import { initThreeObjects } from './threeJSUtils/ThreeJSBasicObjects';
 import { dataGenerator } from './threeJSUtils/dataGenerator';
-import { Stats, benchmarkCleanUp, collectStatsData } from './utils/benchmarkUtils';
+import { Stats, benchmarkCleanUp, collectStatsData, initializeRemoteDataBenchmark } from './utils/benchmarkUtils';
 import { createLabels } from './utils/labelsUtils2D';
 import { animateFrameDashedLine } from './utils/framesUtils';
 import { initVariables } from './utils/initVariables';
 import { cameraViewOptions, hasGeometry } from './utils/cameraUtils';
 import { initMaterials } from './threeJSUtils/threeJSMaterialsInit';
 import { setPreviousPalindrome } from "./utils/destructionUtils";
-import { createBadUrlPopup, loadingText } from "./utils/fetchUtils";
+import { benchmarkInitialData, fetchFromDataProviders, groupMetricsByFetchPace, initializeFetchIntervals, loadingText } from "./utils/fetchUtils";
 import { updateMeshes } from "./utils/renderingUtils";
 import { applyLayerRotationToData, applyLayersSize } from './utils/layersUtils';
 import { changeLayerMetricsBehavior, shiftMetricsToPositive } from './utils/metricsUtils2D';
 import { renderDev } from '../dev/dev-index';
 import { Logger } from './utils/logger';
+import { WorkerPool } from './utils/workersUtils';
 
 /**
  * @param {HTMLElement} parentElement parent element of three's renderer element
  * @param {*} conf model's configuration
  */
 export default (function (parentElement, conf) {
-    conf.testBothVersions= true;
-    conf.testDuration= 1;
+    conf.testBothVersions = true;
+    conf.testDuration = 1;
     /**
      * Main function
      *
@@ -30,35 +31,77 @@ export default (function (parentElement, conf) {
         let data;
         let loading;
         let isDataReady = true;
-        if (!conf?.isRemoteDataSource) {
-            data = conf.data;
-        } else {
-            try {
-                // Getting time, so we can update later on the scrapper palindrome
-                scrapperUpdateInitTime = new Date();
+        if (process.env.CI_BENCHMARK === 'remote_data') {
+            initializeRemoteDataBenchmark(conf);
+        }
 
+        if (conf.validator) {
+            conf.validator(conf.data);
+        }
 
-                // Fetching data
-                const url = localStorage.getItem("palindrome:remote-data-source");
-                if (url) {
-                    data = await conf.fetchFunction(url);
-                    localStorage.removeItem("palindrome:remote-data-source");
-                } else {
-                    // Displaying loading text while fetching data
-                    loading = loadingText();
-                    parentElement.appendChild(loading);
-                    data = await conf.fetchFunction();
-                    // Removing loading text when data is ready
-                    parentElement.removeChild(loading);
+        if (conf.isRemoteData) {
+            const httpRequestsPool = new WorkerPool(conf.resourcesLevel);
+            const benchmarkDataUpdateIter = parseInt(localStorage.getItem('palindrome:benchmarkDataUpdateIter'));
+            if (!benchmarkDataUpdateIter) { // To not repeate benchmarkInitialData on benchmarkDataUpdate
+                if (conf.data.options.benchmarkInitialData) {
+                    const benchmarkData = JSON.parse(JSON.stringify(conf.data));
+                    if (!localStorage.getItem('palindrome:benchmarkInitialDataIter')) {
+                        localStorage.setItem('palindrome:benchmarkInitialDataIter', 0);
+                        benchmarkData.options.useBackend = false;
+                    }
+                    else if (parseInt(localStorage.getItem('palindrome:benchmarkInitialDataIter')) === 0) {
+                        localStorage.setItem('palindrome:benchmarkInitialDataIter', 1);
+                        benchmarkData.options.useBackend = true;
+                    }
+                    const results = await benchmarkInitialData(benchmarkData, conf.webWorkersHTTP, httpRequestsPool);
+                    if (results) {
+                        Logger.log(results);
+                    }
                 }
-
-                Logger.log("client response :", data);
-            } catch (error) {
-                isDataReady = false;
-                createBadUrlPopup(parentElement);
-                // Output the error if we have a http error occurred
-                Logger.error("client response :", error);
             }
+
+            if (conf.data.options.benchmarkDataUpdate === true) {
+                conf.data.options.liveData = true;
+                if (!benchmarkDataUpdateIter) {
+                    localStorage.setItem('palindrome:benchmarkDataUpdateIter', 0);
+                    conf.data.options.useBackend = false;
+                } 
+                else if (benchmarkDataUpdateIter === 1) {
+                    localStorage.setItem('palindrome:benchmarkDataUpdateIter', 1);
+                    conf.data.options.useBackend = true;
+                }
+            }
+            loading = loadingText(conf);
+            parentElement.appendChild(loading);
+            data = await fetchFromDataProviders(conf.data, conf.webWorkersHTTP, httpRequestsPool);
+            loading.remove();
+
+            if (!conf.data.options.liveData && conf.liveData === true) {
+                conf.data.options.liveData = true;
+                conf.data.options.remoteDataFetchPace = conf.remoteDataFetchPace;
+            }
+
+            const title = conf.title ? conf.title.toLowerCase().replaceAll(' ', '-') : '';
+            if (conf.data.options.liveData === true) {
+                fetchIntervals = groupMetricsByFetchPace(conf.data);
+                for(const interval in fetchIntervals) {
+                    const intervalMetrics = fetchIntervals[interval].map(e => e.id);
+                    Logger.log(`Metrics`, intervalMetrics, `will be updated each`, parseInt(interval), `ms.`);
+                }
+                initializeFetchIntervals(fetchIntervals, data, conf.data.options, conf.webWorkersHTTP, httpRequestsPool, title);
+            } 
+            else if (conf.data.options.liveData === false) {
+                const intervals = JSON.parse(localStorage.getItem(`palindrome:${title}:setIntervalIds`));
+                if (intervals) {
+                    for (const interval of intervals) {
+                        clearInterval(interval);
+                    }
+                }
+                localStorage.removeItem(`palindrome:${title}:setIntervalIds`);
+            }
+        }
+        else {
+            data = conf.data;
         }
 
         // Handling negative values
@@ -88,13 +131,11 @@ export default (function (parentElement, conf) {
         // Saving previous palindrome
         setPreviousPalindrome(renderer, scene, meshes, parentElement, frameId);
         if (!(conf.webWorkersRendering || conf.liveData)) {
-
             // Setting camera for default version
             cameraViewOptions(meshes, camera, conf);
         }
     }
 
-    let refreshedData = {};
     //init palindrome parameters
     benchmarkCleanUp();
     let initCamera = true;
@@ -114,16 +155,16 @@ export default (function (parentElement, conf) {
     let statsVariables = { displayMessage, displayBenchmark, statsData, startDate, parentElement };
 
     // Init global parameters
-    let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, scrapperUpdateInitTime;
+    let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, fetchIntervals = null;
     const meshes = {};
     const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(conf);
-    controls.addEventListener( "change", event => {
-        if (conf.keepControls){
+    controls.addEventListener("change", event => {
+        if (conf.keepControls) {
             const position = [controls.object.position.x, controls.object.position.y, controls.object.position.z];
-            localStorage.setItem( "palindrome:controls-" + conf.panelId , JSON.stringify(position));
+            localStorage.setItem("palindrome:controls-" + conf.panelId, JSON.stringify(position));
         }
         else {
-            localStorage.removeItem( "palindrome:controls" + conf.panelId);
+            localStorage.removeItem("palindrome:controls" + conf.panelId);
         }
     });
 
@@ -131,7 +172,7 @@ export default (function (parentElement, conf) {
 
     const palindromeParameters = { conf, metricParameters, layerParameters, parentElement };
     const threeJSParameters = { renderer, labelsRenderer, scene, camera, stats };
-    let [layers_pool, sides_pool, frames_pool, httpRequests_pool] = initVariables(palindromeParameters, threeJSParameters);
+    let [layers_pool, sides_pool, frames_pool] = initVariables(palindromeParameters, threeJSParameters);
     const clock = new THREE.Clock();
 
     // Calling main function
@@ -143,8 +184,13 @@ export default (function (parentElement, conf) {
      */
     async function updateGrafanaData(confUpdate) {
         conf = confUpdate;
-        newData = confUpdate.data;
         conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
+        if(conf.isRemoteData) {
+            newData = await fetchFromDataProviders(conf.data, conf.webWorkersHTTP, new WorkerPool(conf.resourcesLevel));
+        }
+        else {
+            newData = confUpdate.data;
+        }
         renderer.setSize(conf.innerWidth, conf.innerHeight);
         labelsRenderer.setSize(conf.innerWidth, conf.innerHeight);
         camera.aspect = conf.innerWidth / conf.innerHeight;
@@ -165,22 +211,19 @@ export default (function (parentElement, conf) {
             scene, camera,
             labelDiv, layerParameters,
             dashLineMaterial, lineMaterial,
-            scrapperUpdateInitTime,
             newData, dataIterator,
-            layers_pool, sides_pool, frames_pool, httpRequests_pool, refreshedData
+            layers_pool, sides_pool, frames_pool,
+            fetchIntervals
         }
 
         // Rendering with or without web workers
         const renderingMode = conf.webWorkersRendering ? "workers" : "default";
-        const liveDataInfo = await updateMeshes(updateMeshesParams, renderingMode);
-        scrapperUpdateInitTime = liveDataInfo.scrapperUpdateInitTime;
-        newData = liveDataInfo.newData;
-        httpRequests_pool = liveDataInfo.httpRequests_pool;
+        await updateMeshes(updateMeshesParams, renderingMode);
         try {
             renderer.render(scene, camera);
             const isPalindromeInitComplete = localStorage.getItem("palindrome:isInitComplete") === "true";
             if (conf.webWorkersRendering) {
-                if (initCamera && isPalindromeInitComplete && hasGeometry(meshes) ) {
+                if (initCamera && isPalindromeInitComplete && hasGeometry(meshes)) {
                     // Setting camera for web workers
                     cameraViewOptions(meshes, camera, conf);
                     initCamera = false;

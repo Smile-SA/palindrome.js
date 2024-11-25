@@ -5,9 +5,9 @@
 node_modules
 .cache
 *log
-yarn.lock
 .parcel-cache
 .vagrant
+yarn.lock
 
 # IDE
 *.swp
@@ -22,3 +22,4 @@ dist
 cypress/match-screenshots
 .nyc_output/*
 coverage/*
+**/snapshots/**

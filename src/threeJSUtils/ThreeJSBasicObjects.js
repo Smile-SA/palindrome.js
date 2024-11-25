@@ -42,14 +42,15 @@ function initRenderer(conf) {
  */
 function initLabelsRenderer(conf) {
     const labelsRenderer = new CSS2DRenderer();
+    labelsRenderer.domElement.style.position = 'absolute';
     if (conf.innerWidth > 0 && conf.innerHeight > 0) {
         labelsRenderer.setSize(conf.innerWidth, conf.innerHeight);
+        labelsRenderer.domElement.style.top = conf.labelsRendererTopPosition ?? 0;
     }
     else {
         labelsRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelsRenderer.domElement.style.top = 0;
     }
-    labelsRenderer.domElement.style.position = 'absolute';
-    labelsRenderer.domElement.style.top = 0;
     return labelsRenderer;
 }
 
@@ -102,8 +103,8 @@ export function initThreeObjects(conf) {
 
 
     window.addEventListener('resize', function () {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+        const width = conf.innerWidth ?? window.innerWidth;
+        const height = conf.innerHeight ?? window.innerHeight;
         renderer.setSize(width, height);
         labelsRenderer.setSize(width, height);
         camera.aspect = width / height;

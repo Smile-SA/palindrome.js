@@ -5,9 +5,9 @@ class CustomLogger {
      * Logs message in developement environment only
      * @param {*} msg the message to print
      */
-    log(msg) {
+    log(...args) {
         if (process.env.NODE_ENV === 'development') {
-            console.log(msg);
+            console.log(...args);
         }
     };
     /**

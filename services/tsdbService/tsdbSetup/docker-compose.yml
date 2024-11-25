@@ -1,0 +1,43 @@
+version: '3.0'
+
+services:
+  influxdb:
+    image: influxdb:2.1.1
+    env_file:
+      - .env
+    entrypoint: ["./entrypoint.sh"]
+    restart: on-failure:10
+    ports:
+      - ${DOCKER_INFLUXDB_INIT_PORT}:8086
+
+  telegraf:
+    image: telegraf:1.19
+    volumes:
+      - ${TELEGRAF_CFG_PATH}:/etc/telegraf/telegraf.conf:rw
+    env_file:
+      - .env
+    depends_on:
+      - influxdb
+
+  prometheus:
+    image: prom/prometheus:v2.37.9
+    user: root
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command: "--config.file=/etc/prometheus/prometheus.yaml"
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - 9100:9100
+    command:
+      - '--path.rootfs=/host'
+    user: root
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'

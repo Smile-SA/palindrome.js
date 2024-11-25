@@ -5,7 +5,7 @@ RUN yarn add global parcel-bundler
 COPY package.json .
 RUN yarn install --ignore-scripts
 COPY . .
-RUN yarn build
+RUN yarn build:local
 
 # Build storybook stage
 FROM node:20 AS build-storybook-stage

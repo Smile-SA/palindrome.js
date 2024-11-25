@@ -140,7 +140,7 @@ export function settingLabelFormat(sortedMetricsLabels, metrics, conf, labelDiv,
             const metricsLabelsType = metricsLabels.dataType;
             let metricsLabelsUnit = metricsLabels.labelUnit;
             const metricsLabelsIndex = Object.keys(metrics).indexOf(metricsLabels.key);
-            const metricsLabelsValue = Object.values(metrics)[metricsLabelsIndex][metricsLabelsType]?.toFixed();
+            const metricsLabelsValue = Object.values(metrics)[metricsLabelsIndex][metricsLabelsType];
             const labelPositions = metricValue[metricsLabelsType][metricsLabelsIndex];
 
             // update label data

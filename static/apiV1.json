@@ -1,0 +1,159 @@
+{
+    "metrics": {
+        "system": {
+            "cpu": {
+                "usage": {
+                    "average": {
+                        "value": 45.7,
+                        "units": "%",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    "perCore": [
+                        {
+                            "core": 0,
+                            "value": 47.2,
+                            "units": "%",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        },
+                        {
+                            "core": 1,
+                            "value": 44.1,
+                            "units": "%",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        }
+                    ]
+                },
+                "temperature": {
+                    "average": {
+                        "value": 60.5,
+                        "units": "Celsius",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    "perCore": [
+                        {
+                            "core": 0,
+                            "value": 61.0,
+                            "units": "Celsius",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        },
+                        {
+                            "core": 1,
+                            "value": 60.0,
+                            "units": "Celsius",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        }
+                    ]
+                }
+            },
+            "memory": {
+                "usage": {
+                    "total": {
+                        "value": 16384,
+                        "units": "MB",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    "used": {
+                        "value": 8192,
+                        "units": "MB",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    "free": {
+                        "value": 8192,
+                        "units": "MB",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    }
+                }
+            }
+        },
+        "network": {
+            "traffic": {
+                "inbound": {
+                    "total": {
+                        "value": 1024,
+                        "units": "MB",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    "perInterface": [
+                        {
+                            "interface": "eth0",
+                            "value": 512,
+                            "units": "MB",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        },
+                        {
+                            "interface": "eth1",
+                            "value": 512,
+                            "units": "MB",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        }
+                    ]
+                },
+                "outbound": {
+                    "total": {
+                        "value": 768,
+                        "units": "MB",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    "perInterface": [
+                        {
+                            "interface": "eth0",
+                            "value": 384,
+                            "units": "MB",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        },
+                        {
+                            "interface": "eth1",
+                            "value": 384,
+                            "units": "MB",
+                            "timestamp": "2024-08-20T15:30:00Z"
+                        }
+                    ]
+                }
+            }
+        },
+        "application": {
+            "responseTime": {
+                "average": {
+                    "value": 123,
+                    "units": "ms",
+                    "timestamp": "2024-08-20T15:30:00Z"
+                },
+                "perEndpoint": [
+                    {
+                        "endpoint": "/api/v1/users",
+                        "value": 100,
+                        "units": "ms",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    {
+                        "endpoint": "/api/v1/orders",
+                        "value": 150,
+                        "units": "ms",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    }
+                ]
+            },
+            "errorRate": {
+                "total": {
+                    "value": 0.5,
+                    "units": "%",
+                    "timestamp": "2024-08-20T15:30:00Z"
+                },
+                "perService": [
+                    {
+                        "service": "auth-service",
+                        "value": 0.3,
+                        "units": "%",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    },
+                    {
+                        "service": "order-service",
+                        "value": 0.7,
+                        "units": "%",
+                        "timestamp": "2024-08-20T15:30:00Z"
+                    }
+                ]
+            }
+        }
+    }
+}

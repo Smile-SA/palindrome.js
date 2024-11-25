@@ -23,69 +23,20 @@ export async function updateMeshes(params, renderingType) {
         layerParameters,
         dashLineMaterial,
         lineMaterial,
-        scrapperUpdateInitTime,
         newData,
         dataIterator,
-        refreshedData,
     } = params;
-    let layers_pool, sides_pool, frames_pool, httpRequests_pool;
+    let layers_pool, sides_pool, frames_pool;
     if (renderingType === "workers") {
         layers_pool = params.layers_pool;
         sides_pool = params.sides_pool;
         frames_pool = params.frames_pool;
     }
 
-    httpRequests_pool = params.httpRequests_pool;
-    if (conf.isRemoteDataSource && !conf.mockupData && conf.liveData) {
-        const currentTime = new Date();
-        const timeDifferenceInMilliseconds = currentTime - (refreshedData["scrapperUpdateInitTime"] ? refreshedData["scrapperUpdateInitTime"] : scrapperUpdateInitTime);
-        const remoteDataFetchPace = conf.remoteDataFetchPace; // in ms
-        if (timeDifferenceInMilliseconds >= remoteDataFetchPace) {
-            const url = localStorage.getItem("palindrome:remote-data-source");
-            // Getting updates...
-            if (conf.webWorkersHTTP) { // Making http requests using web workers
-                const worker = httpRequests_pool.getWorker();
-
-                worker.onmessage = function (e) {
-                    newData = e.data.newData;
-                    refreshedData["newData"] = e.data.newData;
-                    refreshedData["scrapperUpdateInitTime"] = new Date();
-                }
-
-                httpRequests_pool.releaseWorker(worker);
-                worker.postMessage({
-                    subject: "httpRequests",
-                    fn: conf.fetchFunction.toString()
-                });
-            }
-            else { // Making http requests using main thread
-                if (url) {
-                    data = await conf.fetchFunction(url);
-                    localStorage.removeItem("palindrome:remote-data-source");
-                }
-                else {
-                    newData = await conf.fetchFunction();
-                }
-                scrapperUpdateInitTime = new Date();
-            }
-        }
-    }
-
-    if (refreshedData["newData"]) {
-        newData = refreshedData["newData"];
-    }
-
     if (conf.mockupData && !conf.liveData) {
         newData = dataIterator.next().value;
     }
-    if (conf.hasScrapper) {
-        let currentHours = new Date().getHours();
-        if (currentHours > scrapperUpdateInitTime) {
-            Logger.info("Getting updates ...")
-            scrapperUpdateInitTime = currentHours;
-            newData = await scrappers[conf.scrapper]();
-        }
-    }
+
     let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null, previousLayerColor = null,
         metricIndex = 0, layerIndex = 0, zAxisWorker = conf.zPlaneInitial;
     if (conf.cameraOptions.indexOf("Flat") !== -1) {
@@ -269,8 +220,9 @@ export async function updateMeshes(params, renderingType) {
                     if (layerIndex_frames > newDataKeysLength) {
                         layerIndex_frames = 0;
                     }
-                    if (localStorage.getItem("palindrome:isInitComplete") === "false")
+                    if (!localStorage.getItem("palindrome:isInitComplete") || localStorage.getItem("palindrome:isInitComplete") === "false") {
                         localStorage.setItem("palindrome:isInitComplete", true);
+                    }
 
                     //releaseWorker when it finishes its job
                     frames_pool.releaseWorker(metricsWorker);
@@ -381,6 +333,4 @@ export async function updateMeshes(params, renderingType) {
             metricIndex++;
         }
     }
-
-    return { scrapperUpdateInitTime, newData, httpRequests_pool };
 }

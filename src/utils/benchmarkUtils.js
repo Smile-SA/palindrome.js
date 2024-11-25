@@ -1,5 +1,6 @@
 import ApexCharts from 'apexcharts';
 import { Logger } from './logger';
+import { remoteSchemaValidator } from './dataStructureValidationUtils';
 
 /**
  * stats.js main function
@@ -214,7 +215,7 @@ export var collectStatsData = async function (stats, duringTime, statsVariables,
                 fileResults['palindrome_config'] = conf;
                 const fileContent = JSON.stringify(fileResults, null, 2);
                 const fileName = process.env.PALINDROME_BENCH_OUTPUT ? process.env.PALINDROME_BENCH_OUTPUT : "benchmarkResults";
-                exportBenchMarkResultsToFile(fileContent, fileName, "text/plain");
+                saveFile(fileContent, fileName, "text/plain");
             }
             await createModal(Object.keys(results), Object.values(results), previousResults, duringTime, parentElement, versionString, previousVersion, statsData, previousData);
             // mutate benchmark control to Inactive
@@ -587,7 +588,7 @@ function padData(data1, data2, data3) {
 }
 
 
-export const exportBenchMarkResultsToFile = function (content, fileName, contentType) {
+export const saveFile = function (content, fileName, contentType) {
     const a = document.createElement("a");
     const file = new Blob([content], { type: contentType });
 
@@ -616,4 +617,12 @@ export const benchmarkCleanUp = () => {
             localStorage.removeItem('palindrome:previousData');
         }
     }
+}
+
+
+export const initializeRemoteDataBenchmark = (conf) => {
+    conf.isRemoteData = true;
+    conf.data.options.benchmarkInitialData = true;
+    conf.data.options.benchmarkDataUpdate = true;
+    conf.validator = remoteSchemaValidator;    
 }

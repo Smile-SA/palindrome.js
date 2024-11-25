@@ -128,12 +128,10 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
     }
 
     // creating pools for layer, sides and frames
-    let layers_pool, sides_pool, frames_pool, httpRequests_pool;
+    let layers_pool, sides_pool, frames_pool;
     layers_pool = new WorkerPool(conf.resourcesLevel);
     sides_pool = new WorkerPool(conf.resourcesLevel);
     frames_pool = new WorkerPool(conf.resourcesLevel);
-    httpRequests_pool = new WorkerPool(conf.resourcesLevel);
 
-
-    return [layers_pool, sides_pool, frames_pool, httpRequests_pool];
+    return [layers_pool, sides_pool, frames_pool];
 }

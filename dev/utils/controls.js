@@ -11,8 +11,14 @@ import { logicFiveThreeTwo } from "../../data-examples/logic_FiveThreeTwo";
 import { logicFourValued } from "../../data-examples/logic_FourValued";
 import { logicTernary } from "../../data-examples/logic_Ternary";
 import { pyramidOfMaslows } from "../../data-examples/oth_pyramid_of_maslows";
-import { getWeatherData } from "../../src/webCollectors/api.open-meteo.com";
-import { localLiveMonitoring } from "../../src/webCollectors/local_live_monitoring";
+import { remoteSchema } from "../../data-examples/remote_data";
+import { heavyRemoteSchema } from "../../data-examples/heavy_remote_data";
+import { remoteSchemaValidator } from "../../src/utils/dataStructureValidationUtils";
+import { hybridMultiplePalindromes } from "../../data-examples/mvp_hybridMultiplePalindromes";
+import { openMeteo } from "../../data-examples/oth_api_open_meteo_com";
+import { localLiveMonitoring as localLiveMonitoringData } from "../../data-examples/oth_localLiveMonitoring";
+import { staticMultiplePlaindromes } from "../../data-examples/mvp_staticMultiplePalindromes";
+import { benchGenerator } from "../../data-examples/mvpBenchGenerator";
 
 // defining categories
 export let categories = [
@@ -60,15 +66,33 @@ export let palindromes = {
         { name: "logicFourValued", data: logicFourValued },
         { name: "logicTernary", data: logicTernary },
     ],
+    remoteDataExamples: [
+        { name: "api.open-meteo.com", isRemoteData: true, data: openMeteo()},
+    ],
+    multiviewportExamples: [
+        { name: "staticMultiplePalindromes", isMultipleViewPorts: true, data: staticMultiplePlaindromes() }
+    ],
     otherExamples: [
         { name: "benchLoadTest", data: benchLoadTestData },
         { name: "pyramidOfMaslows", data: pyramidOfMaslows },
-        { name: "api.open-meteo.com", isRemoteDataSource: true, fetchFunction: getWeatherData, remoteDataFetchPace: 1000 * 60 * 60 },
-    ],
+    ]
 };
 
+if (process.env.CI_BENCHMARK === "multi-viewports") {
+    for(let i = 1; i <= 15; i++) {
+        palindromes.remoteDataExamples.push(
+            { name: `benchmarkRemoteData${i}`, isMultipleViewPorts: true, data: benchGenerator(i) }
+        );
+    }
+}
+
 if (process.env.PLATFORM !== "GH_PAGES") {
-    palindromes.otherExamples.push({ name: "localLiveMonitoring", isRemoteDataSource: true, fetchFunction: localLiveMonitoring, isLive: true })
+    palindromes.otherExamples.push({ name: "localLiveMonitoring", isRemoteData: true, data: localLiveMonitoringData() })
+    palindromes.multiviewportExamples.push( { name: "hybridMultiplePalindromes", isMultipleViewPorts: true, data: hybridMultiplePalindromes() });
+    palindromes.remoteDataExamples.push(
+        { name: "remoteData", isRemoteData: true, data: remoteSchema(), validator: remoteSchemaValidator },
+        { name: "heavyRemoteData", isRemoteData: true, data: heavyRemoteSchema() },
+    );
 }
 
 //Defining sidebar controls

@@ -1,0 +1,37 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore dotenv environment variables file
+.env
+
+# Ignore built files
+dist/
+
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore yarn integrity file
+.yarn-integrity
+
+# Ignore IDE-specific files and directories
+.vscode/
+.idea/
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore user-specific files
+*.iml
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# Ignore test coverage directory
+coverage/
+
+# Ignore build artifacts
+build/

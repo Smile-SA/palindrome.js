@@ -19,7 +19,7 @@ Feedbacks are more than welcome !**_
 
 ## Motivation
 
-Idea behind this project is to go one step further current monitoring and dashboards solutions, by enabling a scalable
+The idea behind this project is to go one step further current monitoring and dashboards solutions, by enabling a scalable
 and user oriented, 3D monitoring probe for multi-dimensional and heterogeneous sets of data points. Compatible use cases
 are various, from comparing system metrics with external indicators, to stacking up multi-tenancy informations groups
 for measuring differences or similarities, ```Palindrome.js``` can both be used as a live UI component for a larger BI
@@ -47,13 +47,23 @@ sudo apt install nodejs
 **Note:** An already built version of Palindrome.js is ready to be integrated without any Node.js setup, two files can be found inside the `/artifacts` folder: `palindrome.dev.js`, which includes a sidebar, and `palindrome.js`, which represents the basic version of Palindrome.js without a sidebar. The [documentation](../../wikis/Single-file-distribution) should be followed for more integration details.
 ## Setup
 
-This project uses ```three.js``` as its 3D renderer, ```yarn``` as the dependency manager, ```storybook``` for
+This project uses ```three.js``` as its 3D renderer, ```yarn``` as the dependency manager, ```Storybook``` for
 functional testing and ```parcel-bundler``` as the stand-alone packager.
 
 First install the project dependencies :
 
 ```
 yarn install
+```
+
+### TSDBs Setup
+
+Palindrome.js includes use cases that require metrics data coming from `InfluxDB`, `Prometheus`, `Node Exporter`, and `Telegraf`. You can configure your remote data use cases by following the documentation [here](../../wikis/Remote-Data-Integration). 
+
+If you haven't configured your own TSDBs in Palindrome.js, you need to run the following command to launch the TSDBs with the default configuration:
+
+```
+docker compose -f ./services/tsdbService/tsdbSetup/docker-compose.yml up -d
 ```
 
 ## Default HTML
@@ -78,10 +88,18 @@ yarn storybook
 
 ## Docker
 
-You can as well, run Palindrome.js on docker :
+Palindrome.js can also be run in Docker.
+
+First, start the TSDB servers by running the following command (if you haven't configured your own TSDBs in Palindrome.js):
 
 ```
-docker-compose up
+docker compose -f ./services/tsdbService/tsdbSetup/docker-compose.yml up -d
+```
+
+Next, launch Palindrome.js by running:
+
+```
+docker compose up
 ```
 
 ## Documentation
@@ -90,8 +108,10 @@ Click [here](../../wikis/home) to visit our wiki page containing the documentati
 
 ## Demo Environments
 
-- Dev Environment : https://smile-sa.github.io/palindrome.js
-- Storybook Environment : https://smile-sa.github.io/palindrome.js/storybook
+You can explore the following demo environments:
+
+- [Dev Environment](https://smile-sa.github.io/palindrome.js)
+- [Storybook Environment](https://smile-sa.github.io/palindrome.js/storybook)
 
 
 ## Contribute
@@ -100,7 +120,7 @@ Simply open a pull request over the repository to describe your changes.
 
 ## Credits
 
-- Mohamed Ali YACOUBI @yacoubii
+- Mohamed Ali Yacoubi @yacoubii
 - Koku Ulrich Gblokpo @koku-ulrich.gblokpo
 - Damien Gilles @gillesdami
 - JonRiv (author) @JonRiv

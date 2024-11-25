@@ -31,10 +31,17 @@ default:
 build-dev:
   stage: build
   before_script:
-    - apk update
-    - apk add bash
-    - apk add git
+    - export CI_BENCHMARK=remote_data
+    - export PALINDROME_TYPE=basic
   script:
+    - yarn install --ignore-scripts
+    - |
+      yarn parcel dev/index.html --no-cache &
+      until curl -s http://localhost:1234 > /dev/null; do
+        echo "Waiting for Parcel server..."
+        sleep 1
+      done
+    - cd services/tsdbService
     - yarn install
     - yarn build
   artifacts:
@@ -73,6 +80,53 @@ cypress-test:
     - rm -rf cypress/match-screenshots/ .cache/
     - for i in 1 2; do yarn cypress:run; done
   allow_failure: false
+
+.launch-benchmark-remote-data:
+  stage: test
+  image: ghcr.io/puppeteer/puppeteer:latest 
+  script:
+    - |
+      for file in data-examples/*; do
+        if [ -f "$file" ]; then
+          if grep -q "localhost" "$file"; then
+            echo "Processing $file"
+            sed -i "s/localhost/${INFLUX_PROMETHEUS_SERVER}/g" "$file"
+            sed -i "s/'token'/'${INFLUX_TOKEN}'/g" "$file"
+          fi
+        fi
+      done
+    - yarn install --ignore-scripts
+    - |
+      yarn parcel dev/index.html --no-cache &
+      until curl -s http://localhost:1234 > /dev/null; do
+        echo "Waiting for Parcel server..."
+        sleep 1
+      done
+    - cd services/tsdbService
+    - yarn install
+    - |
+      yarn dev &
+      until curl -s http://localhost:9009 > /dev/null; do
+        echo "Waiting for palindrome service..."
+        sleep 1
+      done
+    - cd ../..
+    - node "$BENCHMARK_SCRIPT"
+  allow_failure: false
+
+initial_remote-data-benchmark:
+  extends: .launch-benchmark-remote-data
+  before_script:
+    - export CI_BENCHMARK=remote_data
+    - export PALINDROME_TYPE=basic
+    - export BENCHMARK_SCRIPT=./scripts/remoteDataBenchmark/remoteDataBenchmark.js
+
+remote-data-update-multiviewport-benchmark:
+  extends: .launch-benchmark-remote-data
+  before_script:
+    - export CI_BENCHMARK=multi-viewports
+    - export PALINDROME_TYPE=basic
+    - export BENCHMARK_SCRIPT=./scripts/remoteDataBenchmark/multiViewportBenchmark.js
 
 benchmark:
   image: ubuntu:20.04

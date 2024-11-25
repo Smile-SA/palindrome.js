@@ -1,11 +1,11 @@
 import { defaultControls, defaultValues } from "./controls/defaultControls";
 import { createPalindrome } from "./controls/createPalindrome";
 import { pyramidOfMaslows } from "../data-examples/oth_pyramid_of_maslows";
-import { getWeatherData } from "../src/webCollectors/api.open-meteo.com";
-import { localLiveMonitoring as localMonitoring } from "../src/webCollectors/local_live_monitoring";
+import { openMeteo } from "../data-examples/oth_api_open_meteo_com";
+import { localLiveMonitoring as localLiveMonitoringData } from "../data-examples/oth_localLiveMonitoring";
 
 export default {
-    title: 'Use Cases/Palindrome/Other examples',
+    title: 'Use Cases/Palindrome/Other example',
     argTypes: defaultControls(),
     args: defaultValues(),
 };
@@ -18,13 +18,13 @@ PyramidOfMaslows.args = {
 
 export const api_open_meteo_com = createPalindrome.bind({});
 api_open_meteo_com.args = {
-    isRemoteDataSource: true,
-    remoteDataFetchPace: 1000 * 60 * 60, // every hour
-    fetchFunction: getWeatherData
+    isRemoteData: true,
+    data: openMeteo()
 };
+api_open_meteo_com.storyName = 'api.open-meteo.com';
 
 export const localLiveMonitoring = createPalindrome.bind({});
 localLiveMonitoring.args = {
-    isRemoteDataSource: true,
-    fetchFunction: localMonitoring
+    isRemoteData: true,
+    data: localLiveMonitoringData()
 };

@@ -95,11 +95,13 @@ export default () => {
         return 100 * sum / status.length;
     }
 
-    onmessage = async function (e) {
-        if (e.data.subject === 'httpRequests') {
-            const fun = eval("const f = function(){ return " + e.data.fn + ";}; f();");
-            const newData = await fun();
-            postMessage({ subject: 'httpRequests', newData });
+    onmessage = function (e) {
+        if (e.data.subject === 'httpRequest') {
+            this.fetch(e.data.url).then((response) =>{
+                response.json().then((responseData) => {
+                    postMessage({ subject: 'httpRequest', data: responseData });
+                }).catch(err => console.error(err)); 
+            }).catch(err => console.error(err));
         }
         else {
             const metrics = e.data.newData[e.data.layer].metrics,

@@ -55,6 +55,7 @@ export var createPalindrome = ({ ...args }) => {
     const container = document.createElement('div');
     const stringArgs = JSON.parse(JSON.stringify({ ...args }));
     stringArgs["fetchFunction"] = args?.fetchFunction;
+    stringArgs["validator"] = args?.validator;
     palindrome(container, stringArgs);
     return container;
 };

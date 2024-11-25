@@ -8,10 +8,10 @@ services:
     ports:
       - 1234:1234
   local_live_monitoring:
-    build: ./localMonitoringServer
+    build: ./services/localMonitoringServer
+    privileged: true
     container_name: local_live_monitoring_c
     environment:
       NODE_ENV: production
     ports:
-      - 9000:9000
-  
+      - "9000:9000"
