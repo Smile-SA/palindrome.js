@@ -1,0 +1,6 @@
+{
+    "basicFps":5,
+    "basicMs":1000,
+    "workersFps":10,
+    "workersMs":100
+}

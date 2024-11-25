@@ -63,7 +63,7 @@ launch_benchmark_and_get_results(){
 # $result_array, $fps_workers, $ms_workers, $fps_basic, $ms_basic
 eval_benchmark_get_median(){
     if [[ "${PALINDROME_BENCH_EXPECTED_VALUES_SOURCE}" == "remote" ]]; then
-        remote_values=$(curl ${PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL} -H "Accept: application/json")
+        remote_values=$(curl -k ${PALINDROME_BENCH_EXPECTED_VALUES_REMOTE_SOURCE_URL} -H "Accept: application/json")
         dynamic_fps_workers=$(echo "${remote_values}" | jq -r '.workersFps')
         dynamic_fps_basic=$(echo "${remote_values}" | jq -r '.basicFps')
         dynamic_ms_workers=$(echo "${remote_values}" | jq -r '.workersMs')
