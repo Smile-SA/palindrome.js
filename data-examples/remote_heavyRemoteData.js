@@ -43,7 +43,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Weighted IO Time',
                 unit: 'MS',
                 id: 'diskWIOT-id',
-                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1",
                 remoteDataFetchPace: 6000
@@ -52,7 +52,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Write Time',
                 unit: 'MS',
                 id: 'diskWT-id',
-                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1"
             },
@@ -148,7 +148,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Weighted IO Time',
                 unit: 'MS',
                 id: 'diskWIOT-id2',
-                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1",
                 remoteDataFetchPace: 6000
@@ -157,7 +157,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Write Time',
                 unit: 'MS',
                 id: 'diskWT-id2',
-                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1"
             },
@@ -253,7 +253,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Weighted IO Time',
                 unit: 'MS',
                 id: 'diskWIOT-id3',
-                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1",
                 remoteDataFetchPace: 6000
@@ -262,7 +262,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Write Time',
                 unit: 'MS',
                 id: 'diskWT-id3',
-                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1"
             },
@@ -358,7 +358,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Weighted IO Time',
                 unit: 'MS',
                 id: 'diskWIOT-id4',
-                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js") |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio") |> filter(fn: (r) => r["_field"] == "weighted_io_time") ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1",
                 remoteDataFetchPace: 6000
@@ -367,7 +367,7 @@ export function heavyRemoteSchema() {
                 label: 'Disk Write Time',
                 unit: 'MS',
                 id: 'diskWT-id4',
-                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  |> filter(fn: (r) => r["name"] == "sda")',
+                query: 'from(bucket: "Palindrome.js")  |> range(start:-1m) |> filter(fn: (r) => r["_measurement"] == "diskio")  |> filter(fn: (r) => r["_field"] == "write_time")  ',
                 ranges: [0, 500, 1000],
                 dataProviderId: "influxdb-1"
             },

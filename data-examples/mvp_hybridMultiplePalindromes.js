@@ -3,8 +3,8 @@ import { dcEnergeticEfficiency } from "./dc_EnergeticEfficiency"
 import { dcFullMap } from "./dc_FullMap"
 import { debugTwoLayersFourPoints } from "./debug_TwoLayersFourPoints"
 import { debugTwoLayersThreePoints } from "./debug_TwoLayersThreePoints"
-import { heavyRemoteSchema } from "./heavy_remote_data"
-import { remoteSchema } from "./remote_data"
+import { heavyRemoteSchema } from "./remote_heavyRemoteData"
+import { remoteSchema } from "./remote_remoteData"
 
 export const hybridMultiplePalindromes = () => {
     return {

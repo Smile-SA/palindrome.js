@@ -1,5 +1,5 @@
-import { heavyRemoteSchema } from "../data-examples/heavy_remote_data";
-import { remoteSchema } from "../data-examples/remote_data";
+import { heavyRemoteSchema } from "../data-examples/remote_heavyRemoteData";
+import { remoteSchema } from "../data-examples/remote_remoteData";
 import { remoteSchemaValidator } from "../src/utils/dataStructureValidationUtils";
 import { createPalindrome } from "./controls/createPalindrome";
 import { defaultControls, defaultValues } from "./controls/defaultControls";

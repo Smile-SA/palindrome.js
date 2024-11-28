@@ -2,11 +2,8 @@
 
 # Set sudo prefix depending on situation
 declare -g cmd_prefix
-if [[ -n "${GITLAB_CI}" ]]; then
-    cmd_prefix=""
-else
-    cmd_prefix="sudo"
-fi
+
+cmd_prefix="sudo"
 
 # Update the package manager
 ${cmd_prefix} apt update -y

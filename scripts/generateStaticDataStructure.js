@@ -1,4 +1,4 @@
-import { remoteSchema } from "../data-examples/remote_data.js";
+import { remoteSchema } from "../data-examples/remote_remoteData.js";
 import { fetchFromDataProviders } from "../src/utils/fetchUtils.js";
 import { writeFile } from 'fs/promises';
 

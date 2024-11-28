@@ -811,52 +811,6 @@ export function defaultControls() {
                 category: "Data"
             },
         },
-        //benchamark
-        // benchmark: {
-        //     name: "benchmark",
-        //     control: 'inline-radio',
-        //     description: "Turn on or off benchmark mode",
-        //     options: ['Active', 'Inactive'],
-        //     table: {
-        //         category: "Benchmark"
-        //     },
-        // },
-
-        // testBothVersions: {
-        //     name: "basicAndWorkers",
-        //     control: 'boolean',
-        //     description: "test with and without web workers",
-        //     table: {
-        //         category: "Benchmark"
-        //     },
-        // },
-
-        // testDuration: {
-        //     name: "testDuration (minutes)",
-        //     control: "number",
-        //     description: "benchmark execution duration in minutes",
-        //     table: {
-        //         category: "Benchmark"
-        //     }
-        // },
-        // clearHistory: {
-        //     name: "clearHistory",
-        //     control: "boolean",
-        //     description: "allow or not clearing history after benchmark execution",
-        //     table: {
-        //         category: "Benchmark"
-        //     }
-        // },
-
-        // showResultsHistory: {
-        //     name: "showResultsHistory",
-        //     control: "boolean",
-        //     description: "show benchmark history",
-        //     table: {
-        //         category: "Benchmark"
-        //     }
-        // },
-
         webWorkersRendering: {
             name: "webWorkersRendering",
             control: "boolean",
@@ -932,7 +886,6 @@ export function defaultValues() {
         transparencyMed: 0.5,
         transparencyLow: 0,
         mainStaticColor: '#f3c60a',
-
         displayArea: 'palindrome',
         palindromeSize: 3,
         cameraOptions: ['Fit'],
@@ -987,19 +940,13 @@ export function defaultValues() {
         displayFramesBackground: false,
         displayMetricsLabelsUnit: true,
         displayLabelLine: true,
-
         statusRangeLow: 0,
         statusRangeMed: 33,
         statusRangeHigh: 66,
         data: 'palindrome',
         mockupData: false,
         liveData: false,
-        // benchmark: 'Inactive',
-        // testBothVersions: true,
-        // testDuration: 1,
-        // clearHistory: false,
         webWorkersRendering: false,
-        // showResultsHistory: false,
         webWorkersHTTP: false,
         resourcesLevel: 50,
         sideLabelDisplay: false,

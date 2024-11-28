@@ -1,5 +1,5 @@
-import { heavyRemoteSchema } from "./heavy_remote_data"
-import { remoteSchema } from "./remote_data"
+import { heavyRemoteSchema } from "./remote_heavyRemoteData"
+import { remoteSchema } from "./remote_remoteData"
 
 export const benchmarkRemoteData = () => {
     return {

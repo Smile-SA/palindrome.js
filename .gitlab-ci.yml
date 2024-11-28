@@ -5,81 +5,7 @@ stages:
 
 .install-dependencies:
   before_script:
-    - apt update -y
-    - apt install curl -y
-    - apt install git -y
-    - git --version
     - yarn install
-
-.install-node-yarn-dependencies:
-  before_script:
-    - apt update -y
-    - apt install git -y
-    - apt install -y sudo curl
-    - curl --version
-    - curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-    - sudo apt install -y nodejs
-    - node -v
-    - curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-    - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    - sudo apt update && sudo apt install -y yarn
-    - yarn install
-
-default:
-  image: node:18.18-alpine
-
-build-dev:
-  stage: build
-  before_script:
-    - export CI_BENCHMARK=remote_data
-    - export PALINDROME_TYPE=basic
-  script:
-    - yarn install --ignore-scripts
-    - |
-      yarn parcel dev/index.html --no-cache &
-      until curl -s http://localhost:1234 > /dev/null; do
-        echo "Waiting for Parcel server..."
-        sleep 1
-      done
-    - cd services/tsdbService
-    - yarn install
-    - yarn build
-  artifacts:
-    paths:
-      - "dist/"
-  allow_failure: false
-  when: manual
-
-build-storybook:
-  stage: build
-  before_script:
-    - apk update
-    - apk add bash
-    - apk add git
-  script:
-    - yarn install
-    - 'file_path="stories/oth.stories.js"'
-    - 'start_pattern="export const localLiveMonitoring"'
-    - 'end_pattern="fetchFunction: localMonitoring.*};"'
-    - 'sed -i "/$start_pattern/,/$end_pattern/d" "$file_path"' 
-    - yarn build-storybook
-  artifacts:
-    paths:
-      - "storybook-static/"
-  allow_failure: false
-  when: manual
-
-cypress-test:
-  stage: test
-  extends: .install-dependencies
-  dependencies: []
-  image: cypress/base:latest
-  script:
-    - yarn storybook &
-    - yarn dev &
-    - rm -rf cypress/match-screenshots/ .cache/
-    - for i in 1 2; do yarn cypress:run; done
-  allow_failure: false
 
 .launch-benchmark-remote-data:
   stage: test
@@ -112,9 +38,24 @@ cypress-test:
       done
     - cd ../..
     - node "$BENCHMARK_SCRIPT"
+  allow_failure: true
+
+default:
+  image: node:18.18-alpine
+
+cypress-test:
+  stage: test
+  extends: .install-dependencies
+  dependencies: []
+  image: cypress/base:latest
+  script:
+    - export NODE_OPTIONS=--openssl-legacy-provider & yarn run start-storybook -p 6006 &
+    - yarn run cross-env PALINDROME_TYPE=dev parcel dev/index.html --no-cache &
+    - rm -rf cypress/match-screenshots/ .cache/
+    - for i in 1 2; do yarn cypress:run; done
   allow_failure: false
 
-initial_remote-data-benchmark:
+initial-remote-data-benchmark:
   extends: .launch-benchmark-remote-data
   before_script:
     - export CI_BENCHMARK=remote_data
@@ -129,21 +70,59 @@ remote-data-update-multiviewport-benchmark:
     - export BENCHMARK_SCRIPT=./scripts/remoteDataBenchmark/multiViewportBenchmark.js
 
 benchmark:
-  image: ubuntu:20.04
+  image: cimg/node:18.0
   stage: test
   dependencies: []
-  extends: .install-node-yarn-dependencies
+  before_script:
+    - sudo chown -R $(whoami):$(whoami) .
+    - !reference [.install-dependencies, before_script]
   script:
     - /bin/bash ./scripts/benchmark.sh "classic"
   allow_failure: false
 
 benchmark-test:
-  image: ubuntu:20.04
+  image: cimg/node:18.0
   stage: test
   dependencies: []
-  extends: .install-node-yarn-dependencies
+  before_script:
+    - sudo chown -R $(whoami):$(whoami) .
+    - !reference [.install-dependencies, before_script]
   script:
     - /bin/bash ./scripts/benchmark.sh "evaluation"
+  allow_failure: false
+
+build-dev:
+  stage: build
+  before_script:
+    - apk update
+    - apk add bash
+    - apk add git
+  script:
+    - yarn install
+    - yarn build
+  artifacts:
+    paths:
+      - "dist/"
+  allow_failure: false
+
+build-storybook:
+  stage: build
+  before_script:
+    - apk update
+    - apk add bash
+    - apk add git
+  script:
+    - yarn install
+    - rm -rf stories/remote.stories.js
+    - file_path="stories/oth.stories.js"
+    - sed -i '/export const localLiveMonitoring = createPalindrome.bind({});/,/};/d' $file_path
+    - file_path="stories/mvp.stories.js"
+    - sed -i "/export const hybridMultiviewport = createMultipleViewPorts.bind({});/,/};/d" "$file_path"
+    - sed -i "/export const benchmarkMultiviewport = createMultipleViewPorts.bind({});/,/};/d" "$file_path"
+    - yarn build-storybook
+  artifacts:
+    paths:
+      - "storybook-static/"
   allow_failure: false
 
 pages:
@@ -157,6 +136,7 @@ pages:
     paths:
       - "public/"
   allow_failure: false
+  when: manual
 
 gh-pages:
   stage: deploy
