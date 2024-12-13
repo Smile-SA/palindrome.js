@@ -25,13 +25,6 @@ are various, from comparing system metrics with external indicators, to stacking
 for measuring differences or similarities, ```Palindrome.js``` can both be used as a live UI component for a larger BI
 dashboard, or as the signal source for a computer-vision based workflow.
 
-## Tech/framework used
-
-Project is created with:
-
-* Three.js
-* love <3
-
 ## Requirements
 
 - Node.js version 20 or later
@@ -56,15 +49,7 @@ First install the project dependencies :
 yarn install
 ```
 
-### TSDBs Setup
-
-Palindrome.js includes use cases that require metrics data coming from `InfluxDB`, `Prometheus`, `Node Exporter`, and `Telegraf`. You can configure your remote data use cases by following the documentation [here](../../wikis/Remote-Data-Integration). 
-
-If you haven't configured your own TSDBs in Palindrome.js, you need to run the following command to launch the TSDBs with the default configuration:
-
-```
-docker compose -f ./services/tsdbService/tsdbSetup/docker-compose.yml up -d
-```
+You can configure your remote data use cases by following the documentation [here](../../wikis/Remote-Data-Integration).
 
 ## Default HTML
 
@@ -90,13 +75,9 @@ yarn storybook
 
 Palindrome.js can also be run in Docker.
 
-First, start the TSDB servers by running the following command (if you haven't configured your own TSDBs in Palindrome.js):
+You can optionally start the TSDB servers, as outlined in the [documentation](../../wikis/Remote-Data-Integration#quick-setup).
 
-```
-docker compose -f ./services/tsdbService/tsdbSetup/docker-compose.yml up -d
-```
-
-Next, launch Palindrome.js by running:
+Then, launch Palindrome.js by running:
 
 ```
 docker compose up
@@ -121,8 +102,6 @@ Simply open a pull request over the repository to describe your changes.
 ## Credits
 
 - Mohamed Ali Yacoubi @yacoubii
-- Koku Ulrich Gblokpo @koku-ulrich.gblokpo
-- Damien Gilles @gillesdami
 - JonRiv (author) @JonRiv
 - Rnd Team @ SMILE
 
