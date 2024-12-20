@@ -49,7 +49,7 @@ First install the project dependencies :
 yarn install
 ```
 
-You can configure your remote data use cases by following the documentation [here](../../wikis/Remote-Data-Integration).
+You can configure your remote data use cases by following the documentation [here](../../wikis/Remote-Data-Integration-(Time-Series-Databases-and-External-APIs)).
 
 ## Default HTML
 
@@ -75,7 +75,7 @@ yarn storybook
 
 Palindrome.js can also be run in Docker.
 
-You can optionally start the TSDB servers, as outlined in the [documentation](../../wikis/Remote-Data-Integration#quick-setup).
+You can optionally start the TSDB servers, as outlined in the [documentation](../../wikis/Remote-Data-Integration-(Time-Series-Databases-and-External-APIs)#quick-setup).
 
 Then, launch Palindrome.js by running:
 

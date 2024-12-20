@@ -148,6 +148,7 @@ gh-pages:
     - apk add bash
     - apk add git
   script:
+    - git config --global --add safe.directory '*'
     - git remote set-url origin "https://${GITLAB_USER_NAME}:${GITLAB_GHPAGES_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
     - git config --global user.email "${GITLAB_USER_EMAIL}"
     - git config --global user.name "${GITLAB_USER_NAME}"
