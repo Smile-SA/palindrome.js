@@ -1,0 +1,131 @@
+{
+    "timestamp": "2024-08-12T14:35:00Z",
+    "metrics": [
+        {
+            "name": "cpu_usage",
+            "value": 72.5,
+            "unit": "percentage",
+            "description": "The percentage of CPU usage by the application.",
+            "tags": [
+                "performance",
+                "system"
+            ]
+        },
+        {
+            "name": "memory_usage",
+            "value": 1500,
+            "unit": "MB",
+            "description": "The amount of memory in megabytes currently being used by the application.",
+            "tags": [
+                "performance",
+                "system"
+            ]
+        },
+        {
+            "name": "request_count",
+            "value": 12000,
+            "unit": "requests",
+            "description": "The total number of requests processed by the application.",
+            "tags": [
+                "traffic",
+                "application"
+            ]
+        },
+        {
+            "name": "error_rate",
+            "value": 0.03,
+            "unit": "percentage",
+            "description": "The percentage of failed requests.",
+            "tags": [
+                "reliability",
+                "application"
+            ]
+        },
+        {
+            "name": "average_response_time",
+            "value": 250,
+            "unit": "ms",
+            "description": "The average time taken to process a request.",
+            "tags": [
+                "performance",
+                "application"
+            ]
+        },
+        {
+            "name": "disk_io",
+            "value": {
+                "read": 500,
+                "write": 300
+            },
+            "unit": "MB/s",
+            "description": "The disk read and write speed in megabytes per second.",
+            "tags": [
+                "performance",
+                "system"
+            ]
+        },
+        {
+            "name": "network_traffic",
+            "value": 750,
+            "unit": "MB/s",
+            "description": "The incoming and outgoing network traffic in megabytes per second.",
+            "tags": [
+                "traffic",
+                "network"
+            ]
+        },
+        {
+            "name": "uptime",
+            "value": 86400,
+            "unit": "seconds",
+            "description": "The total uptime of the application in seconds.",
+            "tags": [
+                "reliability",
+                "system"
+            ]
+        },
+        {
+            "name": "db_query_time",
+            "value": 5,
+            "unit": "ms",
+            "description": "The average, maximum, and minimum time taken to execute database queries.",
+            "tags": [
+                "performance",
+                "database"
+            ]
+        },
+        {
+            "name": "thread_count",
+            "value": 50,
+            "unit": "threads",
+            "description": "The number of active threads in the application.",
+            "tags": [
+                "performance",
+                "application"
+            ]
+        },
+        {
+            "name": "gc_activity",
+            "value": 10,
+            "unit": {
+                "gc_count": "operations",
+                "gc_time": "ms"
+            },
+            "description": "The number of garbage collection operations and the time taken for garbage collection.",
+            "tags": [
+                "performance",
+                "memory"
+            ]
+        },
+        {
+            "name": "cache_hit_ratio",
+            "value": 0.95,
+            "unit": "ratio",
+            "description": "The ratio of cache hits to total cache lookups.",
+            "tags": [
+                "performance",
+                "cache"
+            ]
+        }
+    ]
+}
