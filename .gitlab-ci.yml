@@ -3,10 +3,6 @@ stages:
   - build
   - deploy
 
-.install-dependencies:
-  before_script:
-    - yarn install
-
 .launch-benchmark-remote-data:
   stage: test
   image: ghcr.io/puppeteer/puppeteer:latest 
@@ -41,18 +37,19 @@ stages:
   allow_failure: true
 
 default:
-  image: node:18.18-alpine
+  image: node:22.12-alpine
 
 cypress-test:
   stage: test
-  extends: .install-dependencies
   dependencies: []
   image: cypress/base:latest
+  before_script:
+    - yarn install
   script:
     - export NODE_OPTIONS=--openssl-legacy-provider & yarn run start-storybook -p 6006 &
     - yarn run cross-env PALINDROME_TYPE=dev parcel dev/index.html --no-cache &
     - rm -rf cypress/match-screenshots/ .cache/
-    - for i in 1 2; do yarn cypress:run; done
+    - yarn cypress:run
   allow_failure: false
 
 initial-remote-data-benchmark:
@@ -70,25 +67,36 @@ remote-data-update-multiviewport-benchmark:
     - export BENCHMARK_SCRIPT=./scripts/remoteDataBenchmark/multiViewportBenchmark.js
 
 benchmark:
-  image: cimg/node:18.0
+  image: cimg/node:22.12
   stage: test
   dependencies: []
   before_script:
+    - yarn install
     - sudo chown -R $(whoami):$(whoami) .
-    - !reference [.install-dependencies, before_script]
   script:
     - /bin/bash ./scripts/benchmark.sh "classic"
   allow_failure: false
 
 benchmark-test:
-  image: cimg/node:18.0
+  image: cimg/node:22.12
   stage: test
   dependencies: []
   before_script:
+    - yarn install
     - sudo chown -R $(whoami):$(whoami) .
-    - !reference [.install-dependencies, before_script]
   script:
     - /bin/bash ./scripts/benchmark.sh "evaluation"
+  allow_failure: false
+
+lint:
+  stage: test
+  dependencies: []
+  before_script:
+    - apk update
+    - apk add bash
+    - yarn install
+  script:
+    - yarn lint
   allow_failure: false
 
 build-dev:
@@ -96,7 +104,6 @@ build-dev:
   before_script:
     - apk update
     - apk add bash
-    - apk add git
   script:
     - yarn install
     - yarn build
@@ -110,7 +117,6 @@ build-storybook:
   before_script:
     - apk update
     - apk add bash
-    - apk add git
   script:
     - yarn install
     - rm -rf stories/remote.stories.js
@@ -124,19 +130,6 @@ build-storybook:
     paths:
       - "storybook-static/"
   allow_failure: false
-
-pages:
-  stage: deploy
-  image: busybox
-  dependencies:
-    - build-dev
-  script:
-    - mv dist/ public/
-  artifacts:
-    paths:
-      - "public/"
-  allow_failure: false
-  when: manual
 
 gh-pages:
   stage: deploy

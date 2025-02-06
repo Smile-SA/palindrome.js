@@ -94,7 +94,7 @@ export function initThreeObjects(conf) {
         document.addEventListener('keydown', function(event) {
             controls.enableZoom = event.ctrlKey;
         });
-        document.addEventListener('keyup', function(event) {
+        document.addEventListener('keyup', function() {
             controls.enableZoom = false;
         });
     }

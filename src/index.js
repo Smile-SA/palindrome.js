@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { initThreeObjects } from './threeJSUtils/ThreeJSBasicObjects';
-import { dataGenerator } from './threeJSUtils/dataGenerator';
+import { dataGenerator } from './utils/dataGenerator';
 import { Stats, benchmarkCleanUp, collectStatsData, initializeRemoteDataBenchmark } from './utils/benchmarkUtils';
 import { createLabels } from './utils/labelsUtils2D';
 import { animateFrameDashedLine } from './utils/framesUtils';
@@ -155,9 +155,11 @@ export default (function (parentElement, conf) {
     let statsVariables = { displayMessage, displayBenchmark, statsData, startDate, parentElement };
 
     // Init global parameters
+    // eslint-disable-next-line no-unused-vars
     let dataIterator, newData, dashLineMaterial, lineMaterialTransparent, lineMaterial, fetchIntervals = null;
     const meshes = {};
     const { scene, labelsRenderer, controls, renderer, camera } = initThreeObjects(conf);
+    // eslint-disable-next-line no-unused-vars
     controls.addEventListener("change", event => {
         if (conf.keepControls) {
             const position = [controls.object.position.x, controls.object.position.y, controls.object.position.z];
@@ -170,7 +172,7 @@ export default (function (parentElement, conf) {
 
     const metricParameters = {}, layerParameters = {}, borderThickness = 4, labelDiv = [];
 
-    const palindromeParameters = { conf, metricParameters, layerParameters, parentElement };
+    const palindromeParameters = { conf, metricParameters, layerParameters, parentElement, meshes };
     const threeJSParameters = { renderer, labelsRenderer, scene, camera, stats };
     let [layers_pool, sides_pool, frames_pool] = initVariables(palindromeParameters, threeJSParameters);
     const clock = new THREE.Clock();

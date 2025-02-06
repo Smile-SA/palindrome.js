@@ -19,8 +19,8 @@ export var createPalindrome = ({ ...args }) => {
                 });
             }
             else {
-                meshes[key].geometry.dispose();
-                meshes[key].material.dispose();
+                meshes[key].geometry?.dispose();
+                meshes[key].material?.dispose();
             }
             delete meshes[key];
         }
@@ -37,9 +37,11 @@ export var createPalindrome = ({ ...args }) => {
             } else {
                 // an array of materials
                 if (object.material) {
-                    for (let material of object?.material) {
-                        material?.dispose();
-                        material = undefined;
+                    for (let material of object.material) {
+                        if (material) {
+                            material.dispose();
+                            material = undefined;
+                        }
                     }
                 }
             }

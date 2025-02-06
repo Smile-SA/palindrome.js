@@ -9,7 +9,7 @@ import { Logger } from "./logger.js";
 /**
  * Returning "fetching data..." span that can be displayed while data is being fetched
  */
-export const loadingText = (conf) => {
+export const loadingText = () => {
     let loading = document.createElement("div");
     const svg = document.createElement("img");
     svg.setAttribute("src", 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6IGF1dG87IGRpc3BsYXk6IGJsb2NrOyBiYWNrZ3JvdW5kOiB0cmFuc3BhcmVudDsiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48Zz48Y2lyY2xlIHI9IjIwIiBmaWxsPSIjZThlOGU4IiBjeT0iNTAiIGN4PSIzMCI+CiAgPGFuaW1hdGUgYmVnaW49Ii0wLjVzIiB2YWx1ZXM9IjMwOzcwOzMwIiBrZXlUaW1lcz0iMDswLjU7MSIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGF0dHJpYnV0ZU5hbWU9ImN4Ij48L2FuaW1hdGU+CjwvY2lyY2xlPgo8Y2lyY2xlIHI9IjIwIiBmaWxsPSIjNjk2OTY5IiBjeT0iNTAiIGN4PSI3MCI+CiAgPGFuaW1hdGUgYmVnaW49IjBzIiB2YWx1ZXM9IjMwOzcwOzMwIiBrZXlUaW1lcz0iMDswLjU7MSIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGF0dHJpYnV0ZU5hbWU9ImN4Ij48L2FuaW1hdGU+CjwvY2lyY2xlPgo8Y2lyY2xlIHI9IjIwIiBmaWxsPSIjZThlOGU4IiBjeT0iNTAiIGN4PSIzMCI+CiAgPGFuaW1hdGUgYmVnaW49Ii0wLjVzIiB2YWx1ZXM9IjMwOzcwOzMwIiBrZXlUaW1lcz0iMDswLjU7MSIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGF0dHJpYnV0ZU5hbWU9ImN4Ij48L2FuaW1hdGU+CiAgPGFuaW1hdGUgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGR1cj0iMXMiIGtleVRpbWVzPSIwOzAuNDk5OzAuNTsxIiBjYWxjTW9kZT0iZGlzY3JldGUiIHZhbHVlcz0iMDswOzE7MSIgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ij48L2FuaW1hdGU+CjwvY2lyY2xlPjxnPjwvZz48L2c+PCEtLSBbbGRpb10gZ2VuZXJhdGVkIGJ5IGh0dHBzOi8vbG9hZGluZy5pbyAtLT48L3N2Zz4=');
@@ -413,7 +413,7 @@ export const httpWorkerFetch = (url, workersPool) => {
 
         httpWorker.onerror = function (error) {
             reject(error);
-            worker.terminate();
+            httpWorker.terminate();
         };
 
         httpWorker.postMessage({

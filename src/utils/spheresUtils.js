@@ -1,7 +1,8 @@
 import { metricColor, getColorOpacityBasedOnRanges } from "./colorsUtils";
 import { Sphere } from '../threeJSUtils/ThreeJSGeometryObjects';
-import { htmlToSvg } from "./labelsUtils2D";
+import { createHtmlTable, htmlToSvg } from "./labelsUtils2D";
 import * as THREE from 'three';
+import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
 /**
  * Draw spheres and their hover context

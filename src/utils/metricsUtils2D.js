@@ -209,6 +209,7 @@ export const changeLayerMetricsBehavior = (data, conf) => {
             let minLabels = [];
             let medLabels = [];
             let maxLabels = [];
+            // eslint-disable-next-line no-unused-vars
             for (const [_, value] of Object.entries(metrics)) {
                 let min, med, max, current;
                 min = value.min ?? getMetricMin(value);
@@ -231,6 +232,7 @@ export const changeLayerMetricsBehavior = (data, conf) => {
             const normalizeArraydMaxs = l2Normalize(maxs);
             const normalizeArraydMins = l2Normalize(mins);
             let i = 0;
+            // eslint-disable-next-line no-unused-vars
             for (const [key, _] of Object.entries(metrics)) {
                 data[layer].metrics[key]["_" + minLabels[i]] = normalizeArraydMins[i];
                 data[layer].metrics[key]["_" + maxLabels[i]] = normalizeArraydMaxs[i];

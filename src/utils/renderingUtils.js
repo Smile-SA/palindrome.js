@@ -5,7 +5,6 @@ import { drawSideStraightLine } from "./sidesUtils";
 import { displayFramesAndArrows, setArrowPostion, setRectangleFramePositions } from "./framesUtils";
 import { setLabelsPositions, settingLabelFormat } from "./labelsUtils3D";
 import { layerColorDecidedByLayerStatus } from "./colorsUtils";
-import { Logger } from "./logger";
 
 /**
  * Updates meshes, renderingType can be "workers" or "default"
@@ -37,7 +36,8 @@ export async function updateMeshes(params, renderingType) {
         newData = dataIterator.next().value;
     }
 
-    let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayer = null, previousLayerStatus = null, previousLayerColor = null,
+    // let previousLayer = null;
+    let zAxis = conf.zPlaneInitial, previousMetric = null, previousLayerStatus = null, previousLayerColor = null,
         metricIndex = 0, layerIndex = 0, zAxisWorker = conf.zPlaneInitial;
     if (conf.cameraOptions.indexOf("Flat") !== -1) {
         conf.displaySides = false;
@@ -246,7 +246,8 @@ export async function updateMeshes(params, renderingType) {
         for (let layer in newData) {
             //Declaration of metrics variables
             //this is the updated layer metrics
-            const metrics = newData[layer].metrics, layers = newData[layer].layer,
+            // const layers = newData[layer].layer;
+            const metrics = newData[layer].metrics,
                 metricsNumber = Object.values(metrics).length;
 
             let layerStatus = getLayerStatus(metrics, layer);
@@ -326,7 +327,7 @@ export async function updateMeshes(params, renderingType) {
             }
             zAxis -= conf.zPlaneMultilayer;
             previousMetric = metrics;
-            previousLayer = layers;
+            // previousLayer = layers;
             previousLayerStatus = layerStatus;
             previousLayerColor = layerColor;
             layerIndex++;

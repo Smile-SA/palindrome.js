@@ -840,7 +840,6 @@ export function defaultControls() {
             name: "sideLabelDisplay",
             control: "boolean",
             description: 'Display layers labels on the side',
-            control: 'boolean',
             table: {
                 category: 'Labels',
                 subcategory: 'Layers'
@@ -850,7 +849,6 @@ export function defaultControls() {
             name: "displayMetricsLabelsUnit",
             control: "boolean",
             description: "Display or hide metrics labels units",
-            control: "boolean",
             table: {
                 category: 'Labels',
                 subcategory: 'Metrics'

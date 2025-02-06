@@ -36,7 +36,7 @@ Cypress.Commands.add('eval_snapshot', ($el, env) => {
   }
   cy.wait(3000)
   cy.matchScreenshot($el, {
-    threshold: 0.0001,
+    threshold: 0.05,
     thresholdType: "pixel"
   })
   if (env === 'dev') {

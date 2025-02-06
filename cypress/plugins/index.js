@@ -15,8 +15,6 @@
 /**
  * @type {Cypress.PluginConfig}
  */
-// eslint-disable-next-line no-unused-vars
-
 
 const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin');
 const { Logger } = require('../../src/utils/logger');

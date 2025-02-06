@@ -88,19 +88,18 @@ simple_benchmark_set_endpoint(){
 simple_benchmark_execute_browsers(){
     local chrome_pid
 
-    # Launch browser
-    Xvfb :1 -screen 0 1024x768x16 &
-    export DISPLAY=:1
-
     # Execute browsers depending on ENV values
     if [[ "${PALINDROME_BENCH_HEADLESS}" == false ]]; then
         if [[ "${PALINDROME_BENCH_GPU}" == true ]]; then
             firefox -url $url &
         else
-            # review: ${url}& or ${url} &
-            chromium --disable-gpu --no-sandbox ${url}&
+            chromium --disable-gpu --no-sandbox ${url} &
         fi
     else
+        # Launch browser
+        Xvfb :1 -screen 0 1024x768x16 &
+        export DISPLAY=:1
+
         if [[ "${PALINDROME_BENCH_GPU}" == true ]]; then
             firefox --headless -url ${url} &
         else
@@ -110,8 +109,7 @@ simple_benchmark_execute_browsers(){
                 sleep 10
                 kill -9 "${chrome_pid}"
                 sleep 30
-                # review: ${url}& or ${url} &
-                chromium --disable-gpu --no-sandbox ${url}&
+                chromium --disable-gpu --no-sandbox ${url} &
             else
                 firefox --headless -url ${url} &
             fi;

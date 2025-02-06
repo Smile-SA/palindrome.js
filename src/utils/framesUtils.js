@@ -8,6 +8,7 @@ let time = 0;
  * @param {*} clock 
  */
 export var animateFrameDashedLine = function (meshs, clock) {
+    // eslint-disable-next-line no-unused-vars
     for (const [key, _] of Object.entries(meshs)) {
         if (key.includes("_rangeDasheline")) {
             time += clock.getDelta() * 3;

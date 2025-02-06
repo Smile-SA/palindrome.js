@@ -8,9 +8,15 @@ describe('[DEV] Sidebar values', function () {
     });
     it("should respect all default values", () => {
         const defaultValuesObject = getDefaultValues();
+        const urlParams = new URLSearchParams(Cypress.env("dev"));
+        const isWebWorkers = JSON.parse(urlParams.get("webWorkersRendering"));
         for (const control of Object.keys(controls)) {
             let selector = "#" + control;
             if (controls[control].control === "boolean") {
+                if (control === 'webWorkersRendering') {
+                    cy.get(selector).should(isWebWorkers ? 'be.checked' : 'not.be.checked');
+                    break;
+                }
                 cy.get(selector).should(defaultValuesObject[control] ? 'be.checked' : 'not.be.checked');
             }
         }

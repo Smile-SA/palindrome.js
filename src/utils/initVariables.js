@@ -11,7 +11,7 @@ import { WorkerPool } from "./workersUtils";
  * @returns web workers pools
  */
 export var initVariables = function (palindromeParameters, threeJSParameters) {
-    let { conf, metricParameters, layerParameters, parentElement } = palindromeParameters;
+    let { conf, metricParameters, layerParameters, parentElement, meshes } = palindromeParameters;
     let { renderer, labelsRenderer, scene, camera, stats } = threeJSParameters;
     //distance between planes is expressed in positive number
     conf.zPlaneMultilayer = -conf.zPlaneMultilayer;
@@ -26,8 +26,8 @@ export var initVariables = function (palindromeParameters, threeJSParameters) {
     }
 
     if (conf.displayValuesOnSphereHover) {
-        //sphere hovering effect init
-        sphereHoverInit(meshs, camera, scene, conf);
+        // sphere hovering effect init
+        sphereHoverInit(meshes, camera, scene, conf);
     }
     //metrics
     metricParameters["displayUnits"] = conf.displayMetricsLabelsUnit;

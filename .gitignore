@@ -19,7 +19,6 @@ storybook-static
 dist
 
 # TESTS
-cypress/match-screenshots
 .nyc_output/*
 coverage/*
 **/snapshots/**

@@ -1,15 +1,15 @@
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
+  viewportWidth: 1280,
+  viewportHeight: 720,
   screenshotsFolder: './cypress/fixtures/snapshots/actual',
   trashAssetsBeforeRuns: true,
   updateScreenshots: false,
   waitForAnimations: true,
   env: {
     storybook: 'http://localhost:6006/',
-    dev: 'http://localhost:1234/',
-    'production-eval-values':
-      'https://palindrome-production.onrender.com/api/requirements',
+    dev: 'http://localhost:1234/?webWorkersRendering=false',
     'cypress-plugin-snapshots': {
       autoCleanUp: true,
     },

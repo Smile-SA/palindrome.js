@@ -13,12 +13,16 @@
     "@babel/core": "^7.23.7",
     "@babel/plugin-syntax-jsx": "^7.18.6",
     "@cypress/code-coverage": "^3.12.17",
+    "@eslint/js": "^9.16.0",
     "@storybook/cli": "^6.5.10",
     "@types/node": "^18.0.3",
     "cross-env": "^7.0.3",
     "cypress": "^13.6.2",
     "cypress-match-screenshot": "^1.1.0",
     "es-module-loader": "^2.3.0",
+    "eslint": "^9.16.0",
+    "eslint-plugin-cypress": "^4.1.0",
+    "globals": "^15.13.0",
     "parcel-bundler": "^1.12.5",
     "parcel-plugin-static-files-copy": "^2.6.0",
     "storybook-addon-turbo-build": "^1.1.0"
@@ -39,7 +43,8 @@
     "cypress:open": "cypress open",
     "storybook-deploy": "gh-pages -d storybook-static",
     "dev-deploy": "gh-pages -d dist",
-    "benchmark": "/bin/bash ./scripts/benchmark.sh"
+    "benchmark": "/bin/bash ./scripts/benchmark.sh",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@bellapps/three.text-sprite": "^1.0.0",

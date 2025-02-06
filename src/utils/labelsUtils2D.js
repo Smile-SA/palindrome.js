@@ -1,4 +1,4 @@
-import { getMetricMax, getMetricMed, getMetricMin, getMetricState, getMetricsLabelsStructureData } from './metricsUtils2D';
+import { getMetricMax, getMetricMed, getMetricMin, getMetricsLabelsStructureData } from './metricsUtils2D';
 import { CSS2DObject } from "three/examples/jsm/renderers/CSS2DRenderer";
 import { create3DMetricsLabels, create3DLayersLabels } from './labelsUtils3D';
 import * as THREE from 'three';
@@ -188,6 +188,8 @@ export var createHtmlTable = function (data, parameters) {
         if (parseInt(xKey) === 0) {
             tRow.style.backgroundColor = parameters["labelBackground"]
         }
+
+        // eslint-disable-next-line no-unused-vars
         for (const [yKey, yValue] of Object.entries(xValue)) {
             let tCel = tRow.insertCell();
             tCel.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");

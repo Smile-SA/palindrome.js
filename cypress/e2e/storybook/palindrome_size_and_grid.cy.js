@@ -2,7 +2,6 @@
 // First run calls each element of Palindrome.js, takes a screenshot, makes changes, takes a new screenshot.
 // Second run compares the screenshot to the first run and fails if the difference is greater than 5%
 // Unmatched/failed screenshots are saved in cypress/match-screenshots/
-const fullscreen = '.sto-1k5e3f'
 
 describe('Palindrome size and Grid', function () {
 

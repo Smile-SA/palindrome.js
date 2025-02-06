@@ -1,10 +1,8 @@
 import { Triangle, SimpleLine, DasheLine } from '../threeJSUtils/ThreeJSGeometryObjects';
 import * as THREE from 'three';
 import { createRenderOrderCounter } from './cameraUtils';
-import { computeMetricValue, getMetricMax, getMetricMin, getRepresentationKeys, layerPoints } from './metricsUtils2D';
+import { computeMetricValue, getMetricMax, getMetricMin, getRepresentationKeys } from './metricsUtils2D';
 import { getColorOpacityBasedOnRanges } from './colorsUtils';
-import { behavioredMetricsTotalValues } from './labelsUtils2D';
-import { l2Normalize } from './metricsUtils2D';
 
 /**
  * drawTrianglesInALayer() caller
@@ -208,13 +206,11 @@ export function applyLayerRotationToData(data, conf) {
  */
 export function applyLayerMetricsMergeToData(data, conf) {
     if (conf.zPlaneMultilayer === 0) {
-        let zAxis = conf.zPlaneInitial;
         let allMetrics = {};
         for (let layer in data) {
             const metrics = data[layer].metrics;
             let metricValue = computeMetricValue(metrics, conf);
             let counter = 0;
-            zAxis -= conf.zPlaneMultilayer;
             for (const metric in metrics) {
                 metrics[metric]["position"] = metricValue.current[counter];
                 metrics[metric]["layerLabel"] = layer;
@@ -247,6 +243,7 @@ export const applyLayersSize = (data) => {
         const layerSize = layerInfo[`${layer}-layer`]?.layerSize;
         if (layerSize) {
             const metrics = data[layer].metrics;
+            // eslint-disable-next-line no-unused-vars
             for (const [key, _] of Object.entries(metrics)) {
                 const representationKeys = getRepresentationKeys([data[layer].metrics[key]], ['label', 'unit', '_min', '_max', '_med', '_current', '_unit', 'isLayerBehaviored', 'metricDirection', 'isLayerResized', 'isPositiveShifted']);
                 for (const representationKey of representationKeys) {
@@ -263,7 +260,7 @@ export const applyLayersSize = (data) => {
 }
 
 
-export const getLayerStatus = (metrics, layer) => {
+export const getLayerStatus = (metrics) => {
     let status = [];
     for (const metric of Object.values(metrics)) {
         let current, min, max;

@@ -38,6 +38,7 @@ export var cameraViewOptions = function (meshes, camera, conf) {
         yMax = (Math.max.apply(Math, tabY)),
         yMin = (Math.min.apply(Math, tabY)),
         zMax = (Math.max.apply(Math, tabZ)),
+        // eslint-disable-next-line no-unused-vars
         zMin = (Math.min.apply(Math, tabZ));
 
     let cameraDir = new THREE.Vector3(),
