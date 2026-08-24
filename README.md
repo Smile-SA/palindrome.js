@@ -10,8 +10,10 @@ Presented as metrics sets within layers, ```Palindrome.js``` helps to easily ide
 indicators, behaviors or trends for your realtime systems or any other data source. Custom algorithms, visual behaviors,
 styles and color schemes can easily be modified or added.
 
-_**```Palindrome.js``` is still considered as an experimental / beta prototype, be aware API can change at any moment.
-Feedbacks are more than welcome !**_
+```Palindrome.js``` is developed as a research prototype. API changes could occur with new versions.
+
+2024/06 : Palindrome.js has been published in the [IEEE ECO 2024 workshop](https://ieeexplore.ieee.org/document/10733683/).
+The article is publicly accessible over the [HAL open science archives](https://hal.science/hal-04921480v1).
 
 <p float="left">
 <img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV1.jpg" width="93%" >
