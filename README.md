@@ -16,7 +16,7 @@ styles and color schemes can easily be modified or added.
 The article is publicly accessible over the [HAL open science archives](https://hal.science/hal-04921480v1).
 
 <p float="left">
-<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV2.png" width="93%" >
+<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV2.png" >
 </p>
 
 ## Motivation
