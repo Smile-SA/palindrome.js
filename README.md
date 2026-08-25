@@ -6,7 +6,7 @@ such as madam, racecar. There are also numeric palindromes, including date/time 
 and long digits 02/02/2020.***
 
 ```Palindrome.js``` is a ```three.js``` based library which provides 3D monitoring for system metrics and KPIs.
-Presented as metrics sets within layers, ```Palindrome.js``` helps to easily identify relations between metrics,
+Presented as metrics sets within layers, the 3D information helps to easily identify relations between metrics,
 indicators, behaviors or trends for your realtime systems or any other data source. Custom algorithms, visual behaviors,
 styles and color schemes can easily be modified or added.
 
@@ -16,7 +16,7 @@ styles and color schemes can easily be modified or added.
 The article is publicly accessible over the [HAL open science archives](https://hal.science/hal-04921480v1).
 
 <p float="left">
-<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV1.jpg" width="93%" >
+<img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV2.png" width="93%" >
 </p>
 
 ## Motivation
