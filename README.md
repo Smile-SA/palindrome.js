@@ -12,8 +12,9 @@ styles and color schemes can easily be modified or added.
 
 ```Palindrome.js``` is developed as a research prototype. API changes could occur with new versions.
 
-2024/06 : Palindrome.js has been published in the [IEEE ECO 2024 workshop](https://ieeexplore.ieee.org/document/10733683/).
-The article is publicly accessible over the [HAL open science archives](https://hal.science/hal-04921480v1).
+- 2024/06: Our article "Palindrome.js: 3D monitoring for distributed systems visual analysis" has been published in the [IEEE ECO 2024 workshop](https://ieeexplore.ieee.org/document/10733683/).
+- 2024/11: Palindrome.js was presented at the [OSMC 2024](https://data.europa.eu/en/news-events/events/open-source-monitoring-conference-2024)
+- 2025/09: Plaindrome.js was presented at the [Open Tech Day 2025](https://foss.events/2025/09-23-open-tech-day.html)
 
 <p float="left">
 <img alt="Palindrome.js" desc="Palindrome.js" title="Palindrome.js" src="dev/assets/img/palindromeExamplesV2.png" >
